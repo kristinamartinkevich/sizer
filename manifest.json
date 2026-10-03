@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Sizer",
+  "version": "0.1.0",
+  "description": "Your size on any clothing page, worked out from sizes you already know, brand size charts and the item's fit notes.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "background": { "service_worker": "src/background.js" },
+  "action": { "default_popup": "ui/popup.html", "default_title": "Sizer" },
+  "options_page": "ui/options.html",
+  "icons": { "16": "icons/16.png", "48": "icons/48.png", "128": "icons/128.png" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.zalando.de/*", "https://*.zalando.co.uk/*", "https://*.zalando.fr/*", "https://*.zalando.it/*",
+        "https://*.zalando.es/*", "https://*.zalando.nl/*", "https://*.zalando.be/*", "https://*.zalando.at/*",
+        "https://*.zalando.ch/*", "https://*.zalando.pl/*", "https://*.zalando.se/*", "https://*.zalando.dk/*",
+        "https://*.zalando.fi/*", "https://*.zalando.no/*", "https://*.zalando.ie/*", "https://*.zalando.cz/*",
+        "https://*.zara.com/*", "https://*.asos.com/*", "https://*.net-a-porter.com/*", "https://*.mytheresa.com/*",
+        "https://*.farfetch.com/*", "https://*.revolve.com/*", "https://*.shopbop.com/*", "https://*.ssense.com/*",
+        "https://*.nordstrom.com/*", "https://*.rag-bone.com/*", "https://*.levi.com/*", "https://*.mango.com/*",
+        "https://*.hm.com/*", "https://*.cos.com/*", "https://*.arket.com/*", "https://*.selfridges.com/*"
+      ],
+      "js": ["src/brands.js", "src/defaults.js", "src/engine.js", "src/extract.js", "src/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [{ "resources": ["src/panel.css"], "matches": ["<all_urls>"] }]
+}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sizer · Your fit profile</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brandmark"><span class="mark">S</span>Sizer</div>
+      <span class="status" id="status" role="status" aria-live="polite"></span>
+    </header>
+
+    <div class="intro">
+      <h1>Your fit profile</h1>
+      <p>Tell Sizer your measurements, the clothes that already fit you, or both. The more it knows, the surer it gets on every product page.</p>
+    </div>
+
+    <div class="layout">
+      <main>
+        <!-- 01 Measurements -->
+        <section class="block" aria-labelledby="m-title">
+          <div class="block-head">
+            <span class="num">01</span>
+            <div>
+              <h2 id="m-title">Measurements</h2>
+              <p class="sub">Measure over underwear with a soft tape, snug but not tight.</p>
+            </div>
+            <div class="seg small" role="radiogroup" aria-label="Units" id="unit">
+              <button role="radio" data-v="cm">cm</button>
+              <button role="radio" data-v="in">in</button>
+            </div>
+          </div>
+
+          <div class="measure">
+            <svg class="figure" viewBox="0 0 120 300" aria-hidden="true">
+              <path class="form" d="M52,30 L52,42 C40,45 30,47 28,56 L30,92 C33,104 40,108 41,116 C40,126 30,136 29,150 L32,200 L38,288 L52,288 L56,180 L60,168 L64,180 L68,288 L82,288 L88,200 L91,150 C90,136 80,126 79,116 C80,108 87,104 90,92 L92,56 C90,47 80,45 68,42 L68,30 C68,24 64,20 60,20 C56,20 52,24 52,30 Z"/>
+              <g class="line" data-m="waist">
+                <ellipse cx="60" cy="116" rx="21" ry="4"/>
+                <circle cx="81" cy="116" r="2"/>
+              </g>
+              <g class="line" data-m="hip">
+                <ellipse cx="60" cy="150" rx="33" ry="5"/>
+                <circle cx="93" cy="150" r="2"/>
+              </g>
+              <g class="line" data-m="inseam">
+                <path d="M58,172 L53,284"/>
+                <circle cx="58" cy="172" r="2"/><circle cx="53" cy="284" r="2"/>
+              </g>
+            </svg>
+
+            <div class="fields">
+              <label class="field" data-m="waist">
+                <span class="f-label">Waist</span>
+                <span class="f-hint">Narrowest part of your torso, usually just above the belly button.</span>
+                <span class="f-input"><input id="waist" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="waist-error"></span>
+              </label>
+              <label class="field" data-m="hip">
+                <span class="f-label">Hip</span>
+                <span class="f-hint">Fullest part of your hips and seat, feet together.</span>
+                <span class="f-input"><input id="hip" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="hip-error"></span>
+              </label>
+              <label class="field" data-m="inseam">
+                <span class="f-label">Inseam <em>optional</em></span>
+                <span class="f-hint">Crotch to ankle along the inside leg. Picks your jean length.</span>
+                <span class="f-input"><input id="inseam" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="inseam-error"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- 02 Wardrobe -->
+        <section class="block" aria-labelledby="w-title">
+          <div class="block-head">
+            <span class="num">02</span>
+            <div>
+              <h2 id="w-title">Clothes you own</h2>
+              <p class="sub">Add pieces you wear often and say how they fit. A pair that’s a little tight tells Sizer as much as one that fits perfectly.</p>
+            </div>
+          </div>
+          <div id="wardrobe" class="wardrobe"></div>
+          <button type="button" class="add" id="add"><span aria-hidden="true">+</span> Add something you own</button>
+          <datalist id="brands"></datalist>
+        </section>
+
+        <!-- 03 Preference -->
+        <section class="block" aria-labelledby="p-title">
+          <div class="block-head">
+            <span class="num">03</span>
+            <div>
+              <h2 id="p-title">How you like things to fit</h2>
+              <p class="sub">When you fall between two sizes, which way should Sizer lean?</p>
+            </div>
+          </div>
+          <div class="prefs" role="radiogroup" aria-label="Fit preference" id="fit">
+            <button role="radio" data-v="snug"><b>Close</b><span>Body-skimming, the smaller size</span></button>
+            <button role="radio" data-v="regular"><b>Regular</b><span>As the brand intends</span></button>
+            <button role="radio" data-v="relaxed"><b>A little room</b><span>Ease to move, the bigger size</span></button>
+          </div>
+        </section>
+      </main>
+
+      <aside class="read" aria-labelledby="r-title">
+        <div class="read-card">
+          <h2 id="r-title">Sizer’s read on you</h2>
+          <div id="read-empty" class="read-empty">Add a measurement or something you own to see your sizes.</div>
+          <div id="read-body" hidden>
+            <div class="stats">
+              <div><span class="k">Waist</span><span class="v" id="r-waist"></span></div>
+              <div><span class="k">Hip</span><span class="v" id="r-hip"></span></div>
+            </div>
+            <p class="from" id="r-from"></p>
+            <p class="warn" id="r-warn" hidden></p>
+            <h3>Your size in</h3>
+            <ul class="sizes" id="r-sizes"></ul>
+            <p class="fine">Before page details like stretch and fit notes. Charts are approximate.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <template id="item-tpl">
+    <div class="item">
+      <div class="types" role="radiogroup" aria-label="Type of clothing">
+        <button role="radio" data-v="jeans">Jeans</button>
+        <button role="radio" data-v="trousers">Trousers</button>
+        <button role="radio" data-v="skirt">Skirt</button>
+        <button role="radio" data-v="top">Top</button>
+        <button role="radio" data-v="dress">Dress</button>
+      </div>
+      <button type="button" class="remove" aria-label="Remove this item">×</button>
+      <div class="item-row">
+        <label class="mini"><span>Brand</span><input class="i-brand" list="brands" placeholder="e.g. Zara, rag & bone" autocomplete="off"></label>
+        <label class="mini size"><span>Size on the label</span><input class="i-size" placeholder="e.g. 27, W27/L30, 38, M" autocomplete="off"></label>
+      </div>
+      <div class="item-foot">
+        <div class="seg fitseg" role="radiogroup" aria-label="How it fits you">
+          <button role="radio" data-v="tight">A bit tight</button>
+          <button role="radio" data-v="perfect">Just right</button>
+          <button role="radio" data-v="loose">A bit loose</button>
+        </div>
+        <span class="reading"></span>
+      </div>
+    </div>
+  </template>
+
+  <script src="../src/brands.js"></script>
+  <script src="../src/defaults.js"></script>
+  <script src="../src/engine.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

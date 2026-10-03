@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Straight leg jeans · Demo shop</title>
+  <!--
+    A neutral product page built like the shops Sizer reads: product data with per-size stock,
+    a collapsed size picker button, and size & fit details. Query options:
+      ?profile=none   first run, no sizes saved
+      ?profile=one    a single piece you own (lower confidence)
+      ?stock=out      the recommended size is sold out
+      ?open=why       open the reasoning sheet on load
+      ?picker=none    no picker to attach to (fallback pill)
+  -->
+  <script>
+    const q = new URLSearchParams(location.search);
+    const PROFILES = {
+      default: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: '', type: 'jeans', size: '27', fit: 'perfect' }], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
+      one: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
+      none: { anchors: [], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
+    };
+    const profile = PROFILES[q.get('profile')] || PROFILES.default;
+    window.chrome = {
+      runtime: { getURL: (p) => '../' + p, sendMessage: () => {}, onMessage: { addListener: () => {} } },
+      storage: { sync: { get: (d, cb) => cb({ profile }) }, onChanged: { addListener: () => {} } },
+    };
+    const out = q.get('stock') === 'out' ? ['27', '28', '29'] : ['25'];
+    const variants = ['24', '25', '26', '27', '28', '29', '30'].map((size) => ({
+      '@type': 'Product', size, sku: `DEMO-${size}`,
+      offers: { '@type': 'Offer', availability: `https://schema.org/${out.includes(size) ? 'OutOfStock' : 'InStock'}` },
+    }));
+    document.write(`<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org/', '@type': 'ProductGroup', name: 'WREN - Straight leg jeans', brand: { '@type': 'Brand', name: 'rag & bone' }, hasVariant: variants })}<\/script>`);
+  </script>
+  <style>
+    body { margin: 0; font: 15px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; color: #111; background: #fff; }
+    .bar { height: 56px; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 32px; font-weight: 700; letter-spacing: .02em; }
+    .pdp { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, 500px); align-items: start; gap: 48px; max-width: 1180px; margin: 0 auto; padding: 32px; }
+    .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .shot { aspect-ratio: 3 / 4; background: linear-gradient(160deg, #c9d3dd, #8ea0b3 60%, #6d8197); }
+    .shot:nth-child(2) { background: linear-gradient(170deg, #d8dfe6, #9fb0c1); }
+    .brand { font-weight: 700; font-size: 18px; }
+    h1 { font-size: 18px; font-weight: 400; margin: 2px 0 10px; }
+    .price { font-size: 18px; margin-bottom: 24px; }
+    [data-testid="pdp-size-picker-trigger"] { width: 100%; height: 48px; border: 1px solid #111; background: #fff; text-align: left; padding: 0 14px; font: inherit; cursor: pointer; }
+    .sizes { display: none; border: 1px solid #111; border-top: 0; }
+    .sizes.open { display: block; }
+    .sizes label { display: block; padding: 10px 14px; cursor: pointer; }
+    .sizes input { display: none; }
+    .bag { width: 100%; height: 48px; margin-top: 16px; border: 0; background: #111; color: #fff; font: 600 15px/1 inherit; }
+    details { border-top: 1px solid #eee; padding: 14px 0; }
+    details:last-of-type { border-bottom: 1px solid #eee; }
+    summary { font-weight: 600; cursor: pointer; }
+    @media (max-width: 760px) { .pdp { grid-template-columns: 1fr; padding: 16px; gap: 20px; } .gallery { grid-template-columns: 1fr; } .shot:nth-child(2) { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="bar">DEMO SHOP</div>
+  <div class="pdp">
+    <div class="gallery"><div class="shot"></div><div class="shot"></div></div>
+    <div>
+      <div class="brand">rag & bone</div>
+      <h1>WREN - Straight leg jeans - blue denim</h1>
+      <div class="price">£260.00</div>
+      <div id="picker-wrap">
+        <button data-testid="pdp-size-picker-trigger" id="picker-trigger" type="button">Choose your size</button>
+        <div class="sizes" id="sizes"></div>
+      </div>
+      <button class="bag" type="button">Add to bag</button>
+      <details data-testid="pdp-accordion-material_care" open><summary>Material &amp; care</summary><p>Outer fabric material: <span>100% cotton</span></p><p>Fabric: <span>Denim</span></p></details>
+      <details data-testid="pdp-accordion-size_fit" open><summary>Size &amp; fit</summary><p>Our model's height: <span>Our model is 5' 10" tall and is wearing size 27</span></p><p>Fit: <span>Straight</span></p><p>Stretch level: <span>no stretch</span></p></details>
+    </div>
+  </div>
+  <script>
+    const list = document.getElementById('sizes');
+    for (const v of variants) {
+      const sold = v.offers.availability.endsWith('OutOfStock');
+      list.insertAdjacentHTML('beforeend', `<input type="checkbox" id="size-picker-${v.sku}"><label for="size-picker-${v.sku}">${v.size}<span style="color:#888;margin-left:8px">${sold ? 'Set a reminder' : ''}</span></label>`);
+    }
+    document.getElementById('picker-trigger').onclick = () => list.classList.toggle('open');
+    if (q.get('picker') === 'none') document.getElementById('picker-wrap').remove();
+  </script>
+  <script src="../src/brands.js"></script>
+  <script src="../src/defaults.js"></script>
+  <script src="../src/engine.js"></script>
+  <script src="../src/extract.js"></script>
+  <script src="../src/panel-style.js"></script>
+  <script src="../src/content.js"></script>
+  <script>
+    if (q.get('open') === 'why') {
+      const tryOpen = () => {
+        const h = document.getElementById('sizer-inline') || document.getElementById('sizer-pill');
+        const b = h && h.shadowRoot.querySelector('[data-act="why"]');
+        if (b) b.click(); else setTimeout(tryOpen, 200);
+      };
+      setTimeout(tryOpen, 900);
+    }
+    if (q.get('picker-open')) setTimeout(() => list.classList.add('open'), 700);
+  </script>
+</body>
+</html>

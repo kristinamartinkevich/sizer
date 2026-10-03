@@ -4,21 +4,37 @@
   <meta charset="utf-8">
   <title>Sizer</title>
   <link rel="stylesheet" href="ui.css">
-  <style>
-    body { width: 300px; padding: 16px; }
-    .result { margin: 12px 0; padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
-    .big { font: 500 32px/1 Georgia, "Times New Roman", serif; }
-    .stack { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-  </style>
 </head>
 <body>
-  <h1>Sizer</h1>
-  <p class="muted" id="profile"></p>
-  <div class="result" id="result" hidden></div>
-  <div class="stack">
-    <button class="btn" id="show" type="button">Show my size on this page</button>
-    <button class="btn ghost" id="edit" type="button">Edit my sizes</button>
-  </div>
+  <header class="top"><span class="mark" aria-hidden="true">S</span><span class="word">Sizer</span></header>
+
+  <!-- One of these is shown, depending on the profile and the tab. -->
+  <section class="state" id="s-setup" hidden>
+    <h1>Your size, on every product page</h1>
+    <p class="muted">Add your measurements or one piece you own. It takes under a minute.</p>
+    <button class="btn" data-act="profile" type="button">Add your sizes</button>
+  </section>
+
+  <section class="state" id="s-result" hidden>
+    <span class="k" id="r-k">Your size</span>
+    <div class="big" id="r-size"></div>
+    <p class="headline" id="r-headline"></p>
+    <p class="muted small" id="r-meta"></p>
+    <p class="gone small" id="r-stock" hidden></p>
+    <button class="btn" data-act="why" type="button">Why this size</button>
+  </section>
+
+  <section class="state" id="s-idle" hidden>
+    <h1>Open a product page</h1>
+    <p class="muted" id="idle-text">Your size appears right under the shop’s size picker.</p>
+    <button class="btn ghost" data-act="why" type="button" id="idle-try">Check this page anyway</button>
+  </section>
+
+  <footer class="foot">
+    <span class="muted small" id="profile"></span>
+    <button class="link" data-act="profile" type="button">Fit profile</button>
+  </footer>
+
   <script src="../src/brands.js"></script>
   <script src="../src/defaults.js"></script>
   <script src="popup.js"></script>

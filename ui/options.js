@@ -184,6 +184,11 @@ function migrate(p) {
 
 chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, ({ profile: stored }) => {
   const p = migrate(stored);
+  const fresh = !p.anchors.length && !(p.waist && p.hip);
+  if (fresh || new URLSearchParams(location.search).has('welcome')) {
+    $('intro-title').textContent = 'Welcome to Sizer';
+    $('intro-text').textContent = 'Start with your waist and hip, or one piece you own that fits well. From then on, your size appears under the size picker on product pages. Everything stays in your browser.';
+  }
   profile = { ...p, anchors: [] };
   unit = p.unit || 'cm';
   p.anchors.forEach((a) => addItem(a));

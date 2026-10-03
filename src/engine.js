@@ -116,7 +116,7 @@
       const m = measure(parsed, brand);
       if (!m) continue;
       const shift = FIT_SHIFT_CM[a.fit] || 0;
-      const name = brand ? brand.name : a.brand && !a.brand.startsWith('generic') ? a.brand : genericName(parsed.system);
+      const name = brand ? brand.name : a.brand && !a.brand.startsWith('generic') ? a.brand : a.type || (a.brand === 'generic-denim' || parsed.system === 'denim' ? 'jeans' : 'size');
       points.push({ waist: m.waist + shift, hip: m.hip + shift, name: `${name} ${a.size}` });
     }
     return points;
@@ -146,10 +146,6 @@
     return { waist, hip, sources, spread, points };
   }
 
-  function genericName(system) {
-    return { denim: 'Denim waist', eu: 'EU', us: 'US', uk: 'UK', it: 'IT', letter: 'Size' }[system] || system;
-  }
-
   // ---- page text signals -------------------------------------------------
 
   const RE = {
@@ -165,6 +161,7 @@
     roomy: /\b(?:oversize[d]?|relaxed|baggy|boyfriend|loose|barrel|balloon)\b/i,
     model: /model[^.]{0,40}?(?:wears?|wearing|is\s+wearing|trägt)[^.]{0,20}?(?:size|größe|grösse|taille)\s*:?\s*([A-Z]{0,2}\s?\d{0,2}(?:\s?\/\s?L?\d{2})?|[XSML]{1,3})/i,
     modelHeight: /(?:model'?s?\s+height|model\s+is|größe\s+des\s+models|modelgröße)[^.\d]{0,20}(\d{3})\s*cm/i,
+    modelHeightFt: /model[^.\d]{0,30}?(\d)\s*['’]\s*(\d{1,2})/i,
     bottoms: /\b(?:jeans?|denim|trousers?|pants?|chinos?|skirts?|shorts|culottes?|leggings|hose|rock)\b/i,
   };
 
@@ -181,7 +178,8 @@
     const small = RE.small.test(t);
     const large = RE.large.test(t);
     const modelSize = (t.match(RE.model) || [])[1];
-    const modelHeight = (t.match(RE.modelHeight) || [])[1];
+    const ft = t.match(RE.modelHeightFt);
+    const modelHeight = (t.match(RE.modelHeight) || [])[1] || (ft ? Math.round((+ft[1] * 12 + +ft[2]) * 2.54) : null);
     return {
       fitNote: small && !large ? 'small' : large && !small ? 'large' : RE.tts.test(t) ? 'tts' : null,
       fitNoteText: ((t.match(small && !large ? RE.small : large && !small ? RE.large : RE.tts) || [])[0] || '').trim(),
@@ -212,9 +210,22 @@
 
   const FIT_PREF = { snug: -0.3, regular: 0, relaxed: 0.4 };
 
+  function joinNames(list) {
+    return list.length < 3 ? list.join(' and ') : `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}`;
+  }
+
+  // Where a fractional chart position lands, in words: "27", "27½", or "between 36 and 38".
+  function approxLabel(chart, system, pos) {
+    const i = Math.max(0, Math.min(chart.length - 1, Math.floor(pos)));
+    const f = pos - Math.floor(pos);
+    if (pos <= 0 || f < 0.25) return chart[i].label;
+    if (f > 0.75 || i === chart.length - 1) return chart[Math.min(i + 1, chart.length - 1)].label;
+    return system === 'denim' ? `${chart[i].label}½` : `between ${chart[i].label} and ${chart[i + 1].label}`;
+  }
+
   function recommend(profile, product) {
     const body = bodyFromProfile(profile);
-    if (!body) return { ok: false, reason: 'Add a size you know in Sizer settings first.' };
+    if (!body) return { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
 
     const brand = findBrand(product.brand) || findBrand(product.title);
     const pageSizes = resolveSizes(product.sizes || [], brand && brand.system);
@@ -223,6 +234,7 @@
 
     const chartSystem = brand ? brand.system : pageSystem && GENERIC[pageSystem] ? pageSystem : TO_EU[pageSystem] ? 'eu' : signals.bottoms ? 'denim' : 'eu';
     const chart = brand ? brand.sizes : GENERIC[chartSystem];
+    const chartName = brand ? brand.name : 'standard';
 
     const reasons = [];
     const w = position(chart, 'waist', body.waist);
@@ -230,61 +242,84 @@
     const rigid = signals.stretch === 'none';
     // Too small is the worse failure for bottoms, so lean on the larger dimension.
     const base = rigid ? Math.max(w, h) : 0.4 * Math.min(w, h) + 0.6 * Math.max(w, h);
-    reasons.push({ text: `Your ${body.sources.join(' + ')} matches ${brand ? brand.name : 'the standard'} chart between ${labelAt(chart, Math.floor(base))} and ${labelAt(chart, Math.floor(base) + 1)}.`, delta: null });
+    reasons.push({ text: `Your ${joinNames(body.sources)} fit${body.sources.length === 1 && !/measurements/.test(body.sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
 
     let adj = 0;
     const explicit = signals.fitNote === 'small' || signals.fitNote === 'large';
-    if (signals.stretch === 'none') {
-      if (explicit) reasons.push({ text: 'No stretch: rounding up when you fall between sizes.', delta: null });
-      else { adj += 0.35; reasons.push({ text: `No stretch${signals.cotton100 ? ' (100% cotton)' : ''}: rigid fabric won’t give, so leaning up.`, delta: +0.35 }); }
-      if (signals.skinny && !explicit) { adj += 0.15; reasons.push({ text: 'Slim or skinny cut in rigid fabric fits tighter still.', delta: +0.15 }); }
+    const elastane = signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : '';
+    if (rigid) {
+      if (!explicit) adj += 0.35 + (signals.skinny ? 0.15 : 0);
+      reasons.push({ text: `No stretch${signals.cotton100 ? ', 100% cotton' : ''}, so going up when in doubt.`, delta: null });
     } else if (signals.stretch === 'high') {
       adj -= 0.25;
-      reasons.push({ text: `High stretch${signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : ''}: it gives and relaxes with wear, so leaning down.`, delta: -0.25 });
+      reasons.push({ text: `Lots of stretch${elastane}, so it gives and eases with wear.`, delta: null });
     } else if (signals.stretch === 'slight') {
-      reasons.push({ text: `Slight stretch${signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : ''}: your usual size should work.`, delta: 0 });
+      reasons.push({ text: `A little stretch${elastane}, so your usual fit.`, delta: null });
     }
     if (brand && brand.tendency && !explicit) {
       adj += brand.tendency;
-      reasons.push({ text: `${brand.name}: ${brand.note}`, delta: brand.tendency });
+      reasons.push({ text: brand.note, delta: null });
     }
     const pref = FIT_PREF[profile.fitPreference] || 0;
-    if (pref) { adj += pref; reasons.push({ text: `You prefer a ${profile.fitPreference} fit.`, delta: pref }); }
+    if (pref) {
+      adj += pref;
+      reasons.push({ text: profile.fitPreference === 'relaxed' ? 'You like a little room.' : 'You like a close fit.', delta: null });
+    }
 
     const threshold = rigid ? 0.35 : signals.stretch === 'high' ? 0.65 : 0.5;
     const raw = base + adj;
     const frac = raw - Math.floor(raw);
     const roundedUp = frac >= threshold;
     let idx = Math.floor(raw) + (roundedUp ? 1 : 0);
+    const usual = Math.floor(base) + (base - Math.floor(base) >= 0.5 ? 1 : 0);
 
-    if (signals.fitNote === 'small') { idx += 1; reasons.push({ text: `The product page says “${signals.fitNoteText}”: one size up.`, delta: +1 }); }
-    if (signals.fitNote === 'large') { idx -= 1; reasons.push({ text: `The product page says “${signals.fitNoteText}”: one size down.`, delta: -1 }); }
-    if (signals.fitNote === 'tts') reasons.push({ text: 'The product page says it fits true to size.', delta: 0 });
-    if (signals.roomy) reasons.push({ text: 'Relaxed or oversized cut: this size gives the intended roomy look. Go one down only if you want it closer.', delta: null });
+    if (signals.fitNote === 'small') { idx += 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size up.`, delta: +1 }); }
+    if (signals.fitNote === 'large') { idx -= 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size down.`, delta: -1 }); }
+    if (signals.fitNote === 'tts') reasons.push({ text: 'The page says it fits true to size.', delta: null });
+    if (signals.roomy) reasons.push({ text: 'Relaxed cut, roomy by design. Go one down only if you want it closer.', delta: null });
 
     idx = Math.max(0, Math.min(chart.length - 1, idx));
     const altIdx = !explicit && frac > 0.25 && frac < 0.75 ? idx + (roundedUp ? -1 : 1) : null;
+
+    const headline = signals.fitNote === 'small' ? 'Runs small, sized up'
+      : signals.fitNote === 'large' ? 'Runs large, sized down'
+        : rigid && idx > usual ? 'No stretch, sized up'
+          : signals.stretch === 'high' && idx < usual ? 'Stretchy, sized down'
+            : idx > usual ? 'Sized up for you' : idx < usual ? 'Sized down for you' : 'Your usual fit';
 
     const pick = chart[idx];
     const pageMatch = matchPageSize(pick, pageSizes, brand, profile.inseam);
     const alt = altIdx != null && altIdx >= 0 && altIdx < chart.length ? chart[altIdx] : null;
     const altMatch = alt ? matchPageSize(alt, pageSizes, brand, profile.inseam) : null;
+    const inStock = pageMatch && pageMatch.available === false ? nearestInStock(pick, pageSizes, brand, rigid, chart) : null;
+    const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
 
     let score = 0.4;
     if (brand) score += 0.2;
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
-    if (body.sources.length > 1 || profile.waist) score += 0.1;
+    const corroborated = body.points.length > 1 || (profile.waist && profile.hip);
+    if (corroborated) score += 0.1;
     if (body.spread > 5) score -= 0.15;
     if (!signals.bottoms) score -= 0.1;
     const confidence = score >= 0.75 ? 'High' : score >= 0.55 ? 'Medium' : 'Low';
+    const firmUp = !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
+      : body.spread > 5 ? 'Some of your sizes disagree. Check them in your fit profile.'
+        : !corroborated ? 'Add another piece you own to firm this up.'
+          : signals.stretch === 'unknown' ? 'The page doesn’t say how stretchy this is.'
+            : null;
 
     return {
       ok: true,
-      size: pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand),
+      size,
+      matchedOnPage: !!pageMatch,
       available: pageMatch ? pageMatch.available !== false : null,
-      alternative: alt ? { size: altMatch ? altMatch.label : displayLabel(alt, chartSystem, brand), why: altIdx > idx ? 'if you prefer more room' : 'if you like a closer fit' } : null,
+      inStock,
+      stockText: pageMatch && pageMatch.available === false ? inStockText(size, inStock) : null,
+      alternative: alt ? { size: altMatch ? altMatch.label : displayLabel(alt, chartSystem, brand), why: altIdx > idx ? 'if you like more room' : 'if you like a closer fit' } : null,
+      headline,
       confidence,
+      firmUp,
       brand: brand ? brand.name : product.brand || null,
       brandKnown: !!brand,
       guide: brand ? brand.guide : null,
@@ -294,8 +329,33 @@
     };
   }
 
-  function labelAt(chart, i) {
-    return chart[Math.max(0, Math.min(chart.length - 1, i))].label;
+  // In-stock sizes closest to the pick, counted in whole sizes; both directions when it's a tie.
+  function nearestInStock(target, pageSizes, brand, preferUp, chart) {
+    const at = (m) => (position(chart, 'waist', m.waist) + position(chart, 'hip', m.hip)) / 2;
+    const from = at(target);
+    const options = [];
+    for (const s of pageSizes) {
+      if (s.available === false) continue;
+      const m = measure(s.parsed, brand);
+      if (!m) continue;
+      const steps = Math.round(at(m) - from);
+      if (steps !== 0 && Math.abs(steps) <= 2) options.push({ size: s.label, steps });
+    }
+    if (!options.length) return null;
+    options.sort((x, y) => Math.abs(x.steps) - Math.abs(y.steps) || (preferUp ? y.steps - x.steps : x.steps - y.steps));
+    const [best] = options;
+    const other = options.find((o) => o.steps === -best.steps) || null;
+    return { size: best.size, steps: best.steps, other };
+  }
+
+  const STEP_WORDS = { 1: 'one size up', 2: 'two sizes up', '-1': 'one size down', '-2': 'two sizes down' };
+
+  function inStockText(size, inStock) {
+    if (!inStock) return `Sold out in ${size}, and nothing close is in stock.`;
+    const first = `${inStock.size}, ${STEP_WORDS[inStock.steps]}`;
+    return inStock.other
+      ? `Sold out in ${size}. In stock: ${first}, or ${inStock.other.size}, ${STEP_WORDS[inStock.other.steps]}.`
+      : `Sold out in ${size}. Nearest in stock: ${first}.`;
   }
 
   function displayLabel(entry, system, brand) {

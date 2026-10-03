@@ -96,3 +96,61 @@ test('measurements win over wardrobe, and the wardrobe still reports disagreemen
   assert.equal(b.hip, 96);
   assert.ok(b.spread > 5);
 });
+
+// ---- the answer in plain words, stock fallback, first run ------------------
+
+const stevie = {
+  brand: 'rag & bone',
+  title: 'STEVIE - Straight leg jeans',
+  text: 'Outer fabric material: 65% cotton, 35% polyester. Fit: Relaxed. Stretch level: no stretch',
+  sizes: [['26', true], ['27', false], ['28', false], ['29', false], ['30', true]].map(([label, available]) => ({ label, available })),
+};
+
+test('a sold-out pick offers the nearest size in stock and says which way it fits', () => {
+  const r = recommend(profile, stevie);
+  assert.equal(r.size, '28');
+  assert.equal(r.available, false);
+  assert.deepEqual(r.inStock, { size: '30', steps: 2, other: { size: '26', steps: -2 } });
+});
+
+test('the headline names the deciding factor', () => {
+  assert.equal(recommend(profile, stevie).headline, 'No stretch, sized up');
+  const small = recommend(profile, { ...stevie, text: '100% cotton. No stretch. Runs small, size up.' });
+  assert.equal(small.headline, 'Runs small, sized up');
+  const stretch = recommend(profile, { ...stevie, text: '92% cotton 6% polyester 2% elastane' });
+  assert.equal(stretch.headline, 'Your usual fit');
+});
+
+test('the first reason says what your sizes equal in this brand, in half sizes', () => {
+  const r = recommend(profile, stevie);
+  assert.match(r.reasons[0].text, /^Your Zara 38 and jeans 27 fit like rag & bone 27½\.$/);
+});
+
+test('reasons only carry whole-size moves', () => {
+  const r = recommend(profile, { ...stevie, text: '100% cotton denim, skinny fit, 4% elastane' });
+  assert.ok(r.reasons.every((x) => x.delta == null || Number.isInteger(x.delta)));
+});
+
+test('a single wardrobe item says how to firm the answer up', () => {
+  const r = recommend({ anchors: [{ brand: 'Zara', size: '38' }] }, stevie);
+  assert.equal(r.firmUp, 'Add another piece you own to firm this up.');
+});
+
+test('an empty profile asks for sizes instead of guessing', () => {
+  const r = recommend({ anchors: [] }, stevie);
+  assert.equal(r.ok, false);
+  assert.equal(r.needsProfile, true);
+});
+
+test('reads Zalando size-and-fit text where the labels run together', () => {
+  const s = analyzeText('Size & fit Our model\'s height: Our model is 5\' 10"  tall and is wearing size 28 Fit: Relaxed Stretch level: no stretch');
+  assert.equal(s.modelSize, '28');
+  assert.equal(s.modelHeight, 178);
+  assert.equal(s.stretch, 'none');
+  assert.equal(s.roomy, true);
+});
+
+test('one size away in stock needs no second option', () => {
+  const r = recommend(profile, { ...stevie, sizes: [['27', false], ['28', false], ['29', true], ['30', true]].map(([label, available]) => ({ label, available })) });
+  assert.deepEqual(r.inStock, { size: '29', steps: 1, other: null });
+});

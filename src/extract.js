@@ -1,6 +1,17 @@
-// Reads brand, title, fit/fabric text and the size picker from a product page.
+// Reads brand, title, fit/fabric text, sizes and stock, and finds the size picker on a product page.
 (function (root) {
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+  const OURS = '#sizer-inline, #sizer-panel, #sizer-pill';
+
+  // textContent glues sibling labels together ("Fit:RelaxedShape"), which breaks word matching.
+  function spacedText(el) {
+    const parts = [];
+    const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => (n.parentElement && n.parentElement.closest('script, style, noscript, svg') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+    });
+    while (walker.nextNode()) parts.push(walker.currentNode.nodeValue);
+    return clean(parts.join(' '));
+  }
 
   function jsonLdProduct(doc) {
     for (const el of doc.querySelectorAll('script[type="application/ld+json"]')) {
@@ -19,12 +30,29 @@
     return null;
   }
 
+  const OUT_OF_STOCK = /OutOfStock|SoldOut|Discontinued/i;
+
+  function variantSizes(ld) {
+    const variants = ld && [].concat(ld.hasVariant || []);
+    if (!variants || !variants.length) return [];
+    const out = new Map();
+    for (const v of variants) {
+      const size = clean(typeof v.size === 'object' ? v.size && v.size.name : v.size);
+      if (!size) continue;
+      const availability = [].concat(v.offers || []).map((o) => o && o.availability).filter(Boolean).join(' ');
+      const available = availability ? !OUT_OF_STOCK.test(availability) : null;
+      if (!out.has(size) || available) out.set(size, { label: size, available, sku: v.sku || null });
+    }
+    return [...out.values()];
+  }
+
   function meta(doc, sel) {
     const el = doc.querySelector(sel);
     return el ? clean(el.getAttribute('content')) : '';
   }
 
   const DETAIL_SEL = [
+    '[data-testid^="pdp-accordion" i]',
     '[class*="description" i]', '[id*="description" i]', '[data-testid*="description" i]',
     '[class*="detail" i]', '[id*="detail" i]', '[data-testid*="detail" i]',
     '[class*="size-fit" i]', '[class*="sizefit" i]', '[class*="fit" i][class*="size" i]', '[data-testid*="fit" i]',
@@ -33,77 +61,101 @@
   ].join(',');
 
   function detailText(doc) {
-    const seen = new Set();
-    const parts = [];
+    const seen = [];
     let total = 0;
     for (const el of doc.querySelectorAll(DETAIL_SEL)) {
-      if (el.closest('#sizer-root') || el.closest('[class*="review" i], [class*="recommend" i], [class*="carousel" i], footer, nav')) continue;
-      const t = clean(el.textContent);
-      if (t.length < 15 || seen.has(t) || [...seen].some((s) => s.includes(t))) continue;
-      seen.add(t);
-      parts.push(t.slice(0, 3000));
+      if (el.closest(OURS) || el.closest('[class*="review" i], [class*="recommend" i], [class*="carousel" i], footer, nav')) continue;
+      const t = spacedText(el);
+      if (t.length < 15 || seen.some((s) => s.includes(t))) continue;
+      seen.push(t.slice(0, 3000));
       total += t.length;
       if (total > 20000) break;
     }
-    return parts.join('\n');
+    return seen.join('\n');
   }
 
-  const SIZE_SEL = [
+  const OPTION_SEL = [
     'select option',
+    'label[for*="size" i]',
     '[data-testid*="size" i] button', '[data-testid*="size" i] li', '[data-testid*="size" i] label', '[data-testid*="size" i] [role="option"]',
     '[class*="size" i] button', '[class*="size" i] li', '[class*="size" i] label', '[class*="size" i] [role="option"]', '[class*="size" i] [role="radio"]',
     '[id*="size" i] button', '[id*="size" i] li', '[id*="size" i] option',
-    '[aria-label*="size" i]', '[role="listbox"] [role="option"]', '[role="radiogroup"] [role="radio"]',
+    '[role="listbox"] [role="option"]', '[role="radiogroup"] [role="radio"]',
   ].join(',');
 
   function isUnavailable(el, text) {
     if (el.disabled || el.getAttribute('aria-disabled') === 'true') return true;
-    const cls = `${el.className && el.className.baseVal !== undefined ? el.className.baseVal : el.className} ${el.parentElement ? el.parentElement.className : ''}`;
-    return /disabled|unavailable|sold-?out|out-?of-?stock|\boos\b/i.test(cls) || /sold out|out of stock|notify me|ausverkauft|benachrichtig|épuisé|agotad/i.test(text);
+    const cls = `${typeof el.className === 'string' ? el.className : ''} ${el.parentElement && typeof el.parentElement.className === 'string' ? el.parentElement.className : ''}`;
+    return /disabled|unavailable|sold-?out|out-?of-?stock|\boos\b/i.test(cls) || /sold out|out of stock|notify me|set a reminder|ausverkauft|benachrichtig|épuisé|agotad/i.test(text);
   }
 
-  function sizeOptions(doc, parse) {
-    const out = new Map();
-    for (const el of doc.querySelectorAll(SIZE_SEL)) {
-      if (el.closest('#sizer-root') || el.childElementCount > 4) continue;
-      const text = clean(el.getAttribute('aria-label') && !el.textContent.trim() ? el.getAttribute('aria-label') : el.textContent);
-      if (!text || text.length > 40) continue;
+  // Size option elements currently in the page, with the size each one stands for.
+  function optionElements(doc, parse) {
+    const out = [];
+    for (const el of doc.querySelectorAll(OPTION_SEL)) {
+      if (el.closest(OURS) || el.childElementCount > 6) continue;
+      const text = spacedText(el) || clean(el.getAttribute('aria-label'));
+      if (!text || text.length > 48) continue;
       const p = parse(text.replace(/^(size|größe|taille|talla|taglia)\s*:?\s*/i, ''));
       if (!p) continue;
-      const label = p.label.trim();
-      const available = !isUnavailable(el, text);
-      if (!out.has(label) || (available && out.get(label).available === false)) out.set(label, { label, available });
+      out.push({ el, label: p.label.trim(), available: !isUnavailable(el, text) });
     }
-    if (out.size < 2) {
-      for (const s of doc.querySelectorAll('script:not([src])')) {
-        const re = /"(?:size|sizeName|size_name|displaySize)"\s*:\s*"([^"]{1,12})"/g;
-        let m;
-        while ((m = re.exec(s.textContent)) && out.size < 40) {
-          const p = parse(m[1]);
-          if (p && !out.has(p.label.trim())) out.set(p.label.trim(), { label: p.label.trim(), available: null });
-        }
-      }
+    return out;
+  }
+
+  function domSizes(doc, parse) {
+    const out = new Map();
+    for (const o of optionElements(doc, parse)) {
+      if (!out.has(o.label) || (o.available && out.get(o.label).available === false)) out.set(o.label, { label: o.label, available: o.available });
     }
     return [...out.values()];
+  }
+
+  const PICKER_SEL = [
+    '[data-testid*="size-picker" i]', '[data-testid*="sizepicker" i]', '[data-testid*="size-selector" i]', '[data-testid*="sizeselector" i]',
+    '[class*="size-picker" i]', '[class*="sizePicker" i]', '[class*="size-selector" i]', '[class*="sizeSelector" i]',
+    'select[name*="size" i]', 'select[id*="size" i]', '[role="radiogroup"][aria-label*="size" i]', '[role="listbox"][aria-label*="size" i]',
+  ].join(',');
+
+  const visible = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.width > 60 && r.height > 16 && getComputedStyle(el).visibility !== 'hidden';
+  };
+
+  // The element Sizer's answer line goes directly after.
+  function findPicker(doc, parse) {
+    for (const el of doc.querySelectorAll(PICKER_SEL)) {
+      if (el.tagName === 'INPUT' || el.closest(OURS) || !visible(el)) continue;
+      return el;
+    }
+    const opts = optionElements(doc, parse).filter((o) => visible(o.el));
+    if (opts.length >= 2) {
+      let a = opts[0].el.parentElement;
+      while (a && !a.contains(opts[1].el)) a = a.parentElement;
+      if (a && a !== doc.body) return a;
+    }
+    return null;
   }
 
   function extractProduct(doc, engine) {
     const ld = jsonLdProduct(doc);
     const ldBrand = ld && (typeof ld.brand === 'string' ? ld.brand : ld.brand && ld.brand.name);
-    const h1 = clean(doc.querySelector('h1') && doc.querySelector('h1').textContent);
+    const h1El = doc.querySelector('h1');
+    const h1 = h1El ? spacedText(h1El) : '';
     const title = clean((ld && ld.name) || meta(doc, 'meta[property="og:title"]') || h1 || doc.title);
     const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i]');
-    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? brandEl.textContent : '').slice(0, 60));
+    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? spacedText(brandEl) : '').slice(0, 60));
 
     const description = clean(ld && ld.description);
     let text = [description, detailText(doc)].filter(Boolean).join('\n');
     if (text.length < 200) {
       const main = doc.querySelector('main') || doc.body;
-      text += `\n${clean(main ? main.textContent : '').slice(0, 20000)}`;
+      text += `\n${main ? spacedText(main).slice(0, 20000) : ''}`;
     }
 
-    const sizes = sizeOptions(doc, engine.parseSizeLabel);
-    const brandGuess = brand || [title, h1, doc.title].map((s) => engine.findBrand(s)).find(Boolean)?.name || '';
+    const fromLd = variantSizes(ld);
+    const sizes = fromLd.length ? fromLd : domSizes(doc, engine.parseSizeLabel);
+    const brandGuess = brand || ([title, h1, doc.title].map((s) => engine.findBrand(s)).find(Boolean) || {}).name || '';
     return {
       brand: brandGuess,
       title,
@@ -114,5 +166,5 @@
     };
   }
 
-  root.SizerExtract = { extractProduct };
+  root.SizerExtract = { extractProduct, findPicker, optionElements };
 })(globalThis);

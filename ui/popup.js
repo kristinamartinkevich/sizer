@@ -1,16 +1,15 @@
 const $ = (id) => document.getElementById(id);
-const FILES = ['src/brands.js', 'src/defaults.js', 'src/engine.js', 'src/extract.js', 'src/content.js'];
+const FILES = ['src/brands.js', 'src/defaults.js', 'src/engine.js', 'src/extract.js', 'src/panel-style.js', 'src/content.js'];
 
-chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, ({ profile }) => {
-  const name = (a) => {
-    const known = SizerBrands.BRANDS.find((b) => b.id === a.brand);
-    if (known) return known.name;
-    if (!a.brand || a.brand.startsWith('generic')) return a.type === 'jeans' || a.brand === 'generic-denim' ? 'Jeans' : 'Size';
-    return a.brand;
-  };
-  const known = profile.anchors.map((a) => `${name(a)} ${a.size}`).join(', ');
-  $('profile').textContent = profile.waist && profile.hip ? 'Based on your measurements' : known ? `Based on ${known}` : 'Add your measurements or a size you know to get started.';
-});
+function show(id) {
+  document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));
+}
+
+function summary(profile) {
+  if (profile.waist && profile.hip) return 'From your measurements';
+  const n = profile.anchors.length;
+  return n ? `From ${n} piece${n > 1 ? 's' : ''} you own` : '';
+}
 
 async function activeTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -27,29 +26,44 @@ async function send(tab, msg) {
   }
 }
 
-(async () => {
-  const tab = await activeTab();
-  if (!tab || !/^https?:/.test(tab.url || '')) return;
-  try {
-    const r = await send(tab, { type: 'sizer:analyze' });
-    if (r && r.result && r.result.ok) {
-      $('result').hidden = false;
-      $('result').innerHTML = '';
-      const big = document.createElement('div');
-      big.className = 'big';
-      big.textContent = r.result.size;
-      const sub = document.createElement('div');
-      sub.className = 'muted';
-      sub.textContent = `${r.result.brand || 'Unknown brand'} · ${r.result.confidence} confidence`;
-      $('result').append(big, sub);
+document.querySelectorAll('[data-act="profile"]').forEach((b) => (b.onclick = () => chrome.runtime.openOptionsPage()));
+document.querySelectorAll('[data-act="why"]').forEach((b) => {
+  b.onclick = async () => {
+    const tab = await activeTab();
+    try {
+      await send(tab, { type: 'sizer:open' });
+      window.close();
+    } catch {
+      show('s-idle');
+      $('idle-text').textContent = 'Chrome doesn’t let extensions read this page.';
+      $('idle-try').hidden = true;
     }
-  } catch {
-    // Pages Chrome won't let extensions touch (store pages, PDFs) just skip the preview.
-  }
-})();
+  };
+});
 
-$('show').onclick = async () => {
+chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) => {
+  const hasProfile = (profile.waist && profile.hip) || profile.anchors.length;
+  $('profile').textContent = summary(profile);
+  if (!hasProfile) { show('s-setup'); return; }
+
+  show('s-idle');
   const tab = await activeTab();
-  try { await send(tab, { type: 'sizer:open' }); window.close(); } catch { $('profile').textContent = 'Sizer can’t run on this page.'; }
-};
-$('edit').onclick = () => chrome.runtime.openOptionsPage();
+  if (!tab || !/^https?:/.test(tab.url || '')) {
+    $('idle-try').hidden = true;
+    return;
+  }
+  let r;
+  try { r = await send(tab, { type: 'sizer:analyze' }); } catch { $('idle-try').hidden = true; return; }
+  const res = r && r.result;
+  if (!res || !res.ok || !r.isProduct) return;
+
+  show('s-result');
+  $('r-k').textContent = res.confidence === 'Low' ? 'Rough guess' : 'Your size';
+  $('r-size').textContent = res.size;
+  $('r-headline').textContent = res.headline;
+  $('r-meta').textContent = `${res.brand || 'Unknown brand'} · ${res.confidence} confidence`;
+  if (res.available === false) {
+    $('r-stock').hidden = false;
+    $('r-stock').textContent = res.stockText;
+  }
+});

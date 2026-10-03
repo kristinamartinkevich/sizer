@@ -1,0 +1,13 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  html, body { margin: 0; background: transparent; }
+  .d { position: absolute; top: 4%; left: 4%; border-radius: 50%; background: #2F4A3A; display: grid; place-items: center; }
+  .s { color: #F6F3EC; font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-weight: 500; line-height: 1; transform: translateY(-3%); }
+</style></head><body><div class="d"><span class="s">S</span></div>
+<script>
+  // ?s=128 renders the mark at 128px; the 4% inset keeps the disc off the edge.
+  const s = +new URLSearchParams(location.search).get('s') || 128;
+  const d = document.querySelector('.d');
+  d.style.cssText += `top:${s * 0.04}px;left:${s * 0.04}px;width:${s * 0.92}px;height:${s * 0.92}px`;
+  document.querySelector('.s').style.fontSize = `${s * 0.6}px`;
+</script></body></html>

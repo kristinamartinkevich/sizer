@@ -11,7 +11,7 @@
   --loden: #2F4A3A;
   --loden-wash: #E6ECE5;
   --madder: #9A3B2E;
-  --serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --serif: "Jost", "Avenir Next", "Futura", "Century Gothic", -apple-system, "Segoe UI", sans-serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ease: cubic-bezier(.2, .7, .2, 1);
   all: initial;
@@ -51,7 +51,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .line .k { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .line .answer { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
 .line .row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.line .size { font: 400 24px/1 var(--serif); font-variation-settings: "opsz" 24, "SOFT" 100, "WONK" 0; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.01em; }
+.line .size { font: 500 24px/1 var(--serif); font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.01em; }
 .line .why-text { color: var(--muted); }
 .line .note { font-size: 13px; color: var(--muted); }
 .line .note.gone { color: var(--madder); }
@@ -96,7 +96,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   color: var(--ecru);
   box-shadow: 0 8px 28px rgba(28, 27, 24, .22);
 }
-.pill b { font: 400 17px/1 var(--serif); font-variation-settings: "SOFT" 100, "WONK" 0; margin-left: 2px; }
+.pill b { font: 500 17px/1 var(--serif); margin-left: 2px; }
 
 /* ---- the reasoning sheet ---- */
 .sheet {
@@ -117,13 +117,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sheet:focus { outline: none; }
 @keyframes in { from { transform: translateX(24px); opacity: 0; } }
 .sheet header { display: flex; align-items: center; gap: 10px; padding: 18px 22px; border-bottom: 1px solid var(--hair); }
-.sheet .title { flex: 1; font: 500 16px/1 var(--serif); font-variation-settings: "SOFT" 100, "WONK" 0; letter-spacing: .01em; }
+.sheet .title { flex: 1; font: 500 16px/1 var(--serif); letter-spacing: .01em; }
 .close { width: 34px; height: 34px; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 22px; line-height: 1; }
 .close:hover { background: var(--ecru); color: var(--graphite); }
 .body { flex: 1; overflow: auto; padding: 24px 22px 8px; }
 .hero .k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.hero .big { font: 400 64px/1 var(--serif); font-variation-settings: "opsz" 72, "SOFT" 100, "WONK" 0; letter-spacing: -.02em; margin: 6px 0 8px; font-variant-numeric: lining-nums tabular-nums; }
-.hero .headline { font: 400 19px/1.3 var(--serif); font-variation-settings: "SOFT" 100, "WONK" 0; }
+.hero .big { font: 500 64px/1 var(--serif); letter-spacing: -.02em; margin: 6px 0 8px; font-variant-numeric: lining-nums tabular-nums; }
+.hero .headline { font: 500 19px/1.3 var(--serif); }
 .hero .headline.moved { font-style: italic; }
 .meter { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted); }
 .dots { display: inline-flex; gap: 4px; }
@@ -137,7 +137,7 @@ h3 { margin: 26px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .1em
 ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
 ol li { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--hair); counter-increment: r; }
 ol li:first-child { border-top: 0; padding-top: 2px; }
-ol li::before { content: counter(r); flex: none; width: 16px; font: 400 13px/1.6 var(--serif); font-variation-settings: "SOFT" 100, "WONK" 0; color: var(--muted); }
+ol li::before { content: counter(r); flex: none; width: 16px; font: 500 13px/1.6 var(--serif); color: var(--muted); }
 ol li span { flex: 1; }
 ol li em { flex: none; align-self: flex-start; font-style: normal; font-size: 12px; font-weight: 600; color: var(--loden); background: var(--loden-wash); padding: 2px 8px; border-radius: 999px; }
 dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }

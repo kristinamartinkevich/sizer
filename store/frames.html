@@ -8,15 +8,15 @@
   <style>
     :root {
       --ecru: #F6F3EC; --graphite: #1C1B18; --muted: #5F5B52; --hair: #DDD7CA; --loden: #2F4A3A;
-      --serif: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+      --serif: "Jost", "Avenir Next", "Futura", "Century Gothic", -apple-system, "Segoe UI", sans-serif;
       --sans: "Instrument Sans", -apple-system, "Helvetica Neue", Arial, sans-serif;
     }
     html, body { margin: 0; background: var(--ecru); color: var(--graphite); font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
     .frame { width: 1280px; height: 800px; display: grid; grid-template-columns: 380px 724px; gap: 48px; align-items: center; padding: 0 64px; box-sizing: border-box; overflow: hidden; }
     .mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--loden); overflow: hidden; vertical-align: middle; }
     .mark img { width: 28px; height: 28px; display: block; }
-    .word { font: 500 18px/1 var(--serif); font-variation-settings: "SOFT" 100, "WONK" 0; letter-spacing: .01em; margin-left: 10px; vertical-align: middle; }
-    h1 { font: 400 50px/1.04 var(--serif); font-variation-settings: "opsz" 72, "SOFT" 100, "WONK" 0; letter-spacing: -.02em; margin: 34px 0 18px; text-wrap: balance; }
+    .word { font: 500 18px/1 var(--serif); letter-spacing: .01em; margin-left: 10px; vertical-align: middle; }
+    h1 { font: 500 50px/1.04 var(--serif); letter-spacing: -.02em; margin: 34px 0 18px; text-wrap: balance; }
     p { margin: 0; font-size: 18px; color: var(--muted); max-width: 360px; }
     .window { width: 724px; height: 640px; background: #fff; border-radius: 14px; box-shadow: 0 30px 80px rgba(28, 27, 24, .18), 0 0 0 1px rgba(28, 27, 24, .06); overflow: hidden; position: relative; }
     .chrome { height: 38px; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 16px; gap: 10px; font-size: 12px; color: #8a8a8a; }
@@ -26,7 +26,7 @@
     .tile { width: 440px; height: 280px; background: var(--loden); color: var(--ecru); display: flex; flex-direction: column; justify-content: center; padding: 0 40px; box-sizing: border-box; }
     .tile .logo { width: 72px; height: 72px; display: block; }
     .marquee .logo { width: 120px; height: 120px; }
-    .tile .t { font: 400 34px/1.08 var(--serif); font-variation-settings: "opsz" 72, "SOFT" 100, "WONK" 0; letter-spacing: -.015em; margin-top: 22px; }
+    .tile .t { font: 500 34px/1.08 var(--serif); letter-spacing: -.015em; margin-top: 22px; }
     .marquee { width: 1400px; height: 560px; padding: 0 110px; }
     .marquee .t { font-size: 64px; max-width: 900px; }
     .marquee .sub { font-size: 21px; opacity: .8; margin-top: 18px; max-width: 760px; }

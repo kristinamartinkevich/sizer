@@ -41,8 +41,8 @@
     const s = document.createElement('style');
     s.id = 'sizer-page-style';
     // One document-level face for the figure: @font-face is ignored inside a shadow root.
-    const font = chrome.runtime.getURL('fonts/Jost-latin.woff2');
-    s.textContent = `@font-face { font-family: "Jost"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("${font}") format("woff2"); }\n` + globalThis.SIZER_PAGE_STYLE;
+    const font = chrome.runtime.getURL('fonts/HankenGrotesk-latin.woff2');
+    s.textContent = `@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("${font}") format("woff2"); }\n` + globalThis.SIZER_PAGE_STYLE;
     document.head.appendChild(s);
   }
 

@@ -15,6 +15,16 @@
         get: (d, cb) => { const s = localStorage.getItem('sizer'); cb(s ? JSON.parse(s) : d); },
         set: (v, cb) => { localStorage.setItem('sizer', JSON.stringify(v)); if (cb) cb(); },
       },
+      // ?charts=1 serves the verified rag & bone chart the way the background worker would have stored it.
+      local: {
+        get: (d, cb) => {
+          if (!q.get('charts')) { cb(d); return; }
+          fetch('../tests/fixtures/bundle-rag-bone.json').then((r) => r.json()).then((list) => cb({
+            charts: { fetchedAt: Date.now(), brands: list.map((b) => ({ id: b.brand_id, name: b.brand_name, aliases: b.aliases || [], charts: b.charts, fitNotes: b.fit_notes || [], updatedAt: b.updated_at })) },
+          })).catch(() => cb(d));
+        },
+        set: (v, cb) => { if (cb) cb(); },
+      },
       onChanged: { addListener: () => {} },
     },
   };

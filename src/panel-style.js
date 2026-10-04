@@ -145,6 +145,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
 dd s { color: var(--muted); }
 .sheet footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 22px 18px; border-top: 1px solid var(--hair); }
 .fine { font-size: 12px; color: var(--muted); }
+.fine a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.fine a:hover { color: var(--graphite); }
 .link { border: 0; background: none; padding: 4px 0; color: var(--accent); font-weight: 600; white-space: nowrap; }
 .empty { color: var(--muted); }
 

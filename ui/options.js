@@ -1,11 +1,13 @@
 const CM = 2.54;
 const $ = (id) => document.getElementById(id);
 const ESTIMATE_BRANDS = ['rag & bone', "Levi's", 'AGOLDE', 'MOTHER', 'Zara', 'Mango', 'H&M', 'COS'];
-const RANGE_CM = { waist: [45, 150], hip: [60, 170], inseam: [55, 102] };
-const LABEL = { waist: 'waist', hip: 'hip', inseam: 'inseam' };
+const RANGE_CM = { waist: [45, 150], hip: [60, 170], inseam: [55, 102], footLength: [18, 35] };
+const LABEL = { waist: 'waist', hip: 'hip', inseam: 'inseam', footLength: 'foot length' };
+const MEASURES = ['waist', 'hip', 'inseam', 'footLength'];
 
 let profile;
 let unit = 'cm';
+let charts = null;
 
 for (const b of SizerBrands.BRANDS.slice().sort((a, b) => a.name.localeCompare(b.name))) {
   $('brands').appendChild(new Option(b.name));
@@ -58,18 +60,19 @@ function fillMeasures() {
   $('waist').value = toDisplay(profile.waist);
   $('hip').value = toDisplay(profile.hip);
   $('inseam').value = inseamToDisplay(profile.inseam);
+  $('footLength').value = toDisplay(profile.footLength);
   document.querySelectorAll('[data-unit]').forEach((u) => (u.textContent = unit));
-  for (const id of ['waist', 'hip', 'inseam']) $(`${id}-error`).textContent = '';
+  for (const id of MEASURES) $(`${id}-error`).textContent = '';
   markFigure();
 }
 
 function markFigure() {
-  for (const id of ['waist', 'hip', 'inseam']) {
+  for (const id of MEASURES) {
     document.querySelector(`.figure [data-m="${id}"]`).classList.toggle('filled', !!$(id).value.trim());
   }
 }
 
-for (const id of ['waist', 'hip', 'inseam']) {
+for (const id of MEASURES) {
   const field = document.querySelector(`.field[data-m="${id}"]`);
   const line = document.querySelector(`.figure [data-m="${id}"]`);
   const input = $(id);
@@ -105,8 +108,14 @@ function addItem(a, focus) {
   function explain() {
     const r = node.querySelector('.reading');
     if (!item.size) { r.textContent = ''; return; }
-    const e = SizerEngine.explainAnchor(item);
+    const e = SizerEngine.explainAnchor(item, charts);
     r.classList.toggle('bad', !e.ok);
+    if (item.type === 'shoes') {
+      if (!e.ok) r.textContent = 'Sizer can’t read this size yet. Try the EU number, like 38.';
+      else if (e.brand) r.textContent = `Read with the ${e.brand} shoe chart`;
+      else r.textContent = 'Read as an EU shoe size on a standard chart';
+      return;
+    }
     const what = { denim: 'a denim waist size', eu: 'an EU size', us: 'a US size', uk: 'a UK size', it: 'an Italian size', letter: 'a letter size' }[e.system];
     if (!e.ok) r.textContent = 'Sizer can’t read this size yet. Try the number on the label.';
     else if (e.brand) r.textContent = `Read with the ${e.brand} chart`;
@@ -124,22 +133,26 @@ $('add').onclick = () => { addItem({}, true); changed(); };
 
 function renderRead() {
   const clean = { ...profile, anchors: profile.anchors.filter((a) => a.size) };
-  const body = SizerEngine.bodyFromProfile(clean);
+  const body = SizerEngine.bodyFromProfile(clean, charts);
   $('read-empty').hidden = !!body;
   $('read-body').hidden = !body;
   if (!body) return;
 
-  const show = (cm) => `${unit === 'cm' ? Math.round(cm) : (cm / CM).toFixed(1)}<small>${unit}</small>`;
+  const show = (cm) => (cm == null ? '—' : `${unit === 'cm' ? Math.round(cm) : (cm / CM).toFixed(1)}<small>${unit}</small>`);
   $('r-waist').innerHTML = show(body.waist);
   $('r-hip').innerHTML = show(body.hip);
 
   const items = body.points.length;
   const measured = profile.waist && profile.hip;
-  $('r-from').textContent = measured
-    ? items ? `From your measurements, checked against ${items} thing${items > 1 ? 's' : ''} you own.` : 'From your measurements.'
-    : profile.waist || profile.hip
-      ? `From your ${profile.waist ? 'waist' : 'hip'} and ${items} thing${items > 1 ? 's' : ''} you own.`
-      : `From ${items} thing${items > 1 ? 's' : ''} you own.`;
+  const from = body.waist == null ? ''
+    : measured
+      ? items ? `From your measurements, checked against ${items} thing${items > 1 ? 's' : ''} you own.` : 'From your measurements.'
+      : profile.waist || profile.hip
+        ? `From your ${profile.waist ? 'waist' : 'hip'} and ${items} thing${items > 1 ? 's' : ''} you own.`
+        : `From ${items} thing${items > 1 ? 's' : ''} you own.`;
+  const footCm = body.foot == null ? '' : unit === 'cm' ? `${body.foot.toFixed(1)} cm` : `${(body.foot / CM).toFixed(1)} in`;
+  const foot = body.foot == null ? '' : body.footSource === 'your foot length' ? ` Foot length ${footCm}.` : ` Foot length ${footCm} from your ${body.footSource}.`;
+  $('r-from').textContent = (from + foot).trim();
 
   const off = body.points.filter((p) => Math.abs(p.hip - body.hip) + Math.abs(p.waist - body.waist) > 5).map((p) => p.name);
   $('r-warn').hidden = !off.length;
@@ -147,7 +160,7 @@ function renderRead() {
 
   $('r-sizes').innerHTML = '';
   for (const name of ESTIMATE_BRANDS) {
-    const r = SizerEngine.recommend(clean, { brand: name, title: 'jeans', text: '', sizes: [] });
+    const r = SizerEngine.recommend(clean, { brand: name, title: 'jeans', text: '', sizes: [] }, charts);
     if (!r.ok) continue;
     const li = document.createElement('li');
     const n = document.createElement('span');
@@ -182,9 +195,14 @@ function migrate(p) {
   return { ...SIZER_DEFAULT_PROFILE, ...p, anchors };
 }
 
+chrome.storage.local.get({ charts: null }, (r) => {
+  charts = r.charts;
+  if (profile) renderRead();
+});
+
 chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, ({ profile: stored }) => {
   const p = migrate(stored);
-  const fresh = !p.anchors.length && !(p.waist && p.hip);
+  const fresh = !p.anchors.length && !(p.waist && p.hip) && !p.footLength;
   if (fresh || new URLSearchParams(location.search).has('welcome')) {
     $('intro-title').textContent = 'Welcome to Sizer';
     $('intro-text').textContent = 'Start with your waist and hip, or one piece you own that fits well. From then on, your size appears under the size picker on product pages. Everything stays in your browser.';
@@ -196,7 +214,7 @@ chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, ({ profile: stored }
   fillMeasures();
   bindSeg($('unit'), unit, (v) => {
     // A value flagged as the wrong unit was typed in the new one, so re-read it rather than convert it.
-    const retyped = ['waist', 'hip', 'inseam'].filter((id) => $(`${id}-error`).textContent);
+    const retyped = MEASURES.filter((id) => $(`${id}-error`).textContent);
     const raw = Object.fromEntries(retyped.map((id) => [id, $(id).value]));
     unit = v;
     profile.unit = v;

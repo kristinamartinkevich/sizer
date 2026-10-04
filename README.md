@@ -29,18 +29,28 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 
 1. Measurements are used as given. Otherwise each piece you own becomes body measurements through
    its brand's chart, nudged for pieces marked tight or loose.
-2. Those measurements are placed on the product brand's chart.
+2. Those measurements are placed on the product brand's chart: the verified chart downloaded from
+   the chart database when the brand has one for this kind of item, else the built-in approximation.
+   Rows the brand page gets visibly wrong are marked suspect in the database and skipped. Charts
+   that list garment rather than body measurements get a little ease taken off.
 3. Rigid fabric rounds up when you fall between sizes, high stretch rounds down, and the brand's
    reputation and your fit preference adjust it.
 4. A "runs small / size up" note on the page moves it one full size (or down for "runs large").
 5. The result maps to the sizes on the page, using the shop's product data for stock.
+6. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
+   the brand's shoe chart or a standard EU one.
+
+The sheet's footer links to the brand page the chart was read from, with the date it was read.
 
 ## Layout
 
 | Path | What it is |
 |---|---|
-| `src/brands.js` | Size charts (body measurements per size) for 40 brands, plus generic charts |
+| `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, plus generic charts |
+| `src/charts.js` | Turns the downloaded chart bundle into engine charts: cm, suspect rows dropped, one chart per kind of item |
+| `src/charts-store.js`, `src/background.js` | Daily download of verified charts from the Supabase project into `chrome.storage.local` |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
+| `supabase/` | Schema migrations, the research seed and the script that builds it |
 | `src/extract.js` | Reads the product page and finds the size picker |
 | `src/content.js`, `src/panel-style.js` | What Sizer draws on shop pages |
 | `ui/` | Popup and fit profile page |
@@ -49,8 +59,10 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 
 ## Limits
 
-- Charts are approximate and women's only. Check them against each brand's current guide.
-- Sizing runs on waist and hip, so it's strongest for jeans, trousers and skirts.
+- Only verified charts are downloaded; a brand without one falls back to the built-in approximation,
+  and the sheet says which it used. Women's charts only so far.
+- Clothing runs on waist and hip, so it's strongest for jeans, trousers and skirts. Shoes need a foot
+  length or a pair you own.
 - Page reading is heuristic. If a shop changes its markup, `src/extract.js` may need a fix.
 
 ## Test and package

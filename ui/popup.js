@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const FILES = ['src/brands.js', 'src/defaults.js', 'src/engine.js', 'src/extract.js', 'src/panel-style.js', 'src/content.js'];
+const FILES = ['src/brands.js', 'src/charts.js', 'src/defaults.js', 'src/engine.js', 'src/extract.js', 'src/panel-style.js', 'src/content.js'];
 
 function show(id) {
   document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));
@@ -42,7 +42,7 @@ document.querySelectorAll('[data-act="why"]').forEach((b) => {
 });
 
 chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) => {
-  const hasProfile = (profile.waist && profile.hip) || profile.anchors.length;
+  const hasProfile = (profile.waist && profile.hip) || profile.anchors.length || profile.footLength;
   $('profile').textContent = summary(profile);
   if (!hasProfile) { show('s-setup'); return; }
 

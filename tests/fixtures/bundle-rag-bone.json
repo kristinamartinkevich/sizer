@@ -1,0 +1,248 @@
+[
+ {
+  "brand_id": "rag-bone",
+  "brand_name": "rag & bone",
+  "aliases": [
+   "rag & bone"
+  ],
+  "charts": [
+   {
+    "id": "dafaf282-b2f8-5ae7-881f-9414198cfd8a",
+    "rows": [
+     {
+      "hip": [
+       88.0,
+       88.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "23",
+      "waist": [
+       32.0,
+       32.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "00",
+       "letter": "XXS"
+      },
+      "suspect": "Published as waist 32 cm; the inches table gives 24 in (61 cm). Brand-page typo.",
+      "foot_length": null
+     },
+     {
+      "hip": [
+       90.0,
+       90.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "24",
+      "waist": [
+       64.0,
+       64.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "0",
+       "letter": "XS"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       93.0,
+       93.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "25",
+      "waist": [
+       67.0,
+       67.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "2",
+       "letter": "S"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       95.0,
+       95.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "26",
+      "waist": [
+       69.0,
+       69.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "4",
+       "letter": "S"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       98.0,
+       98.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "27",
+      "waist": [
+       72.0,
+       72.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "6",
+       "letter": "M"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       100.0,
+       100.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "28",
+      "waist": [
+       74.0,
+       74.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "8",
+       "letter": "M"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       103.0,
+       103.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "29",
+      "waist": [
+       77.0,
+       77.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "10",
+       "letter": "L"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       105.0,
+       105.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "30",
+      "waist": [
+       79.0,
+       79.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "10",
+       "letter": "L"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       108.0,
+       108.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "31",
+      "waist": [
+       82.0,
+       82.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "12",
+       "letter": "L"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       110.0,
+       110.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "32",
+      "waist": [
+       84.0,
+       84.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "14",
+       "letter": "XL"
+      },
+      "suspect": null,
+      "foot_length": null
+     },
+     {
+      "hip": [
+       116.0,
+       116.0
+      ],
+      "bust": null,
+      "extra": {},
+      "label": "34",
+      "waist": [
+       90.0,
+       90.0
+      ],
+      "inseam": null,
+      "aliases": {
+       "us": "16",
+       "letter": "XL"
+      },
+      "suspect": null,
+      "foot_length": null
+     }
+    ],
+    "unit": "cm",
+    "gender": "women",
+    "category": "jeans",
+    "fit_line": null,
+    "fit_advice": "Note: This size chart provides general sizing information, which can vary depending on style.",
+    "source_url": "https://www.rag-bone.com/on/demandware.store/Sites-ragandbone-Site/en_US/Product-SizeChart?cid=size-chart-womens-denim",
+    "size_system": "denim_waist",
+    "retrieved_on": "2026-10-04",
+    "measurement_basis": "body",
+    "source_archive_url": null
+   }
+  ],
+  "fit_notes": [],
+  "updated_at": "2026-10-04T10:41:49.943873+00:00"
+ }
+]

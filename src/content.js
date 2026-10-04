@@ -16,6 +16,16 @@
     return new Promise((resolve) => chrome.storage.sync.get({ profile: globalThis.SIZER_DEFAULT_PROFILE }, (r) => resolve(r.profile)));
   }
 
+  // The verified charts the background worker downloaded; null until the first download lands.
+  function getCharts() {
+    return new Promise((resolve) => chrome.storage.local.get({ charts: null }, (r) => resolve(r.charts)));
+  }
+
+  function recommendHere(profile, charts) {
+    const product = extractProduct(document, Engine);
+    return { product, result: product.isProduct || product.sizes.length || state.forced ? Engine.recommend(profile, product, charts) : null };
+  }
+
   function host(id, place) {
     let h = hosts[id];
     if (!h || !h.el.isConnected) {
@@ -118,9 +128,9 @@
     const s = r.signals;
     const facts = [
       ['Brand', r.brand ? `${esc(r.brand)}${r.brandKnown ? '' : ', no size chart yet'}` : 'Not found'],
-      ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
+      r.shoes ? null : ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
       ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : 'None'],
-      s.modelSize ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
+      s.modelSize && !r.shoes ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
       ['Sizes', p.sizes.length ? p.sizes.map((x) => (x.available === false ? `<s>${esc(x.label)}</s>` : esc(x.label))).join(' · ') : 'Not found'],
     ].filter(Boolean);
     return `
@@ -143,7 +153,7 @@
     if (!state.sheetOpen) { drop('sizer-panel'); return; }
     const r = state.result;
     const h = host('sizer-panel', (el) => { if (!el.isConnected) document.documentElement.appendChild(el); });
-    const guide = r && r.guide ? `Charts are approximate. Check the ${esc(r.guide)}.` : 'Size charts are approximate.';
+    const guide = sourceLine(r);
     h.mount.innerHTML = `<section class="sheet" role="dialog" aria-modal="false" aria-labelledby="sizer-title" tabindex="-1">
       <header>${MARK}<span class="title" id="sizer-title">sizer</span><button class="close" data-act="close" aria-label="Close">×</button></header>
       <div class="body">${sheetBody()}</div>
@@ -151,6 +161,22 @@
     </section>`;
     bind(h.mount);
     h.mount.querySelector('.sheet').focus();
+  }
+
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function shortDate(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}` : '';
+  }
+
+  // Where the chart came from: a link to the brand's own guide when it is a verified chart, a caveat otherwise.
+  function sourceLine(r) {
+    if (r && r.source && r.source.url) {
+      const when = shortDate(r.source.retrievedOn);
+      return `Chart from <a href="${esc(r.source.url)}" target="_blank" rel="noopener">${esc(r.source.name)}’s size guide</a>${when ? `, ${when}` : ''}`;
+    }
+    if (r && r.guide) return `Charts are approximate. Check the ${esc(r.guide)}.`;
+    return 'Size charts are approximate.';
   }
 
   function closeSheet() {
@@ -198,10 +224,10 @@
   }
 
   async function run() {
-    const product = extractProduct(document, Engine);
-    const profile = await getProfile();
+    const [profile, charts] = await Promise.all([getProfile(), getCharts()]);
+    const { product, result } = recommendHere(profile, charts);
     state.product = product;
-    state.result = product.isProduct || product.sizes.length || state.forced ? Engine.recommend(profile, product) : null;
+    state.result = result;
     state.phase = 'ready';
     place();
     if (state.sheetOpen) renderSheet();
@@ -234,15 +260,15 @@
       return true;
     }
     if (msg.type === 'sizer:analyze') {
-      getProfile().then((profile) => {
-        const product = extractProduct(document, Engine);
-        reply({ result: product.isProduct || product.sizes.length ? Engine.recommend(profile, product) : null, isProduct: product.isProduct });
+      Promise.all([getProfile(), getCharts()]).then(([profile, charts]) => {
+        const { product, result } = recommendHere(profile, charts);
+        reply({ result, isProduct: product.isProduct });
       });
       return true;
     }
   });
 
-  chrome.storage.onChanged.addListener((c) => { if (c.profile) run(); });
+  chrome.storage.onChanged.addListener((c) => { if (c.profile || c.charts) run(); });
 
   // Product pages hydrate late and shops navigate without full reloads.
   let url = location.href;

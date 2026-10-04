@@ -23,9 +23,21 @@
     const profile = PROFILES[q.get('profile')] || PROFILES.default;
     window.chrome = {
       runtime: { getURL: (p) => '../' + p, sendMessage: () => {}, onMessage: { addListener: () => {} } },
-      storage: { sync: { get: (d, cb) => cb({ profile }) }, onChanged: { addListener: () => {} } },
+      storage: {
+        sync: { get: (d, cb) => cb({ profile }) },
+        // ?charts=1 serves the verified rag & bone chart as the background worker would have stored it.
+        local: {
+          get: (d, cb) => {
+            if (!q.get('charts')) { cb(d); return; }
+            fetch('fixtures/bundle-rag-bone.json').then((r) => r.json()).then((list) => cb({
+              charts: { fetchedAt: Date.now(), brands: list.map((b) => ({ id: b.brand_id, name: b.brand_name, aliases: b.aliases || [], charts: b.charts, fitNotes: b.fit_notes || [], updatedAt: b.updated_at })) },
+            })).catch(() => cb(d));
+          },
+        },
+        onChanged: { addListener: () => {} },
+      },
     };
-    const out = q.get('stock') === 'out' ? ['27', '28', '29'] : ['25'];
+    const out = q.get('stock') === 'out' ? ['26', '27', '28'] : ['25'];
     const variants = ['24', '25', '26', '27', '28', '29', '30'].map((size) => ({
       '@type': 'Product', size, sku: `DEMO-${size}`,
       offers: { '@type': 'Offer', availability: `https://schema.org/${out.includes(size) ? 'OutOfStock' : 'InStock'}` },
@@ -81,6 +93,7 @@
     if (q.get('picker') === 'none') document.getElementById('picker-wrap').remove();
   </script>
   <script src="../src/brands.js"></script>
+  <script src="../src/charts.js"></script>
   <script src="../src/defaults.js"></script>
   <script src="../src/engine.js"></script>
   <script src="../src/extract.js"></script>

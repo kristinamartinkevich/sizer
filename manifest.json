@@ -67,6 +67,7 @@
       ],
       "js": [
         "src/brands.js",
+        "src/charts.js",
         "src/defaults.js",
         "src/engine.js",
         "src/extract.js",

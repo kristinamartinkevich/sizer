@@ -50,6 +50,10 @@
                 <path d="M58,172 L53,284"/>
                 <circle cx="58" cy="172" r="2"/><circle cx="53" cy="284" r="2"/>
               </g>
+              <g class="line" data-m="footLength">
+                <path d="M66,292 L84,292"/>
+                <circle cx="66" cy="292" r="2"/><circle cx="84" cy="292" r="2"/>
+              </g>
             </svg>
 
             <div class="fields">
@@ -70,6 +74,12 @@
                 <span class="f-hint">Crotch to ankle along the inside leg. Picks your jean length.</span>
                 <span class="f-input"><input id="inseam" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
                 <span class="f-error" id="inseam-error"></span>
+              </label>
+              <label class="field" data-m="footLength">
+                <span class="f-label">Foot length <em>optional</em></span>
+                <span class="f-hint">Heel to longest toe, standing on paper. Picks your shoe size.</span>
+                <span class="f-input"><input id="footLength" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="footLength-error"></span>
               </label>
             </div>
           </div>
@@ -119,7 +129,7 @@
             <p class="warn" id="r-warn" hidden></p>
             <h3>Your size in</h3>
             <ul class="sizes" id="r-sizes"></ul>
-            <p class="fine">Before page details like stretch and fit notes. Charts are approximate.</p>
+            <p class="fine" id="r-fine">Before page details like stretch and fit notes. Charts are approximate.</p>
           </div>
         </div>
       </aside>
@@ -134,11 +144,12 @@
         <button role="radio" data-v="skirt">Skirt</button>
         <button role="radio" data-v="top">Top</button>
         <button role="radio" data-v="dress">Dress</button>
+        <button role="radio" data-v="shoes">Shoes</button>
       </div>
       <button type="button" class="remove" aria-label="Remove this item">×</button>
       <div class="item-row">
         <label class="mini"><span>Brand</span><input class="i-brand" list="brands" placeholder="e.g. Zara, rag & bone" autocomplete="off"></label>
-        <label class="mini size"><span>Size on the label</span><input class="i-size" placeholder="e.g. 27, W27/L30, 38, M" autocomplete="off"></label>
+        <label class="mini size"><span>Size on the label</span><input class="i-size" placeholder="e.g. 27, W27/L30, 38, M, EU 38" autocomplete="off"></label>
       </div>
       <div class="item-foot">
         <div class="seg fitseg" role="radiogroup" aria-label="How it fits you">
@@ -152,6 +163,7 @@
   </template>
 
   <script src="../src/brands.js"></script>
+  <script src="../src/charts.js"></script>
   <script src="../src/defaults.js"></script>
   <script src="../src/engine.js"></script>
   <script src="options.js"></script>

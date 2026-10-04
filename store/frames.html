@@ -36,9 +36,9 @@
   <script>
     const q = new URLSearchParams(location.search);
     const FRAMES = {
-      1: ['Your size, right under the size picker.', 'Sizer reads the brand, the fabric and the fit notes, then tells you which size to pick.', '../tests/fixture-shop.html?picker-open=1', 'demo-shop.example/jeans'],
-      2: ['Every answer shows its working.', 'Your sizes, the brand’s chart, the stretch and the page’s own fit notes, in plain words.', '../tests/fixture-shop.html?open=why', 'demo-shop.example/jeans'],
-      3: ['Sold out? It says what’s close.', 'When your size is gone, Sizer names the nearest sizes in stock and how far off they are.', '../tests/fixture-shop.html?stock=out&picker-open=1', 'demo-shop.example/jeans'],
+      1: ['Your size, right under the size picker.', 'Sizer reads the brand, the fabric and the fit notes, then tells you which size to pick.', '../tests/fixture-shop.html?picker-open=1&charts=1', 'demo-shop.example/jeans'],
+      2: ['Every answer shows its working.', 'Your sizes, the brand’s chart, the stretch and the page’s own fit notes, in plain words.', '../tests/fixture-shop.html?open=why&charts=1', 'demo-shop.example/jeans'],
+      3: ['Sold out? It says what’s close.', 'When your size is gone, Sizer names the nearest sizes in stock and how far off they are.', '../tests/fixture-shop.html?stock=out&picker-open=1&charts=1', 'demo-shop.example/jeans'],
       4: ['Set up once, in under a minute.', 'Add your measurements, clothes that already fit, or both. Everything stays in your browser.', 'out/_options.png', 'Sizer · Your fit profile'],
     };
     const kind = q.get('kind');

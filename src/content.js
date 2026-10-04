@@ -40,7 +40,9 @@
     if (document.getElementById('sizer-page-style')) return;
     const s = document.createElement('style');
     s.id = 'sizer-page-style';
-    s.textContent = globalThis.SIZER_PAGE_STYLE;
+    // One document-level face for the figure: @font-face is ignored inside a shadow root.
+    const font = chrome.runtime.getURL('fonts/Fraunces-latin.woff2');
+    s.textContent = `@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("${font}") format("woff2"); }\n` + globalThis.SIZER_PAGE_STYLE;
     document.head.appendChild(s);
   }
 
@@ -125,7 +127,7 @@
       <div class="hero">
         <div class="k">${r.confidence === 'Low' ? 'Rough guess' : 'Your size'}</div>
         <div class="big">${esc(r.size)}</div>
-        <div class="headline">${esc(r.headline)}</div>
+        <div class="headline${r.headline === 'Your usual fit' ? '' : ' moved'}">${esc(r.headline)}</div>
         <div class="meter">${dots(r.confidence)}<span>${r.confidence} confidence</span></div>
         ${r.firmUp ? `<p class="firm">${esc(r.firmUp)}</p>` : ''}
       </div>
@@ -143,7 +145,7 @@
     const h = host('sizer-panel', (el) => { if (!el.isConnected) document.documentElement.appendChild(el); });
     const guide = r && r.guide ? `Charts are approximate. Check the ${esc(r.guide)}.` : 'Size charts are approximate.';
     h.mount.innerHTML = `<section class="sheet" role="dialog" aria-modal="false" aria-labelledby="sizer-title" tabindex="-1">
-      <header>${MARK}<span class="title" id="sizer-title">Sizer</span><button class="close" data-act="close" aria-label="Close">×</button></header>
+      <header>${MARK}<span class="title" id="sizer-title">sizer</span><button class="close" data-act="close" aria-label="Close">×</button></header>
       <div class="body">${sheetBody()}</div>
       <footer><span class="fine">${guide}</span><button class="link" data-act="profile">Edit fit profile</button></footer>
     </section>`;

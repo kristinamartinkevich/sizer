@@ -61,6 +61,7 @@ chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) 
   $('r-k').textContent = res.confidence === 'Low' ? 'Rough guess' : 'Your size';
   $('r-size').textContent = res.size;
   $('r-headline').textContent = res.headline;
+  $('r-headline').classList.toggle('moved', res.headline !== 'Your usual fit');
   $('r-meta').textContent = `${res.brand || 'Unknown brand'} · ${res.confidence} confidence`;
   if (res.available === false) {
     $('r-stock').hidden = false;

@@ -1,0 +1,430 @@
+{
+  "brand_id": "7fam",
+  "brand_name": "7 for all mankind",
+  "status": "found",
+  "charts": [
+    {
+      "category": "bottoms",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "NATURAL WAIST: \"Measure under your natural waist-line, keeping the tape slightly loose.\" LOW HIPS: \"Measure under your hips, keeping the tape slightly loose.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://7forallmankind.com/pages/size-chart",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "letter": "XXS",
+            "us": "0",
+            "uk": "4",
+            "de": "30",
+            "eu": "32",
+            "it": "36"
+          },
+          "waist": [
+            58.5,
+            58.5
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "uk": "6",
+            "de": "32",
+            "eu": "34",
+            "it": "38"
+          },
+          "waist": [
+            61,
+            61
+          ],
+          "hip": [
+            86.5,
+            86.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "uk": "6",
+            "de": "32",
+            "eu": "34",
+            "it": "38"
+          },
+          "waist": [
+            63.5,
+            63.5
+          ],
+          "hip": [
+            89,
+            89
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "S",
+            "us": "4",
+            "uk": "8",
+            "de": "34",
+            "eu": "36",
+            "it": "40"
+          },
+          "waist": [
+            66,
+            66
+          ],
+          "hip": [
+            91.5,
+            91.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "us": "4",
+            "uk": "8",
+            "de": "34",
+            "eu": "36",
+            "it": "40"
+          },
+          "waist": [
+            68.5,
+            68.5
+          ],
+          "hip": [
+            94,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "M",
+            "us": "6",
+            "uk": "10",
+            "de": "36",
+            "eu": "38",
+            "it": "42"
+          },
+          "waist": [
+            71,
+            71
+          ],
+          "hip": [
+            96.5,
+            96.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "us": "6",
+            "uk": "10",
+            "de": "36",
+            "eu": "38",
+            "it": "42"
+          },
+          "waist": [
+            73.5,
+            73.5
+          ],
+          "hip": [
+            99,
+            99
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "L",
+            "us": "8",
+            "uk": "12",
+            "de": "38",
+            "eu": "40",
+            "it": "44"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            101.5,
+            101.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "L",
+            "us": "8",
+            "uk": "12",
+            "de": "38",
+            "eu": "40",
+            "it": "44"
+          },
+          "waist": [
+            78.5,
+            78.5
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XL",
+            "us": "10",
+            "uk": "14",
+            "de": "40",
+            "eu": "42",
+            "it": "46"
+          },
+          "waist": [
+            81,
+            81
+          ],
+          "hip": [
+            106.5,
+            106.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "XL",
+            "us": "10",
+            "uk": "14",
+            "de": "40",
+            "eu": "42",
+            "it": "46"
+          },
+          "waist": [
+            83.5,
+            83.5
+          ],
+          "hip": [
+            109,
+            109
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XXL",
+            "us": "12",
+            "uk": "16",
+            "de": "42",
+            "eu": "44",
+            "it": "48"
+          },
+          "waist": [
+            86,
+            86
+          ],
+          "hip": [
+            111.5,
+            111.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "XXL",
+            "us": "12",
+            "uk": "16",
+            "de": "42",
+            "eu": "44",
+            "it": "48"
+          },
+          "waist": [
+            91,
+            91
+          ],
+          "hip": [
+            116.5,
+            116.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "BUST: \"Measure under your arms, around the fullest part of your chest.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://7forallmankind.com/pages/size-chart",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {},
+          "waist": [
+            58.5,
+            58.5
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            81,
+            81
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            61,
+            63.5
+          ],
+          "hip": [
+            86.5,
+            89
+          ],
+          "bust": [
+            83,
+            85
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            66,
+            68.5
+          ],
+          "hip": [
+            91.5,
+            94
+          ],
+          "bust": [
+            87,
+            89
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            71,
+            73.5
+          ],
+          "hip": [
+            96.5,
+            99
+          ],
+          "bust": [
+            92,
+            95
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            76,
+            78.5
+          ],
+          "hip": [
+            101.5,
+            104
+          ],
+          "bust": [
+            98,
+            101
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            81,
+            83.5
+          ],
+          "hip": [
+            106.5,
+            109
+          ],
+          "bust": [
+            104,
+            107
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XXL",
+          "aliases": {},
+          "waist": [
+            89,
+            91
+          ],
+          "hip": [
+            111.5,
+            116.5
+          ],
+          "bust": [
+            110,
+            113
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Bottoms chart also gives a Thigh column (cm: 50.2, 51.4, 52.7, 54.0, 55.3, 56.5, 57.8, 59.1, 62.2, 65.4, 68.6, 71.8, 78.1 for sizes 23-36) which has no field in the schema. Hip is the published 'Low Hips' column. An inch toggle exists and was not recorded. Charts render via JavaScript after clicking 'View size chart' (read in the browser); the page showed a country/language prompt detecting France, but the URL is the default 7forallmankind.com store and the conversion table includes US sizes. Size 35 is absent (34 then 36). Dresses and belts charts exist and were not recorded."
+}

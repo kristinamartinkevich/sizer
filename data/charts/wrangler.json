@@ -1,0 +1,1950 @@
+{
+  "brand_id": "wrangler",
+  "brand_name": "Wrangler",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "WOMEN'S Jeans (waist = Natural Waist; hip = Seat)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"All measurements should be taken directly on the body.\" (WOMEN'S JEANS MEASURING TIPS)",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://eu.wrangler.com/uk-en/WRG-SIZECHART-BOTTOMS-WOMEN.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "22",
+          "aliases": {},
+          "waist": [
+            58.5,
+            58.5
+          ],
+          "hip": [
+            81.5,
+            81.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            61,
+            61
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            63.5,
+            63.5
+          ],
+          "hip": [
+            86.5,
+            86.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            66,
+            66
+          ],
+          "hip": [
+            89,
+            89
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            68.5,
+            68.5
+          ],
+          "hip": [
+            91.5,
+            91.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            71,
+            71
+          ],
+          "hip": [
+            94,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            73.5,
+            73.5
+          ],
+          "hip": [
+            96.5,
+            96.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            99,
+            99
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            78.5,
+            78.5
+          ],
+          "hip": [
+            101.5,
+            101.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            81.5,
+            81.5
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            106.5,
+            106.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {},
+          "waist": [
+            87,
+            87
+          ],
+          "hip": [
+            109,
+            109
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {},
+          "waist": [
+            90,
+            90
+          ],
+          "hip": [
+            112,
+            112
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "35",
+          "aliases": {},
+          "waist": [
+            93.5,
+            93.5
+          ],
+          "hip": [
+            114.5,
+            114.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {},
+          "waist": [
+            96.5,
+            96.5
+          ],
+          "hip": [
+            117,
+            117
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "37",
+          "aliases": {},
+          "waist": [
+            99.5,
+            99.5
+          ],
+          "hip": [
+            119.5,
+            119.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {},
+          "waist": [
+            103,
+            103
+          ],
+          "hip": [
+            122,
+            122
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {},
+          "waist": [
+            108.5,
+            108.5
+          ],
+          "hip": [
+            127,
+            127
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {},
+          "waist": [
+            114.5,
+            114.5
+          ],
+          "hip": [
+            132,
+            132
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {},
+          "waist": [
+            120,
+            120
+          ],
+          "hip": [
+            137,
+            137
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "46",
+          "aliases": {},
+          "waist": [
+            125.5,
+            125.5
+          ],
+          "hip": [
+            142,
+            142
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "If your measurements suggest different sizes, your hip measurement is leading. If your measurement is in between two sizes, order the smallest size for a tighter fit or the bigger size for a looser fit."
+    },
+    {
+      "category": "jeans",
+      "fit_line": "WOMEN'S Jeans length table (label = jeans length L)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"INSEAM: Measure the distance at the inner leg vertically, from the crotch down to the floor, without wearing shoes.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://eu.wrangler.com/uk-en/WRG-SIZECHART-BOTTOMS-WOMEN.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "L30",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76.2,
+            76.2
+          ]
+        },
+        {
+          "label": "L32",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            81.3,
+            81.3
+          ]
+        },
+        {
+          "label": "L34",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            86.4,
+            86.4
+          ]
+        },
+        {
+          "label": "L36",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            91.4,
+            91.4
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "International Sizes table (jeans)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"All measurements should be taken directly on the body.\" (WOMEN'S JEANS MEASURING TIPS)",
+      "unit": "cm",
+      "size_system": "mixed",
+      "source_url": "https://eu.wrangler.com/uk-en/WRG-SIZECHART-BOTTOMS-WOMEN.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "22",
+          "aliases": {
+            "eu": "32",
+            "fr": "34",
+            "it": "36",
+            "uk": "4"
+          },
+          "waist": [
+            58,
+            58
+          ],
+          "hip": [
+            81,
+            81
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "23",
+          "aliases": {
+            "eu": "34",
+            "fr": "36",
+            "it": "38",
+            "uk": "6"
+          },
+          "waist": [
+            61,
+            61
+          ],
+          "hip": [
+            64,
+            64
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "eu": "34",
+            "fr": "36",
+            "it": "38",
+            "uk": "6"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            86,
+            86
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "eu": "36",
+            "fr": "38",
+            "it": "40",
+            "uk": "8",
+            "us": "0"
+          },
+          "waist": [
+            66,
+            66
+          ],
+          "hip": [
+            89,
+            89
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "eu": "36",
+            "fr": "38",
+            "it": "40",
+            "uk": "8",
+            "us": "2"
+          },
+          "waist": [
+            69,
+            69
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "eu": "38",
+            "fr": "40",
+            "it": "42",
+            "uk": "10",
+            "us": "4"
+          },
+          "waist": [
+            71,
+            71
+          ],
+          "hip": [
+            94,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "eu": "38",
+            "fr": "40",
+            "it": "42",
+            "uk": "10",
+            "us": "6"
+          },
+          "waist": [
+            74,
+            74
+          ],
+          "hip": [
+            97,
+            97
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "eu": "40",
+            "fr": "42",
+            "it": "44",
+            "uk": "12",
+            "us": "8"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            99,
+            99
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "eu": "40",
+            "fr": "42",
+            "it": "44",
+            "uk": "12",
+            "us": "10"
+          },
+          "waist": [
+            79,
+            79
+          ],
+          "hip": [
+            102,
+            102
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "eu": "42",
+            "fr": "44",
+            "it": "46",
+            "uk": "14",
+            "us": "10"
+          },
+          "waist": [
+            81,
+            81
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "eu": "42",
+            "fr": "44",
+            "it": "46",
+            "uk": "14",
+            "us": "12"
+          },
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            107,
+            107
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "eu": "44",
+            "fr": "46",
+            "it": "48",
+            "uk": "16",
+            "us": "14"
+          },
+          "waist": [
+            87,
+            87
+          ],
+          "hip": [
+            109,
+            109
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "eu": "44",
+            "fr": "46",
+            "it": "48",
+            "uk": "16",
+            "us": "16"
+          },
+          "waist": [
+            90,
+            90
+          ],
+          "hip": [
+            112,
+            112
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "35",
+          "aliases": {
+            "eu": "46",
+            "fr": "48",
+            "it": "50",
+            "uk": "18",
+            "us": "16"
+          },
+          "waist": [
+            93,
+            93
+          ],
+          "hip": [
+            114,
+            114
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "eu": "46",
+            "fr": "48",
+            "it": "50",
+            "uk": "18",
+            "us": "18"
+          },
+          "waist": [
+            97,
+            97
+          ],
+          "hip": [
+            117,
+            117
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "37",
+          "aliases": {
+            "eu": "48",
+            "fr": "50",
+            "it": "52",
+            "uk": "20",
+            "us": "18"
+          },
+          "waist": [
+            100,
+            100
+          ],
+          "hip": [
+            119,
+            119
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "eu": "48",
+            "fr": "50",
+            "it": "52",
+            "uk": "22",
+            "us": "20"
+          },
+          "waist": [
+            103,
+            103
+          ],
+          "hip": [
+            122,
+            122
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "eu": "50",
+            "fr": "52",
+            "it": "54",
+            "uk": "24",
+            "us": "22"
+          },
+          "waist": [
+            109,
+            109
+          ],
+          "hip": [
+            127,
+            127
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "eu": "52",
+            "fr": "54",
+            "it": "56",
+            "uk": "26",
+            "us": "24"
+          },
+          "waist": [
+            116,
+            116
+          ],
+          "hip": [
+            132,
+            132
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "eu": "54",
+            "fr": "56",
+            "it": "58",
+            "uk": "28",
+            "us": "26"
+          },
+          "waist": [
+            122,
+            122
+          ],
+          "hip": [
+            137,
+            137
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "46",
+          "aliases": {
+            "eu": "56",
+            "fr": "58",
+            "it": "60",
+            "uk": "30",
+            "us": "28"
+          },
+          "waist": [
+            128,
+            128
+          ],
+          "hip": [
+            142,
+            142
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "48",
+          "aliases": {
+            "eu": "58",
+            "fr": "60",
+            "it": "62",
+            "uk": "32",
+            "us": "30"
+          },
+          "waist": [
+            135,
+            135
+          ],
+          "hip": [
+            147,
+            147
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "50",
+          "aliases": {
+            "eu": "60",
+            "fr": "62",
+            "it": "64",
+            "uk": "34",
+            "us": "32"
+          },
+          "waist": [
+            141,
+            141
+          ],
+          "hip": [
+            152,
+            152
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "52",
+          "aliases": {
+            "eu": "62",
+            "fr": "64",
+            "it": "66",
+            "uk": "36",
+            "us": "34"
+          },
+          "waist": [
+            147,
+            147
+          ],
+          "hip": [
+            157,
+            157
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "54",
+          "aliases": {
+            "eu": "64",
+            "fr": "66",
+            "it": "68",
+            "uk": "38",
+            "us": "36"
+          },
+          "waist": [
+            154,
+            154
+          ],
+          "hip": [
+            163,
+            163
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "56",
+          "aliases": {
+            "eu": "66",
+            "fr": "68",
+            "it": "70",
+            "uk": "40",
+            "us": "38"
+          },
+          "waist": [
+            160,
+            160
+          ],
+          "hip": [
+            168,
+            168
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "58",
+          "aliases": {
+            "eu": "68",
+            "fr": "70",
+            "it": "72",
+            "uk": "42",
+            "us": "40"
+          },
+          "waist": [
+            166,
+            166
+          ],
+          "hip": [
+            173,
+            173
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "60",
+          "aliases": {
+            "eu": "70",
+            "fr": "72",
+            "it": "74",
+            "uk": "44",
+            "us": "42"
+          },
+          "waist": [
+            173,
+            173
+          ],
+          "hip": [
+            178,
+            178
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": "WOMEN'S Tops (bust = Chest; hip = Seat)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"All measurements should be taken directly on the body.\" (WOMEN'S TOPS MEASURING TIPS)",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://eu.wrangler.com/uk-en/WRG-SIZECHART-BOTTOMS-WOMEN.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            68.5,
+            68.5
+          ],
+          "hip": [
+            91.5,
+            91.5
+          ],
+          "bust": [
+            85,
+            85
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            73.5,
+            73.5
+          ],
+          "hip": [
+            96.5,
+            96.5
+          ],
+          "bust": [
+            90,
+            90
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            78.5,
+            78.5
+          ],
+          "hip": [
+            101.5,
+            101.5
+          ],
+          "bust": [
+            93.5,
+            93.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            85,
+            85
+          ],
+          "hip": [
+            106.5,
+            106.5
+          ],
+          "bust": [
+            100.5,
+            100.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            94,
+            94
+          ],
+          "hip": [
+            114.5,
+            114.5
+          ],
+          "bust": [
+            108,
+            108
+          ],
+          "inseam": null
+        },
+        {
+          "label": "2XL",
+          "aliases": {},
+          "waist": [
+            103,
+            103
+          ],
+          "hip": [
+            122,
+            122
+          ],
+          "bust": [
+            115.5,
+            115.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "3XL",
+          "aliases": {},
+          "waist": [
+            114.5,
+            114.5
+          ],
+          "hip": [
+            132,
+            132
+          ],
+          "bust": [
+            125.5,
+            125.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "4XL",
+          "aliases": {},
+          "waist": [
+            125.5,
+            125.5
+          ],
+          "hip": [
+            142,
+            142
+          ],
+          "bust": [
+            136,
+            136
+          ],
+          "inseam": null
+        },
+        {
+          "label": "5XL",
+          "aliases": {},
+          "waist": [
+            137,
+            137
+          ],
+          "hip": [
+            152.5,
+            152.5
+          ],
+          "bust": [
+            146,
+            146
+          ],
+          "inseam": null
+        },
+        {
+          "label": "6XL",
+          "aliases": {},
+          "waist": [
+            148.5,
+            148.5
+          ],
+          "hip": [
+            162.5,
+            162.5
+          ],
+          "bust": [
+            156,
+            156
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": "If your measurements suggest different sizes, your hip measurement is leading. If your measurement is in between two sizes, order the smallest size for a tighter fit or the bigger size for a looser fit."
+    },
+    {
+      "category": "tops",
+      "fit_line": "International Sizes table (tops)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"All measurements should be taken directly on the body.\" (WOMEN'S TOPS MEASURING TIPS)",
+      "unit": "cm",
+      "size_system": "mixed",
+      "source_url": "https://eu.wrangler.com/uk-en/WRG-SIZECHART-BOTTOMS-WOMEN.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "3XS",
+          "aliases": {
+            "eu": "32",
+            "fr": "34",
+            "it": "36",
+            "uk": "4"
+          },
+          "waist": [
+            58,
+            58
+          ],
+          "hip": [
+            81,
+            81
+          ],
+          "bust": [
+            75,
+            75
+          ],
+          "inseam": null
+        },
+        {
+          "label": "2XS",
+          "aliases": {
+            "eu": "34",
+            "fr": "36",
+            "it": "38",
+            "uk": "6"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            86,
+            86
+          ],
+          "bust": [
+            80,
+            80
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "36",
+            "fr": "38",
+            "it": "40",
+            "uk": "8",
+            "us": "0-2"
+          },
+          "waist": [
+            69,
+            69
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": [
+            85,
+            85
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "38",
+            "fr": "40",
+            "it": "42",
+            "uk": "10",
+            "us": "4-6"
+          },
+          "waist": [
+            74,
+            74
+          ],
+          "hip": [
+            97,
+            97
+          ],
+          "bust": [
+            90,
+            90
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "40",
+            "fr": "42",
+            "it": "44",
+            "uk": "12",
+            "us": "8-10"
+          },
+          "waist": [
+            79,
+            79
+          ],
+          "hip": [
+            102,
+            102
+          ],
+          "bust": [
+            95,
+            95
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "42",
+            "fr": "44",
+            "it": "46",
+            "uk": "14",
+            "us": "12-14"
+          },
+          "waist": [
+            85,
+            85
+          ],
+          "hip": [
+            107,
+            107
+          ],
+          "bust": [
+            100,
+            100
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL = 1XL",
+          "aliases": {
+            "eu": "44-46",
+            "fr": "46-48",
+            "it": "48-50",
+            "uk": "16-18",
+            "us": "16-18"
+          },
+          "waist": [
+            94,
+            94
+          ],
+          "hip": [
+            114,
+            114
+          ],
+          "bust": [
+            108,
+            108
+          ],
+          "inseam": null
+        },
+        {
+          "label": "2XL",
+          "aliases": {
+            "eu": "48-50",
+            "fr": "50-52",
+            "it": "52-54",
+            "uk": "20-22",
+            "us": "18-20"
+          },
+          "waist": [
+            103,
+            103
+          ],
+          "hip": [
+            122,
+            122
+          ],
+          "bust": [
+            116,
+            116
+          ],
+          "inseam": null
+        },
+        {
+          "label": "3XL",
+          "aliases": {
+            "eu": "52-54",
+            "fr": "54-56",
+            "it": "56-58",
+            "uk": "24-26",
+            "us": "22-24"
+          },
+          "waist": [
+            114,
+            114
+          ],
+          "hip": [
+            132,
+            132
+          ],
+          "bust": [
+            126,
+            126
+          ],
+          "inseam": null
+        },
+        {
+          "label": "4XL",
+          "aliases": {
+            "eu": "56-58",
+            "fr": "58-60",
+            "it": "60-62",
+            "uk": "28-30",
+            "us": "26-28"
+          },
+          "waist": [
+            126,
+            126
+          ],
+          "hip": [
+            142,
+            142
+          ],
+          "bust": [
+            136,
+            136
+          ],
+          "inseam": null
+        },
+        {
+          "label": "5XL",
+          "aliases": {
+            "eu": "60-62",
+            "fr": "62-64",
+            "it": "64-66",
+            "uk": "32-34",
+            "us": "30-32"
+          },
+          "waist": [
+            137,
+            137
+          ],
+          "hip": [
+            152,
+            152
+          ],
+          "bust": [
+            146,
+            146
+          ],
+          "inseam": null
+        },
+        {
+          "label": "6XL",
+          "aliases": {
+            "eu": "64-66",
+            "fr": "66-68",
+            "it": "68-70",
+            "uk": "36-38",
+            "us": "34-36"
+          },
+          "waist": [
+            149,
+            149
+          ],
+          "hip": [
+            163,
+            163
+          ],
+          "bust": [
+            156,
+            156
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "general",
+      "fit_line": "US Women's General Tops & Bottoms (label = denim waist size)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"For the best fit, we recommend you measure without clothing on. ... 4 Waist Measure around your waist at the narrowest point.\"",
+      "unit": "in",
+      "size_system": "mixed",
+      "source_url": "https://www.wrangler.com/size-charts.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XXS",
+            "us": "00",
+            "us_junior": "00"
+          },
+          "waist": [
+            25,
+            25.5
+          ],
+          "hip": [
+            33.5,
+            34
+          ],
+          "bust": [
+            29.5,
+            31.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS",
+            "us": "0",
+            "us_junior": "0"
+          },
+          "waist": [
+            26,
+            26.5
+          ],
+          "hip": [
+            34.5,
+            35
+          ],
+          "bust": [
+            31.5,
+            33.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "us_junior": "1"
+          },
+          "waist": [
+            27,
+            27.5
+          ],
+          "hip": [
+            35.5,
+            36
+          ],
+          "bust": [
+            31.5,
+            33.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "us": "4",
+            "us_junior": "3"
+          },
+          "waist": [
+            28,
+            28.5
+          ],
+          "hip": [
+            36.5,
+            37
+          ],
+          "bust": [
+            33.5,
+            35.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "S",
+            "us": "6",
+            "us_junior": "5"
+          },
+          "waist": [
+            29,
+            29.5
+          ],
+          "hip": [
+            37.5,
+            38
+          ],
+          "bust": [
+            33.5,
+            35.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "us": "8",
+            "us_junior": "7"
+          },
+          "waist": [
+            30,
+            30.5
+          ],
+          "hip": [
+            38.5,
+            39
+          ],
+          "bust": [
+            35.5,
+            37.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "M",
+            "us": "10",
+            "us_junior": "9"
+          },
+          "waist": [
+            31,
+            31.5
+          ],
+          "hip": [
+            39.5,
+            40
+          ],
+          "bust": [
+            35.5,
+            37.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "L",
+            "us": "12",
+            "us_junior": "11"
+          },
+          "waist": [
+            32,
+            33.5
+          ],
+          "hip": [
+            40.5,
+            41.5
+          ],
+          "bust": [
+            37.5,
+            40.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "L",
+            "us": "14",
+            "us_junior": "13"
+          },
+          "waist": [
+            33.5,
+            34.5
+          ],
+          "hip": [
+            42,
+            43
+          ],
+          "bust": [
+            37.5,
+            40.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "XL",
+            "us": "16",
+            "us_junior": "15"
+          },
+          "waist": [
+            35,
+            36.75
+          ],
+          "hip": [
+            43.5,
+            44.5
+          ],
+          "bust": [
+            40.5,
+            44
+          ],
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XL",
+            "us": "18",
+            "us_junior": "17"
+          },
+          "waist": [
+            36.75,
+            38.5
+          ],
+          "hip": [
+            45,
+            46.5
+          ],
+          "bust": [
+            40.5,
+            44
+          ],
+          "inseam": null
+        },
+        {
+          "label": "35",
+          "aliases": {
+            "letter": "XXL",
+            "us": "20",
+            "us_junior": "19"
+          },
+          "waist": [
+            39,
+            40.75
+          ],
+          "hip": [
+            47,
+            48.5
+          ],
+          "bust": [
+            44.5,
+            46
+          ],
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "XXXL",
+            "us": "22W",
+            "us_junior": "22W"
+          },
+          "waist": [
+            41.25,
+            43
+          ],
+          "hip": [
+            49,
+            50.5
+          ],
+          "bust": [
+            46.5,
+            49.5
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Women's Cowboy Cut Slim Fit Stretch Jean (18MWZ), junior sizes",
+      "measurement_basis": "body",
+      "basis_evidence": "\"For the best fit, we recommend you measure without clothing on. ... 2 Waist Measure around waist at the smallest part, just above the navel.\"",
+      "unit": "in",
+      "size_system": "us",
+      "source_url": "https://www.wrangler.com/size-charts.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "00",
+          "aliases": {},
+          "waist": [
+            23.5,
+            24
+          ],
+          "hip": [
+            33.5,
+            34
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "0",
+          "aliases": {},
+          "waist": [
+            24.5,
+            25
+          ],
+          "hip": [
+            34.5,
+            35
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "1",
+          "aliases": {},
+          "waist": [
+            25.5,
+            26
+          ],
+          "hip": [
+            35.5,
+            36
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "3",
+          "aliases": {},
+          "waist": [
+            26.5,
+            27
+          ],
+          "hip": [
+            36.5,
+            37
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "5",
+          "aliases": {},
+          "waist": [
+            27.5,
+            28.5
+          ],
+          "hip": [
+            37.5,
+            38.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "7",
+          "aliases": {},
+          "waist": [
+            29,
+            30
+          ],
+          "hip": [
+            39,
+            40
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "9",
+          "aliases": {},
+          "waist": [
+            30.5,
+            31
+          ],
+          "hip": [
+            40.5,
+            41
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "11",
+          "aliases": {},
+          "waist": [
+            31.5,
+            32.5
+          ],
+          "hip": [
+            41.5,
+            42.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "13",
+          "aliases": {},
+          "waist": [
+            33,
+            34
+          ],
+          "hip": [
+            43,
+            44
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "15",
+          "aliases": {},
+          "waist": [
+            34.5,
+            35.5
+          ],
+          "hip": [
+            44.5,
+            45.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "bottoms",
+      "fit_line": "US Women's Plus Bottoms",
+      "measurement_basis": "body",
+      "basis_evidence": "\"For the best fit, we recommend you measure without clothing on. ... 1 Waist Measure around your waist at the narrowest point.\"",
+      "unit": "in",
+      "size_system": "us",
+      "source_url": "https://www.wrangler.com/size-charts.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "18W",
+          "aliases": {},
+          "waist": [
+            39.5,
+            41
+          ],
+          "hip": [
+            47.5,
+            49
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "20W",
+          "aliases": {},
+          "waist": [
+            41.5,
+            43
+          ],
+          "hip": [
+            49.5,
+            51
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "22W",
+          "aliases": {},
+          "waist": [
+            43.5,
+            45
+          ],
+          "hip": [
+            51.5,
+            53
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24W",
+          "aliases": {},
+          "waist": [
+            45.5,
+            47.5
+          ],
+          "hip": [
+            53.5,
+            55
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26W",
+          "aliases": {},
+          "waist": [
+            47.5,
+            49.5
+          ],
+          "hip": [
+            55.5,
+            57
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Wrangler EMEA page publishes cm and inch tabs (cm recorded; values with ½ recorded as .5). It lists Natural Waist, Low Waist (5cm below natural), Seat and Thigh; only Natural Waist and Seat are recorded. The International Sizes jeans table shows Seat 64 for size 23, which is almost certainly a typo on the page (neighbours 81 and 86); copied as published. The International table's whole-number Waist/Seat differ slightly from the main jeans table (e.g. size 24: 64 vs 63.5) and its tops chest values differ from the WOMEN'S Tops tab (M: 95 vs 93.5); both kept as separate charts. US alias 10 appears for both 30 and 31, 16 for both 34 and 35, 18 for both 36 and 37. The EU chart is identical to Lee EU (same parent company, Kontoor). The US (wrangler.com) Women's General table's size column has four parts: alpha, a denim waist size 24-36, a junior size (00, 0, 1, 3 ...) and a misses size (00, 0, 2, 4 ...); stored as label, aliases us_junior and us. Both XS rows are labelled XS, and size 36 shows 22W in both junior and misses columns. The US general table also gives Neck, Sleeve and Thigh, not recorded."
+}

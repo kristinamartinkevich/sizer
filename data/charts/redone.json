@@ -1,0 +1,378 @@
+{
+  "brand_id": "redone",
+  "brand_name": "RE/DONE",
+  "status": "found",
+  "charts": [
+    {
+      "fit_line": "High Rise Stove Pipe",
+      "source_url": "https://shopredone.com/products/high-rise-stove-pipe-medium-vain",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            25.5,
+            25.5
+          ],
+          "hip": [
+            35.5,
+            35.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            26.5,
+            26.5
+          ],
+          "hip": [
+            36.5,
+            36.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            27.5,
+            27.5
+          ],
+          "hip": [
+            37.5,
+            37.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            28.5,
+            28.5
+          ],
+          "hip": [
+            38.5,
+            38.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            29.5,
+            29.5
+          ],
+          "hip": [
+            39.5,
+            39.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            30.5,
+            30.5
+          ],
+          "hip": [
+            40.5,
+            40.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": [
+            42,
+            42
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            33.5,
+            33.5
+          ],
+          "hip": [
+            43.5,
+            43.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": [
+            45,
+            45
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            36.5,
+            36.5
+          ],
+          "hip": [
+            46.5,
+            46.5
+          ],
+          "bust": null,
+          "inseam": [
+            27,
+            27
+          ]
+        }
+      ],
+      "category": "jeans",
+      "measurement_basis": "garment",
+      "basis_evidence": "Image titled \"Measurements (Inches)\" with Waist, Hip, Rise, Inseam and Opening per size for one style; rise and leg opening are garment dimensions, and the product specs state e.g. \"11” high rise, 27” inseam, 14.5” leg opening\" for the same style.",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "fit_advice": null
+    },
+    {
+      "fit_line": "High Rise Loose",
+      "source_url": "https://shopredone.com/products/90s-high-rise-loose-heritage-rinse",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": [
+            41,
+            41
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            32.5,
+            32.5
+          ],
+          "hip": [
+            42.5,
+            42.5
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": [
+            44,
+            44
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": [
+            45.5,
+            45.5
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": null,
+          "inseam": [
+            32,
+            32
+          ]
+        }
+      ],
+      "category": "jeans",
+      "measurement_basis": "garment",
+      "basis_evidence": "Image titled \"Measurements (Inches)\" with Waist, Hip, Rise, Inseam and Opening per size for one style; rise and leg opening are garment dimensions, and the product specs state e.g. \"11” high rise, 27” inseam, 14.5” leg opening\" for the same style.",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "fit_advice": null
+    }
+  ],
+  "problems": "RE/DONE publishes no general women's body-measurement chart on its own site (shopredone.com/pages/size-guide is 404; no size page in the sitemap). Each product has its own per-style garment-measurement image, so only two representative styles were recorded; other styles (Comfort Stretch, 70s Bootcut, RE/DONE x Levi's reconstructed vintage) have their own charts and will differ. Values read visually from 828x205 PNG images (https://shopredone.com/cdn/shop/files/188-3WSTV27.png, https://shopredone.com/cdn/shop/files/141-03W90HRLO_SIZEGUIDE.png); fractions converted to decimals (e.g. 25 1/2 -> 25.5), which is notation only, not rounding. Rise and leg opening per size also published but have no schema field. Stove Pipe fabric is rigid 100% cotton. A retailer conversion table (Smallable: 24/25=FR 34, US 0-2, etc.) exists but was not used because the brand site has charts."
+}

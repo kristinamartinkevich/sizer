@@ -1,0 +1,637 @@
+{
+  "brand_id": "cos",
+  "brand_name": "COS",
+  "status": "found",
+  "charts": [
+    {
+      "category": "bottoms",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Section heading 'BODY MEASUREMENTS'; 'Measure around your natural waistline, at the narrowest point.'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.cos.com/en-gb/customer-service/size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XXS",
+            "uk": "4",
+            "us": "2",
+            "fr": "32",
+            "it": "36"
+          },
+          "waist": [
+            63,
+            63
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "uk": "6",
+            "us": "4",
+            "fr": "34",
+            "it": "38"
+          },
+          "waist": [
+            65,
+            65
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "uk": "8",
+            "us": "6",
+            "fr": "36",
+            "it": "40"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "S",
+            "uk": "10",
+            "us": "8",
+            "fr": "38",
+            "it": "42"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "M",
+            "uk": "12",
+            "us": "10",
+            "fr": "40",
+            "it": "44"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            99,
+            99
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "M",
+            "uk": "14",
+            "us": "12",
+            "fr": "42",
+            "it": "46"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            102,
+            102
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "L",
+            "uk": "16",
+            "us": "14",
+            "fr": "44",
+            "it": "48"
+          },
+          "waist": [
+            85,
+            85
+          ],
+          "hip": [
+            105,
+            105
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "46",
+          "aliases": {
+            "letter": "L",
+            "uk": "18",
+            "us": "16",
+            "fr": "46",
+            "it": "50"
+          },
+          "waist": [
+            90,
+            90
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "48",
+          "aliases": {
+            "letter": "XL",
+            "uk": "20",
+            "us": "18",
+            "fr": "48",
+            "it": "52"
+          },
+          "waist": [
+            96,
+            96
+          ],
+          "hip": [
+            113,
+            113
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        }
+      ],
+      "fit_advice": "These size charts are a guide to help you find the right size for you. As many pieces are designed in a unique way, we suggest you also refer to the specific garment lengths and measurements provided in the product descriptions."
+    },
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Section heading 'BODY MEASUREMENTS'; 'Measure around your natural waistline, at the narrowest point.'",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.cos.com/en-gb/customer-service/size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            59.5,
+            59.5
+          ],
+          "hip": [
+            83.5,
+            83.5
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            62,
+            62
+          ],
+          "hip": [
+            86,
+            86
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            64.5,
+            64.5
+          ],
+          "hip": [
+            88.5,
+            88.5
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            67,
+            67
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            69.5,
+            69.5
+          ],
+          "hip": [
+            93.5,
+            93.5
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            74.5,
+            74.5
+          ],
+          "hip": [
+            98.5,
+            98.5
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            101,
+            101
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            79.5,
+            79.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            82,
+            82
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ]
+        }
+      ],
+      "fit_advice": "These size charts are a guide to help you find the right size for you. As many pieces are designed in a unique way, we suggest you also refer to the specific garment lengths and measurements provided in the product descriptions."
+    },
+    {
+      "category": "tops",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Section heading 'BODY MEASUREMENTS'; 'Measure around your natural waistline, at the narrowest point.'; 'Measure around the fullest part of your chest'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.cos.com/en-gb/customer-service/size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XXS",
+            "uk": "4",
+            "us": "2",
+            "fr": "32",
+            "it": "36"
+          },
+          "waist": [
+            63,
+            63
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            77,
+            77
+          ],
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "uk": "6",
+            "us": "4",
+            "fr": "34",
+            "it": "38"
+          },
+          "waist": [
+            65,
+            65
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": [
+            80,
+            80
+          ],
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "uk": "8",
+            "us": "6",
+            "fr": "36",
+            "it": "40"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": [
+            84,
+            84
+          ],
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "S",
+            "uk": "10",
+            "us": "8",
+            "fr": "38",
+            "it": "42"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": [
+            88,
+            88
+          ],
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "M",
+            "uk": "12",
+            "us": "10",
+            "fr": "40",
+            "it": "44"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            99,
+            99
+          ],
+          "bust": [
+            92,
+            92
+          ],
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "M",
+            "uk": "14",
+            "us": "12",
+            "fr": "42",
+            "it": "46"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            102,
+            102
+          ],
+          "bust": [
+            96,
+            96
+          ],
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "L",
+            "uk": "16",
+            "us": "14",
+            "fr": "44",
+            "it": "48"
+          },
+          "waist": [
+            85,
+            85
+          ],
+          "hip": [
+            105,
+            105
+          ],
+          "bust": [
+            100,
+            100
+          ],
+          "inseam": null
+        },
+        {
+          "label": "46",
+          "aliases": {
+            "letter": "L",
+            "uk": "18",
+            "us": "16",
+            "fr": "46",
+            "it": "50"
+          },
+          "waist": [
+            90,
+            90
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": [
+            104,
+            104
+          ],
+          "inseam": null
+        },
+        {
+          "label": "48",
+          "aliases": {
+            "letter": "XL",
+            "uk": "20",
+            "us": "18",
+            "fr": "48",
+            "it": "52"
+          },
+          "waist": [
+            96,
+            96
+          ],
+          "hip": [
+            113,
+            113
+          ],
+          "bust": [
+            110,
+            110
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": "These size charts are a guide to help you find the right size for you. As many pieces are designed in a unique way, we suggest you also refer to the specific garment lengths and measurements provided in the product descriptions."
+    }
+  ],
+  "problems": "Letter sizes S, M and L each cover two EU sizes (S = 36/38, M = 40/42, L = 44/46; table rowspan). Hip column is labelled 'Low Hip'. Tops chart calls bust 'Chest' and also gives arm length (not stored); its low-hip values match bottoms. Inches toggle exists; cm values recorded. Inside leg is 78 for every size. FR equals EU on this chart."
+}

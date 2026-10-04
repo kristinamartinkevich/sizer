@@ -1,0 +1,311 @@
+{
+  "brand_id": "mother",
+  "brand_name": "MOTHER (denim)",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Women's Stretch Denim and Tops",
+      "measurement_basis": "body",
+      "basis_evidence": "Waist: \"Measure at the smallest part of your waist. This is usually below the rib cage and above the hip bone.\"",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://www.motherdenim.com/pages/size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "letter": "XS",
+            "us": "0",
+            "uk": "4",
+            "de": "30",
+            "it": "36",
+            "jp": "3"
+          },
+          "waist": [
+            23,
+            23
+          ],
+          "hip": [
+            33,
+            33
+          ],
+          "bust": [
+            30,
+            30
+          ],
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "uk": "6",
+            "de": "32",
+            "it": "38",
+            "jp": "5"
+          },
+          "waist": [
+            24,
+            24
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": [
+            31,
+            31
+          ],
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "uk": "6",
+            "de": "32",
+            "it": "38",
+            "jp": "5"
+          },
+          "waist": [
+            25,
+            25
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": [
+            32,
+            32
+          ],
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "S",
+            "us": "4",
+            "uk": "8",
+            "de": "34",
+            "it": "40",
+            "jp": "7"
+          },
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": [
+            33,
+            33
+          ],
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "us": "4-6",
+            "uk": "8-10",
+            "de": "34-36",
+            "it": "40-42",
+            "jp": "7-9"
+          },
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": [
+            34,
+            34
+          ],
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "S",
+            "us": "6",
+            "uk": "10",
+            "de": "36",
+            "it": "42",
+            "jp": "9"
+          },
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": [
+            35,
+            35
+          ],
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "us": "8",
+            "uk": "12",
+            "de": "38",
+            "it": "44",
+            "jp": "11"
+          },
+          "waist": [
+            29,
+            29
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": [
+            36,
+            36
+          ],
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "M",
+            "us": "8",
+            "uk": "12",
+            "de": "38",
+            "it": "44",
+            "jp": "11"
+          },
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": [
+            37,
+            37
+          ],
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "M",
+            "us": "10",
+            "uk": "14",
+            "de": "40",
+            "it": "46",
+            "jp": "13"
+          },
+          "waist": [
+            31,
+            31
+          ],
+          "hip": [
+            41,
+            41
+          ],
+          "bust": [
+            38,
+            38
+          ],
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "L",
+            "us": "10-12",
+            "uk": "14-16",
+            "de": "40-42",
+            "it": "46-48",
+            "jp": "13-15"
+          },
+          "waist": [
+            32,
+            32
+          ],
+          "hip": [
+            42,
+            42
+          ],
+          "bust": [
+            39,
+            39
+          ],
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "L",
+            "us": "12",
+            "uk": "16",
+            "de": "42",
+            "it": "48",
+            "jp": "15"
+          },
+          "waist": [
+            33,
+            33
+          ],
+          "hip": [
+            43,
+            43
+          ],
+          "bust": [
+            40,
+            40
+          ],
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "L",
+            "us": "14",
+            "uk": "18",
+            "de": "44",
+            "it": "50",
+            "jp": "17"
+          },
+          "waist": [
+            34,
+            34
+          ],
+          "hip": [
+            44,
+            44
+          ],
+          "bust": [
+            41,
+            41
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Note: this guide provides general sizing information, which can vary depending on style."
+    }
+  ],
+  "problems": "The chart is titled 'Women's Stretch Denim and Tops' and covers both denim and tops; no separate non-stretch chart was found. Source data is in inches; the page's cm toggle is computed client-side (value x 2.54, rounded to 1 decimal), so inches were recorded as the published unit. 'bust' is the published Chest row. Letter labels published as X-Small/Small/Medium/Large (abbreviated XS..L), each spanning three denim sizes. The France conversion list is malformed in the page data (11 entries, one cell '40<tab>42'), so it misaligns from size 30 up and was omitted; the Brazil list also has only 11 entries for 12 sizes and was omitted. Australia equals United Kingdom and was not repeated. The US URL geo-redirects to /en-fr/ in a browser; data read from the page's embedded size_guide script."
+}

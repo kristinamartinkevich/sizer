@@ -1,0 +1,1492 @@
+{
+  "brand_id": "toteme",
+  "brand_name": "TOTEME",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Twisted seam denim (relaxed, low waist)",
+      "measurement_basis": "garment",
+      "basis_evidence": "Product \"Size information\" table gives WAIST/SEAT/THIGH/RISE and a fixed inseam per length, i.e. flat garment specs; TOTEME labels the same table format \"Garment measurements\" on non-denim products. Denim pages carry no explicit wording.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://toteme.com/en-fr/products/twisted-seam-denim-full-length-worn-blue",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            67,
+            67
+          ],
+          "hip": [
+            90,
+            90
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            55.3,
+            55.3
+          ],
+          "rise": [
+            27.1,
+            27.1
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            69.5,
+            69.5
+          ],
+          "hip": [
+            92.5,
+            92.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            56.8,
+            56.8
+          ],
+          "rise": [
+            27.5,
+            27.5
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            95,
+            95
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            58.3,
+            58.3
+          ],
+          "rise": [
+            27.9,
+            27.9
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            74.5,
+            74.5
+          ],
+          "hip": [
+            97.5,
+            97.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            59.8,
+            59.8
+          ],
+          "rise": [
+            28.3,
+            28.3
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            61.3,
+            61.3
+          ],
+          "rise": [
+            28.7,
+            28.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            79.5,
+            79.5
+          ],
+          "hip": [
+            102.5,
+            102.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            62.8,
+            62.8
+          ],
+          "rise": [
+            29.1,
+            29.1
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            82,
+            82
+          ],
+          "hip": [
+            105,
+            105
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            64.3,
+            64.3
+          ],
+          "rise": [
+            29.5,
+            29.5
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            84.5,
+            84.5
+          ],
+          "hip": [
+            107.5,
+            107.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            65.8,
+            65.8
+          ],
+          "rise": [
+            29.9,
+            29.9
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            87,
+            87
+          ],
+          "hip": [
+            110,
+            110
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            67.3,
+            67.3
+          ],
+          "rise": [
+            30.3,
+            30.3
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            89.5,
+            89.5
+          ],
+          "hip": [
+            112.5,
+            112.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            68.8,
+            68.8
+          ],
+          "rise": [
+            30.7,
+            30.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              67.5,
+              67.5
+            ],
+            "30": [
+              72.5,
+              72.5
+            ],
+            "32": [
+              77.5,
+              77.5
+            ],
+            "34": [
+              82.5,
+              82.5
+            ]
+          }
+        }
+      ],
+      "fit_advice": "True-to-size for a relaxed look; go down a size or two for a closer, higher-waist fit"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Classic slim denim (mid waist)",
+      "measurement_basis": "garment",
+      "basis_evidence": "Product \"Size information\" table gives WAIST/SEAT/THIGH/RISE and a fixed inseam per length, i.e. flat garment specs; TOTEME labels the same table format \"Garment measurements\" on non-denim products. Denim pages carry no explicit wording.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://toteme.com/en-fr/products/classic-slim-denim-full-length-faded-blue",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            66,
+            66
+          ],
+          "hip": [
+            84.5,
+            84.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            52.4,
+            52.4
+          ],
+          "front_rise": [
+            23.7,
+            23.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            68.5,
+            68.5
+          ],
+          "hip": [
+            87,
+            87
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            53.9,
+            53.9
+          ],
+          "front_rise": [
+            24.2,
+            24.2
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            71,
+            71
+          ],
+          "hip": [
+            89.5,
+            89.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            55.4,
+            55.4
+          ],
+          "front_rise": [
+            24.7,
+            24.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            73.5,
+            73.5
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            56.9,
+            56.9
+          ],
+          "front_rise": [
+            25.2,
+            25.2
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            94.5,
+            94.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            58.4,
+            58.4
+          ],
+          "front_rise": [
+            25.7,
+            25.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            78.5,
+            78.5
+          ],
+          "hip": [
+            97,
+            97
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            59.9,
+            59.9
+          ],
+          "front_rise": [
+            26.2,
+            26.2
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            81,
+            81
+          ],
+          "hip": [
+            99.5,
+            99.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            61.4,
+            61.4
+          ],
+          "front_rise": [
+            26.7,
+            26.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            83.5,
+            83.5
+          ],
+          "hip": [
+            102,
+            102
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            62.9,
+            62.9
+          ],
+          "front_rise": [
+            27.2,
+            27.2
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            86,
+            86
+          ],
+          "hip": [
+            104.5,
+            104.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            64.4,
+            64.4
+          ],
+          "front_rise": [
+            27.7,
+            27.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            88.5,
+            88.5
+          ],
+          "hip": [
+            107,
+            107
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            65.9,
+            65.9
+          ],
+          "front_rise": [
+            28.2,
+            28.2
+          ],
+          "inseam_by_length": {
+            "28": [
+              72,
+              72
+            ],
+            "30": [
+              77,
+              77
+            ],
+            "32": [
+              82,
+              82
+            ],
+            "34": [
+              87,
+              87
+            ]
+          }
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Low straight denim (low waist)",
+      "measurement_basis": "garment",
+      "basis_evidence": "Product \"Size information\" table gives WAIST/SEAT/THIGH/RISE and a fixed inseam per length, i.e. flat garment specs; TOTEME labels the same table format \"Garment measurements\" on non-denim products. Denim pages carry no explicit wording.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://toteme.com/en-fr/products/low-straight-denim-indigo",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            71,
+            71
+          ],
+          "hip": [
+            86,
+            86
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            55,
+            55
+          ],
+          "rise": [
+            22.9,
+            22.9
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            73.5,
+            73.5
+          ],
+          "hip": [
+            88.5,
+            88.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            56.5,
+            56.5
+          ],
+          "rise": [
+            23.3,
+            23.3
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            58,
+            58
+          ],
+          "rise": [
+            23.7,
+            23.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            78.5,
+            78.5
+          ],
+          "hip": [
+            93.5,
+            93.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            59.5,
+            59.5
+          ],
+          "rise": [
+            24.1,
+            24.1
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            81,
+            81
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            61,
+            61
+          ],
+          "rise": [
+            24.5,
+            24.5
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            83.5,
+            83.5
+          ],
+          "hip": [
+            98.5,
+            98.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            62.5,
+            62.5
+          ],
+          "rise": [
+            24.9,
+            24.9
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            86,
+            86
+          ],
+          "hip": [
+            101,
+            101
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            64,
+            64
+          ],
+          "rise": [
+            25.3,
+            25.3
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            88.5,
+            88.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            65.5,
+            65.5
+          ],
+          "rise": [
+            25.7,
+            25.7
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            91,
+            91
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            67,
+            67
+          ],
+          "rise": [
+            26.1,
+            26.1
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            93.5,
+            93.5
+          ],
+          "hip": [
+            108.5,
+            108.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            68.5,
+            68.5
+          ],
+          "rise": [
+            26.5,
+            26.5
+          ],
+          "inseam_by_length": {
+            "28": [
+              70,
+              70
+            ],
+            "30": [
+              75,
+              75
+            ],
+            "32": [
+              80,
+              80
+            ],
+            "34": [
+              85,
+              85
+            ]
+          }
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "trousers",
+      "fit_line": "High-waist flannel trousers",
+      "measurement_basis": "garment",
+      "basis_evidence": "Table heading on the product page: \"Garment measurements\"",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://toteme.com/en-fr/products/high-waist-trousers-black",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            65,
+            65
+          ],
+          "hip": [
+            90.8,
+            90.8
+          ],
+          "bust": null,
+          "inseam": [
+            77,
+            77
+          ],
+          "thigh": [
+            64,
+            64
+          ],
+          "rise": [
+            28.2,
+            28.2
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "uk": "4",
+            "us": "0",
+            "it": "36"
+          },
+          "waist": [
+            69,
+            69
+          ],
+          "hip": [
+            94.8,
+            94.8
+          ],
+          "bust": null,
+          "inseam": [
+            78,
+            78
+          ],
+          "thigh": [
+            67.5,
+            67.5
+          ],
+          "rise": [
+            28.7,
+            28.7
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "uk": "6",
+            "us": "2",
+            "it": "38"
+          },
+          "waist": [
+            73,
+            73
+          ],
+          "hip": [
+            98.8,
+            98.8
+          ],
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ],
+          "thigh": [
+            70,
+            70
+          ],
+          "rise": [
+            29.2,
+            29.2
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "uk": "8",
+            "us": "4",
+            "it": "40"
+          },
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            102.8,
+            102.8
+          ],
+          "bust": null,
+          "inseam": [
+            80,
+            80
+          ],
+          "thigh": [
+            72.5,
+            72.5
+          ],
+          "rise": [
+            29.7,
+            29.7
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "uk": "10",
+            "us": "6",
+            "it": "42"
+          },
+          "waist": [
+            81,
+            81
+          ],
+          "hip": [
+            106.8,
+            106.8
+          ],
+          "bust": null,
+          "inseam": [
+            80.8,
+            80.8
+          ],
+          "thigh": [
+            75,
+            75
+          ],
+          "rise": [
+            30.2,
+            30.2
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "uk": "12",
+            "us": "8",
+            "it": "44"
+          },
+          "waist": [
+            85,
+            85
+          ],
+          "hip": [
+            110.8,
+            110.8
+          ],
+          "bust": null,
+          "inseam": [
+            81.6,
+            81.6
+          ],
+          "thigh": [
+            77.5,
+            77.5
+          ],
+          "rise": [
+            30.7,
+            30.7
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "uk": "14",
+            "us": "10",
+            "it": "46"
+          },
+          "waist": [
+            89,
+            89
+          ],
+          "hip": [
+            114.8,
+            114.8
+          ],
+          "bust": null,
+          "inseam": [
+            82.4,
+            82.4
+          ],
+          "thigh": [
+            80,
+            80
+          ],
+          "rise": [
+            31.2,
+            31.2
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {},
+          "waist": [
+            93,
+            93
+          ],
+          "hip": [
+            118.8,
+            118.8
+          ],
+          "bust": null,
+          "inseam": [
+            83.2,
+            83.2
+          ],
+          "thigh": [
+            82.5,
+            82.5
+          ],
+          "rise": [
+            31.7,
+            31.7
+          ]
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "TOTEME has no general size-guide page (toteme.com/pages/size-guide returns 404); every chart is a per-product GARMENT chart, so the numbers are the item's measurements, not body sizes, and they differ by style (a body-to-size mapping needs ease assumptions the brand does not publish). Three current denim styles and one trouser recorded; other styles will differ. Hip is the row labelled \"SEAT\". Denim inseam depends on the length bought (23/28 ... 32/34), so inseam is null and the per-length values are in inseam_by_length; rows also carry thigh and rise (front_rise for Classic slim). Inches tables also published. Trouser sizes 30 and 44 have garment measurements but no row in the size-conversion table (which covers EU 32-42 with UK, US, IT, AU, RU, JP)."
+}

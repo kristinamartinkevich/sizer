@@ -1,0 +1,210 @@
+{
+  "brand_id": "rag-bone",
+  "brand_name": "rag & bone",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Waist: \"Wrap the tape around the narrowest part of your torso, which is usually just above the belly button.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.rag-bone.com/on/demandware.store/Sites-ragandbone-Site/en_US/Product-SizeChart?cid=size-chart-womens-denim",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "us": "00",
+            "letter": "XXS"
+          },
+          "waist": [
+            32,
+            32
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "us": "0",
+            "letter": "XS"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            90,
+            90
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "us": "2",
+            "letter": "S"
+          },
+          "waist": [
+            67,
+            67
+          ],
+          "hip": [
+            93,
+            93
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "us": "4",
+            "letter": "S"
+          },
+          "waist": [
+            69,
+            69
+          ],
+          "hip": [
+            95,
+            95
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "us": "6",
+            "letter": "M"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            98,
+            98
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "us": "8",
+            "letter": "M"
+          },
+          "waist": [
+            74,
+            74
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "us": "10",
+            "letter": "L"
+          },
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            103,
+            103
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "us": "10",
+            "letter": "L"
+          },
+          "waist": [
+            79,
+            79
+          ],
+          "hip": [
+            105,
+            105
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "us": "12",
+            "letter": "L"
+          },
+          "waist": [
+            82,
+            82
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "us": "14",
+            "letter": "XL"
+          },
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            110,
+            110
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "us": "16",
+            "letter": "XL"
+          },
+          "waist": [
+            90,
+            90
+          ],
+          "hip": [
+            116,
+            116
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Note: This size chart provides general sizing information, which can vary depending on style."
+    }
+  ],
+  "problems": "Size 23 cm waist is published as 32 cm, which is clearly a typo on the brand page (the inches table gives 24 in for size 23, and 24 in for size 24 is 64 cm); recorded as published, do not trust it. Inches also published: waist 24,25,26,27,28,29,30,31,32,33,35 and hips 34.5..43.5,45.5 for sizes 23..32,34. Sizes 29 and 30 both map to US 10. The page footer also says 'We provided the item measurements', contradicting the body-measuring instructions; the chart instructions are body-based. The women's apparel chart (cid=size-chart-womens-apparel) is a broken placeholder (only sizes 00-2, cm column shows 131/124/134.5) and uses garment flat-lay instructions, so it was not recorded. The www.rag-bone.com/size-chart-womens-apparel.html URL redirects to rag-bone.eu."
+}

@@ -1,0 +1,254 @@
+{
+  "brand_id": "noisy-may",
+  "brand_name": "Noisy May",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Jeans (aliases from SIZE CONVERSION table)",
+      "measurement_basis": "body",
+      "basis_evidence": "Section heading \"BODY MEASUREMENT\"; \"How to measure: Measure around the narrowest part of the waist and the fullest part of the hips.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.noisymay.com/en-gb/sizeguide/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "SX",
+            "eu": "34"
+          },
+          "waist": [
+            64.5,
+            64.5
+          ],
+          "hip": [
+            88.5,
+            88.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "S",
+            "eu": "36"
+          },
+          "waist": [
+            67,
+            67
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "eu": "36"
+          },
+          "waist": [
+            69.5,
+            69.5
+          ],
+          "hip": [
+            93.5,
+            93.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "S",
+            "eu": "38"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "eu": "38"
+          },
+          "waist": [
+            74.5,
+            74.5
+          ],
+          "hip": [
+            98.5,
+            98.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "M",
+            "eu": "40"
+          },
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            101,
+            101
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "M",
+            "eu": "42"
+          },
+          "waist": [
+            79.5,
+            79.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "L",
+            "eu": "42"
+          },
+          "waist": [
+            82,
+            82
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "general",
+      "fit_line": "Clothing (aliases from SIZE CONVERSION table)",
+      "measurement_basis": "body",
+      "basis_evidence": "Section heading \"BODY MEASUREMENT\"; \"Chest - Measure around the fullest part of the bust, while wearing a bra that fits.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.noisymay.com/en-gb/sizeguide/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "32-34",
+            "uk": "4-6"
+          },
+          "waist": [
+            60,
+            64
+          ],
+          "hip": [
+            84,
+            88
+          ],
+          "bust": [
+            76,
+            80
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "36-38",
+            "uk": "8-10"
+          },
+          "waist": [
+            68,
+            72
+          ],
+          "hip": [
+            92,
+            96
+          ],
+          "bust": [
+            84,
+            88
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "40-42",
+            "uk": "12-14"
+          },
+          "waist": [
+            76,
+            80
+          ],
+          "hip": [
+            100,
+            104
+          ],
+          "bust": [
+            92,
+            96
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "44-46",
+            "uk": "16"
+          },
+          "waist": [
+            84,
+            88
+          ],
+          "hip": [
+            108,
+            112
+          ],
+          "bust": [
+            100,
+            104
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "The jeans SIZE CONVERSION table lists letter 'SX' for size 25, almost certainly a typo for XS; copied as published. EU 36 maps to both 26 and 27, 38 to 28 and 29, 42 to 31 and 32. Jeans run only 25-32 on this guide. No inseam table is published (a generic HOW TO MEASURE note defines inseam only). The HOW TO MEASURE block uses the word 'width' ('Waist width: Measured at the narrowest part of the waist'), which could read as garment, but the tables sit under a 'BODY MEASUREMENT' heading, so body was recorded."
+}

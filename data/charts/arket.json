@@ -1,0 +1,266 @@
+{
+  "brand_id": "arket",
+  "brand_name": "ARKET",
+  "status": "found",
+  "charts": [
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Table headed 'Body measurement' (Clothing and Jeans sections)",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.arket.com/en-gb/customer-service/size-guide/women/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "32–34",
+            "uk": "4–6"
+          },
+          "waist": [
+            60,
+            64
+          ],
+          "hip": [
+            84,
+            88
+          ],
+          "bust": [
+            76,
+            80
+          ],
+          "inseam": [
+            76,
+            77
+          ]
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "36–38",
+            "uk": "8–10"
+          },
+          "waist": [
+            68,
+            72
+          ],
+          "hip": [
+            92,
+            96
+          ],
+          "bust": [
+            84,
+            88
+          ],
+          "inseam": [
+            78,
+            79
+          ]
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "40–42",
+            "uk": "12–14"
+          },
+          "waist": [
+            76,
+            80
+          ],
+          "hip": [
+            100,
+            104
+          ],
+          "bust": [
+            92,
+            96
+          ],
+          "inseam": [
+            80,
+            84
+          ]
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "44–46",
+            "uk": "16"
+          },
+          "waist": [
+            84,
+            88
+          ],
+          "hip": [
+            108,
+            112
+          ],
+          "bust": [
+            100,
+            104
+          ],
+          "inseam": [
+            82,
+            83
+          ]
+        }
+      ],
+      "fit_advice": "Use the size charts as a guide to find the best fit."
+    },
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Table headed 'Body measurement' (Clothing and Jeans sections)",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.arket.com/en-gb/customer-service/size-guide/women/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS",
+            "eu": "34"
+          },
+          "waist": [
+            64.5,
+            64.5
+          ],
+          "hip": [
+            88.5,
+            88.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "S",
+            "eu": "36"
+          },
+          "waist": [
+            67,
+            67
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "eu": "36"
+          },
+          "waist": [
+            69.5,
+            69.5
+          ],
+          "hip": [
+            93.5,
+            93.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "S",
+            "eu": "38"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "eu": "38"
+          },
+          "waist": [
+            74.5,
+            74.5
+          ],
+          "hip": [
+            98.5,
+            98.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "M",
+            "eu": "40"
+          },
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            101,
+            101
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "M",
+            "eu": "42"
+          },
+          "waist": [
+            79.5,
+            79.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "L",
+            "eu": "42"
+          },
+          "waist": [
+            82,
+            82
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Use the size charts as a guide to find the best fit."
+    }
+  ],
+  "problems": "General chart is letter-based (XS-L only); EU/UK aliases are ranges as published (e.g. XS = EUR 32–34). Bust column is labelled 'Chest'. Inside-leg ranges look irregular (M = 80–84 cm wider than neighbours XS 76–77, S 78–79, L 82–83) but are copied as published. Jeans chart gives waist/hip only, no inseam. Inches toggle exists; cm recorded."
+}

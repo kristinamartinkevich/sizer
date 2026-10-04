@@ -1,0 +1,958 @@
+{
+  "brand_id": "khaite",
+  "brand_name": "KHAITE",
+  "status": "found",
+  "charts": [
+    {
+      "category": "trousers",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording. Size Guide page lists Waist/Low Hip per size with the note \"Email a stylist for size and fit advice\"; values follow a standard body-measurement grading (identical across Dresses, Knitwear, Coats), so treated as body",
+      "unit": "cm",
+      "size_system": "us",
+      "source_url": "https://khaite.com/pages/size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            64.8,
+            64.8
+          ],
+          "hip": [
+            90.8,
+            90.8
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "2",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            67.3,
+            67.3
+          ],
+          "hip": [
+            93.3,
+            93.3
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "4",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            69.8,
+            69.8
+          ],
+          "hip": [
+            95.9,
+            95.9
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "6",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            72.4,
+            72.4
+          ],
+          "hip": [
+            98.4,
+            98.4
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "8",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            74.9,
+            74.9
+          ],
+          "hip": [
+            101.0,
+            101.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "10",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            77.5,
+            77.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "12",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            80.0,
+            80.0
+          ],
+          "hip": [
+            107.3,
+            107.3
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "dresses",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording; same Bust/Waist/Low Hip grading used for Dresses, Knitwear, Outerwear, Jackets, Shirts & Tops, T-Shirts & Tanks",
+      "unit": "cm",
+      "size_system": "us",
+      "source_url": "https://khaite.com/pages/size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            64.8,
+            64.8
+          ],
+          "hip": [
+            90.8,
+            90.8
+          ],
+          "bust": [
+            81.9,
+            81.9
+          ],
+          "inseam": null
+        },
+        {
+          "label": "2",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            67.3,
+            67.3
+          ],
+          "hip": [
+            93.3,
+            93.3
+          ],
+          "bust": [
+            84.5,
+            84.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "4",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            69.8,
+            69.8
+          ],
+          "hip": [
+            95.9,
+            95.9
+          ],
+          "bust": [
+            87.0,
+            87.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "6",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            72.4,
+            72.4
+          ],
+          "hip": [
+            98.4,
+            98.4
+          ],
+          "bust": [
+            89.5,
+            89.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "8",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            74.9,
+            74.9
+          ],
+          "hip": [
+            101.0,
+            101.0
+          ],
+          "bust": [
+            92.1,
+            92.1
+          ],
+          "inseam": null
+        },
+        {
+          "label": "10",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            77.5,
+            77.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": [
+            94.6,
+            94.6
+          ],
+          "inseam": null
+        },
+        {
+          "label": "12",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            80.0,
+            80.0
+          ],
+          "hip": [
+            107.3,
+            107.3
+          ],
+          "bust": [
+            98.4,
+            98.4
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Danielle Stretch Jean (Lykens)",
+      "measurement_basis": "garment",
+      "basis_evidence": "Product \"Denim Size Guide\" gives Waist/Hip/Inseam/Rise per size and varies by product; it includes a fixed Inseam and a Rise, which are garment specifications. No explicit wording either way.",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://khaite.com/products/danielle-stretch-jean-in-lykens",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            23,
+            23
+          ],
+          "hip": [
+            33.5,
+            33.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            14.5,
+            14.5
+          ]
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            24,
+            24
+          ],
+          "hip": [
+            34.5,
+            34.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            14.75,
+            14.75
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            25,
+            25
+          ],
+          "hip": [
+            35.5,
+            35.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            15,
+            15
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            36.5,
+            36.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            15.25,
+            15.25
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            37.5,
+            37.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            15.5,
+            15.5
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            38.5,
+            38.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            15.75,
+            15.75
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": [
+            39.5,
+            39.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            16,
+            16
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            40.5,
+            40.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            16.25,
+            16.25
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": [
+            41.5,
+            41.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            16.5,
+            16.5
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": [
+            42.5,
+            42.5
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            16.75,
+            16.75
+          ]
+        }
+      ],
+      "fit_advice": "Runs small. Recommended to size up. Model is 5’10, wearing size 26."
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Danielle Stretch Jean (Montgomery)",
+      "measurement_basis": "garment",
+      "basis_evidence": "Product \"Denim Size Guide\" gives Waist/Hip/Inseam/Rise per size and varies by product; it includes a fixed Inseam and a Rise, which are garment specifications. No explicit wording either way.",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://khaite.com/products/danielle-stretch-jean-in-montgomery",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            23.5,
+            23.5
+          ],
+          "hip": [
+            32.25,
+            32.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            10.75,
+            10.75
+          ]
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            24.5,
+            24.5
+          ],
+          "hip": [
+            33.25,
+            33.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            11,
+            11
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            25.5,
+            25.5
+          ],
+          "hip": [
+            34.25,
+            34.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            11.25,
+            11.25
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            26.5,
+            26.5
+          ],
+          "hip": [
+            35.25,
+            35.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            11.5,
+            11.5
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            27.5,
+            27.5
+          ],
+          "hip": [
+            36.25,
+            36.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            11.75,
+            11.75
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            28.5,
+            28.5
+          ],
+          "hip": [
+            37.25,
+            37.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            12,
+            12
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            29.5,
+            29.5
+          ],
+          "hip": [
+            38.25,
+            38.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            12.25,
+            12.25
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            30.5,
+            30.5
+          ],
+          "hip": [
+            39.25,
+            39.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            12.5,
+            12.5
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            31.5,
+            31.5
+          ],
+          "hip": [
+            40.25,
+            40.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            12.75,
+            12.75
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            32.5,
+            32.5
+          ],
+          "hip": [
+            41.25,
+            41.25
+          ],
+          "bust": null,
+          "inseam": [
+            33,
+            33
+          ],
+          "rise": [
+            13,
+            13
+          ]
+        }
+      ],
+      "fit_advice": "Runs true to size. Model is 5'9'', wearing size 26."
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Dane Stretch Jean (Carlyle)",
+      "measurement_basis": "garment",
+      "basis_evidence": "Product \"Denim Size Guide\" gives Waist/Hip/Inseam/Rise per size and varies by product; it includes a fixed Inseam and a Rise, which are garment specifications. No explicit wording either way.",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://khaite.com/products/dane-stretch-jean-in-carlyle",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            24.5,
+            24.5
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            11.25,
+            11.25
+          ]
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            25.5,
+            25.5
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            11.5,
+            11.5
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            26.5,
+            26.5
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            11.75,
+            11.75
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            27.5,
+            27.5
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            12,
+            12
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            28.5,
+            28.5
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            12.25,
+            12.25
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            29.5,
+            29.5
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            12.5,
+            12.5
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            30.5,
+            30.5
+          ],
+          "hip": [
+            41,
+            41
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            12.75,
+            12.75
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            31.5,
+            31.5
+          ],
+          "hip": [
+            42,
+            42
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            13,
+            13
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            32.5,
+            32.5
+          ],
+          "hip": [
+            43,
+            43
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            13.25,
+            13.25
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            33.5,
+            33.5
+          ],
+          "hip": [
+            44,
+            44
+          ],
+          "bust": null,
+          "inseam": [
+            34,
+            34
+          ],
+          "rise": [
+            13.5,
+            13.5
+          ]
+        }
+      ],
+      "fit_advice": "True to size. Recommended to take your normal size. Model is 5’10, wearing size 26."
+    }
+  ],
+  "problems": "The main size guide says for Denim: \"Please see fit and size information on our denim product pages, as they vary by style.\" There is no single denim chart; three product charts recorded (inches only, fractions such as 33 1/2 written as decimals; rows carry an extra \"rise\" field). Even the same style differs by wash (Danielle Lykens vs Montgomery), so a per-product chart is needed for accuracy. None of the charts says whether values are body or garment; basis is inferred. Pants/dresses inches tables also published (e.g. size 0 waist 25.5, low hip 35.75); hip is labelled \"Low Hip\". Pants chart labels size 12 as L while the dresses chart labels it XL."
+}

@@ -1,0 +1,503 @@
+{
+  "brand_id": "hm",
+  "brand_name": "H&M",
+  "status": "found",
+  "charts": [
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Measurements should be taken directly on your body.",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.hm.com/om/customer-service/sizeguide/ladies/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "uk": "6",
+            "au": "4"
+          },
+          "waist": [
+            60,
+            60
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            76,
+            76
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "us": "4",
+            "uk": "8",
+            "au": "6"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": [
+            80,
+            80
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "us": "6",
+            "uk": "10",
+            "au": "8"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": [
+            84,
+            84
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "S",
+            "us": "8",
+            "uk": "12",
+            "au": "10"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": [
+            88,
+            88
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "M",
+            "us": "10",
+            "uk": "14",
+            "au": "12"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": [
+            92,
+            92
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "M",
+            "us": "12",
+            "uk": "16",
+            "au": "14"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": [
+            96,
+            96
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "L",
+            "us": "14",
+            "uk": "18",
+            "au": "16"
+          },
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": [
+            100,
+            100
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "46",
+          "aliases": {
+            "letter": "L",
+            "us": "16",
+            "uk": "20",
+            "au": "18"
+          },
+          "waist": [
+            88,
+            88
+          ],
+          "hip": [
+            112,
+            112
+          ],
+          "bust": [
+            104,
+            104
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "48",
+          "aliases": {
+            "letter": "XL",
+            "us": "18",
+            "uk": "22",
+            "au": "20"
+          },
+          "waist": [
+            94,
+            94
+          ],
+          "hip": [
+            117,
+            117
+          ],
+          "bust": [
+            110,
+            110
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "50",
+          "aliases": {
+            "letter": "XL",
+            "us": "20",
+            "uk": "24",
+            "au": "22"
+          },
+          "waist": [
+            100,
+            100
+          ],
+          "hip": [
+            122,
+            122
+          ],
+          "bust": [
+            116,
+            116
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "52",
+          "aliases": {
+            "letter": "2XL",
+            "us": "22",
+            "uk": "26",
+            "au": "24"
+          },
+          "waist": [
+            106,
+            106
+          ],
+          "hip": [
+            127,
+            127
+          ],
+          "bust": [
+            122,
+            122
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "54",
+          "aliases": {
+            "letter": "2XL",
+            "us": "24",
+            "uk": "28",
+            "au": "26"
+          },
+          "waist": [
+            112,
+            112
+          ],
+          "hip": [
+            132,
+            132
+          ],
+          "bust": [
+            128,
+            128
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "56",
+          "aliases": {
+            "letter": "3XL",
+            "us": "26",
+            "uk": "30",
+            "au": "28"
+          },
+          "waist": [
+            118,
+            118
+          ],
+          "hip": [
+            137,
+            137
+          ],
+          "bust": [
+            134,
+            134
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "58",
+          "aliases": {
+            "letter": "3XL",
+            "us": "28",
+            "uk": "32",
+            "au": "30"
+          },
+          "waist": [
+            124,
+            124
+          ],
+          "hip": [
+            142,
+            142
+          ],
+          "bust": [
+            140,
+            140
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "60",
+          "aliases": {
+            "letter": "4XL",
+            "us": "30",
+            "uk": "34",
+            "au": "32"
+          },
+          "waist": [
+            130,
+            130
+          ],
+          "hip": [
+            147,
+            147
+          ],
+          "bust": [
+            146,
+            146
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "62",
+          "aliases": {
+            "letter": "4XL",
+            "us": "32",
+            "uk": "36",
+            "au": "34"
+          },
+          "waist": [
+            136,
+            136
+          ],
+          "hip": [
+            152,
+            152
+          ],
+          "bust": [
+            152,
+            152
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Measurements should be taken directly on your body.",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://www.hm.com/om/customer-service/sizeguide/ladies/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "32/34",
+            "us": "2/4",
+            "uk": "6/8",
+            "denim_waist": "24/25"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "36/38",
+            "us": "6/8",
+            "uk": "10/12",
+            "denim_waist": "26/27/28"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "40/42",
+            "us": "10/12",
+            "uk": "14/16",
+            "denim_waist": "29/30/31"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "44/46",
+            "us": "14/16",
+            "uk": "18/20",
+            "denim_waist": "32/33/34"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "eu": "48/50",
+            "us": "18/20",
+            "uk": "22/24",
+            "denim_waist": "36"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "The en_gb customer-service size guide URL now redirects to a FAQ saying the guide lives on product pages; the tables were read from the H&M Oman (hm.com/om) customer-service guide, H&M's own site. Letter sizes span two EU sizes each (XS = 32-34 ... 4XL = 60-62, header colspan 2). The general chart covers trousers too and gives one inside-leg value, 79 cm, for every size. The jeans table is only a conversion (waist-inch labels grouped per letter/EU pair, no measurements); exact inch-to-EU pairing inside each group is not published, so groups are stored as-is. Bust measurement listed as 'Bust (cm)', hip as 'Seat (cm)'. Product-page guides for specific markets were not cross-checked."
+}

@@ -1,0 +1,235 @@
+{
+  "brand_id": "pull-bear",
+  "brand_name": "Pull&Bear",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Measurements panel, 'Body' tab: '* The measurements shown refer to body measurements.'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.pullandbear.com/es/en/lowrise-star-straightleg-jeans-l07662319?cS=802",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            60.0,
+            60.0
+          ],
+          "hip": [
+            86.0,
+            86.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {},
+          "waist": [
+            64.0,
+            64.0
+          ],
+          "hip": [
+            90.0,
+            90.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {},
+          "waist": [
+            68.0,
+            68.0
+          ],
+          "hip": [
+            94.0,
+            94.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {},
+          "waist": [
+            72.0,
+            72.0
+          ],
+          "hip": [
+            98.0,
+            98.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {},
+          "waist": [
+            76.0,
+            76.0
+          ],
+          "hip": [
+            102.0,
+            102.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {},
+          "waist": [
+            80.0,
+            80.0
+          ],
+          "hip": [
+            106.0,
+            106.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {},
+          "waist": [
+            84.0,
+            84.0
+          ],
+          "hip": [
+            110.0,
+            110.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "46",
+          "aliases": {},
+          "waist": [
+            91.0,
+            91.0
+          ],
+          "hip": [
+            116.0,
+            116.0
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Measurements panel, 'Body' tab: '* The measurements shown refer to body measurements.' 'Measure the chest circumference at the widest part of the chest below the armpits'",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.pullandbear.com/es/en/boxyfit-long-sleeve-tshirt-l07230388?cS=800",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            62.0,
+            62.0
+          ],
+          "hip": [
+            88.0,
+            88.0
+          ],
+          "bust": [
+            80.0,
+            80.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            68.0,
+            68.0
+          ],
+          "hip": [
+            94.0,
+            94.0
+          ],
+          "bust": [
+            86.0,
+            86.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            74.0,
+            74.0
+          ],
+          "hip": [
+            100.0,
+            100.0
+          ],
+          "bust": [
+            92.0,
+            92.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            80.0,
+            80.0
+          ],
+          "hip": [
+            106.0,
+            106.0
+          ],
+          "bust": [
+            98.0,
+            98.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            87.0,
+            87.0
+          ],
+          "hip": [
+            113.0,
+            113.0
+          ],
+          "bust": [
+            105.0,
+            105.0
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "No standalone size-guide page found; charts come from the product-page 'See measurements' panel ('Body' tab), read on the Spain (English) store, one size at a time. The jeans body chart (Low-rise star straight-leg jeans) gives waist and hip only; inseam appears only on the garment ('Item') tab as a flat item measurement, so it is not stored. The letter chart was identical on a basic T-shirt and on a Maxi dress (l07380333); bust column labelled 'Chest'. No published EU-number to letter or US/UK equivalence on these panels. Charts are per product and may vary for other products."
+}

@@ -1,0 +1,268 @@
+{
+  "brand_id": "zara",
+  "brand_name": "Zara",
+  "status": "partial",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "TRF MID-WAIST STRAIGHT-LEG JEANS (product 00541211)",
+      "measurement_basis": "garment",
+      "basis_evidence": "'Measurements may show slight variations due to the production process. The garment is measured flat'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.zara.com/es/en/trf-mid-waist-straight-leg-jeans-p00541211.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "uk": "4"
+          },
+          "waist": [
+            30.0,
+            30.0
+          ],
+          "hip": [
+            44.0,
+            44.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "uk": "6"
+          },
+          "waist": [
+            33.0,
+            33.0
+          ],
+          "hip": [
+            46.0,
+            46.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "uk": "8"
+          },
+          "waist": [
+            36.0,
+            36.0
+          ],
+          "hip": [
+            48.0,
+            48.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "uk": "10"
+          },
+          "waist": [
+            39.0,
+            39.0
+          ],
+          "hip": [
+            50.0,
+            50.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "uk": "12"
+          },
+          "waist": [
+            42.0,
+            42.0
+          ],
+          "hip": [
+            52.0,
+            52.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "uk": "14"
+          },
+          "waist": [
+            45.0,
+            45.0
+          ],
+          "hip": [
+            54.0,
+            54.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "uk": "16"
+          },
+          "waist": [
+            48.0,
+            48.0
+          ],
+          "hip": [
+            56.0,
+            56.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "46",
+          "aliases": {
+            "uk": "18"
+          },
+          "waist": [
+            51.0,
+            51.0
+          ],
+          "hip": [
+            58.0,
+            58.0
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "dresses",
+      "fit_line": "SHORT SLEEVE MIDI DRESS (product 07861207)",
+      "measurement_basis": "garment",
+      "basis_evidence": "'Measurements may show slight variations due to the production process. The garment is measured flat'",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.zara.com/ie/en/short-sleeve-midi-dress-p07861207.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            31.5,
+            31.5
+          ],
+          "hip": [
+            43.5,
+            43.5
+          ],
+          "bust": [
+            39.0,
+            39.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            33.5,
+            33.5
+          ],
+          "hip": [
+            45.0,
+            45.0
+          ],
+          "bust": [
+            41.0,
+            41.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": [
+            46.5,
+            46.5
+          ],
+          "bust": [
+            43.0,
+            43.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            37.5,
+            37.5
+          ],
+          "hip": [
+            48.0,
+            48.0
+          ],
+          "bust": [
+            45.0,
+            45.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": [
+            49.5,
+            49.5
+          ],
+          "bust": [
+            47.0,
+            47.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XXL",
+          "aliases": {},
+          "waist": [
+            41.5,
+            41.5
+          ],
+          "hip": [
+            51.0,
+            51.0
+          ],
+          "bust": [
+            49.0,
+            49.0
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Zara publishes no general women's body-measurement size chart: there is no size-guide help page (help-center/SizeGuide is 'PAGE NOT FOUND'), and product pages offer only a per-product 'Measurements' panel of FLAT GARMENT measurements plus an interactive 'Size recommender'. The two charts here are single-product garment examples, not a brand-wide chart; values are flat (half-circumference) and must not be compared directly with body measurements. Jeans panel also lists total length and rises (machine-translated as 'Front towing eye' / 'Backfire'), no inseam. Spain store labels the jeans EU 32-46; the Ireland store shows the same product as 4-18 (UK). Dress chart also has chest, total length, sleeve length, arm width (bust stored from 'Chest'). Inches toggle exists."
+}

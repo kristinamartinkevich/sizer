@@ -1,0 +1,388 @@
+{
+  "brand_id": "other-stories",
+  "brand_name": "& Other Stories",
+  "status": "found",
+  "charts": [
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "HOW TO MEASURE: 'Measure your chest around the fullest part of your bust while wearing a bra that fits well.'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.stories.com/en-gb/customer-service/size-guide/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XS",
+            "uk": "4-6",
+            "it": "36-38",
+            "fr": "34-36"
+          },
+          "waist": [
+            60,
+            60
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            76,
+            76
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "uk": "4-6",
+            "it": "36-38",
+            "fr": "34-36"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": [
+            80,
+            80
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "uk": "8-10",
+            "it": "40-42",
+            "fr": "38-40"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": [
+            84,
+            84
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "S",
+            "uk": "8-10",
+            "it": "40-42",
+            "fr": "38-40"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": [
+            88,
+            88
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "M",
+            "uk": "12-14",
+            "it": "44-46",
+            "fr": "42-44"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": [
+            92,
+            92
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "M",
+            "uk": "12-14",
+            "it": "44-46",
+            "fr": "42-44"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": [
+            96,
+            96
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "L",
+            "uk": "16",
+            "it": "48",
+            "fr": "46"
+          },
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": [
+            100,
+            100
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        }
+      ],
+      "fit_advice": "As the sizes may vary between our products, we recommend that you also have a look at the specific measurements provided in the product descriptions."
+    },
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "HOW TO MEASURE: 'Measure your chest around the fullest part of your bust while wearing a bra that fits well.'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.stories.com/en-gb/customer-service/size-guide/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XS",
+            "uk": "4-6",
+            "it": "36-38",
+            "fr": "34-36"
+          },
+          "waist": [
+            60,
+            60
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            76,
+            76
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "uk": "4-6",
+            "it": "36-38",
+            "fr": "34-36"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": [
+            80,
+            80
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "uk": "8-10",
+            "it": "40-42",
+            "fr": "38-40"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": [
+            84,
+            84
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "S",
+            "uk": "8-10",
+            "it": "40-42",
+            "fr": "38-40"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": [
+            88,
+            88
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "M",
+            "uk": "12-14",
+            "it": "44-46",
+            "fr": "42-44"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": [
+            92,
+            92
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "M",
+            "uk": "12-14",
+            "it": "44-46",
+            "fr": "42-44"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": [
+            96,
+            96
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "L",
+            "uk": "16",
+            "it": "48",
+            "fr": "46"
+          },
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": [
+            100,
+            100
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        }
+      ],
+      "fit_advice": "As the sizes may vary between our products, we recommend that you also have a look at the specific measurements provided in the product descriptions."
+    }
+  ],
+  "problems": "Clothing, Denim and Swimwear accordions show identical body tables; Denim is sized by EU number, not waist inches. Letters span two EU sizes (XS = 32/34, S = 36/38, M = 40/42; L = 44 only). The 'size converter' view publishes UK/IT/FR-ES per letter as ranges (e.g. XS: UK 4-6, IT 36-38, FR/ES 34-36); those ranges are stored unsplit on both EU rows of each letter. Bust column labelled 'Chest'. Inseam 79 for every size. Chart tops out at EU 44."
+}

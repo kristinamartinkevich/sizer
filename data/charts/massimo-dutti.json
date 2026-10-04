@@ -1,0 +1,305 @@
+{
+  "brand_id": "massimo-dutti",
+  "brand_name": "Massimo Dutti",
+  "status": "partial",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Size-guide tab 'Body measurements' (selected), with link 'Instructions for taking body measurements'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.massimodutti.com/es/en/midwaist-straightleg-jeans-l05038838",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": null,
+          "hip": [
+            90,
+            90
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": null,
+          "hip": [
+            94,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": null,
+          "hip": [
+            98,
+            98
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": null,
+          "hip": [
+            102,
+            102
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": null,
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "XXL"
+          },
+          "waist": null,
+          "hip": [
+            110,
+            110
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "trousers",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Size-guide tab 'Body measurements' (selected), with link 'Instructions for taking body measurements'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.massimodutti.com/es/en/extra-fine-wool-pleated-pants-l05006685",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": null,
+          "hip": [
+            90,
+            90
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": null,
+          "hip": [
+            94,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": null,
+          "hip": [
+            98,
+            98
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": null,
+          "hip": [
+            102,
+            102
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": null,
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "XXL"
+          },
+          "waist": null,
+          "hip": [
+            110,
+            110
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "dresses",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Size-guide tab 'Body measurements' (selected), with link 'Instructions for taking body measurements'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.massimodutti.com/es/en/flowing-satin-finish-midi-dress-l06631510",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": null,
+          "hip": [
+            90,
+            90
+          ],
+          "bust": [
+            82,
+            82
+          ],
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": null,
+          "hip": [
+            94,
+            94
+          ],
+          "bust": [
+            86,
+            86
+          ],
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": null,
+          "hip": [
+            98,
+            98
+          ],
+          "bust": [
+            90,
+            90
+          ],
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": null,
+          "hip": [
+            102,
+            102
+          ],
+          "bust": [
+            96,
+            96
+          ],
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": null,
+          "hip": [
+            106,
+            106
+          ],
+          "bust": [
+            100,
+            100
+          ],
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "XXL"
+          },
+          "waist": null,
+          "hip": [
+            110,
+            110
+          ],
+          "bust": [
+            104,
+            104
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Status partial because Massimo Dutti's body tab publishes NO WAIST measurement: bottoms show hip circumference only, the dress shows chest and hip only. No standalone size-guide page; charts are from the product-page 'SEE MEASUREMENT TABLE' panel (Spain store, English), 'Body measurements' tab, which displays three sizes at a time; sizes are labelled '34 / XS' ... '44 / XXL', so the EU-to-letter alias is published. Jeans and tailored trousers showed identical hip values. Inseam appears only on the 'Item measurements' (garment) tab ('INNER THIGH LENGTH'), so it is not stored. Bust stored from 'CHEST CIRCUMFERENCE'. Inches toggle exists. Charts are per product and may vary."
+}

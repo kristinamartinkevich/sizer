@@ -1,0 +1,221 @@
+{
+  "brand_id": "stradivarius",
+  "brand_name": "Stradivarius",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Product 'MEASUREMENTS' panel, 'body' tab active; 'HOW TO MEASURE YOURSELF ... Waist measurements are taken at the narrowest part of the waist.'",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.stradivarius.com/es/en/d92-ripped-straight-wideleg-jeans-l04891746",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            58.0,
+            58.0
+          ],
+          "hip": [
+            87.0,
+            87.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {},
+          "waist": [
+            62.0,
+            62.0
+          ],
+          "hip": [
+            91.0,
+            91.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {},
+          "waist": [
+            66.0,
+            66.0
+          ],
+          "hip": [
+            95.0,
+            95.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {},
+          "waist": [
+            70.0,
+            70.0
+          ],
+          "hip": [
+            99.0,
+            99.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {},
+          "waist": [
+            76.0,
+            76.0
+          ],
+          "hip": [
+            105.0,
+            105.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {},
+          "waist": [
+            82.0,
+            82.0
+          ],
+          "hip": [
+            111.0,
+            111.0
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "44",
+          "aliases": {},
+          "waist": [
+            88.0,
+            88.0
+          ],
+          "hip": [
+            117.0,
+            117.0
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "dresses",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Product 'MEASUREMENTS' panel, 'body' tab active; 'HOW TO MEASURE YOURSELF ... Waist measurements are taken at the narrowest part of the waist.'; 'Place the tape horizontally across the chest, around the widest part of the thorax.'",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.stradivarius.com/es/en/open-back-midi-dress-l06400105",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            62.0,
+            62.0
+          ],
+          "hip": [
+            91.0,
+            91.0
+          ],
+          "bust": [
+            81.0,
+            81.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            66.0,
+            66.0
+          ],
+          "hip": [
+            95.0,
+            95.0
+          ],
+          "bust": [
+            85.0,
+            85.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            70.0,
+            70.0
+          ],
+          "hip": [
+            99.0,
+            99.0
+          ],
+          "bust": [
+            89.0,
+            89.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            76.0,
+            76.0
+          ],
+          "hip": [
+            105.0,
+            105.0
+          ],
+          "bust": [
+            95.0,
+            95.0
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            82.0,
+            82.0
+          ],
+          "hip": [
+            111.0,
+            111.0
+          ],
+          "bust": [
+            101.0,
+            101.0
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "No standalone size-guide page; charts come from the product-page 'Measurements' panel (Spain store, English), 'body' tab, one size at a time. Jeans chart (D92 ripped straight wide-leg jeans) gives waist and hip only, EU 32-44; no inseam on the body tab. Letter chart from one dress only (Open back midi dress); bust column labelled 'Chest'; tops were not separately checked. Waist/hip for XS-XL match EU 34-42 on the jeans chart, but no EU-to-letter mapping is published, so none is recorded. Charts are per product and may vary."
+}

@@ -1,0 +1,1466 @@
+{
+  "brand_id": "madewell",
+  "brand_name": "Madewell",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Regular Denim",
+      "measurement_basis": "body",
+      "basis_evidence": "Column headers read \"YOUR WAIST | YOUR HIP | US SIZE\"",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://www.madewell.com/c/size-chart/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            24,
+            24
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            25,
+            25
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            29.25,
+            29.25
+          ],
+          "hip": [
+            39.25,
+            39.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            30.5,
+            30.5
+          ],
+          "hip": [
+            40.5,
+            40.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": [
+            42,
+            42
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            33.75,
+            33.75
+          ],
+          "hip": [
+            43.75,
+            43.75
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": [
+            45.5,
+            45.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {},
+          "waist": [
+            37.5,
+            37.5
+          ],
+          "hip": [
+            47.5,
+            47.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "14W",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "16W",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": [
+            49,
+            49
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "18W",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": [
+            51,
+            51
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "20W",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": [
+            53,
+            53
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "22W",
+          "aliases": {},
+          "waist": [
+            45,
+            45
+          ],
+          "hip": [
+            55,
+            55
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24W",
+          "aliases": {},
+          "waist": [
+            47,
+            47
+          ],
+          "hip": [
+            57,
+            57
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26W",
+          "aliases": {},
+          "waist": [
+            49,
+            49
+          ],
+          "hip": [
+            59,
+            59
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28W",
+          "aliases": {},
+          "waist": [
+            51,
+            51
+          ],
+          "hip": [
+            61,
+            61
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Madewell jeans generally run true to size, but fit varies by style."
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Curvy Denim",
+      "measurement_basis": "body",
+      "basis_evidence": "Column headers read \"YOUR WAIST | YOUR HIP | US SIZE\"",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://www.madewell.com/c/size-chart/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {},
+          "waist": [
+            23.5,
+            23.5
+          ],
+          "hip": [
+            35.5,
+            35.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            24.5,
+            24.5
+          ],
+          "hip": [
+            36.5,
+            36.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            25.5,
+            25.5
+          ],
+          "hip": [
+            37.5,
+            37.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            26.5,
+            26.5
+          ],
+          "hip": [
+            38.5,
+            38.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            27.5,
+            27.5
+          ],
+          "hip": [
+            39.5,
+            39.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            28.75,
+            28.75
+          ],
+          "hip": [
+            40.75,
+            40.75
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            42,
+            42
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            31.5,
+            31.5
+          ],
+          "hip": [
+            43.5,
+            43.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            33.25,
+            33.25
+          ],
+          "hip": [
+            45.25,
+            45.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            49,
+            49
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "14W",
+          "aliases": {},
+          "waist": [
+            36.5,
+            36.5
+          ],
+          "hip": [
+            48.5,
+            48.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "16W",
+          "aliases": {},
+          "waist": [
+            38.5,
+            38.5
+          ],
+          "hip": [
+            50.5,
+            50.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "18W",
+          "aliases": {},
+          "waist": [
+            40.5,
+            40.5
+          ],
+          "hip": [
+            52.5,
+            52.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "20W",
+          "aliases": {},
+          "waist": [
+            42.5,
+            42.5
+          ],
+          "hip": [
+            54.5,
+            54.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "22W",
+          "aliases": {},
+          "waist": [
+            44.5,
+            44.5
+          ],
+          "hip": [
+            56.5,
+            56.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24W",
+          "aliases": {},
+          "waist": [
+            46.5,
+            46.5
+          ],
+          "hip": [
+            58.5,
+            58.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26W",
+          "aliases": {},
+          "waist": [
+            48.5,
+            48.5
+          ],
+          "hip": [
+            60.5,
+            60.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28W",
+          "aliases": {},
+          "waist": [
+            50.5,
+            50.5
+          ],
+          "hip": [
+            62.5,
+            62.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Madewell jeans generally run true to size, but fit varies by style."
+    },
+    {
+      "category": "trousers",
+      "fit_line": "Pants & More",
+      "measurement_basis": "body",
+      "basis_evidence": "Column headers read \"YOUR WAIST | YOUR HIP | US SIZE\"",
+      "unit": "in",
+      "size_system": "us",
+      "source_url": "https://www.madewell.com/c/size-chart/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "00",
+          "aliases": {
+            "letter": "XXS"
+          },
+          "waist": [
+            24,
+            24
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            25,
+            25
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "2",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "4",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "6",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            29,
+            29
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "8",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "10",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            31,
+            31
+          ],
+          "hip": [
+            41,
+            41
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "12",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            32.5,
+            32.5
+          ],
+          "hip": [
+            42.5,
+            42.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "14",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            34,
+            34
+          ],
+          "hip": [
+            44,
+            44
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "16",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": [
+            45.5,
+            45.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "18",
+          "aliases": {
+            "letter": "XXL"
+          },
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "18",
+          "aliases": {
+            "letter": "1X"
+          },
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "20",
+          "aliases": {
+            "letter": "1X"
+          },
+          "waist": [
+            39,
+            39
+          ],
+          "hip": [
+            49,
+            49
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "22",
+          "aliases": {
+            "letter": "2X"
+          },
+          "waist": [
+            41,
+            41
+          ],
+          "hip": [
+            51,
+            51
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "2X"
+          },
+          "waist": [
+            43,
+            43
+          ],
+          "hip": [
+            53,
+            53
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "3X"
+          },
+          "waist": [
+            45,
+            45
+          ],
+          "hip": [
+            55,
+            55
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "dresses",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Column headers read \"YOUR BUST | YOUR WAIST | YOUR HIP | US SIZE\"",
+      "unit": "in",
+      "size_system": "us",
+      "source_url": "https://www.madewell.com/c/size-chart/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "00",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            24,
+            24
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": [
+            31,
+            31
+          ],
+          "inseam": null
+        },
+        {
+          "label": "00",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            25,
+            25
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": [
+            32,
+            32
+          ],
+          "inseam": null
+        },
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": [
+            33,
+            33
+          ],
+          "inseam": null
+        },
+        {
+          "label": "2",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": [
+            34,
+            34
+          ],
+          "inseam": null
+        },
+        {
+          "label": "4",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": [
+            35,
+            35
+          ],
+          "inseam": null
+        },
+        {
+          "label": "6",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            29,
+            29
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": [
+            36,
+            36
+          ],
+          "inseam": null
+        },
+        {
+          "label": "8",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": [
+            37,
+            37
+          ],
+          "inseam": null
+        },
+        {
+          "label": "10",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            31,
+            31
+          ],
+          "hip": [
+            41,
+            41
+          ],
+          "bust": [
+            38,
+            38
+          ],
+          "inseam": null
+        },
+        {
+          "label": "12",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            32.5,
+            32.5
+          ],
+          "hip": [
+            42.5,
+            42.5
+          ],
+          "bust": [
+            39.5,
+            39.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "14",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            34,
+            34
+          ],
+          "hip": [
+            44,
+            44
+          ],
+          "bust": [
+            41,
+            41
+          ],
+          "inseam": null
+        },
+        {
+          "label": "16",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": [
+            45.5,
+            45.5
+          ],
+          "bust": [
+            42.5,
+            42.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "18",
+          "aliases": {
+            "letter": "XXL"
+          },
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": [
+            44,
+            44
+          ],
+          "inseam": null
+        },
+        {
+          "label": "18",
+          "aliases": {
+            "letter": "1X"
+          },
+          "waist": [
+            37,
+            37
+          ],
+          "hip": [
+            47,
+            47
+          ],
+          "bust": [
+            44,
+            44
+          ],
+          "inseam": null
+        },
+        {
+          "label": "20",
+          "aliases": {
+            "letter": "1X"
+          },
+          "waist": [
+            39,
+            39
+          ],
+          "hip": [
+            49,
+            49
+          ],
+          "bust": [
+            46,
+            46
+          ],
+          "inseam": null
+        },
+        {
+          "label": "22",
+          "aliases": {
+            "letter": "2X"
+          },
+          "waist": [
+            41,
+            41
+          ],
+          "hip": [
+            51,
+            51
+          ],
+          "bust": [
+            48,
+            48
+          ],
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "2X"
+          },
+          "waist": [
+            43,
+            43
+          ],
+          "hip": [
+            53,
+            53
+          ],
+          "bust": [
+            50,
+            50
+          ],
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "3X"
+          },
+          "waist": [
+            45,
+            45
+          ],
+          "hip": [
+            55,
+            55
+          ],
+          "bust": [
+            52,
+            52
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Column headers read \"YOUR BUST | YOUR WAIST | US SIZE\"",
+      "unit": "in",
+      "size_system": "us",
+      "source_url": "https://www.madewell.com/c/size-chart/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "00",
+          "aliases": {
+            "letter": "XXS"
+          },
+          "waist": [
+            24,
+            24
+          ],
+          "hip": null,
+          "bust": [
+            31,
+            31
+          ],
+          "inseam": null
+        },
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            25,
+            25
+          ],
+          "hip": null,
+          "bust": [
+            32,
+            32
+          ],
+          "inseam": null
+        },
+        {
+          "label": "0",
+          "aliases": {
+            "letter": "XS"
+          },
+          "waist": [
+            26,
+            26
+          ],
+          "hip": null,
+          "bust": [
+            33,
+            33
+          ],
+          "inseam": null
+        },
+        {
+          "label": "2",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            27,
+            27
+          ],
+          "hip": null,
+          "bust": [
+            34,
+            34
+          ],
+          "inseam": null
+        },
+        {
+          "label": "4",
+          "aliases": {
+            "letter": "S"
+          },
+          "waist": [
+            28,
+            28
+          ],
+          "hip": null,
+          "bust": [
+            35,
+            35
+          ],
+          "inseam": null
+        },
+        {
+          "label": "6",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": [
+            36,
+            36
+          ],
+          "inseam": null
+        },
+        {
+          "label": "8",
+          "aliases": {
+            "letter": "M"
+          },
+          "waist": [
+            30,
+            30
+          ],
+          "hip": null,
+          "bust": [
+            37,
+            37
+          ],
+          "inseam": null
+        },
+        {
+          "label": "10",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": [
+            38,
+            38
+          ],
+          "inseam": null
+        },
+        {
+          "label": "12",
+          "aliases": {
+            "letter": "L"
+          },
+          "waist": [
+            32.5,
+            32.5
+          ],
+          "hip": null,
+          "bust": [
+            39.5,
+            39.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "14",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": [
+            41,
+            41
+          ],
+          "inseam": null
+        },
+        {
+          "label": "16",
+          "aliases": {
+            "letter": "XL"
+          },
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": null,
+          "bust": [
+            42.5,
+            42.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "18",
+          "aliases": {
+            "letter": "1X"
+          },
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": [
+            44,
+            44
+          ],
+          "inseam": null
+        },
+        {
+          "label": "20",
+          "aliases": {
+            "letter": "1X"
+          },
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": [
+            46,
+            46
+          ],
+          "inseam": null
+        },
+        {
+          "label": "22",
+          "aliases": {
+            "letter": "2X"
+          },
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": [
+            48,
+            48
+          ],
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "2X"
+          },
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": [
+            50,
+            50
+          ],
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "3X"
+          },
+          "waist": [
+            45,
+            45
+          ],
+          "hip": null,
+          "bust": [
+            52,
+            52
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Recorded in inches: the page has an in/cm toggle but scripted clicks did not switch the tables, so cm values were not captured (not converted). Length guidance is separate: Petite 5'3\" and under, Short 5'5\" and under, Standard between 5'4\" and 5'9\", Tall 5'9\" and over; \"Designed for 5'4\" to 5'8\" with a 30\" to 32\" inseam.\" No per-size inseam. INCONSISTENCY: the page FAQ says \"A women's jeans size 28 refers to a 29-inch waist\" while the Regular Denim chart gives 29.25\". Plus sizes overlap: 33 (37.5\") vs 14W (37\"); 18 appears as both XXL and 1X with identical measurements; 0 / XS covers two rows (25\" and 26\"). Many third-party sites quote an older Madewell chart (24 = 25\" waist); that is not what madewell.com shows today. A hidden alternate bust/waist/hip table (000/XXXS to 24W/3X) exists in the page DOM but is not displayed; not recorded."
+}

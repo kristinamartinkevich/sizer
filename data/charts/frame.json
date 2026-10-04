@@ -1,0 +1,509 @@
+{
+  "brand_id": "frame",
+  "brand_name": "FRAME",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Table has no visible caption; the site's size-guide script builds it with the title \"Body Measurements\", and the modal section heading is \"Product Measurements\". No measuring instructions shown. Basis is ambiguous; body is the more likely reading (waist equals the size number).",
+      "size_system": "denim_waist",
+      "source_url": "https://frame-store.com/products/the-borrowed-au-natural-clean",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "uk": "4",
+            "it": "36",
+            "fr": "32"
+          },
+          "waist": [
+            23,
+            23
+          ],
+          "hip": [
+            32,
+            32
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "uk": "6",
+            "it": "38",
+            "fr": "34"
+          },
+          "waist": [
+            24,
+            24
+          ],
+          "hip": [
+            33,
+            33
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "uk": "6",
+            "it": "38",
+            "fr": "34"
+          },
+          "waist": [
+            25,
+            25
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "uk": "8",
+            "it": "40",
+            "fr": "36"
+          },
+          "waist": [
+            26,
+            26
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "uk": "8/10",
+            "it": "42",
+            "fr": "38"
+          },
+          "waist": [
+            27,
+            27
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "uk": "10",
+            "it": "44",
+            "fr": "40"
+          },
+          "waist": [
+            28,
+            28
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "uk": "12",
+            "it": "46",
+            "fr": "42"
+          },
+          "waist": [
+            29,
+            29
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "uk": "14",
+            "it": "48",
+            "fr": "44"
+          },
+          "waist": [
+            30,
+            30
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "uk": "16",
+            "it": "50",
+            "fr": "46"
+          },
+          "waist": [
+            31,
+            31
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "uk": "18",
+            "it": "52",
+            "fr": "48"
+          },
+          "waist": [
+            32,
+            32
+          ],
+          "hip": [
+            41,
+            41
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "uk": "20",
+            "it": "54",
+            "fr": "50"
+          },
+          "waist": [
+            33.5,
+            33.5
+          ],
+          "hip": [
+            42.5,
+            42.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "uk": "22",
+            "it": "56",
+            "fr": "52"
+          },
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": [
+            43.5,
+            43.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "unit": "in",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Size-Spanning",
+      "measurement_basis": "body",
+      "basis_evidence": "Table has no visible caption; the site's size-guide script builds it with the title \"Body Measurements\", and the modal section heading is \"Product Measurements\". No measuring instructions shown. Basis is ambiguous; body is the more likely reading (waist equals the size number).",
+      "size_system": "mixed",
+      "source_url": "https://frame-store.com/products/the-borrowed-au-natural-clean",
+      "rows": [
+        {
+          "label": "0",
+          "aliases": {},
+          "waist": [
+            22,
+            24
+          ],
+          "hip": [
+            31,
+            33
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "1",
+          "aliases": {},
+          "waist": [
+            25,
+            29
+          ],
+          "hip": [
+            34,
+            38
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "2",
+          "aliases": {},
+          "waist": [
+            30,
+            35.5
+          ],
+          "hip": [
+            39,
+            44.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "unit": "in",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "fit_advice": null
+    },
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Table titled \"Measurements Clothing (in.)\" with BUST/WAIST/HIP ranges per size; no measuring instructions shown. Body inferred from the range format.",
+      "size_system": "letter",
+      "source_url": "https://frame-store.com/products/baby-tee-heather-grey-1",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {
+            "us": "00",
+            "uk": "4",
+            "au": "4",
+            "fr": "32"
+          },
+          "waist": [
+            23,
+            24.75
+          ],
+          "hip": [
+            34.5,
+            35.25
+          ],
+          "bust": [
+            31,
+            32
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "us": "0",
+            "uk": "6",
+            "au": "6",
+            "fr": "32"
+          },
+          "waist": [
+            25,
+            25.75
+          ],
+          "hip": [
+            35.5,
+            36.25
+          ],
+          "bust": [
+            32,
+            33
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "us": "2",
+            "uk": "8",
+            "au": "8",
+            "fr": "36"
+          },
+          "waist": [
+            26,
+            26.75
+          ],
+          "hip": [
+            36.5,
+            37.25
+          ],
+          "bust": [
+            33,
+            34
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S/M",
+          "aliases": {
+            "us": "4",
+            "uk": "8/10",
+            "au": "10",
+            "fr": "38"
+          },
+          "waist": [
+            27,
+            27.75
+          ],
+          "hip": [
+            37.5,
+            38.25
+          ],
+          "bust": [
+            34,
+            35
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "us": "6",
+            "uk": "10",
+            "au": "12",
+            "fr": "40"
+          },
+          "waist": [
+            27.5,
+            28.5
+          ],
+          "hip": [
+            38.5,
+            39.25
+          ],
+          "bust": [
+            35,
+            36
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M/L",
+          "aliases": {
+            "us": "8",
+            "uk": "12",
+            "au": "14",
+            "fr": "42"
+          },
+          "waist": [
+            29,
+            29.75
+          ],
+          "hip": [
+            39.5,
+            40.25
+          ],
+          "bust": [
+            36,
+            37
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "us": "10",
+            "uk": "14",
+            "au": "16",
+            "fr": "44"
+          },
+          "waist": [
+            30,
+            30.75
+          ],
+          "hip": [
+            40.5,
+            41.25
+          ],
+          "bust": [
+            40,
+            42
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L/XL",
+          "aliases": {
+            "us": "12",
+            "uk": "16",
+            "au": "18",
+            "fr": "46"
+          },
+          "waist": [
+            31,
+            31.75
+          ],
+          "hip": [
+            41.5,
+            42.25
+          ],
+          "bust": [
+            42,
+            44
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "us": "14",
+            "uk": "18",
+            "au": "20",
+            "fr": "48"
+          },
+          "waist": [
+            32,
+            33
+          ],
+          "hip": [
+            42.5,
+            43.25
+          ],
+          "bust": [
+            44,
+            46
+          ],
+          "inseam": null
+        }
+      ],
+      "unit": "in",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "fit_advice": null
+    }
+  ],
+  "problems": "FRAME has no standalone size-guide page (all /pages/size-guide variants 404); charts live in the per-product 'Size & Fit' modal and were read from the page's embedded data. Values are published in inches; the CM toggle is computed client-side, so inches were recorded. Denim conversion table's first column is headed 'US' but holds the denim size (23-34); UK/IT/FR aliases kept as published. Conflict: size 34 hip is 43.5 in on denim product pages but 44.5 in in the 'Measurements Bottoms (in.)' table on apparel product pages (all other bottoms values match); 43.5 recorded from the denim page. The apparel chart has unusual steps: M waist 27.5-28.5 overlaps S/M 27-27.75, and bust jumps from 36-37 (M/L) to 40-42 (L); both XXS and XS map to FR 32 and US 0/00. Size-spanning sizes 0/1/2 appear in the denim modal of every jean checked (unclear whether they apply to that style). Product modals also show per-style garment specs (rise, inseam, leg opening) for one size, not recorded. Basis is not stated in visible text for any chart."
+}

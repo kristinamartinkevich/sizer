@@ -1,0 +1,804 @@
+{
+  "brand_id": "abercrombie",
+  "brand_name": "Abercrombie & Fitch",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Classic",
+      "measurement_basis": "body",
+      "basis_evidence": "\"Sizes are designed to fit the following body measurements\"; columns \"Your Waist (cm)\", \"Your Hips (cm)\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.abercrombie.com/shop/eu/p/high-rise-90s-relaxed-jean-60561868",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "eu": "32"
+          },
+          "waist": [
+            57,
+            60
+          ],
+          "hip": [
+            81,
+            84
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "eu": "34"
+          },
+          "waist": [
+            60,
+            62
+          ],
+          "hip": [
+            84,
+            86
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "eu": "36"
+          },
+          "waist": [
+            62,
+            65
+          ],
+          "hip": [
+            86,
+            89
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "eu": "36"
+          },
+          "waist": [
+            65,
+            67
+          ],
+          "hip": [
+            89,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "eu": "38"
+          },
+          "waist": [
+            67,
+            70
+          ],
+          "hip": [
+            91,
+            95
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "eu": "38"
+          },
+          "waist": [
+            70,
+            74
+          ],
+          "hip": [
+            95,
+            98
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "eu": "40"
+          },
+          "waist": [
+            74,
+            77
+          ],
+          "hip": [
+            98,
+            100
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "eu": "40"
+          },
+          "waist": [
+            77,
+            81
+          ],
+          "hip": [
+            100,
+            104
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "eu": "42"
+          },
+          "waist": [
+            81,
+            85
+          ],
+          "hip": [
+            104,
+            108
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "eu": "44"
+          },
+          "waist": [
+            85,
+            90
+          ],
+          "hip": [
+            108,
+            112
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "eu": "46"
+          },
+          "waist": [
+            90,
+            95
+          ],
+          "hip": [
+            112,
+            117
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "eu": "48"
+          },
+          "waist": [
+            95,
+            100
+          ],
+          "hip": [
+            117,
+            122
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "35",
+          "aliases": {
+            "eu": "50"
+          },
+          "waist": [
+            100,
+            107
+          ],
+          "hip": [
+            122,
+            128
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "eu": "52"
+          },
+          "waist": [
+            107,
+            113
+          ],
+          "hip": [
+            128,
+            135
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "37",
+          "aliases": {
+            "eu": "54"
+          },
+          "waist": [
+            113,
+            119
+          ],
+          "hip": [
+            135,
+            141
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "There is a 2 inch (5 cm) difference between inseam lengths. Length by height (cm): Extra Short below 152; Short 152 to 160; Regular 162 to 170; Long 172 and above."
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Curve Love",
+      "measurement_basis": "body",
+      "basis_evidence": "\"Sizes are designed to fit the following body measurements\"; columns \"Your Waist (cm)\", \"Your Hips (cm)\"; Curve Love uses the column \"Curvy Jeans - Your Hips (cm)\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.abercrombie.com/shop/eu/p/high-rise-90s-relaxed-jean-60561868",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "eu": "32"
+          },
+          "waist": [
+            57,
+            60
+          ],
+          "hip": [
+            86,
+            89
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "eu": "34"
+          },
+          "waist": [
+            60,
+            62
+          ],
+          "hip": [
+            89,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "eu": "36"
+          },
+          "waist": [
+            62,
+            65
+          ],
+          "hip": [
+            91,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "eu": "36"
+          },
+          "waist": [
+            65,
+            67
+          ],
+          "hip": [
+            94,
+            97
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "eu": "38"
+          },
+          "waist": [
+            67,
+            70
+          ],
+          "hip": [
+            97,
+            100
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "eu": "38"
+          },
+          "waist": [
+            70,
+            74
+          ],
+          "hip": [
+            100,
+            103
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "eu": "40"
+          },
+          "waist": [
+            74,
+            77
+          ],
+          "hip": [
+            103,
+            105
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "eu": "40"
+          },
+          "waist": [
+            77,
+            81
+          ],
+          "hip": [
+            105,
+            109
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "eu": "42"
+          },
+          "waist": [
+            81,
+            85
+          ],
+          "hip": [
+            109,
+            113
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "eu": "44"
+          },
+          "waist": [
+            85,
+            90
+          ],
+          "hip": [
+            113,
+            117
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "eu": "46"
+          },
+          "waist": [
+            90,
+            95
+          ],
+          "hip": [
+            117,
+            122
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "eu": "48"
+          },
+          "waist": [
+            95,
+            100
+          ],
+          "hip": [
+            122,
+            127
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "35",
+          "aliases": {
+            "eu": "50"
+          },
+          "waist": [
+            100,
+            107
+          ],
+          "hip": [
+            127,
+            134
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "eu": "52"
+          },
+          "waist": [
+            107,
+            113
+          ],
+          "hip": [
+            134,
+            140
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "37",
+          "aliases": {
+            "eu": "54"
+          },
+          "waist": [
+            113,
+            119
+          ],
+          "hip": [
+            140,
+            146
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "There is a 2 inch (5 cm) difference between inseam lengths. Length by height (cm): Extra Short below 152; Short 152 to 160; Regular 162 to 170; Long 172 and above."
+    },
+    {
+      "category": "bottoms",
+      "fit_line": "Classic",
+      "measurement_basis": "body",
+      "basis_evidence": "\"Sizes are designed to fit the following body measurements\"; columns \"Your Waist (cm)\", \"Your Hips (cm)\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.abercrombie.com/shop/eu/p/high-rise-90s-relaxed-jean-60561868",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {
+            "eu": "32-34"
+          },
+          "waist": [
+            57,
+            62
+          ],
+          "hip": [
+            81,
+            86
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "36"
+          },
+          "waist": [
+            62,
+            67
+          ],
+          "hip": [
+            86,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "38"
+          },
+          "waist": [
+            67,
+            74
+          ],
+          "hip": [
+            91,
+            98
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "40"
+          },
+          "waist": [
+            74,
+            81
+          ],
+          "hip": [
+            98,
+            104
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "42-44"
+          },
+          "waist": [
+            81,
+            90
+          ],
+          "hip": [
+            104,
+            112
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "eu": "46-48"
+          },
+          "waist": [
+            90,
+            100
+          ],
+          "hip": [
+            112,
+            122
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XXL",
+          "aliases": {
+            "eu": "50-52"
+          },
+          "waist": [
+            100,
+            113
+          ],
+          "hip": [
+            122,
+            135
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XXXL",
+          "aliases": {
+            "eu": "54"
+          },
+          "waist": [
+            113,
+            125
+          ],
+          "hip": [
+            135,
+            147
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "bottoms",
+      "fit_line": "Curve Love",
+      "measurement_basis": "body",
+      "basis_evidence": "\"Sizes are designed to fit the following body measurements\"; columns \"Your Waist (cm)\", \"Your Hips (cm)\"; Curve Love uses the column \"Curvy Jeans - Your Hips (cm)\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.abercrombie.com/shop/eu/p/high-rise-90s-relaxed-jean-60561868",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {
+            "eu": "32-34"
+          },
+          "waist": [
+            57,
+            62
+          ],
+          "hip": [
+            86,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "36"
+          },
+          "waist": [
+            62,
+            67
+          ],
+          "hip": [
+            91,
+            97
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "38"
+          },
+          "waist": [
+            67,
+            74
+          ],
+          "hip": [
+            97,
+            103
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "40"
+          },
+          "waist": [
+            74,
+            81
+          ],
+          "hip": [
+            103,
+            109
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "42-44"
+          },
+          "waist": [
+            81,
+            90
+          ],
+          "hip": [
+            109,
+            117
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "eu": "46-48"
+          },
+          "waist": [
+            90,
+            100
+          ],
+          "hip": [
+            117,
+            127
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XXL",
+          "aliases": {
+            "eu": "50-52"
+          },
+          "waist": [
+            100,
+            113
+          ],
+          "hip": [
+            127,
+            140
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XXXL",
+          "aliases": {
+            "eu": "54"
+          },
+          "waist": [
+            113,
+            125
+          ],
+          "hip": [
+            140,
+            152
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "abercrombie.com redirects to the EU store from this location, and there is no standalone size-chart page (/help/size-charts returns 404); the chart was read from the product-page \"Size Guide\" dialog with region EU and CM selected. An IN option and USA/Italy/UK/Japan/Korea/China region views exist but were not captured, so no US aliases are recorded. Curve Love has the same waist ranges with larger hips (fit_line). Range ends are shared between neighbouring sizes (e.g. 60 ends 23 and starts 24). EU aliases repeat (25 and 26 are both EU 36). Inseam is not per size: lengths are Extra Short / Short / Regular / Long (an Extra Long length is sold but has no height band). The same dialog shows per-product garment measurements (e.g. Regular Inseam 31.50 for size 28 / 6) that vary by style; not recorded."
+}

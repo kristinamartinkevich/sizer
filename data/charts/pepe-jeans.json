@@ -1,0 +1,499 @@
+{
+  "brand_id": "pepe-jeans",
+  "brand_name": "Pepe Jeans",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Women's JEANS size guide table (aliases from its CONVERSION TABLE tab)",
+      "measurement_basis": "body",
+      "basis_evidence": "Site size-guide copy: \"How to take body measurements\" ... \"WAIST: Measure around your natural waistline at the belly button.\" \"HIP: Measure at the widest part of your hip.\" Table rows are labelled WAIST CIRC. / HIP CIRC.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.pepejeans.com/uk/en_gb/pd/venus---low-rise-straight-fit-jeans-PL2048485.html?wash=4AD&color=000",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XXS",
+            "eu": "34",
+            "uk": "4"
+          },
+          "waist": [
+            61,
+            61
+          ],
+          "hip": [
+            86.4,
+            86.4
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS",
+            "eu": "34/36",
+            "uk": "6"
+          },
+          "waist": [
+            63.5,
+            63.5
+          ],
+          "hip": [
+            88.9,
+            88.9
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "XS",
+            "eu": "36"
+          },
+          "waist": [
+            66,
+            66
+          ],
+          "hip": [
+            91.4,
+            91.4
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "eu": "36/38",
+            "uk": "8"
+          },
+          "waist": [
+            68.4,
+            68.4
+          ],
+          "hip": [
+            94,
+            94
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "S",
+            "eu": "38",
+            "uk": "10"
+          },
+          "waist": [
+            71,
+            71
+          ],
+          "hip": [
+            95.7,
+            95.7
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "eu": "38/40",
+            "uk": "12"
+          },
+          "waist": [
+            73.7,
+            73.7
+          ],
+          "hip": [
+            98.4,
+            98.4
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "M",
+            "eu": "40",
+            "uk": "14"
+          },
+          "waist": [
+            76.2,
+            76.2
+          ],
+          "hip": [
+            100.7,
+            100.7
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "L",
+            "eu": "40/42",
+            "uk": "16"
+          },
+          "waist": [
+            78.7,
+            78.7
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "L",
+            "eu": "42"
+          },
+          "waist": [
+            81.3,
+            81.3
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "XL",
+            "eu": "42/44",
+            "uk": "18"
+          },
+          "waist": [
+            83.2,
+            83.2
+          ],
+          "hip": [
+            108.6,
+            108.6
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XL",
+            "eu": "44"
+          },
+          "waist": [
+            86.4,
+            86.4
+          ],
+          "hip": [
+            111.1,
+            111.1
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Women's JEANS length tables (NUMERICAL LENGTH L28-L34 and ALPHA LENGTH RE/LO)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"INSIDE LEG: Measure from the top of your inside leg at the crotch to the ground without shoes.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.pepejeans.com/uk/en_gb/pd/venus---low-rise-straight-fit-jeans-PL2048485.html?wash=4AD&color=000",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "L28",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            71.2,
+            71.2
+          ]
+        },
+        {
+          "label": "L30",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76.2,
+            76.2
+          ]
+        },
+        {
+          "label": "L32",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            81.3,
+            81.3
+          ]
+        },
+        {
+          "label": "L34",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            85.3,
+            85.3
+          ]
+        },
+        {
+          "label": "RE",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            71.2,
+            71.2
+          ]
+        },
+        {
+          "label": "LO",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76.2,
+            76.2
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": "Women's SHIRTS size guide table",
+      "measurement_basis": "body",
+      "basis_evidence": "Site size-guide copy: \"How to take body measurements\" ... \"BUST: Measure around the fullest part of your bust and shoulder blades by dropping your arms loosely to the sides.\" \"WAIST: Measure around your natural waistline at the belly button.\" \"HIP: Measure at the widest part of your hip.\" Table rows are labelled WAIST CIRC. / HIP CIRC.",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.pepejeans.com/uk/en_gb/pd/ornamental-print-fluid-blouse-PL3051569.html?color=765",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            90,
+            90
+          ],
+          "bust": [
+            82,
+            82
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            94,
+            94
+          ],
+          "bust": [
+            86,
+            86
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            74,
+            74
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": [
+            92,
+            92
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": [
+            98,
+            98
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            87,
+            87
+          ],
+          "hip": [
+            112,
+            112
+          ],
+          "bust": [
+            104,
+            104
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": "Women's SHIRTS size guide, DENIM SIZE table",
+      "measurement_basis": "body",
+      "basis_evidence": "Site size-guide copy: \"How to take body measurements\" ... \"BUST: Measure around the fullest part of your bust and shoulder blades by dropping your arms loosely to the sides.\" \"WAIST: Measure around your natural waistline at the belly button.\" \"HIP: Measure at the widest part of your hip.\" Table rows are labelled WAIST CIRC. / HIP CIRC.",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://www.pepejeans.com/uk/en_gb/pd/ornamental-print-fluid-blouse-PL3051569.html?color=765",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            90,
+            90
+          ],
+          "bust": [
+            82,
+            82
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            94,
+            94
+          ],
+          "bust": [
+            86,
+            86
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            98,
+            98
+          ],
+          "bust": [
+            90,
+            90
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            102,
+            102
+          ],
+          "bust": [
+            94,
+            94
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": [
+            98,
+            98
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "No standalone size-guide page works any more: pepejeans.com/en_gb/pepejeans-size-guide-ladies-jeans.html and /uk/en_gb/size-guide.html return 'page can't be found'; the charts were read from the 'View Size Chart' panel on UK product pages (Venus jeans, a fluid blouse), which may be the generic category chart. Body-vs-garment wording ('How to take body measurements') comes from the site's size-guide copy embedded in the page, not from text visible in the panel itself. The panel offers CM/IN toggles; cm recorded. The jeans conversion tab gives EU 34..44 (with 34/36-style halves) whereas the shirts conversion tab maps the same 24-34 sizes to EUR 30..50; both copied as published. UK '-' means no UK equivalent published (omitted). Jeans table also gives THIGH; shirts table gives SHOULDER, LONG SLEEVE, BICEPS (not recorded). The jeans length table is per leg length, not per waist size, so it is a separate chart labelled L28..L34 / RE / LO."
+}

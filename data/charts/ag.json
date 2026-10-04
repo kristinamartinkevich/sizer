@@ -1,0 +1,227 @@
+{
+  "brand_id": "ag",
+  "brand_name": "AG Jeans",
+  "status": "found",
+  "charts": [
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "No measuring instructions on the page; the chart lists Hip and Bust as ranges per size (e.g. Hip \"86.5 - 89\", Bust \"79 - 81.5\"), which is the form of a body-measurement chart. Basis inferred, not stated.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.agjeans.com/pages/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "letter": "XXS",
+            "us": "00"
+          },
+          "waist": null,
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            76,
+            76
+          ],
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XS",
+            "us": "0"
+          },
+          "waist": null,
+          "hip": [
+            86.5,
+            89
+          ],
+          "bust": [
+            79,
+            81.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS",
+            "us": "2"
+          },
+          "waist": null,
+          "hip": [
+            86.5,
+            89
+          ],
+          "bust": [
+            79,
+            81.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "S",
+            "us": "4"
+          },
+          "waist": null,
+          "hip": [
+            91.5,
+            94
+          ],
+          "bust": [
+            84,
+            86.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S",
+            "us": "4"
+          },
+          "waist": null,
+          "hip": [
+            91.5,
+            94
+          ],
+          "bust": [
+            84,
+            86.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "M",
+            "us": "6"
+          },
+          "waist": null,
+          "hip": [
+            96.5,
+            99
+          ],
+          "bust": [
+            89,
+            91.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M",
+            "us": "8"
+          },
+          "waist": null,
+          "hip": [
+            96.5,
+            99
+          ],
+          "bust": [
+            89,
+            91.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "L",
+            "us": "10"
+          },
+          "waist": null,
+          "hip": [
+            101.5,
+            105.5
+          ],
+          "bust": [
+            94,
+            96
+          ],
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "L",
+            "us": "12"
+          },
+          "waist": null,
+          "hip": [
+            101.5,
+            105.5
+          ],
+          "bust": [
+            94,
+            96
+          ],
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XL",
+            "us": "14"
+          },
+          "waist": null,
+          "hip": [
+            109,
+            113
+          ],
+          "bust": [
+            99,
+            101.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "XL",
+            "us": "16"
+          },
+          "waist": null,
+          "hip": [
+            109,
+            113
+          ],
+          "bust": [
+            99,
+            101.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XXL",
+            "us": "18"
+          },
+          "waist": null,
+          "hip": [
+            114.5,
+            118
+          ],
+          "bust": [
+            106.5,
+            110.5
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "The first column is headed 'Waist' but holds the denim size (23-34) and is identical in the INCH and CM tables, so it is a size label, not a measured waist; waist is therefore null. Letter size, hip and bust cells span two denim sizes (rowspan), so both sizes in each pair share the same hip/bust range. Sizes 26 and 27 are both published as US 4 (no US 4/6 split). The XXL hip/bust cells have rowspan=2 but there is no size 35 row. The page gives no body-vs-garment wording; 'body' is inferred from the range format. Inches also published (hip 33, 34-35, 36-37, 38-39, 40-41.5, 42.5-44, 45-46.5; bust 30, 31-32, 33-34, 35-36, 37-38.5, 39.5-41, 42-43.5). No inseam chart."
+}

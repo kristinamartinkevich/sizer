@@ -1,0 +1,543 @@
+{
+  "brand_id": "weekday",
+  "brand_name": "Weekday",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "\"Weekday, Monki and Cheap Monday sizing is based on the same body measurements\"; How to measure: \"Waist : Measure around your natural waistline, at the smallest part of your waist.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.weekday.com/en-ww/customer-service/size-guide/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "eu": "32",
+            "letter": "XXS"
+          },
+          "waist": [
+            59.5,
+            59.5
+          ],
+          "hip": [
+            83.5,
+            83.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "eu": "32",
+            "letter": "XXS"
+          },
+          "waist": [
+            62,
+            62
+          ],
+          "hip": [
+            86,
+            86
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "eu": "34",
+            "letter": "XS"
+          },
+          "waist": [
+            64.5,
+            64.5
+          ],
+          "hip": [
+            88.5,
+            88.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "eu": "34",
+            "letter": "XS"
+          },
+          "waist": [
+            67,
+            67
+          ],
+          "hip": [
+            91,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "eu": "36",
+            "letter": "S"
+          },
+          "waist": [
+            69.5,
+            69.5
+          ],
+          "hip": [
+            93.5,
+            93.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "eu": "38",
+            "letter": "S"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "eu": "40",
+            "letter": "M"
+          },
+          "waist": [
+            74.5,
+            74.5
+          ],
+          "hip": [
+            98.5,
+            98.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "eu": "40",
+            "letter": "M"
+          },
+          "waist": [
+            77,
+            77
+          ],
+          "hip": [
+            101,
+            101
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "eu": "42",
+            "letter": "M"
+          },
+          "waist": [
+            79.5,
+            79.5
+          ],
+          "hip": [
+            103.5,
+            103.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "eu": "42",
+            "letter": "M"
+          },
+          "waist": [
+            82,
+            82
+          ],
+          "hip": [
+            106,
+            106
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "eu": "44",
+            "letter": "L"
+          },
+          "waist": [
+            84.5,
+            84.5
+          ],
+          "hip": [
+            108.5,
+            108.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "eu": "44",
+            "letter": "L"
+          },
+          "waist": [
+            87,
+            87
+          ],
+          "hip": [
+            111,
+            111
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "eu": "46",
+            "letter": "L"
+          },
+          "waist": [
+            92,
+            92
+          ],
+          "hip": [
+            116,
+            116
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "eu": "48",
+            "letter": "XL"
+          },
+          "waist": [
+            97,
+            97
+          ],
+          "hip": [
+            121,
+            121
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "eu": "50",
+            "letter": "XL"
+          },
+          "waist": [
+            102,
+            102
+          ],
+          "hip": [
+            126,
+            126
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Weekday jeans come in different fits, rises, leg shapes and washes, so start with your usual size, then check the product page for fit notes, fabric details and customer reviews with real sizing feedback."
+    },
+    {
+      "category": "general",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "\"Weekday, Monki and Cheap Monday sizing is based on the same body measurements\"; How to measure: \"Waist : Measure around your natural waistline, at the smallest part of your waist.\"",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.weekday.com/en-ww/customer-service/size-guide/",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XXS",
+            "ca": "TTP",
+            "us": "0",
+            "uk": "4"
+          },
+          "waist": [
+            58,
+            62
+          ],
+          "hip": [
+            82,
+            86
+          ],
+          "bust": [
+            74,
+            78
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "ca": "TP",
+            "us": "2",
+            "uk": "6"
+          },
+          "waist": [
+            62,
+            66
+          ],
+          "hip": [
+            86,
+            90
+          ],
+          "bust": [
+            78,
+            82
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "ca": "P",
+            "us": "4",
+            "uk": "8"
+          },
+          "waist": [
+            66,
+            70
+          ],
+          "hip": [
+            90,
+            94
+          ],
+          "bust": [
+            82,
+            86
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "S",
+            "ca": "P",
+            "us": "6",
+            "uk": "10"
+          },
+          "waist": [
+            70,
+            74
+          ],
+          "hip": [
+            94,
+            97.5
+          ],
+          "bust": [
+            86,
+            90
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "M",
+            "ca": "M",
+            "us": "8",
+            "uk": "12"
+          },
+          "waist": [
+            74,
+            78
+          ],
+          "hip": [
+            97.5,
+            100.5
+          ],
+          "bust": [
+            90,
+            94
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "M",
+            "ca": "M",
+            "us": "10",
+            "uk": "14"
+          },
+          "waist": [
+            78,
+            82.5
+          ],
+          "hip": [
+            100.5,
+            103.5
+          ],
+          "bust": [
+            94,
+            98
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "L",
+            "ca": "G",
+            "us": "12",
+            "uk": "16"
+          },
+          "waist": [
+            82.5,
+            87.5
+          ],
+          "hip": [
+            103.5,
+            106.5
+          ],
+          "bust": [
+            98,
+            102
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "46",
+          "aliases": {
+            "letter": "L",
+            "ca": "G",
+            "us": "14",
+            "uk": "18"
+          },
+          "waist": [
+            87.5,
+            93
+          ],
+          "hip": [
+            106.5,
+            110.5
+          ],
+          "bust": [
+            102,
+            107
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "48",
+          "aliases": {
+            "letter": "XL",
+            "ca": "TG",
+            "us": "16",
+            "uk": "20"
+          },
+          "waist": [
+            93,
+            99
+          ],
+          "hip": [
+            110.5,
+            115.5
+          ],
+          "bust": [
+            107,
+            113
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "50",
+          "aliases": {
+            "letter": "XL",
+            "ca": "TG",
+            "us": "18",
+            "uk": "22"
+          },
+          "waist": [
+            99,
+            105
+          ],
+          "hip": [
+            115.5,
+            120.5
+          ],
+          "bust": [
+            113,
+            119
+          ],
+          "inseam": [
+            79,
+            79
+          ]
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Charts are published only as images on the size-guide page (\"size-guide-conversion-chart_denim_women\" and \"..._clothing_women\"); values read from the images (decimal commas, e.g. 59,5, written as 59.5). Hip is the row labelled \"SEAT CM\". The denim chart has no inseam and no waist sizes 35, 37 or 39. In the denim image EUR and letter sizes span columns: EU 32 covers 23-24, 34 covers 25-26, 40 covers 29-30, 42 covers 31-32, 44 covers 33-34; EU 46/48/50 sit over 36/38/40 (adjacent cells are blank). Letter M spans 29-32 in denim but EU 40-42 in clothing. The general chart gives a single inseam 79 cm for every size; \"CA\" aliases are Canadian-French letter sizes (TTP, TP, P, M, G, TG). The page says Curve jeans exist (\"more room through the hip and seat\") but no separate Curve chart is published."
+}

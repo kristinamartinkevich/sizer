@@ -1,0 +1,215 @@
+{
+  "brand_id": "diesel",
+  "brand_name": "Diesel",
+  "status": "partial",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Diesel Size Chart (women's jeans, product-page size chart panel)",
+      "measurement_basis": null,
+      "basis_evidence": "Not applicable: the official Diesel Size Chart is a conversion table only and publishes no body or garment measurements.",
+      "unit": null,
+      "size_system": "denim_waist",
+      "source_url": "https://uk.diesel.com/en/regular/regular-jeans-1971-d-sent-007ei-blue/A19869007EI01.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "23",
+          "aliases": {
+            "letter": "XXS/XS",
+            "it": "36",
+            "us": "0",
+            "de": "30",
+            "fr": "32",
+            "uk": "4",
+            "ru": "38"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XS",
+            "it": "38",
+            "us": "2",
+            "de": "32",
+            "fr": "34",
+            "uk": "6",
+            "ru": "40"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XS/S",
+            "it": "38/40",
+            "us": "2/4",
+            "de": "32/34",
+            "fr": "34/36",
+            "uk": "6/8",
+            "ru": "40/42"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "S",
+            "it": "40",
+            "us": "4",
+            "de": "34",
+            "fr": "36",
+            "uk": "8",
+            "ru": "42"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "S/M",
+            "it": "42",
+            "us": "6",
+            "de": "36",
+            "fr": "38",
+            "uk": "10",
+            "ru": "44"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "M",
+            "it": "42/44",
+            "us": "6/8",
+            "de": "36/38",
+            "fr": "38/40",
+            "uk": "10/12",
+            "ru": "44/46"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "M/L",
+            "it": "44",
+            "us": "8",
+            "de": "38",
+            "fr": "40",
+            "uk": "12",
+            "ru": "46"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "L",
+            "it": "44/46",
+            "us": "8/10",
+            "de": "38/40",
+            "fr": "40/42",
+            "uk": "12/14",
+            "ru": "46/48"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "L/XL",
+            "it": "46",
+            "us": "10",
+            "de": "40",
+            "fr": "42",
+            "uk": "14",
+            "ru": "48"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XL",
+            "it": "48",
+            "us": "12",
+            "de": "42",
+            "fr": "44",
+            "uk": "16",
+            "ru": "50"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "XL/XXL",
+            "it": "48/50",
+            "us": "12/14",
+            "de": "42/44",
+            "fr": "44/46",
+            "uk": "16/18",
+            "ru": "50/52"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XXL",
+            "it": "50",
+            "us": "14",
+            "de": "44",
+            "fr": "46",
+            "uk": "18",
+            "ru": "52"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Diesel's own site (uk.diesel.com and diesel.com/en-us, women's jeans product pages, 'Size chart' panel) shows only a conversion table (Diesel Size / Intern. Size / Ita / Us / De / Fr/Es / Uk / Ru) with no waist or hip measurements; the women's denim guide (global.diesel.com/woman/denim-guide/) describes fits only. The table is staggered: Diesel sizes 23, 25, 27-31 and 33 each straddle two rows of the conversion columns, so those aliases are recorded as 'A/B' exactly as the spans fall (e.g. 28 spans IT 42 and 44). measurement_basis and unit are null because no measurements exist. Third-party sites (footshop.eu, size-charts.com) publish waist/hip cm values labelled as Diesel, but they are not the brand's chart and were not used. Extra alias keys used: it, de, fr, uk, ru."
+}

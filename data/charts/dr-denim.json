@@ -1,0 +1,2672 @@
+{
+  "brand_id": "dr-denim",
+  "brand_name": "Dr. Denim",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Addy Mid Straight",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/addy-mid-straight-bay-mid-fade",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            38,
+            38
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42,
+            42
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Arch",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/arch-canyon-mid-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            33.3,
+            33.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            38.3,
+            38.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            40.8,
+            40.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42,
+            42
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            43.3,
+            43.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 74.6/79.5/84.5 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Arch Mid Straight",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/arch-mid-straight-tar-mid-grey-retro",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            33.3,
+            33.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            38.3,
+            38.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            40.8,
+            40.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42,
+            42
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            43.3,
+            43.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 74.6/79.5/84.5 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Dace Mid Wide Capri",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/dace-haze-dark-shade",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            35.3,
+            35.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            36.5,
+            36.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            37.8,
+            37.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            40.3,
+            40.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            41.5,
+            41.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            42.8,
+            42.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            44,
+            44
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            45.3,
+            45.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            48,
+            48
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Donna",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/donna-washed-olive",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            32.35,
+            32.35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            33.6,
+            33.6
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            34.9,
+            34.9
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            36.1,
+            36.1
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            37.35,
+            37.35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            38.6,
+            38.6
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            39.85,
+            39.85
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            41.1,
+            41.1
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            42.35,
+            42.35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 78/83/88 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Donna High Relaxed",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/donna-high-relaxed-stream-rinse",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            32.35,
+            32.35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            33.6,
+            33.6
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            34.9,
+            34.9
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            36.1,
+            36.1
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            37.35,
+            37.35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            38.6,
+            38.6
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            39.85,
+            39.85
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            41.1,
+            41.1
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            42.35,
+            42.35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Elba Mid Bootcut",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/elba-mid-bootcut-tar-mid-grey-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            35.8,
+            35.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            38,
+            38
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42,
+            42
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 78/83/88 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Hill Low Relaxed",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/hill-low-relaxed-stream-mid-fade",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            36.25,
+            36.25
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            37.5,
+            37.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            38.5,
+            38.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            41.25,
+            41.25
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            42.5,
+            42.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            43.75,
+            43.75
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            45,
+            45
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            46.25,
+            46.25
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 78/83/88 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Kaya Low Capri",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/kaya-low-capri-bay-dark-retro-vintage",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37.5,
+            37.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42.5,
+            42.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            44,
+            44
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            54,
+            54
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Lexy Mid Bootcut",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/lexy-mid-bootcut-vale-mid-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Lexy Mid Skinny",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/lexy-mid-skinny-black-metal",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Lexy Mid Straight",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/lexy-mid-straight-cape-mid-plain",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Macy Mid Flare",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/macy-mid-flare-black",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 79/84/89 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Moxy Flare",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/moxy-flare-cape-light-vintage-worn",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Moxy High Flare",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/moxy-high-flare-dark-grey-mist",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Moxy High Skinny",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/moxy-high-skinny-cape-mid-dirt-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            28,
+            28
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            30,
+            30
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            32,
+            32
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Moxy High Straight",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/moxy-high-straight-vale-sky-plain",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Moxy High Straight Patch Pocket",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/moxy-high-straight-patch-pocket-cape-mid-retro",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Moxy Straight",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/moxy-straight-cape-mid-plain",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Nanci Mid Barrel",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/nanci-mid-barrel-black-leopard",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            38,
+            38
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42,
+            42
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 71/76/81 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Nanci Mid Barrel Seam",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/nanci-mid-barrel-seam-drift-light-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            34.5,
+            34.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            38,
+            38
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            39.5,
+            39.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            41,
+            41
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            42,
+            42
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 71/76/81 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Nika Mid Straight",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/nika-mid-straight-drift-light-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            36.5,
+            36.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            37.8,
+            37.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            41.5,
+            41.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            44,
+            44
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            45,
+            45
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 72/87/82 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Nika Mid Straight Worker",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/nika-mid-straight-worker-aged-black",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            36.5,
+            36.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            37.8,
+            37.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            41.5,
+            41.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            44,
+            44
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            45,
+            45
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 72/87/82 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Nora High Cropped",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/nora-high-cropped-light-retro",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            31.8,
+            31.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            35.5,
+            35.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            36.8,
+            36.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            38,
+            38
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            39.3,
+            39.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            40.5,
+            40.5
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            41.8,
+            41.8
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 70/75/80 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Plenty Mid Skinny",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/plenty-mid-skinny-black",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            36,
+            36
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Rhue Low Wide",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://drdenim.com/products/rhue-low-wide-stream-mid-used",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {},
+          "waist": [
+            34,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {},
+          "waist": [
+            35.3,
+            35.3
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {},
+          "waist": [
+            36.6,
+            36.6
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {},
+          "waist": [
+            38,
+            38
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {},
+          "waist": [
+            39,
+            39
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {},
+          "waist": [
+            40,
+            40
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {},
+          "waist": [
+            41.6,
+            41.6
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {},
+          "waist": [
+            43,
+            43
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {},
+          "waist": [
+            44,
+            44
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": "Inseam by length option: 76/81/86 (same for every size, as published)"
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Solitaire High Skinny",
+      "measurement_basis": "garment",
+      "basis_evidence": "\"Measure a pair of your favorite jeans and compare to the table below to find the perfect fit!\"; How to measure page: \"Please lay a pair of your jeans flat on a smooth and even surface, then measure.\"",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://drdenim.com/products/solitaire-high-skinny-black",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            29,
+            29
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            31,
+            31
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            33,
+            33
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            35,
+            35
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            37,
+            37
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            79,
+            79
+          ]
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Dr. Denim publishes no body-measurement chart: drdenim.com/pages/size-guide is 404 and the How to measure page says to measure a pair of your own jeans laid flat. Each product page carries a per-style GARMENT table (CM): Waist (flat, i.e. half circumference, e.g. 32.35 for size 24), Rise, Thigh, Inseam, Leg opening. No hip measurement is published, so hip is null everywhere. One product per women's jeans style (27 styles with tables) was read on 2026-10-04 via the store's product pages; 15 styles had no table (Echo High Straight, Echo High Straight Button, Echo Mid Straight, Zila Mid Wide, Zila Mid Wide Patch Pocket, Straw Mid Slim, Kily Low Bootcut, Ary Low Baggy, Rhue High Wide, Rhue High Wide Pleated, Lexy Mid Skinny Preggo, Moxy Petite, Moxy Tall, Moxy Tall High Skinny, Solitaire High Petite). Some styles are sized XS-XL, others 24-32. Inseam values like 76/81/86 are per length option, so per-row inseam is null and the options are in fit_advice. Inconsistencies copied as published: 'Donna' and 'Donna High Relaxed' have identical waists but inseams 78/83/88 vs 76/81/86; Nika Mid Straight (and Worker) inseam reads 72/87/82 (likely a typo for 72/77/82); Arch size 25 and 26 share waist 34.5; Plenty Mid Skinny L waist 36 vs XL 37. Waist values are garment half-measurements and must not be compared directly to body circumference."
+}

@@ -1,0 +1,391 @@
+{
+  "brand_id": "acne",
+  "brand_name": "Acne Studios",
+  "status": "found",
+  "charts": [
+    {
+      "category": "bottoms",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Table is under the heading \"Body Measurements\" > \"Woman Bottoms\" (separate from \"Size conversion\")",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.acnestudios.com/us/en/help/size-guide.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "XXXS",
+            "denim_waist": "22",
+            "uk": "2",
+            "us": "0",
+            "fr": "32",
+            "it": "36"
+          },
+          "waist": [
+            56,
+            56
+          ],
+          "hip": [
+            82,
+            82
+          ],
+          "bust": null,
+          "inseam": [
+            76,
+            76
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XXS",
+            "denim_waist": "23 - 24",
+            "uk": "4",
+            "us": "0",
+            "fr": "34",
+            "it": "38"
+          },
+          "waist": [
+            60,
+            60
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": null,
+          "inseam": [
+            80,
+            80
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "denim_waist": "25 - 26",
+            "uk": "6",
+            "us": "2",
+            "fr": "36",
+            "it": "40"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": null,
+          "inseam": [
+            81,
+            81
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "denim_waist": "27 - 28",
+            "uk": "8",
+            "us": "4",
+            "fr": "38",
+            "it": "42"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": null,
+          "inseam": [
+            82,
+            82
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "M",
+            "denim_waist": "28 - 29",
+            "uk": "10",
+            "us": "6",
+            "fr": "40",
+            "it": "44"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": null,
+          "inseam": [
+            83,
+            83
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "L",
+            "denim_waist": "30 - 31",
+            "uk": "12",
+            "us": "8",
+            "fr": "42",
+            "it": "46"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": null,
+          "inseam": [
+            84,
+            84
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "XL",
+            "denim_waist": "32 - 33",
+            "uk": "14",
+            "us": "10",
+            "fr": "44",
+            "it": "48"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": null,
+          "inseam": [
+            85,
+            85
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "XXL",
+            "denim_waist": "34 - 36",
+            "uk": "16",
+            "us": "12",
+            "fr": "46",
+            "it": "50"
+          },
+          "waist": [
+            84,
+            84
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": null,
+          "inseam": [
+            86,
+            86
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "Table is under the heading \"Body Measurements\" > \"Woman Tops\"; bust value is the row labelled \"Chest\"",
+      "unit": "cm",
+      "size_system": "eu",
+      "source_url": "https://www.acnestudios.com/us/en/help/size-guide.html",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "XXS",
+            "uk": "2",
+            "us": "0",
+            "fr": "32",
+            "it": "36"
+          },
+          "waist": [
+            56,
+            56
+          ],
+          "hip": [
+            82,
+            82
+          ],
+          "bust": [
+            72,
+            72
+          ],
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "XXS",
+            "uk": "4",
+            "us": "0",
+            "fr": "34",
+            "it": "38"
+          },
+          "waist": [
+            60,
+            60
+          ],
+          "hip": [
+            84,
+            84
+          ],
+          "bust": [
+            76,
+            76
+          ],
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XS",
+            "uk": "6",
+            "us": "2",
+            "fr": "36",
+            "it": "40"
+          },
+          "waist": [
+            64,
+            64
+          ],
+          "hip": [
+            88,
+            88
+          ],
+          "bust": [
+            80,
+            80
+          ],
+          "inseam": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "S",
+            "uk": "8",
+            "us": "4",
+            "fr": "38",
+            "it": "42"
+          },
+          "waist": [
+            68,
+            68
+          ],
+          "hip": [
+            92,
+            92
+          ],
+          "bust": [
+            84,
+            84
+          ],
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "M",
+            "uk": "10",
+            "us": "6",
+            "fr": "40",
+            "it": "44"
+          },
+          "waist": [
+            72,
+            72
+          ],
+          "hip": [
+            96,
+            96
+          ],
+          "bust": [
+            88,
+            88
+          ],
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "L",
+            "uk": "12",
+            "us": "8",
+            "fr": "42",
+            "it": "46"
+          },
+          "waist": [
+            76,
+            76
+          ],
+          "hip": [
+            100,
+            100
+          ],
+          "bust": [
+            92,
+            92
+          ],
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "XL",
+            "uk": "14",
+            "us": "10",
+            "fr": "44",
+            "it": "48"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            104,
+            104
+          ],
+          "bust": [
+            96,
+            96
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Inches tables also published. Woman Bottoms inches table lists Inseam 44 in for 44/XXL while the cm table says 86 cm (about 34 in), so the inch value looks like a typo on the site; cm values recorded. Denim waist aliases are published as ranges (e.g. \"27 - 28\") and 28 appears in both S and M. Tops 30 and 32 are both labelled XXS. A separate \"Woman Tops (oversized)\" body chart (range sizes 32-34/XXS/XS etc.) exists and is not recorded."
+}

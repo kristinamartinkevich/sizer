@@ -1,0 +1,487 @@
+{
+  "brand_id": "calvin-klein-jeans",
+  "brand_name": "Calvin Klein Jeans",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Calvin Klein Jeans Bottoms",
+      "measurement_basis": "body",
+      "basis_evidence": "\"How To Measure Myself? Waist: Measure around 5cm below natural waist where the waistband of trousers normally sits on the body.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.calvinklein.co.uk/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {
+            "letter": "XXS",
+            "us": "00",
+            "eu": "＜ 32",
+            "uk": "＜ 4",
+            "fr": "＜ 34",
+            "it": "＜38"
+          },
+          "waist": [
+            59.7,
+            62.23
+          ],
+          "hip": [
+            83.82,
+            86.36
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            49.21,
+            50.8
+          ]
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "letter": "XXS-XS",
+            "us": "0",
+            "eu": "34",
+            "uk": "4",
+            "fr": "34",
+            "it": "38"
+          },
+          "waist": [
+            62.23,
+            64.77
+          ],
+          "hip": [
+            86.36,
+            88.9
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            50.8,
+            52.39
+          ]
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "letter": "XS",
+            "us": "2",
+            "eu": "34 - 36",
+            "uk": "6",
+            "fr": "36",
+            "it": "40"
+          },
+          "waist": [
+            64.77,
+            67.31
+          ],
+          "hip": [
+            88.9,
+            91.44
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            52.39,
+            53.98
+          ]
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "letter": "XS-S",
+            "us": "4",
+            "eu": "36",
+            "uk": "6 - 8",
+            "fr": "36 - 38",
+            "it": "40 - 42"
+          },
+          "waist": [
+            67.31,
+            69.85
+          ],
+          "hip": [
+            91.44,
+            93.98
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            53.98,
+            55.56
+          ]
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "letter": "S",
+            "us": "6",
+            "eu": "38 - 40",
+            "uk": "10",
+            "fr": "38",
+            "it": "42"
+          },
+          "waist": [
+            69.85,
+            72.39
+          ],
+          "hip": [
+            93.98,
+            96.52
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            55.56,
+            57.15
+          ]
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "letter": "S-M",
+            "us": "8",
+            "eu": "40",
+            "uk": "10 - 12",
+            "fr": "38 - 40",
+            "it": "42 - 44"
+          },
+          "waist": [
+            72.39,
+            74.39
+          ],
+          "hip": [
+            96.52,
+            99.06
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            57.15,
+            58.74
+          ]
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "letter": "M",
+            "us": "10",
+            "eu": "42 - 44",
+            "uk": "14",
+            "fr": "40",
+            "it": "44"
+          },
+          "waist": [
+            74.39,
+            77.47
+          ],
+          "hip": [
+            99.06,
+            101.6
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            58.74,
+            60.33
+          ]
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "letter": "M-L",
+            "us": "12",
+            "eu": "44",
+            "uk": "16 - 18",
+            "fr": "40 - 42",
+            "it": "44 - 46"
+          },
+          "waist": [
+            77.47,
+            81.28
+          ],
+          "hip": [
+            101.6,
+            105.41
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            60.33,
+            62.55
+          ]
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "letter": "L",
+            "us": "14",
+            "eu": "46 - 48",
+            "uk": "18",
+            "fr": "42",
+            "it": "46"
+          },
+          "waist": [
+            81.28,
+            85.09
+          ],
+          "hip": [
+            105.41,
+            109.22
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            62.55,
+            64.77
+          ]
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "letter": "L-XL",
+            "us": "16",
+            "eu": "48",
+            "uk": "20 - 22",
+            "fr": "42 - 44",
+            "it": "46 - 48"
+          },
+          "waist": [
+            85.09,
+            88.9
+          ],
+          "hip": [
+            109.22,
+            113.03
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            64.77,
+            67
+          ]
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "XL",
+            "us": "18",
+            "eu": "50",
+            "uk": "22",
+            "fr": "44",
+            "it": "48"
+          },
+          "waist": [
+            88.9,
+            92.71
+          ],
+          "hip": [
+            113.03,
+            116.84
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            67,
+            69.22
+          ]
+        },
+        {
+          "label": "35",
+          "aliases": {
+            "letter": "XL-XXL",
+            "us": "20"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null,
+          "thigh": null
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "XXL",
+            "us": "22"
+          },
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": null,
+          "thigh": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Plus Size Denim Bottoms (Jeans, Skirts, Shorts)",
+      "measurement_basis": "body",
+      "basis_evidence": "\"How To Measure Myself? Waist: Measure around 5cm below natural waist where the waistband of trousers normally sits on the body.\"",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://www.calvinklein.co.uk/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "34",
+          "aliases": {
+            "letter": "1XL",
+            "eu": "44 - 46",
+            "uk": "16 - 18",
+            "fr": "46 - 48",
+            "it": "50 - 52",
+            "us": "12 - 14"
+          },
+          "waist": [
+            93,
+            97
+          ],
+          "hip": [
+            116,
+            119
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            68.5,
+            71
+          ]
+        },
+        {
+          "label": "36",
+          "aliases": {
+            "letter": "2XL",
+            "eu": "46 - 48",
+            "uk": "18 - 20",
+            "fr": "48 - 50",
+            "it": "52 - 54",
+            "us": "14 - 16"
+          },
+          "waist": [
+            96.5,
+            101.5
+          ],
+          "hip": [
+            119.5,
+            124.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            71,
+            73.5
+          ]
+        },
+        {
+          "label": "38",
+          "aliases": {
+            "letter": "3XL",
+            "eu": "48 - 50",
+            "uk": "20 - 22",
+            "fr": "50 - 52",
+            "it": "54 - 56",
+            "us": "16 - 18"
+          },
+          "waist": [
+            101.5,
+            106.5
+          ],
+          "hip": [
+            124.5,
+            129.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            73.5,
+            77
+          ]
+        },
+        {
+          "label": "40",
+          "aliases": {
+            "letter": "4XL",
+            "eu": "50 - 52",
+            "uk": "22 - 24",
+            "fr": "52 - 54",
+            "it": "56 - 58",
+            "us": "18 - 20"
+          },
+          "waist": [
+            106.5,
+            111.5
+          ],
+          "hip": [
+            129.5,
+            134.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            77,
+            80
+          ]
+        },
+        {
+          "label": "42",
+          "aliases": {
+            "letter": "5XL",
+            "eu": "52 - 54",
+            "uk": "24 - 26",
+            "fr": "54 - 56",
+            "it": "58 - 60",
+            "us": "20 - 22"
+          },
+          "waist": [
+            111.5,
+            116.5
+          ],
+          "hip": [
+            134.5,
+            139.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            80,
+            83
+          ]
+        },
+        {
+          "label": "44",
+          "aliases": {
+            "letter": "6XL",
+            "eu": "54 - 56",
+            "uk": "26 - 28",
+            "fr": "56 - 58",
+            "it": "60 - 62",
+            "us": "22 - 24"
+          },
+          "waist": [
+            116.5,
+            121.5
+          ],
+          "hip": [
+            139.5,
+            144.5
+          ],
+          "bust": null,
+          "inseam": null,
+          "thigh": [
+            83,
+            86
+          ]
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Source is the Calvin Klein UK women's size guide (calvinklein.us returned 403 to scripted fetches; the UK page is the brand's own site). Inches tables also published. Waist sizes 35 and 36 have conversions (letter, US) but EMPTY measurement cells, and EU/UK/FR/IT cells are empty for 35-36; recorded as null. Size 24 conversions are published as \"＜ 32\" etc. (full-width less-than sign kept). Waist ranges are not contiguous at 29/30 (72.39 - 74.39 then 74.39 - 77.47, i.e. a 2.0 cm band) and look inch-derived. No inseam values are given. Rows carry an extra \"thigh\" field. The page also has a \"Womenswear Bottoms\" chart (sizes 34-46) for the Calvin Klein main line, not recorded."
+}

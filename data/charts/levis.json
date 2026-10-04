@@ -1,0 +1,535 @@
+{
+  "brand_id": "levis",
+  "brand_name": "Levi's",
+  "status": "found",
+  "charts": [
+    {
+      "category": "bottoms",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "WAIST: \"Measure around the smallest part of your waist. Not too snug, not too loose.\"",
+      "unit": "in",
+      "size_system": "denim_waist",
+      "source_url": "https://www.levi.com/US/en_US/info/sizeguide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {
+            "us": "00/0"
+          },
+          "waist": [
+            25.25,
+            25.25
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "us": "0/1"
+          },
+          "waist": [
+            26.25,
+            26.25
+          ],
+          "hip": [
+            35,
+            35
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "us": "2/3"
+          },
+          "waist": [
+            27.25,
+            27.25
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "us": "4/5"
+          },
+          "waist": [
+            28.25,
+            28.25
+          ],
+          "hip": [
+            37,
+            37
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "us": "6/7"
+          },
+          "waist": [
+            29.25,
+            29.25
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "us": "8/9"
+          },
+          "waist": [
+            30.25,
+            30.25
+          ],
+          "hip": [
+            39,
+            39
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "us": "10/11"
+          },
+          "waist": [
+            31.25,
+            31.25
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "us": "12/13"
+          },
+          "waist": [
+            32.75,
+            32.75
+          ],
+          "hip": [
+            41.5,
+            41.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "us": "14/15"
+          },
+          "waist": [
+            34.25,
+            34.25
+          ],
+          "hip": [
+            43,
+            43
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "us": "16/17"
+          },
+          "waist": [
+            35.75,
+            35.75
+          ],
+          "hip": [
+            44.5,
+            44.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "us": "18/20"
+          },
+          "waist": [
+            37.75,
+            37.75
+          ],
+          "hip": [
+            46.5,
+            46.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "bottoms",
+      "fit_line": "Plus",
+      "measurement_basis": "body",
+      "basis_evidence": "WAIST: \"Measure around the smallest part of your waist. Not too snug, not too loose.\"",
+      "unit": "in",
+      "size_system": "us",
+      "source_url": "https://www.levi.com/US/en_US/info/sizeguide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "16W",
+          "aliases": {
+            "denim_waist": "34"
+          },
+          "waist": [
+            38.25,
+            38.25
+          ],
+          "hip": [
+            47.25,
+            47.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "18W",
+          "aliases": {
+            "denim_waist": "36"
+          },
+          "waist": [
+            40.25,
+            40.25
+          ],
+          "hip": [
+            49.25,
+            49.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "20W",
+          "aliases": {
+            "denim_waist": "38"
+          },
+          "waist": [
+            42.25,
+            42.25
+          ],
+          "hip": [
+            51.25,
+            51.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "22W",
+          "aliases": {
+            "denim_waist": "40"
+          },
+          "waist": [
+            44.25,
+            44.25
+          ],
+          "hip": [
+            53.25,
+            53.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "24W",
+          "aliases": {
+            "denim_waist": "42"
+          },
+          "waist": [
+            46.25,
+            46.25
+          ],
+          "hip": [
+            55.25,
+            55.25
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26W",
+          "aliases": {
+            "denim_waist": "44"
+          },
+          "waist": [
+            48.25,
+            48.25
+          ],
+          "hip": [
+            57.25,
+            57.25
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "bottoms",
+      "fit_line": "Alpha",
+      "measurement_basis": "body",
+      "basis_evidence": "WAIST: \"Measure around the smallest part of your waist. Not too snug, not too loose.\"",
+      "unit": "in",
+      "size_system": "letter",
+      "source_url": "https://www.levi.com/US/en_US/info/sizeguide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {},
+          "waist": [
+            23,
+            24
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {},
+          "waist": [
+            25,
+            26
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {},
+          "waist": [
+            27,
+            28
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {},
+          "waist": [
+            29,
+            30
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {},
+          "waist": [
+            31,
+            32
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {},
+          "waist": [
+            33,
+            34
+          ],
+          "hip": null,
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "tops",
+      "fit_line": null,
+      "measurement_basis": "body",
+      "basis_evidence": "CHEST: \"Measure the widest part of your chest. Make sure to keep the tape horizontal.\"",
+      "unit": "in",
+      "size_system": "letter",
+      "source_url": "https://www.levi.com/US/en_US/info/sizeguide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {},
+          "waist": [
+            24.25,
+            24.25
+          ],
+          "hip": [
+            34,
+            34
+          ],
+          "bust": [
+            31,
+            31
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "lmc": "0"
+          },
+          "waist": [
+            26.25,
+            26.25
+          ],
+          "hip": [
+            36,
+            36
+          ],
+          "bust": [
+            33,
+            33
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "lmc": "1"
+          },
+          "waist": [
+            28.25,
+            28.25
+          ],
+          "hip": [
+            38,
+            38
+          ],
+          "bust": [
+            35,
+            35
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "lmc": "2"
+          },
+          "waist": [
+            30.25,
+            30.25
+          ],
+          "hip": [
+            40,
+            40
+          ],
+          "bust": [
+            37,
+            37
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "lmc": "3"
+          },
+          "waist": [
+            32.75,
+            32.75
+          ],
+          "hip": [
+            42.5,
+            42.5
+          ],
+          "bust": [
+            39.5,
+            39.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "lmc": "4"
+          },
+          "waist": [
+            35.75,
+            35.75
+          ],
+          "hip": [
+            45.5,
+            45.5
+          ],
+          "bust": [
+            42.5,
+            42.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XXL",
+          "aliases": {},
+          "waist": [
+            38.75,
+            38.75
+          ],
+          "hip": [
+            48.5,
+            48.5
+          ],
+          "bust": [
+            45.5,
+            45.5
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Inseam is not a body measurement per size; the guide gives a height-to-inseam table instead: 5'1\" or shorter -> 28; 5'2\"-5'3\" -> 30; 5'4\"-5'7\" -> 32 (alpha M); 5'8\" or taller -> 34 (alpha L). Tops chart 'bust' is the published CHEST column; the 'lmc' alias is the published 'LMC(TM) SIZE' column (Levi's Made & Crafted). Plus tops (1X-3X, numeric 14-24) and dresses charts exist on the same page and were not recorded; the plus tops and plus dresses tables place the 1X/2X/3X labels against different numeric rows (tops: 1X=14, 2X=18, 3X=22; dresses: 1X=16, 2X=20, 3X=24). Page served from levi.com US; content loads via JavaScript (read in browser)."
+}

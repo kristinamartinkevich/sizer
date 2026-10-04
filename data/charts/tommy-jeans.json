@@ -1,0 +1,896 @@
+{
+  "brand_id": "tommy-jeans",
+  "brand_name": "Tommy Jeans",
+  "status": "found",
+  "charts": [
+    {
+      "category": "jeans",
+      "fit_line": "Tommy Jeans",
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording on the page (no how-to-measure text). Values are given as ranges per size (e.g. WAIST 68 - 70), the form used for body measurements; treated as body.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://uk.tommy.com/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {
+            "eu": "32",
+            "uk": "4",
+            "fr": "34",
+            "it": "38",
+            "us": "0 - 2"
+          },
+          "waist": [
+            60,
+            64
+          ],
+          "hip": [
+            85,
+            89
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "eu": "34 - 36",
+            "uk": "6 - 8",
+            "fr": "36 - 38",
+            "it": "40 - 42",
+            "us": "2 - 4"
+          },
+          "waist": [
+            64,
+            66
+          ],
+          "hip": [
+            89,
+            91
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "eu": "34 - 36",
+            "uk": "6 - 8",
+            "fr": "36 - 38",
+            "it": "40 - 42",
+            "us": "2 - 4"
+          },
+          "waist": [
+            66,
+            68
+          ],
+          "hip": [
+            91,
+            93
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "eu": "36 - 38",
+            "uk": "8 - 10",
+            "fr": "38 - 40",
+            "it": "42 - 44",
+            "us": "4 - 6"
+          },
+          "waist": [
+            68,
+            70
+          ],
+          "hip": [
+            93,
+            95
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "eu": "36 - 38",
+            "uk": "8 - 10",
+            "fr": "38 - 40",
+            "it": "42 - 44",
+            "us": "4 - 6"
+          },
+          "waist": [
+            70,
+            72
+          ],
+          "hip": [
+            95,
+            97
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "eu": "38 - 40",
+            "uk": "10 - 12",
+            "fr": "40 - 42",
+            "it": "44 - 46",
+            "us": "6 - 8"
+          },
+          "waist": [
+            72,
+            74
+          ],
+          "hip": [
+            97,
+            99
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "eu": "38 - 40",
+            "uk": "10 - 12",
+            "fr": "40 - 42",
+            "it": "44 - 46",
+            "us": "6 - 8"
+          },
+          "waist": [
+            74,
+            76
+          ],
+          "hip": [
+            99,
+            101
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "eu": "40 - 42",
+            "uk": "12 - 14",
+            "fr": "42 - 44",
+            "it": "46 - 48",
+            "us": "8 - 10"
+          },
+          "waist": [
+            76,
+            78
+          ],
+          "hip": [
+            101,
+            103
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "eu": "40 - 42",
+            "uk": "12 - 14",
+            "fr": "42 - 44",
+            "it": "46 - 48",
+            "us": "8 - 10"
+          },
+          "waist": [
+            78,
+            81
+          ],
+          "hip": [
+            103,
+            105
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "eu": "42",
+            "uk": "14",
+            "fr": "44",
+            "it": "48",
+            "us": "10"
+          },
+          "waist": [
+            82,
+            86
+          ],
+          "hip": [
+            106,
+            110
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "eu": "42",
+            "uk": "14",
+            "fr": "44",
+            "it": "48",
+            "us": "10"
+          },
+          "waist": [
+            87,
+            91
+          ],
+          "hip": [
+            111,
+            115
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "Tommy Jeans inseam length (table \"INSEAM JEANS LENGTH\")",
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording on the page (no how-to-measure text). Values are given as ranges per size (e.g. WAIST 68 - 70), the form used for body measurements; treated as body.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://uk.tommy.com/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "28\"",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            68.5,
+            73.5
+          ]
+        },
+        {
+          "label": "30\"",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            73.5,
+            78.5
+          ]
+        },
+        {
+          "label": "32\"",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            78.5,
+            83.5
+          ]
+        },
+        {
+          "label": "34\"",
+          "aliases": {},
+          "waist": null,
+          "hip": null,
+          "bust": null,
+          "inseam": [
+            83.5,
+            88.5
+          ]
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "TJ Curve",
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording on the page (no how-to-measure text). Values are given as ranges per size (e.g. WAIST 68 - 70), the form used for body measurements; treated as body.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://uk.tommy.com/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "36",
+          "aliases": {},
+          "waist": [
+            91,
+            96
+          ],
+          "hip": [
+            115,
+            120
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "38",
+          "aliases": {},
+          "waist": [
+            97,
+            102
+          ],
+          "hip": [
+            121,
+            126
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "40",
+          "aliases": {},
+          "waist": [
+            102,
+            107
+          ],
+          "hip": [
+            126,
+            131
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "42",
+          "aliases": {},
+          "waist": [
+            107,
+            112
+          ],
+          "hip": [
+            131,
+            136
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "trousers",
+      "fit_line": "Tommy Jeans pants",
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording on the page (no how-to-measure text). Values are given as ranges per size (e.g. WAIST 68 - 70), the form used for body measurements; treated as body.",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://uk.tommy.com/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {
+            "eu": "30 - 32",
+            "uk": "2 - 4",
+            "fr": "32 - 34",
+            "it": "36 - 38",
+            "us": "00 - 0"
+          },
+          "waist": [
+            58,
+            60.5
+          ],
+          "hip": [
+            84,
+            86.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "32 - 34",
+            "uk": "4 - 6",
+            "fr": "34 - 36",
+            "it": "38 - 40",
+            "us": "0 - 2"
+          },
+          "waist": [
+            60.5,
+            65.5
+          ],
+          "hip": [
+            86.5,
+            91.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "36 - 38",
+            "uk": "8 - 10",
+            "fr": "38 - 40",
+            "it": "42 - 44",
+            "us": "4 - 6"
+          },
+          "waist": [
+            65.5,
+            70.5
+          ],
+          "hip": [
+            91.5,
+            96.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "38 - 40",
+            "uk": "10 - 12",
+            "fr": "40 - 42",
+            "it": "44 - 46",
+            "us": "6 - 8"
+          },
+          "waist": [
+            70.5,
+            75.5
+          ],
+          "hip": [
+            96.5,
+            101.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "40 - 42",
+            "uk": "12 - 14",
+            "fr": "42 - 44",
+            "it": "46 - 48",
+            "us": "8 - 10"
+          },
+          "waist": [
+            75.5,
+            80.5
+          ],
+          "hip": [
+            101.5,
+            106.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "eu": "42- 44",
+            "uk": "14 - 16",
+            "fr": "44 - 46",
+            "it": "48 - 50",
+            "us": "10 - 12"
+          },
+          "waist": [
+            80.5,
+            85.5
+          ],
+          "hip": [
+            106.5,
+            111.5
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "dresses",
+      "fit_line": "Tommy Jeans dresses, jumpsuits",
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording on the page (no how-to-measure text). Values are given as ranges per size (e.g. WAIST 68 - 70), the form used for body measurements; treated as body.",
+      "unit": "cm",
+      "size_system": "letter",
+      "source_url": "https://uk.tommy.com/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "XXS",
+          "aliases": {
+            "eu": "30 - 32",
+            "uk": "2 - 4",
+            "fr": "32 - 34",
+            "it": "36 - 38",
+            "us": "00 - 0"
+          },
+          "waist": [
+            58,
+            60.5
+          ],
+          "hip": [
+            84,
+            86.5
+          ],
+          "bust": [
+            76,
+            78.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XS",
+          "aliases": {
+            "eu": "32 - 34",
+            "uk": "4 - 6",
+            "fr": "34 - 36",
+            "it": "38 - 40",
+            "us": "0 - 2"
+          },
+          "waist": [
+            60.5,
+            65.5
+          ],
+          "hip": [
+            86.5,
+            91.5
+          ],
+          "bust": [
+            78.5,
+            83.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "S",
+          "aliases": {
+            "eu": "36 - 38",
+            "uk": "8 - 10",
+            "fr": "38 - 40",
+            "it": "42 - 44",
+            "us": "4 - 6"
+          },
+          "waist": [
+            65.5,
+            70.5
+          ],
+          "hip": [
+            91.5,
+            96.5
+          ],
+          "bust": [
+            83.5,
+            88.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "M",
+          "aliases": {
+            "eu": "38 - 40",
+            "uk": "10 - 12",
+            "fr": "40 - 42",
+            "it": "44 - 46",
+            "us": "6 - 8"
+          },
+          "waist": [
+            70.5,
+            75.5
+          ],
+          "hip": [
+            96.5,
+            101.5
+          ],
+          "bust": [
+            88.5,
+            93.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "L",
+          "aliases": {
+            "eu": "40 - 42",
+            "uk": "12 - 14",
+            "fr": "42 - 44",
+            "it": "46 - 48",
+            "us": "8 - 10"
+          },
+          "waist": [
+            75.5,
+            80.5
+          ],
+          "hip": [
+            101.5,
+            106.5
+          ],
+          "bust": [
+            93.5,
+            98.5
+          ],
+          "inseam": null
+        },
+        {
+          "label": "XL",
+          "aliases": {
+            "eu": "42- 44",
+            "uk": "14 - 16",
+            "fr": "44 - 46",
+            "it": "48 - 50",
+            "us": "10 - 12"
+          },
+          "waist": [
+            80.5,
+            85.5
+          ],
+          "hip": [
+            106.5,
+            111.5
+          ],
+          "bust": [
+            98.5,
+            103.5
+          ],
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    },
+    {
+      "category": "jeans",
+      "fit_line": "ALTERNATE: tables \"JEANS - INSEAM 28/30/32/34\" (inside leg 71.1 / 76.2 / 81.3 / 86.4 cm)",
+      "measurement_basis": "body",
+      "basis_evidence": "No explicit body/garment wording on the page (no how-to-measure text). Values are given as ranges per size (e.g. WAIST 68 - 70), the form used for body measurements; treated as body.",
+      "unit": "cm",
+      "size_system": "denim_waist",
+      "source_url": "https://uk.tommy.com/womens-size-guide",
+      "source_type": "brand_site",
+      "retailer": null,
+      "retrieved_on": "2026-10-04",
+      "rows": [
+        {
+          "label": "24",
+          "aliases": {
+            "us": "0",
+            "uk": "2",
+            "fr": "32",
+            "it": "36",
+            "eu": "30"
+          },
+          "waist": [
+            59.7,
+            59.7
+          ],
+          "hip": [
+            87.6,
+            87.6
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "25",
+          "aliases": {
+            "us": "2",
+            "uk": "4",
+            "fr": "34",
+            "it": "38",
+            "eu": "32"
+          },
+          "waist": [
+            62.2,
+            62.2
+          ],
+          "hip": [
+            90.2,
+            90.2
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "26",
+          "aliases": {
+            "us": "4",
+            "uk": "6",
+            "fr": "36",
+            "it": "40",
+            "eu": "34"
+          },
+          "waist": [
+            64.8,
+            64.8
+          ],
+          "hip": [
+            92.7,
+            92.7
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "27",
+          "aliases": {
+            "us": "6",
+            "uk": "8",
+            "fr": "38",
+            "it": "42",
+            "eu": "36"
+          },
+          "waist": [
+            67.3,
+            67.3
+          ],
+          "hip": [
+            95.3,
+            95.3
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "28",
+          "aliases": {
+            "us": "8",
+            "uk": "10",
+            "fr": "40",
+            "it": "44",
+            "eu": "38"
+          },
+          "waist": [
+            69.9,
+            69.9
+          ],
+          "hip": [
+            97.8,
+            97.8
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "29",
+          "aliases": {
+            "us": "10",
+            "uk": "12",
+            "fr": "42",
+            "it": "46",
+            "eu": "40"
+          },
+          "waist": [
+            72.4,
+            72.4
+          ],
+          "hip": [
+            100.3,
+            100.3
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "30",
+          "aliases": {
+            "us": "12",
+            "uk": "14",
+            "fr": "44",
+            "it": "48",
+            "eu": "42"
+          },
+          "waist": [
+            74.9,
+            74.9
+          ],
+          "hip": [
+            102.9,
+            102.9
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "31",
+          "aliases": {
+            "us": "14",
+            "uk": "16",
+            "fr": "46",
+            "it": "50",
+            "eu": "44"
+          },
+          "waist": [
+            77.5,
+            77.5
+          ],
+          "hip": [
+            105.4,
+            105.4
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "32",
+          "aliases": {
+            "us": "16",
+            "uk": "18",
+            "fr": "48",
+            "it": "52",
+            "eu": "46"
+          },
+          "waist": [
+            80,
+            80
+          ],
+          "hip": [
+            108,
+            108
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "33",
+          "aliases": {
+            "us": "18",
+            "uk": "20",
+            "fr": "50",
+            "it": "54",
+            "eu": "48"
+          },
+          "waist": [
+            82.6,
+            82.6
+          ],
+          "hip": [
+            110.5,
+            110.5
+          ],
+          "bust": null,
+          "inseam": null
+        },
+        {
+          "label": "34",
+          "aliases": {
+            "us": "20",
+            "uk": "22",
+            "fr": "52",
+            "it": "56",
+            "eu": "50"
+          },
+          "waist": [
+            85.1,
+            85.1
+          ],
+          "hip": [
+            113,
+            113
+          ],
+          "bust": null,
+          "inseam": null
+        }
+      ],
+      "fit_advice": null
+    }
+  ],
+  "problems": "Source is the Tommy Hilfiger UK women's size guide, \"TOMMY JEANS SIZES\" section (nz.tommy.com/size_guide_tommy_jeans_womens publishes the same jeans waist/hip ranges plus 36-42). No body/garment wording anywhere, so basis is inferred. Inches tables also exist. Alias conversions overlap (e.g. 25 and 26 are both EU 34 - 36); the US alias in the pants table is published as \"US + UK SIZE 2 - 4\" and a separate \"US SIZE 00 - 0\" row, and the US row was used. INCONSISTENCY: further down the same Tommy Jeans section, tables titled \"JEANS - INSEAM 28/30/32/34\" give a DIFFERENT single-value grading for the same denim sizes (e.g. 27 = waist 67.3, hips 95.3, US 6, EU 36, inside leg 71.1/76.2/81.3/86.4 cm), and a \"SHORTS, SKIRTS, PANTS\" table gives XXS-XL waist 60-80 / hips 86-106. These look like a second (possibly older or US) chart; the jeans version is recorded as the ALTERNATE chart, the shorts/skirts/pants one is not. Confirm which one Tommy Jeans products use before relying on it."
+}

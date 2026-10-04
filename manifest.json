@@ -6,7 +6,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "alarms"
   ],
   "background": {
     "service_worker": "src/background.js"
@@ -85,5 +86,8 @@
         "<all_urls>"
       ]
     }
+  ],
+  "host_permissions": [
+    "https://cqvrdsgutpczbucbpiqa.supabase.co/*"
   ]
 }

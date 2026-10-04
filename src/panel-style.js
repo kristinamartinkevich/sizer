@@ -31,9 +31,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   height: 24px;
   border-radius: 50%;
   background: var(--loden);
-  color: var(--ecru);
-  font: 600 13px/1 var(--serif);
+  overflow: hidden;
 }
+.mark img { width: 22px; height: 22px; display: block; }
 
 /* ---- the answer line under the shop's size picker ---- */
 .line {
@@ -96,7 +96,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   color: var(--ecru);
   box-shadow: 0 8px 28px rgba(28, 27, 24, .22);
 }
-.pill .mark { background: var(--ecru); color: var(--loden); }
 .pill b { font: 400 17px/1 var(--serif); margin-left: 2px; }
 
 /* ---- the reasoning sheet ---- */

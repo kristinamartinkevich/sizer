@@ -40,7 +40,8 @@ input { font: inherit; color: var(--ink); }
 
 .top { display: flex; align-items: center; justify-content: space-between; }
 .brandmark { display: flex; align-items: center; gap: 10px; font: 600 17px/1 var(--serif); letter-spacing: 0.02em; }
-.mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font: 600 15px/1 var(--serif); }
+.mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #2F4A3A; overflow: hidden; }
+.mark img { width: 26px; height: 26px; display: block; }
 .status { font-size: 13px; color: var(--muted); transition: opacity 0.3s; }
 
 .intro { margin: 44px 0 36px; max-width: 620px; }

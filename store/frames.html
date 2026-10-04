@@ -22,7 +22,8 @@
     iframe, .window img { border: 0; width: 1180px; height: 981px; transform: scale(.6136); transform-origin: 0 0; position: absolute; top: 38px; left: 0; }
 
     .tile { width: 440px; height: 280px; background: var(--loden); color: var(--ecru); display: flex; flex-direction: column; justify-content: center; padding: 0 40px; box-sizing: border-box; }
-    .tile .mark { width: 40px; height: 40px; background: var(--ecru); color: var(--loden); font-size: 23px; }
+    .tile .logo { width: 72px; height: 72px; display: block; }
+    .marquee .logo { width: 120px; height: 120px; }
     .tile .t { font: 400 34px/1.08 var(--serif); letter-spacing: -.015em; margin-top: 22px; }
     .marquee { width: 1400px; height: 560px; padding: 0 110px; }
     .marquee .t { font-size: 64px; max-width: 900px; }
@@ -40,7 +41,7 @@
     };
     const kind = q.get('kind');
     if (kind === 'promo' || kind === 'marquee') {
-      document.write(`<div class="tile ${kind === 'marquee' ? 'marquee' : ''}"><div><span class="mark">S</span></div>
+      document.write(`<div class="tile ${kind === 'marquee' ? 'marquee' : ''}"><img class="logo" src="../brand/logo.png" alt="">
         <div class="t">Your size, on every product page.</div>
         ${kind === 'marquee' ? '<div class="sub">Sizer reads the brand, the fabric and the fit notes, and puts your size under the size picker.</div>' : ''}</div>`);
     } else {

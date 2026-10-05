@@ -485,6 +485,20 @@
     return out.sort((a, b) => AREA_ORDER.indexOf(a.verdict) - AREA_ORDER.indexOf(b.verdict));
   }
 
+  // The one area worth a word on the line: a tight one, or nothing.
+  function areaLine(r) {
+    const a = ((r && r.areas) || []).find((x) => x.verdict === 'tight');
+    return a ? a.text : null;
+  }
+
+  // What the sheet lists: up to three areas that are not simply fine, else one line saying all are.
+  function sheetAreas(r) {
+    const areas = (r && r.areas) || [];
+    const notable = areas.filter((a) => a.verdict !== 'fine').slice(0, 3).map((a) => a.text);
+    if (notable.length || !areas.length) return notable;
+    return [`Fits as expected at the ${joinNames(areas.map((a) => AREA_NAME[a.area] || a.area))}`];
+  }
+
   // ---- the recommendation ------------------------------------------------
 
   // Fractional chart position where a body dimension lands (2.5 = halfway between sizes 2 and 3).
@@ -918,7 +932,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS };
+  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

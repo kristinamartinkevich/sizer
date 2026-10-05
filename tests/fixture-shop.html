@@ -22,6 +22,8 @@
       default: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: '', type: 'jeans', size: '27', fit: 'perfect' }], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
       one: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
       none: { anchors: [], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
+      // Measured, curvy, with a height: shows the per-area lines in the sheet (C2).
+      measured: { anchors: [], waist: '70', hip: '102', height: '160', inseam: '', unit: 'cm', fitPreference: 'regular' },
     };
     const profile = PROFILES[q.get('profile')] || PROFILES.default;
     const unknown = q.get('brand') === 'unknown';

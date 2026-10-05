@@ -58,6 +58,24 @@ test('areas that similar reviewers mention join the chart’s areas', () => {
   assert.strictEqual(hip.text, '3 reviewers like you found it tight at the hips');
 });
 
+const { areaLine, sheetAreas } = require('../src/engine.js');
+
+test('the line names a tight area only, and the sheet lists up to three that are not simply fine', () => {
+  const tight = recommend(ME, trousers({ text: 'This style runs large, we recommend sizing down.' }), null);
+  assert.strictEqual(areaLine(tight), 'May be tight at the hips');
+  assert.deepStrictEqual(sheetAreas(tight), ['May be tight at the hips', 'Roomy at the waist']);
+  const easy = recommend(ME, trousers(), null);
+  assert.strictEqual(areaLine(easy), null);
+  assert.deepStrictEqual(sheetAreas(easy), ['Close fit at the hips', 'Roomy at the waist']);
+});
+
+test('when every area is fine the sheet says so in one line', () => {
+  const r = { areas: [{ area: 'waist', verdict: 'fine', source: 'chart', text: 'Fine at the waist' }, { area: 'hip', verdict: 'fine', source: 'chart', text: 'Fine at the hips' }] };
+  assert.deepStrictEqual(sheetAreas(r), ['Fits as expected at the waist and hips']);
+  assert.deepStrictEqual(sheetAreas({ areas: [] }), []);
+  assert.strictEqual(areaLine({}), null);
+});
+
 test('with no reviewer details nothing changes', () => {
   const a = recommend(ME, trousers({ reviews: ['Runs small.', 'Runs small.'] }), null);
   assert.strictEqual(a.reviews.verdict, 'small');

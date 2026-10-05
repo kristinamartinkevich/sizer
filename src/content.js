@@ -100,8 +100,10 @@
     }
     if (!r || !r.ok) return '';
     const low = r.confidence === 'Low';
+    const area = Engine.areaLine(r);
     const stock = r.stockText ? `<span class="note gone">${esc(r.stockText)}</span>`
-      : low && r.firmUp ? `<span class="note">${esc(r.firmUp)}</span>` : '';
+      : low && r.firmUp ? `<span class="note">${esc(r.firmUp)}</span>`
+        : area ? `<span class="note">${esc(area)}</span>` : '';
     return `<div class="line${low ? ' low' : ''}">${MARK}
       <span class="answer">
         <span class="k">${low ? 'Rough guess' : 'Your size'}</span>
@@ -195,6 +197,7 @@
       </div>
       ${r.stockText ? `<div class="stock"><p>${esc(r.stockText)}</p>${inStock.length ? `<div class="chips">${inStock.map(stockChip).join('')}</div>` : ''}</div>`
         : r.alternative ? `<p class="alt">Or <b>${esc(r.alternative.size)}</b> ${esc(r.alternative.why)}.</p>` : ''}
+      ${Engine.sheetAreas(r).length ? `<h3>Where it fits</h3><ul class="areas">${Engine.sheetAreas(r).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
       <h3>Why this size</h3>
       <ol>${r.reasons.map((x) => `<li><span>${esc(x.text)}</span>${x.delta ? `<em>${x.delta > 0 ? '+' : '−'}${Math.abs(x.delta)} size</em>` : ''}</li>`).join('')}</ol>
       <details class="more">

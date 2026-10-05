@@ -62,7 +62,14 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    product page asks for the pooled tally of the same style on other shops, so a style's fit
    reputation follows it from Zalando to Net-a-Porter to the brand's own site. Each shop counts
    once, however many people read it. See `store/privacy.html` for exactly what travels.
-5. The result maps to the sizes on the page, using the shop's product data for stock. Women's sizes
+   When at least three reviewers say their height or shape (Revolve's "About my height" and
+   "About my curves" fields, or "I'm 5'4" and 130 lbs" in the text), each review counts by how like
+   you its writer is, from your height, your hip minus waist and, when both sides give one, weight.
+   That weighted verdict decides on the device; the plain count is still what is sent to the pool.
+5. The chosen size is checked area by area against your measurements: the sheet says where it will
+   be tight, close, roomy or fine, and adds what reviewers like you say about particular areas
+   ("3 reviewers like you found it tight at the hips"). The line names a tight area only.
+6. The result maps to the sizes on the page, using the shop's product data for stock. Women's sizes
    from different regions line up through one table (FR/EU = DE, IT = FR + 4, UK = FR − 28,
    US = UK − 4, and the letters XXS to 4XL), so a UK 10 on the page finds the brand's EU 38 or M.
    When "Check this page anyway" in the popup finds no brand or no sizes, it offers "Read this page
@@ -70,7 +77,7 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    (at most 6000 characters, web addresses removed) and the install id go to
    `read-chart-image/product`, which returns the brand, title, kind of item, sizes and fabric.
    Nothing of it is stored.
-6. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
+7. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
    the brand's shoe chart or a standard EU one.
 
 The sheet's footer links to the brand page the chart was read from, with the date it was read.

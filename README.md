@@ -68,6 +68,8 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 ## Test and package
 
     node --test tests/
+    python3 tools/serve.py 8766   # demo shop page and store frames, served without caching
+                                  # http://localhost:8766/tests/fixture-shop.html?open=why&charts=1
     sh package.sh        # dist/sizer-<version>.zip for the Chrome Web Store
 
 `tests/fixture-shop.html` is a demo product page with query switches (first run, sold out, open

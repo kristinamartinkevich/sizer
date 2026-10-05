@@ -21,9 +21,38 @@
     return new Promise((resolve) => chrome.storage.local.get({ charts: null }, (r) => resolve(r.charts)));
   }
 
-  function recommendHere(profile, charts) {
+  const Store = globalThis.SizerChartsStore;
+  const reported = new Set();
+
+  // What Sizer users read on other shops for this style. A slow or failed lookup just means this page alone.
+  async function poolFor(product) {
+    const key = Store.itemKey(product.brand, product.title);
+    if (!key) return null;
+    try {
+      const r = await Promise.race([chrome.runtime.sendMessage({ type: 'sizer:item-fit', key }), new Promise((res) => setTimeout(() => res(null), 1500))]);
+      return r && Array.isArray(r.rows) ? Store.poolExcept(r.rows, location.hostname) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  // Sends this page's review tally once per style, so other shops' shoppers can use it.
+  function reportFit(product, result) {
+    const key = Store.itemKey(product.brand, product.title);
+    const counts = result && result.reviews && result.reviews.local;
+    if (!key || !counts || !counts.total || reported.has(key)) return;
+    reported.add(key);
+    const style = key.split('|')[1];
+    try { chrome.runtime.sendMessage({ type: 'sizer:report-fit', key, brand: product.brand, style, vendor: location.hostname, counts }).catch(() => {}); } catch { /* no worker in the demo pages */ }
+  }
+
+  async function recommendHere(profile, charts) {
     const product = extractProduct(document, Engine);
-    return { product, result: product.isProduct || product.sizes.length || state.forced ? Engine.recommend(profile, product, charts) : null };
+    if (!(product.isProduct || product.sizes.length || state.forced)) return { product, result: null };
+    product.poolFit = await poolFor(product);
+    const result = Engine.recommend(profile, product, charts);
+    reportFit(product, result);
+    return { product, result };
   }
 
   function host(id, place) {
@@ -122,13 +151,10 @@
   // What buyers wrote about fit, as one line for the folded read-out.
   function reviewsFact(rv) {
     if (!rv || !rv.total) return null;
-    if (rv.fromSummary) {
-      const word = { small: 'runs small', large: 'runs large', tts: 'true to size' }[rv.verdict];
-      return ['Reviews', rv.verdict ? `${Math.round(rv.share * 100)}% of ${rv.total} say ${word}` : `${rv.total}, no clear fit verdict`];
-    }
     if (!rv.mentions) return ['Reviews', `${rv.total} read, none mention fit`];
     const parts = [rv.small && `${rv.small} small`, rv.large && `${rv.large} large`, rv.tts && `${rv.tts} true to size`].filter(Boolean);
-    return ['Reviews', `${rv.mentions} of ${rv.total} mention fit: ${parts.join(', ')}`];
+    const where = rv.vendors ? ` on ${rv.vendors + (rv.local.total ? 1 : 0)} shops` : '';
+    return ['Reviews', `${rv.mentions} of ${rv.total}${where} mention fit: ${parts.join(', ')}`];
   }
 
   function sheetBody() {
@@ -250,7 +276,7 @@
 
   async function run() {
     const [profile, charts] = await Promise.all([getProfile(), getCharts()]);
-    const { product, result } = recommendHere(profile, charts);
+    const { product, result } = await recommendHere(profile, charts);
     state.product = product;
     state.result = result;
     state.phase = 'ready';
@@ -285,8 +311,7 @@
       return true;
     }
     if (msg.type === 'sizer:analyze') {
-      Promise.all([getProfile(), getCharts()]).then(([profile, charts]) => {
-        const { product, result } = recommendHere(profile, charts);
+      Promise.all([getProfile(), getCharts()]).then(([profile, charts]) => recommendHere(profile, charts)).then(({ product, result }) => {
         reply({ result, isProduct: product.isProduct });
       });
       return true;

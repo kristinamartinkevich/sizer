@@ -40,6 +40,10 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    when at least two reviews agree and they are the majority of those that mention fit. A shop's
    own fit bar ("68% say it runs small") counts the same way. Review text is kept out of the page
    text, so a reviewer's "runs small" is never mistaken for the brand's.
+   The tally from each page is sent to the chart database keyed by brand and style, and every
+   product page asks for the pooled tally of the same style on other shops, so a style's fit
+   reputation follows it from Zalando to Net-a-Porter to the brand's own site. Each shop counts
+   once, however many people read it. See `store/privacy.html` for exactly what travels.
 5. The result maps to the sizes on the page, using the shop's product data for stock.
 6. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
    the brand's shoe chart or a standard EU one.

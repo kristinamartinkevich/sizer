@@ -27,7 +27,8 @@ test('a shop’s fit summary with percentages counts as reviews', () => {
   const r = analyzeReviews([], 'Fit: 68% say it runs small, 27% true to size, 5% runs large. Based on 112 reviews.');
   assert.equal(r.verdict, 'small');
   assert.equal(r.total, 112);
-  assert.equal(r.share, 0.68);
+  assert.equal(r.small, 76);
+  assert.ok(Math.abs(r.share - 0.68) < 0.01);
 });
 
 test('buyers reporting it runs small move the size up, with the count in the reason', () => {

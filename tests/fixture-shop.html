@@ -22,7 +22,14 @@
     };
     const profile = PROFILES[q.get('profile')] || PROFILES.default;
     window.chrome = {
-      runtime: { getURL: (p) => '../' + p, sendMessage: () => {}, onMessage: { addListener: () => {} } },
+      runtime: {
+        getURL: (p) => '../' + p,
+        onMessage: { addListener: () => {} },
+        // ?pool=small answers the cross-shop lookup with two other shops' tallies; reports go nowhere.
+        sendMessage: async (m) => (m.type === 'sizer:item-fit' && q.get('pool') === 'small'
+          ? { rows: [{ vendor: 'www.zalando.de', small: 23, large: 2, tts: 9, total: 51 }, { vendor: 'www.net-a-porter.com', small: 11, large: 1, tts: 4, total: 20 }] }
+          : {}),
+      },
       storage: {
         sync: { get: (d, cb) => cb({ profile }) },
         // ?charts=1 serves the verified rag & bone chart as the background worker would have stored it.
@@ -104,6 +111,7 @@
     }
   </script>
   <script src="../src/brands.js"></script>
+  <script src="../src/charts-store.js"></script>
   <script src="../src/charts.js"></script>
   <script src="../src/defaults.js"></script>
   <script src="../src/engine.js"></script>

@@ -10,7 +10,7 @@
   let lastTrigger = null;
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const MARK = `<span class="mark" aria-hidden="true"><img src="${chrome.runtime.getURL('brand/mark.svg')}" alt=""></span>`;
+  const MARK = `<span class="mark" aria-hidden="true">${globalThis.SIZER_MARK_SVG}</span>`;
 
   function getProfile() {
     return new Promise((resolve) => chrome.storage.sync.get({ profile: globalThis.SIZER_DEFAULT_PROFILE }, (r) => resolve(r.profile)));

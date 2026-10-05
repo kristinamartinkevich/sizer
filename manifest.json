@@ -79,6 +79,7 @@
         "src/engine.js",
         "src/extract.js",
         "src/panel-style.js",
+        "src/mark.js",
         "src/content.js"
       ],
       "run_at": "document_idle"

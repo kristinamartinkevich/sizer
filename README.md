@@ -60,7 +60,7 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
 | `src/extract.js` | Reads the product page and finds the size picker |
-| `src/content.js`, `src/panel-style.js` | What Sizer draws on shop pages |
+| `src/content.js`, `src/panel-style.js`, `src/mark.js` | What Sizer draws on shop pages; the mark is inline SVG so shop CSPs cannot block it |
 | `ui/` | Popup and fit profile page |
 | `store/` | Store listing, privacy policy, Product Hunt kit, image sources and renders |
 | `tests/` | Engine tests and a neutral demo product page for visual checks |

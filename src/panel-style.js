@@ -35,7 +35,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   background: var(--accent);
   overflow: hidden;
 }
-.mark img { width: 22px; height: 22px; display: block; }
+.mark svg { width: 22px; height: 22px; display: block; }
 
 /* ---- the answer line under the shop's size picker ---- */
 .line {

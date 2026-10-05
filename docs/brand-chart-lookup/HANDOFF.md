@@ -116,10 +116,10 @@ dashboard is the deploy, not the test.
 
 | Bundle | Scope | Depends on | Status | PR # | Merge SHA |
 |---|---|---|---|---|---|
-| **B1** | Chart provenance tiers: schema 0004, bundle view, ranking in the extension, sheet wording | — | [ ] not started | | |
-| **B2** | Deterministic shop size-guide table reader (pure parser + DOM finder), fixture checks | — | [ ] not started | | |
-| **B3** | Edge Function `lookup-chart`: brand site first, shop guide classified second, cached, capped | B1 | [ ] not started | | |
-| **B4** | Extension wiring: ask on a miss, merge the answer, looking-up state, privacy and store copy | B1, B2, B3 | [ ] not started | | |
+| **B1** | Chart provenance tiers: schema 0004, bundle view, ranking in the extension, sheet wording | — | [x] complete | single PR | 32d6635 (branch) |
+| **B2** | Deterministic shop size-guide table reader (pure parser + DOM finder), fixture checks | — | [x] complete | single PR | e3e8161, 366e2bd (branch) |
+| **B3** | Edge Function `lookup-chart`: brand site first, shop guide classified second, cached, capped | B1 | [x] complete | single PR | 9cbba14, 4ef4474 (branch) |
+| **B4** | Extension wiring: ask on a miss, merge the answer, looking-up state, privacy and store copy | B1, B2, B3 | [x] complete | single PR | bffa044, bfc00e8 (branch) |
 
 ---
 

@@ -32,6 +32,8 @@ Heartbeat task bbi2lve34 (pid 3605), watchdog cron 7b451094.
 |---|---|---|---|
 | B1 | 32d6635 | 2 confirmed (1 BLOCKER, 1 MINOR), both applied | 0 |
 | B2 | e3e8161, 366e2bd | 3 confirmed (1 MAJOR, 2 MINOR), all applied; 1 refuted | 0 |
+| B3 | 9cbba14, 4ef4474 | 4 confirmed (2 MAJOR: cap race, brand_site poisoning; 2 MINOR docs), all applied | 0 |
+| B4 | bffa044, bfc00e8 | 5 confirmed (1 MAJOR: launch copy under-disclosed; 4 MINOR copy), all applied | 0 |
 
 ## Cross-bundle notes
 - B1 added tools/check-migrations.sh and wired it into HANDOFF §1.2/§1.9. B3 must run it for 0005
@@ -58,3 +60,15 @@ Heartbeat task bbi2lve34 (pid 3605), watchdog cron 7b451094.
 The operator pasted a broader product plan (reference garments, body-similarity review weighting,
 Vinted seller-message generator, post-purchase feedback, chart images via vision). Assessed in chat:
 none of it changes B1 to B4. Candidates for a second plan after this one ships.
+
+## Loop exit (2026-10-05)
+All four bundles built on feat/brand-chart-lookup; §2 flipped to [x] with branch SHAs (merge SHAs do
+not exist until the single PR merges). Final gates on bfc00e8: node 103/103, deno 44/44,
+tests/shops.html PASS (53), check-migrations passes. Claude does not push: the operator pushes the
+branch and opens the one PR. B2's provenance note was closed in B4 (lookupEntry forces machine_read
+and drops unknown source_type). B4's deviation: the chrome stub stays inline in fixture-shop.html
+(HANDOFF §3.4 amended).
+
+Not live until the operator: runs 0004 and 0005 in the SQL editor, sets ANTHROPIC_API_KEY with
+`supabase secrets set`, and deploys with `supabase functions deploy lookup-chart --project-ref
+cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`.

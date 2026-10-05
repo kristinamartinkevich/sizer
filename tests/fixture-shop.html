@@ -91,6 +91,17 @@
     }
     document.getElementById('picker-trigger').onclick = () => list.classList.toggle('open');
     if (q.get('picker') === 'none') document.getElementById('picker-wrap').remove();
+    // ?reviews=small adds buyer reviews that mostly report it running small; the page itself says nothing about fit.
+    if (q.get('reviews') === 'small') {
+      const reviews = [
+        ['Runs small, size up', 'Gorgeous denim but definitely runs small. I had to go one size up.'],
+        ['Stiff at first', 'Rigid cotton, softens after a few wears. Runs small in the waist for me.'],
+        ['Perfect straight leg', 'True to size for me, the length is spot on.'],
+        ['Worth it', 'Had to size up, runs small. Otherwise lovely.'],
+        ['Great colour', 'The wash is beautiful and the pockets are deep.'],
+      ];
+      document.querySelector('.pdp').insertAdjacentHTML('afterend', `<section class="reviews" style="max-width:1180px;margin:0 auto;padding:0 32px 48px"><h2>Reviews (${reviews.length})</h2>${reviews.map(([t, b]) => `<article class="review" style="border-top:1px solid #eee;padding:14px 0"><h3 style="margin:0 0 4px;font-size:15px">${t}</h3><p class="review-text" style="margin:0;color:#444">${b}</p></article>`).join('')}</section>`);
+    }
   </script>
   <script src="../src/brands.js"></script>
   <script src="../src/charts.js"></script>

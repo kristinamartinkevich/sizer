@@ -119,6 +119,18 @@
     return `<span class="dots" aria-hidden="true">${[1, 2, 3].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`;
   }
 
+  // What buyers wrote about fit, as one line for the folded read-out.
+  function reviewsFact(rv) {
+    if (!rv || !rv.total) return null;
+    if (rv.fromSummary) {
+      const word = { small: 'runs small', large: 'runs large', tts: 'true to size' }[rv.verdict];
+      return ['Reviews', rv.verdict ? `${Math.round(rv.share * 100)}% of ${rv.total} say ${word}` : `${rv.total}, no clear fit verdict`];
+    }
+    if (!rv.mentions) return ['Reviews', `${rv.total} read, none mention fit`];
+    const parts = [rv.small && `${rv.small} small`, rv.large && `${rv.large} large`, rv.tts && `${rv.tts} true to size`].filter(Boolean);
+    return ['Reviews', `${rv.mentions} of ${rv.total} mention fit: ${parts.join(', ')}`];
+  }
+
   function sheetBody() {
     const r = state.result;
     const p = state.product;
@@ -136,6 +148,7 @@
       r.shoes ? null : ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
       ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : 'None'],
       s.modelSize && !r.shoes ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
+      reviewsFact(r.reviews),
       !p.sizes.length ? ['Sizes', 'Not found']
         : !stockKnown ? ['Sizes', p.sizes.map(chip).join('')]
           : ['In stock', inStock.length ? inStock.map(chip).join('') : 'None'],

@@ -3,11 +3,14 @@
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const OURS = '#sizer-inline, #sizer-panel, #sizer-pill';
 
+  const REVIEW_AREA = '[class*="review" i], [id*="review" i], [data-testid*="review" i], [itemprop="review"]';
+
   // textContent glues sibling labels together ("Fit:RelaxedShape"), which breaks word matching.
-  function spacedText(el) {
+  // `skip` keeps buyers' reviews out of the page's own text, so a reviewer's "runs small" is never read as the shop's.
+  function spacedText(el, skip) {
     const parts = [];
     const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
-      acceptNode: (n) => (n.parentElement && n.parentElement.closest('script, style, noscript, svg') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+      acceptNode: (n) => (n.parentElement && n.parentElement.closest(skip ? `script, style, noscript, svg, ${skip}` : 'script, style, noscript, svg') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
     });
     while (walker.nextNode()) parts.push(walker.currentNode.nodeValue);
     return clean(parts.join(' '));
@@ -64,14 +67,47 @@
     const seen = [];
     let total = 0;
     for (const el of doc.querySelectorAll(DETAIL_SEL)) {
-      if (el.closest(OURS) || el.closest('[class*="review" i], [class*="recommend" i], [class*="carousel" i], footer, nav')) continue;
-      const t = spacedText(el);
+      if (el.closest(OURS) || el.closest(`${REVIEW_AREA}, [class*="recommend" i], [class*="carousel" i], footer, nav`)) continue;
+      const t = spacedText(el, REVIEW_AREA);
       if (t.length < 15 || seen.some((s) => s.includes(t))) continue;
       seen.push(t.slice(0, 3000));
       total += t.length;
       if (total > 20000) break;
     }
     return seen.join('\n');
+  }
+
+  const REVIEW_SEL = [
+    '[itemprop="reviewBody"]',
+    '[class*="review" i] [class*="text" i]', '[class*="review" i] [class*="body" i]', '[class*="review" i] [class*="content" i]', '[class*="review" i] [class*="comment" i]',
+    '[data-testid*="review" i] p', '[class*="review" i] p', '[id*="review" i] p',
+  ].join(',');
+
+  // What buyers wrote, one string per review, from structured data first and the page second.
+  function extractReviews(doc, ld) {
+    const out = [];
+    for (const r of [].concat((ld && ld.review) || [])) {
+      const body = clean(r && r.reviewBody);
+      if (body) out.push(body);
+    }
+    for (const el of doc.querySelectorAll(REVIEW_SEL)) {
+      if (el.closest(OURS) || el.querySelector('p')) continue;
+      const t = spacedText(el);
+      if (t.length < 10 || t.length > 2000 || out.some((s) => s === t || s.includes(t))) continue;
+      out.push(t);
+      if (out.length >= 200) break;
+    }
+    return out;
+  }
+
+  // A shop's own fit bar from reviews, like "68% say it runs small".
+  function reviewSummary(doc) {
+    for (const el of doc.querySelectorAll('[class*="fit" i], [data-testid*="fit" i], [class*="review" i], [id*="review" i]')) {
+      if (el.closest(OURS) || el.querySelectorAll('*').length > 60) continue;
+      const t = spacedText(el);
+      if (/\d{1,3}\s?%[^.%\d]{0,40}(small|true to size|as expected|large|big)/i.test(t)) return t.slice(0, 600);
+    }
+    return '';
   }
 
   const OPTION_SEL = [
@@ -150,8 +186,9 @@
     let text = [description, detailText(doc)].filter(Boolean).join('\n');
     if (text.length < 200) {
       const main = doc.querySelector('main') || doc.body;
-      text += `\n${main ? spacedText(main).slice(0, 20000) : ''}`;
+      text += `\n${main ? spacedText(main, REVIEW_AREA).slice(0, 20000) : ''}`;
     }
+    const reviews = extractReviews(doc, ld);
 
     const fromLd = variantSizes(ld);
     const sizes = fromLd.length ? fromLd : domSizes(doc, engine.parseSizeLabel);
@@ -161,6 +198,8 @@
       title,
       text,
       sizes,
+      reviews,
+      reviewSummary: reviewSummary(doc),
       url: location.href,
       isProduct: !!ld || (sizes.length >= 2 && !!(brandGuess || title)),
     };

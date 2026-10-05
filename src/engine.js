@@ -279,6 +279,57 @@
     };
   }
 
+  // ---- what buyers say ------------------------------------------------------
+
+  const REVIEW_PCT = /(\d{1,3})\s?%[^.%\d]{0,40}?(runs?\s+small|too\s+small|\bsmall\b|true\s+to\s+size|as\s+expected|runs?\s+large|too\s+large|\blarge\b|\bbig\b)/gi;
+  const REVIEW_COUNT = /(\d[\d,.]*)\s+(?:reviews?|ratings?|bewertungen|avis|reseñas|recensioni)/i;
+
+  // One vote per review; a shop's own fit bar ("68% say it runs small") stands in when there is one.
+  function analyzeReviews(reviews, summary) {
+    const out = { small: 0, large: 0, tts: 0, mentions: 0, total: 0, share: 0, verdict: null, fromSummary: false };
+    for (const text of reviews || []) {
+      const t = String(text || '');
+      if (!t.trim()) continue;
+      out.total += 1;
+      const small = RE.small.test(t);
+      const large = RE.large.test(t);
+      if (small && !large) out.small += 1;
+      else if (large && !small) out.large += 1;
+      else if (RE.tts.test(t)) out.tts += 1;
+    }
+    out.mentions = out.small + out.large + out.tts;
+    if (summary) {
+      const pct = { small: 0, large: 0, tts: 0 };
+      for (const m of String(summary).matchAll(REVIEW_PCT)) {
+        const kind = /small/i.test(m[2]) ? 'small' : /large|big/i.test(m[2]) ? 'large' : 'tts';
+        pct[kind] = Math.max(pct[kind], Math.min(100, +m[1]));
+      }
+      if (pct.small || pct.large || pct.tts) {
+        const count = (String(summary).match(REVIEW_COUNT) || [])[1];
+        out.fromSummary = true;
+        out.total = count ? parseInt(count.replace(/[,.]/g, ''), 10) : out.total;
+        if (pct.small >= 50 && pct.small > pct.large) { out.verdict = 'small'; out.share = pct.small / 100; }
+        else if (pct.large >= 50 && pct.large > pct.small) { out.verdict = 'large'; out.share = pct.large / 100; }
+        else if (pct.tts >= 60) { out.verdict = 'tts'; out.share = pct.tts / 100; }
+        return out;
+      }
+    }
+    if (out.small >= 2 && out.small > out.large && out.small / out.mentions >= 0.5) { out.verdict = 'small'; out.share = out.small / out.mentions; }
+    else if (out.large >= 2 && out.large > out.small && out.large / out.mentions >= 0.5) { out.verdict = 'large'; out.share = out.large / out.mentions; }
+    else if (out.tts >= 2 && out.tts / out.mentions >= 0.6) { out.verdict = 'tts'; out.share = out.tts / out.mentions; }
+    return out;
+  }
+
+  const VERDICT_WORDS = { small: 'runs small', large: 'runs large', tts: 'fits true to size' };
+
+  function reviewReason(rv) {
+    const what = VERDICT_WORDS[rv.verdict];
+    const basis = rv.fromSummary
+      ? `${Math.round(rv.share * 100)}%${rv.total ? ` of ${rv.total} reviews` : ' of buyers'}`
+      : `${rv[rv.verdict]} of ${rv.mentions} reviews that mention fit`;
+    return rv.verdict === 'tts' ? `Buyers say it ${what} (${basis}).` : `Buyers say it ${what}: ${basis}.`;
+  }
+
   // ---- the recommendation ------------------------------------------------
 
   // Fractional chart position where a body dimension lands (2.5 = halfway between sizes 2 and 3).
@@ -311,8 +362,9 @@
   function recommend(profile, product, charts) {
     const kind = kindOf(product.title);
     const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`);
+    const reviews = analyzeReviews(product.reviews, product.reviewSummary);
     const brand = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
-    if (kind === 'shoes') return recommendShoes(profile, product, brand, signals, charts);
+    if (kind === 'shoes') return recommendShoes(profile, product, brand, signals, charts, reviews);
 
     const body = bodyFromProfile(profile, charts);
     if (!body || body.waist == null) return { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
@@ -334,7 +386,10 @@
     if (brand && brand.garment) reasons.push({ text: `${brand.name} lists garment measurements, so Sizer allowed a little ease.`, delta: null });
 
     let adj = 0;
-    const explicit = signals.fitNote === 'small' || signals.fitNote === 'large';
+    // The page's own note comes first; buyers' reports count only when the page says nothing.
+    const pageNote = signals.fitNote === 'small' || signals.fitNote === 'large';
+    const buyersNote = !pageNote && (reviews.verdict === 'small' || reviews.verdict === 'large');
+    const explicit = pageNote || buyersNote;
     const elastane = signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : '';
     if (rigid) {
       if (!explicit) adj += 0.35 + (signals.skinny ? 0.15 : 0);
@@ -365,6 +420,9 @@
     if (signals.fitNote === 'small') { idx += 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size up.`, delta: +1 }); }
     if (signals.fitNote === 'large') { idx -= 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size down.`, delta: -1 }); }
     if (signals.fitNote === 'tts') reasons.push({ text: 'The page says it fits true to size.', delta: null });
+    if (buyersNote && reviews.verdict === 'small') { idx += 1; reasons.push({ text: reviewReason(reviews), delta: +1 }); }
+    if (buyersNote && reviews.verdict === 'large') { idx -= 1; reasons.push({ text: reviewReason(reviews), delta: -1 }); }
+    if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
     if (signals.roomy) reasons.push({ text: 'Relaxed cut, roomy by design. Go one down only if you want it closer.', delta: null });
 
     idx = Math.max(0, Math.min(chart.length - 1, idx));
@@ -372,6 +430,8 @@
 
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up'
       : signals.fitNote === 'large' ? 'Runs large, sized down'
+        : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
+          : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down'
         : rigid && idx > usual ? 'No stretch, sized up'
           : signals.stretch === 'high' && idx < usual ? 'Stretchy, sized down'
             : idx > usual ? 'Sized up for you' : idx < usual ? 'Sized down for you' : 'Your usual fit';
@@ -390,6 +450,7 @@
     if (brand) score += 0.2;
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
+    if (reviews.verdict) score += 0.1;
     const corroborated = body.points.length > 1 || (profile.waist && profile.hip);
     if (corroborated) score += 0.1;
     if (body.spread > 5) score -= 0.15;
@@ -418,6 +479,7 @@
       source: brand && brand.source ? brand.source : null,
       reasons,
       signals,
+      reviews,
       body,
     };
   }
@@ -426,7 +488,7 @@
 
   const cm = (n) => String(+(+n).toFixed(1));
 
-  function recommendShoes(profile, product, found, signals, charts) {
+  function recommendShoes(profile, product, found, signals, charts, reviews = analyzeReviews()) {
     const f = footFromProfile(profile, charts);
     if (!f) return { ok: false, needsProfile: true, reason: 'Add your foot length to your fit profile, and Sizer will size shoes for you.' };
     const brand = found && found.shoes ? found : null;
@@ -447,13 +509,18 @@
       delta: null,
     });
 
-    const explicit = signals.fitNote === 'small' || signals.fitNote === 'large';
+    const pageNote = signals.fitNote === 'small' || signals.fitNote === 'large';
+    const buyersNote = !pageNote && (reviews.verdict === 'small' || reviews.verdict === 'large');
+    const explicit = pageNote || buyersNote;
     let alt = null;
     if (!explicit && inRow && f.foot >= row.foot[1] - 0.2 && idx < rows.length - 1) alt = { row: rows[idx + 1], why: 'if you like more room' };
     else if (!explicit && inRow && f.foot <= row.foot[0] + 0.2 && idx > 0) alt = { row: rows[idx - 1], why: 'if you like a closer fit' };
     if (signals.fitNote === 'small') { idx += 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size up.`, delta: +1 }); }
     if (signals.fitNote === 'large') { idx -= 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size down.`, delta: -1 }); }
     if (signals.fitNote === 'tts') reasons.push({ text: 'The page says it fits true to size.', delta: null });
+    if (buyersNote && reviews.verdict === 'small') { idx += 1; reasons.push({ text: reviewReason(reviews), delta: +1 }); }
+    if (buyersNote && reviews.verdict === 'large') { idx -= 1; reasons.push({ text: reviewReason(reviews), delta: -1 }); }
+    if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
     idx = Math.max(0, Math.min(rows.length - 1, idx));
     const pick = rows[idx];
 
@@ -469,7 +536,9 @@
       : null;
     const size = pageMatch ? pageMatch.label : label(pick);
 
-    const headline = signals.fitNote === 'small' ? 'Runs small, sized up' : signals.fitNote === 'large' ? 'Runs large, sized down' : 'By your foot length';
+    const headline = signals.fitNote === 'small' ? 'Runs small, sized up' : signals.fitNote === 'large' ? 'Runs large, sized down'
+      : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
+        : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down' : 'By your foot length';
     const confidence = brand && f.measured ? 'High' : brand ? 'Medium' : 'Low';
     const firmUp = !brand ? 'There’s no shoe chart for this brand yet, so this uses a standard EU chart.'
       : !f.measured ? 'Add your foot length to firm this up.' : null;
@@ -491,6 +560,7 @@
       source: brand ? brand.source : null,
       reasons,
       signals,
+      reviews,
       body: { foot: f.foot, footSource: f.source },
       shoes: true,
     };
@@ -542,7 +612,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, analyzeText, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf };
+  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -36,6 +36,10 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 3. Rigid fabric rounds up when you fall between sizes, high stretch rounds down, and the brand's
    reputation and your fit preference adjust it.
 4. A "runs small / size up" note on the page moves it one full size (or down for "runs large").
+   When the page says nothing, buyers' reviews stand in: one vote per review, and a verdict only
+   when at least two reviews agree and they are the majority of those that mention fit. A shop's
+   own fit bar ("68% say it runs small") counts the same way. Review text is kept out of the page
+   text, so a reviewer's "runs small" is never mistaken for the brand's.
 5. The result maps to the sizes on the page, using the shop's product data for stock.
 6. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
    the brand's shoe chart or a standard EU one.

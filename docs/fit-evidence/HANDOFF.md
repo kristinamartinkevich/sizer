@@ -80,12 +80,12 @@ like `lookupBody` in plan 1, and `tests/lookup.test.js`'s copy guard is extended
 
 | Bundle | Scope | Depends on | Status | PR # | Merge SHA |
 |---|---|---|---|---|---|
-| **C1** | Fuller profile: height, weight, bust, shoulder, arm; flat-lay on owned pieces; fit preference per category and between-sizes rule; FR/IT/UK/US/EU conversion; onboarding pushes owned pieces | — | [ ] not started | | |
-| **C2** | Per-area fit ("tight in the bust, fine at the waist"); structured reviews; body-similarity weighting | C1 | [ ] not started | | |
-| **C3** | `fit-dossier` function: per-item web fit commentary and model refinement, cached for everyone; two-stage answer | C2 | [ ] not started | | |
-| **C4** | Charts from images (vision), same-origin iframes and same-shop size-guide pages; model fallback reader for "Check this page anyway" | — | [ ] not started | | |
-| **C5** | Vinted: listing reader, seller measurements vs your owned pieces, brand-level fit, seller-message generator, photo measurements on request | C1, C4 | [ ] not started | | |
-| **C6** | Post-purchase "did it fit?", anonymous fit outcomes, side panel | C1–C5 | [ ] not started | | |
+| **C1** | Fuller profile: height, weight, bust, shoulder, arm; flat-lay on owned pieces; fit preference per category and between-sizes rule; FR/IT/UK/US/EU conversion; onboarding pushes owned pieces | — | [x] complete | | |
+| **C2** | Per-area fit ("tight in the bust, fine at the waist"); structured reviews; body-similarity weighting | C1 | [x] complete | | |
+| **C3** | `fit-dossier` function: per-item web fit commentary and model refinement, cached for everyone; two-stage answer | C2 | [x] complete | | |
+| **C4** | Charts from images (vision), same-origin iframes and same-shop size-guide pages; model fallback reader for "Check this page anyway" | — | [x] complete | | |
+| **C5** | Vinted: listing reader, seller measurements vs your owned pieces, brand-level fit, seller-message generator, photo measurements on request | C1, C4 | [x] complete | | |
+| **C6** | Post-purchase "did it fit?", anonymous fit outcomes, side panel | C1–C5 | [x] complete | | |
 
 ---
 

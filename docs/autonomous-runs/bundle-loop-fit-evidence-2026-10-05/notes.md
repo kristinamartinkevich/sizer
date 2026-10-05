@@ -31,10 +31,10 @@ The battery and builders must not share a live tree, so:
 | C1 fuller profile | 8693e66, 9242c3c, abce7c9 | wf (C1) | 1 BLOCKER, 1 MAJOR, minors | none |
 | C2 areas + weighted reviews | core part, engine part, a45b5cd, a9576c9 | wf_76cdfbea-c03 | 3 MAJOR, 3 MINOR | none |
 | C3 server | 5f4a933 | with C3 client | | |
-| C3 client | c11ae36 (from da9a5b3) | wf_d185200d-764 (running) | | |
+| C3 client | c11ae36 (from da9a5b3), be50c43, aea6c39 | wf_d185200d-764 | 1 MAJOR, 2 MINOR | none (dossier_requests retention left to the operator) |
 | C4 charts from images, frames, guide pages | 66faf5e, 840b7f1, 7ccd8e1 | wf_69277a80-867 | 2 MAJOR, 4 MINOR | none |
-| C5 Vinted | core part; wiring building | | | |
-| C6 feedback + side panel | core part; wiring building | | | |
+| C5 Vinted | c0b949c (from 096ee00), 17b108d (from ad6235d) | wf_fdd1e9c0-f4e | 4 MAJOR, 4 MINOR, browser run recorded | none (AI read not offered on Vinted, by choice; see C5 notes) |
+| C6 feedback + side panel | 22bf132 (from 06fbb44), 60ac098 | wf_2dfac5ca-a56 | 5 MAJOR, 2 MINOR | none (Vinted panel slot is a placeholder until C5 defines it) |
 
 ## Cross-bundle notes
 - Integrating C3 onto C2's review fix: the dossier's web areas now follow the same rule as chart and
@@ -46,3 +46,10 @@ The battery and builders must not share a live tree, so:
   five cases, three with the hostname (tally, dossier, chart lookup), two without (image, AI read).
 - Every commit on the branch has git's auto-configured committer identity
   (`Kristina <kristina@Host-001.lan>`); left for the operator to decide.
+
+## Ship state
+
+All six bundles built and reviewed on feat/fit-evidence. Gates after the last commit: node 322/322,
+deno 126/126, check-migrations 0001 to 0008, tests/shops.html PASS (12 shops, 97 checks). The demo
+shop, side panel and popup ran in the browser through the stub. Not pushed: the operator pushes and
+opens the PR against feat/brand-chart-lookup.

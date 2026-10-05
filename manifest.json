@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Sizer",
-  "version": "1.0.0",
-  "description": "Your size on clothing product pages, worked out from your measurements, clothes you own and the item’s fit notes.",
+  "name": "Sizer – Clothing Size Finder",
+  "version": "1.0.1",
+  "description": "Find your clothing size on any shop. Reads the brand’s size chart, stretch, fit notes, stock and buyers’ reviews. Jeans to shoes.",
   "permissions": [
     "storage",
     "activeTab",

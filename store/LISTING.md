@@ -8,7 +8,7 @@
 2. **Host the privacy policy.** It is required now that the review tally leaves the browser. Easiest:
    repo Settings → Pages → deploy from `main`, folder `/` (root). The policy is then at
    `https://kristinamartinkevich.github.io/sizer/store/privacy.html`. Takes about a minute to go live.
-3. **Build the package.** `sh package.sh` writes `dist/sizer-1.0.0.zip`. Bump `version` in
+3. **Build the package.** `sh package.sh` writes `dist/sizer-<version>.zip`. Bump `version` in
    `manifest.json` before every later upload; the store refuses a repeat version.
 4. **New item.** Dashboard → **New item** → upload the zip. Chrome reads name, version, icons and
    permissions from the manifest.
@@ -32,9 +32,10 @@ privacy policy matches what the data disclosure says.
 
 **Name:** Sizer – Clothing Size Finder
 
-Search on the store matches the name first. "Clothing size finder" and "what size am I" are the two
-phrases people type; the dash form keeps "Sizer" as the brand. The manifest `name` stays "Sizer";
-the store name is set separately in the listing.
+The console takes the title and the summary from the package (`name` and `description` in
+`manifest.json`), so both live there. Search on the store matches the name first; "clothing size
+finder" and "what size am I" are the two phrases people type, and the dash form keeps "Sizer" as
+the brand.
 
 **Summary** (132 characters max, shown in search results):
 Find your clothing size on any shop. Reads the brand’s size chart, stretch, fit notes, stock and buyers’ reviews. Jeans to shoes.

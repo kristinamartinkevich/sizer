@@ -3,30 +3,39 @@
 <head>
   <meta charset="utf-8">
   <title>Sizer store frames</title>
-  <!-- Store and launch imagery. ?n=1..4 picks the frame, ?kind=promo|marquee renders the tiles. -->
+  <!--
+    Store and launch imagery at 1280×800. ?n=1..5 picks the screenshot, ?kind=promo|marquee the tiles.
+    Shots 1 to 4 frame a real shop page with Sizer running (store/render/, built by
+    tools/render-shop.py from the saved pages), zoomed onto the product details so the size reads at
+    a glance. Each crop starts below the shop's header, so no shop logo is in the picture; anything
+    personal that falls inside a crop (a seller's name) is blurred.
+  -->
   <link rel="stylesheet" href="../ui/fonts.css">
   <style>
     :root {
       --fog: #f4f4f2; --graphite: #141413; --muted: #6a6a66; --hair: #e9e9e6; --accent: #141413;
-      --serif: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
       --sans: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
     html, body { margin: 0; background: var(--fog); color: var(--graphite); font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
-    .frame { width: 1280px; height: 800px; display: grid; grid-template-columns: 380px 724px; gap: 48px; align-items: center; padding: 0 64px; box-sizing: border-box; overflow: hidden; }
+    .frame { width: 1280px; height: 800px; display: grid; grid-template-columns: 360px 776px; gap: 40px; align-items: center; padding: 0 52px 0 52px; box-sizing: border-box; overflow: hidden; }
     .mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); overflow: hidden; vertical-align: middle; }
     .mark img { width: 28px; height: 28px; display: block; }
-    .word { font: 600 18px/1 var(--serif); letter-spacing: -.01em; margin-left: 10px; vertical-align: middle; }
-    h1 { font: 600 50px/1.04 var(--serif); letter-spacing: -.03em; margin: 34px 0 18px; text-wrap: balance; }
-    p { margin: 0; font-size: 18px; color: var(--muted); max-width: 360px; }
-    .window { width: 724px; height: 640px; background: #fff; border-radius: 14px; box-shadow: 0 30px 80px rgba(28, 27, 24, .18), 0 0 0 1px rgba(28, 27, 24, .06); overflow: hidden; position: relative; }
-    .chrome { height: 38px; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 16px; gap: 10px; font-size: 12px; color: #8a8a8a; }
-    .url { flex: 1; height: 22px; border-radius: 11px; background: #f3f3f3; display: flex; align-items: center; padding: 0 12px; }
-    iframe, .window img { border: 0; width: 1180px; height: 981px; transform: scale(.6136); transform-origin: 0 0; position: absolute; top: 38px; left: 0; }
+    .word { font: 600 18px/1 var(--sans); letter-spacing: -.01em; margin-left: 10px; vertical-align: middle; }
+    .eyebrow { margin-top: 40px; font: 600 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    h1 { font: 600 48px/1.04 var(--sans); letter-spacing: -.03em; margin: 14px 0 18px; text-wrap: balance; }
+    p { margin: 0; font-size: 18px; line-height: 1.5; color: var(--muted); max-width: 340px; text-wrap: pretty; }
+    .window { width: 776px; height: 660px; background: #fff; border-radius: 14px; box-shadow: 0 30px 80px rgba(28, 27, 24, .16), 0 0 0 1px rgba(28, 27, 24, .07); overflow: hidden; position: relative; }
+    .chrome { height: 40px; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 14px; gap: 12px; font-size: 12px; color: #8a8a8a; background: #fafaf9; }
+    .dots { display: flex; gap: 6px; } .dots i { width: 10px; height: 10px; border-radius: 50%; background: #dcdcd8; display: block; }
+    .url { flex: 1; height: 24px; border-radius: 12px; background: #efefec; display: flex; align-items: center; padding: 0 12px; }
+    .view { position: absolute; top: 41px; left: 0; right: 0; bottom: 0; overflow: hidden; }
+    .view iframe { border: 0; position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+    .view img { width: 100%; display: block; }
 
     .tile { width: 440px; height: 280px; background: var(--accent); color: var(--fog); display: flex; flex-direction: column; justify-content: center; padding: 0 40px; box-sizing: border-box; }
     .tile .logo { width: 72px; height: 72px; display: block; }
     .marquee .logo { width: 120px; height: 120px; }
-    .tile .t { font: 600 34px/1.08 var(--serif); letter-spacing: -.015em; margin-top: 22px; }
+    .tile .t { font: 600 34px/1.08 var(--sans); letter-spacing: -.015em; margin-top: 22px; }
     .marquee { width: 1400px; height: 560px; padding: 0 110px; }
     .marquee .t { font-size: 64px; max-width: 900px; }
     .marquee .sub { font-size: 21px; opacity: .8; margin-top: 18px; max-width: 760px; }
@@ -35,11 +44,19 @@
 <body>
   <script>
     const q = new URLSearchParams(location.search);
+    // [eyebrow, title, line, page, address bar, crop]. The crop is in the page's own pixels at a
+    // 1280 px wide window: x and y of the top left corner, and the width shown.
     const FRAMES = {
-      1: ['Your size, right under the size picker.', 'Sizer reads the brand, the fabric and the fit notes, then tells you which size to pick.', '../tests/fixture-shop.html?picker-open=1&charts=1', 'demo-shop.example/jeans'],
-      2: ['Every answer shows its working.', 'Your sizes, the brand’s chart, the stretch and the page’s own fit notes, in plain words.', '../tests/fixture-shop.html?open=why&charts=1', 'demo-shop.example/jeans'],
-      3: ['Sold out? It says what’s close.', 'When your size is gone, Sizer names the nearest sizes in stock and how far off they are.', '../tests/fixture-shop.html?stock=out&picker-open=1&charts=1', 'demo-shop.example/jeans'],
-      4: ['Set up once, in under a minute.', 'Add your measurements, clothes that already fit, or both. Everything stays in your browser.', 'out/_options.png', 'Sizer · Your fit profile'],
+      1: ['On any product page', 'Your size, right under the size picker.', 'Sizer reads the brand’s chart, the fabric and the page’s fit notes. When your size is sold out, it names the nearest ones in stock.',
+          'render/zalando.html', 'zalando.co.uk', { x: 330, y: 236, w: 930 }],
+      2: ['Why this size', 'Every answer shows its working.', 'The pieces you own, the stretch, what the page and its buyers say, in plain words, with what moved the size.',
+          'render/asos.html', 'asos.com', { x: 300, y: 200, w: 980, open: 'why' }],
+      3: ['On the size grid', 'Your size, marked where you pick it.', 'On shops with size buttons, Sizer marks your size in the grid and says why in one line.',
+          'render/nap.html', 'net-a-porter.com', { x: 450, y: 140, w: 830 }],
+      4: ['Second-hand on Vinted', 'Does it fit? Checked against what you own.', 'Sizer reads the seller’s measurements and compares them with a piece you already wear. Missing one, it writes the message to ask.',
+          'render/items/vinted-store.html', 'vinted.co.uk', { x: 380, y: 640, w: 900, hide: ['[data-testid*="profile-username"]'], css: '[itemprop="description"] > div { max-height: none !important; } [itemprop="description"] > button { display: none !important; } .details-list--actions { display: none !important; } [class*="skeleton" i], [class*="placeholder" i] { visibility: hidden !important; }' }],
+      5: ['Your fit profile', 'Set up once, in under a minute.', 'Add your measurements, clothes that already fit, or both. Everything stays in your browser.',
+          'out/_options.png', 'Sizer · Your fit profile', null],
     };
     const kind = q.get('kind');
     if (kind === 'promo' || kind === 'marquee') {
@@ -47,11 +64,56 @@
         <div class="t">Your size, on every product page.</div>
         ${kind === 'marquee' ? '<div class="sub">Sizer reads the brand, the fabric and the fit notes, and puts your size under the size picker.</div>' : ''}</div>`);
     } else {
-      const [title, sub, src, url] = FRAMES[q.get('n') || 1];
+      const [eyebrow, title, sub, src, url, crop] = FRAMES[q.get('n') || 1];
       document.write(`<div class="frame">
-        <div><span class="mark"><img src="../brand/mark.svg" alt=""></span><span class="word">sizer</span><h1>${title}</h1><p>${sub}</p></div>
-        <div class="window"><div class="chrome"><div class="url">${url}</div></div>${src.endsWith('.png') ? `<img src="${src}" alt="">` : `<iframe src="${src}" title="Preview"></iframe>`}</div>
+        <div><span class="mark"><img src="../brand/mark.svg" alt=""></span><span class="word">sizer</span>
+          <div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${sub}</p></div>
+        <div class="window"><div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">${url}</div></div>
+          <div class="view">${crop ? `<iframe src="${src}" title="Preview" scrolling="no"></iframe>` : `<img src="${src}" alt="">`}</div></div>
       </div>`);
+      if (crop) {
+        const view = document.querySelector('.view');
+        const frame = document.querySelector('iframe');
+        const s = view.clientWidth / crop.w;
+        // The page lays out at 1280 wide; the window shows crop.w of it, from crop.x, so fixed
+        // panels (the reasoning sheet) stay inside the visible part.
+        Object.assign(frame.style, { width: `${crop.x + crop.w}px`, height: `${view.clientHeight / s}px`, transform: `scale(${s}) translateX(${-crop.x}px)` });
+        frame.addEventListener('load', () => {
+          const doc = frame.contentDocument;
+          const style = doc.createElement('style');
+          // The shop's own pop-ups (country pickers, chat buttons) would sit over the page, and the
+          // render has no script to dismiss them.
+          style.textContent = `[role="dialog"], [aria-modal="true"], [class*="Dialog__overlay" i], [class*="modal-overlay" i], [id*="chat" i], [class*="chat-widget" i] { display: none !important; }
+            ${(crop.hide || []).map((sel) => `${sel} { filter: blur(6px) !important; }`).join('\n')}
+            ${crop.css || ''}`;
+          doc.head.appendChild(style);
+          // Floating shop buttons (feedback, chat, back to top) are small fixed boxes; Sizer's own are kept.
+          const tidy = () => doc.querySelectorAll('body *').forEach((el) => {
+            if (/^sizer/.test(el.id)) return;
+            const cs = frame.contentWindow.getComputedStyle(el);
+            if (cs.position === 'fixed' && el.getBoundingClientRect().width < 200) el.style.setProperty('display', 'none', 'important');
+          });
+          const place = () => { tidy(); frame.contentWindow.scrollTo(0, crop.y); };
+          place();
+          if (crop.open === 'why') {
+            const tryOpen = () => {
+              const host = doc.getElementById('sizer-inline') || doc.getElementById('sizer-pill');
+              const b = host && host.shadowRoot && host.shadowRoot.querySelector('[data-act="why"]');
+              if (!b) { setTimeout(tryOpen, 200); return; }
+              b.click();
+              // The sheet slides in with an animation that a scaled frame can leave on its first
+              // (transparent) frame, so the still shows it where it ends.
+              setTimeout(() => {
+                const panel = doc.getElementById('sizer-panel');
+                if (panel && panel.shadowRoot) panel.shadowRoot.appendChild(Object.assign(doc.createElement('style'), { textContent: '* { animation: none !important; }' }));
+                place();
+              }, 300);
+            };
+            setTimeout(tryOpen, 800);
+          }
+          setTimeout(place, 1500);
+        });
+      }
     }
   </script>
 </body>

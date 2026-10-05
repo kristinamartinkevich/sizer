@@ -77,11 +77,11 @@ test('review-details.js loads before engine.js everywhere the engine runs in a p
     ['ui/popup.js', "'src/review-details.js'", "'src/engine.js'"],
     ['tests/fixture-shop.html', 'src/review-details.js', 'src/engine.js'],
     ['tests/shops.html', 'src/review-details.js', 'src/engine.js'],
-    ['tools/render-shop.py', "'review-details'", "'engine'"],
   ]) {
     const text = read(file);
     assert.ok(text.indexOf(a) > -1 && text.indexOf(a) < text.indexOf(b), file);
   }
+  assert.match(read('tools/render-shop.py'), /manifest\['content_scripts'\]/, 'render-shop.py reads the manifest list');
 });
 
 test('the engine reads raw review cards, keeping only those with a verdict or an area', () => {

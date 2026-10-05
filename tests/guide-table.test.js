@@ -255,11 +255,11 @@ test('guide-table.js loads before extract.js everywhere the reader runs', () => 
     ['ui/popup.js', "'src/guide-table.js'", "'src/extract.js'"],
     ['tests/fixture-shop.html', 'src/guide-table.js', 'src/extract.js'],
     ['tests/shops.html', 'src/guide-table.js', 'src/extract.js'],
-    ['tools/render-shop.py', "'guide-table'", "'extract'"],
   ]) {
     const text = read(file);
     assert.ok(text.indexOf(a) > -1 && text.indexOf(a) < text.indexOf(b), file);
   }
+  assert.match(read('tools/render-shop.py'), /manifest\['content_scripts'\]/, 'render-shop.py reads the manifest list');
 });
 
 test('hints carry through to the chart', () => {

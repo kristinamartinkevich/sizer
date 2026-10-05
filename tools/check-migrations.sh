@@ -25,8 +25,12 @@ pg_ctl -D "$dir/data" -o "-p $port -k $dir -c listen_addresses=''" -l "$dir/log"
 
 run() { psql -h "$dir" -p "$port" -U postgres -d postgres -X -q -v ON_ERROR_STOP=1 "$@"; }
 
-# The two API roles Supabase provides, which the migrations grant to.
-run -c "create role anon nologin; create role authenticated nologin;"
+# The API roles Supabase provides, which the migrations grant to, and the default privileges a
+# Supabase project gives them on every new table in public: RLS and explicit revokes are what keep
+# a table private there, so the check must not get privacy for free from missing grants.
+run -c "create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;"
+run -c "grant usage on schema public to anon, authenticated, service_role;"
+run -c "alter default privileges in schema public grant all on tables to anon, authenticated, service_role;"
 
 for f in supabase/migrations/*.sql; do
   if run -1 -f "$f" >"$dir/out" 2>&1; then
@@ -54,3 +58,41 @@ begin
 end $$;
 SQL
 echo "ok   chart_bundle serves machine-read charts with provenance and hides drafts"
+
+# The lookup ledger: the function (service role) writes and reads it; the public key can do neither.
+run >/dev/null <<'SQL'
+set role service_role;
+insert into public.chart_lookups (brand, kind, shop, install, outcome, reason)
+values ('helsa', 'dresses', 'revolveclothing.fr', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'no_chart', 'no size guide');
+do $$
+begin
+  if (select count(*) from public.chart_lookups) <> 1 then raise exception 'the service role cannot read chart_lookups'; end if;
+end $$;
+reset role;
+do $$
+begin
+  if not (select relrowsecurity from pg_class where oid = 'public.chart_lookups'::regclass) then
+    raise exception 'chart_lookups has row level security off';
+  end if;
+  if exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'chart_lookups') then
+    raise exception 'chart_lookups has a policy, it should have none';
+  end if;
+end $$;
+set role anon;
+do $$
+declare seen bigint;
+begin
+  begin
+    select count(*) into seen from public.chart_lookups;
+    if seen > 0 then raise exception 'anon can read chart_lookups (% rows)', seen; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.chart_lookups (brand, kind, shop, install, outcome)
+    values ('x', 'tops', 'example.com', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'chart');
+    raise exception 'anon can write chart_lookups';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+SQL
+echo "ok   chart_lookups is written by the service role and closed to anon"

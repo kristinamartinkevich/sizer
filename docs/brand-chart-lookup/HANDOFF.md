@@ -53,8 +53,9 @@ error to retry.
 
 **Operator steps after the merge** (the plan is not live until these are done, and B4's exit
 criteria say so explicitly):
-1. Run migration `0004` in the Supabase SQL editor.
-2. `supabase secrets set ANTHROPIC_API_KEY=<key>` then `supabase functions deploy lookup-chart`.
+1. Run migrations `0004` and then `0005` in the Supabase SQL editor.
+2. `supabase secrets set ANTHROPIC_API_KEY=<key>` then `supabase functions deploy lookup-chart --no-verify-jwt`
+   (exact commands and why the flag is needed: `supabase/functions/lookup-chart/README.md`).
 3. Bump `version` in `manifest.json`, `sh package.sh`, upload to the Web Store.
 
 To drive a single bundle by hand, copy its §3 launch command into `/autonomous-task` verbatim.

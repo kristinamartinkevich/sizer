@@ -4,3 +4,4 @@ store/render/
 ui/_*
 .claude/
 .worktrees/
+supabase/.temp/

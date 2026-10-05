@@ -59,6 +59,7 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 | `src/charts-store.js`, `src/background.js` | Daily download of verified charts from the Supabase project into `chrome.storage.local` |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
+| `supabase/functions/lookup-chart/` | Edge Function that finds a brand's chart when nobody has one yet, stores it as machine-read; deploy steps in its README |
 | `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide |
 | `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables) |
 | `src/content.js`, `src/panel-style.js`, `src/mark.js` | What Sizer draws on shop pages; the mark is inline SVG so shop CSPs cannot block it |
@@ -82,6 +83,7 @@ The sheet's footer links to the brand page the chart was read from, with the dat
     sh package.sh        # dist/sizer-<version>.zip for the Chrome Web Store
     sh tools/check-migrations.sh   # applies supabase/migrations/*.sql to a throwaway local Postgres,
                                    # one transaction per file, as the Supabase SQL editor runs them
+    deno test supabase/functions/  # the lookup-chart Edge Function, no network
 
 `tests/fixture-shop.html` is a demo product page with query switches (first run, sold out, open
 sheet, no picker) for checking every state; serve the folder over HTTP to open it.

@@ -303,6 +303,12 @@
       const kind = /small/i.test(m[2]) ? 'small' : /large|big/i.test(m[2]) ? 'large' : 'tts';
       pct[kind] = Math.max(pct[kind], Math.min(100, +m[1]));
     }
+    // A labelled slider with no numbers ("Fit is Runs Small", ASOS) is read as a lean, not a landslide.
+    const lean = String(summary).match(/fit is (between|runs small|runs large|true to size|too small|too large)/i);
+    if (!(pct.small || pct.large || pct.tts) && lean) {
+      const kind = /small/i.test(lean[1]) ? 'small' : /large/i.test(lean[1]) ? 'large' : 'tts';
+      pct[kind] = kind === 'tts' ? 70 : 65;
+    }
     if (!(pct.small || pct.large || pct.tts)) return out;
     const count = (String(summary).match(REVIEW_COUNT) || [])[1];
     const total = count ? parseInt(count.replace(/[,.]/g, ''), 10) : Math.max(out.total, 100);

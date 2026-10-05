@@ -5,7 +5,7 @@
 Reads tests/fixtures/shops/<name>.html, writes store/render/<name>.html, which the demo server serves
 at http://localhost:8766/store/render/<name>.html. The stub profile is the demo one (Zara 38, jeans 27).
 """
-import re, sys, pathlib
+import re, sys, pathlib, time
 name, base = sys.argv[1], sys.argv[2]
 root = pathlib.Path(__file__).resolve().parent.parent
 html = (root / 'tests/fixtures/shops' / f'{name}.html').read_text()
@@ -16,9 +16,12 @@ window.chrome = { runtime: { getURL: (p) => 'http://localhost:8766/' + p, sendMe
   storage: { sync: { get: (d, cb) => cb({ profile: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: '', type: 'jeans', size: '27', fit: 'perfect' }], waist: '', hip: '', inseam: '', footLength: '', unit: 'cm', fitPreference: 'regular', theme: 'system' } }) },
     local: { get: (d, cb) => cb(typeof d === 'string' ? {} : d) }, onChanged: { addListener: () => {} } } };
 </script>
-""" + ''.join(f'<script src="http://localhost:8766/src/{f}.js"></script>\n' for f in ['brands', 'charts-store', 'charts', 'defaults', 'engine', 'extract', 'panel-style', 'content'])
+""" + ''.join(f'<script src="http://localhost:8766/src/{f}.js?v={int(time.time())}"></script>\n' for f in ['brands', 'charts-store', 'charts', 'defaults', 'engine', 'extract', 'panel-style', 'content'])
 # the shop's own scripts must not run again from a file: they would re-render and fight the snapshot
 html = re.sub(r'<script\b(?![^>]*application/ld\+json)[^>]*>.*?</script>', '', html, flags=re.S | re.I)
+# consent banners would sit on top of every render
+html = re.sub(r'<div[^>]+id="onetrust-consent-sdk"[^>]*>.*?</div>\s*</div>\s*</div>\s*</div>', '', html, flags=re.S)
+stub = '<style>#onetrust-consent-sdk, #onetrust-banner-sdk, [id^="onetrust"], [class*="cookie-banner" i], [class*="cookieBanner" i], [id*="cookie-banner" i], [class*="consent" i][role="dialog"] { display: none !important }</style>\n' + stub
 html = html.replace('</body>', stub + '</body>', 1)
 out = root / 'store/render' / f'{name}.html'
 out.parent.mkdir(parents=True, exist_ok=True)

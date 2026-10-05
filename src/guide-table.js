@@ -11,7 +11,10 @@
   ];
   const SIZE_WORD = /\bsizes?\b|^tailles?\b|gr(ö|o)(ß|ss)en?\b|^tallas?\b|^taglias?\b|^maat\b/i;
   const SYSTEMS = [['uk', /\b(uk|gb)\b/i], ['eu', /\b(eu|eur|europe|de)\b/i], ['fr', /\b(fr|france)\b/i], ['it', /\b(it|ital(y|ia))\b/i], ['us', /\b(us|usa)\b/i], ['letter', /\b(int|intl|international|letter)\b/i]];
-  const GARMENT = /garment|product (measurements|dimensions)|item measurements|laid flat|\bflat\b|dimensions du produit|mesures du (produit|v[êe]tement)|ma(ß|ss)e des artikels/i;
+  // A shop's "model info" panel lists the model's own body and the size she wears: real body
+  // measurements against sizes, so only its wording tells it apart from a chart.
+  const MODEL = /\bmodels?\b|mannequin|size worn|\bwears? (a )?size|is wearing|porte une taille|taille port[ée]e|tr(ä|a)gt gr(ö|o)(ß|ss)e/i;
+  const GARMENT =/garment|product (measurements|dimensions)|item measurements|laid flat|\bflat\b|dimensions du produit|mesures du (produit|v[êe]tement)|ma(ß|ss)e des artikels/i;
 
   // Plausible body measurements, so a column of something else (inseam, model height) is not read as one.
   const PLAUSIBLE = {
@@ -109,7 +112,9 @@
     return Array.from({ length: width }, (_, c) => m.map((r) => (r[c] == null ? '' : r[c])));
   }
 
-  const isUnitRow = (r) => r.some(Boolean) && r.every((c) => !c || /^\(?(cm|in|inch(es)?|")\)?$/i.test(c));
+  // A cell repeating the header above it is a rowspanned header ("Size" over two rows), not data.
+  const UNIT_CELL = /^\(?(cm|in|inch(es)?|")\)?$/i;
+  const isUnitRow = (r, above) => r.some((c) => UNIT_CELL.test(c)) && r.every((c, i) => !c || UNIT_CELL.test(c) || c === above[i]);
   const isSpanned = (r) => { const f = r.filter(Boolean); return !f.length || (f.length === r.length && f.length > 1 && f.every((c) => c === f[0])); };
 
   // Sizes down the side, one measurement per column. The other orientation is tried by transposing.
@@ -119,11 +124,12 @@
     const width = Math.max(...m.map((r) => r.length));
     const headers = Array.from({ length: width }, (_, c) => clean(m[headerAt][c]));
     let next = headerAt + 1;
-    while (next < m.length && isUnitRow(m[next])) {
-      m[next].forEach((u, c) => { if (u) headers[c] = clean(`${headers[c]} ${u}`); });
+    while (next < m.length && isUnitRow(m[next], m[headerAt])) {
+      m[next].forEach((u, c) => { if (UNIT_CELL.test(u)) headers[c] = clean(`${headers[c]} ${u}`); });
       next += 1;
     }
     const context = m.slice(0, headerAt).map((r) => r.join(' ')).join(' ');
+    if (MODEL.test(`${headers.join(' ')} ${context} ${hints.caption || ''}`)) return null;
     const body = m.slice(next).filter((r) => !isSpanned(r));
     if (body.length < 2) return null;
     const kinds = headers.map((h) => classify(h));
@@ -176,10 +182,11 @@
     }
 
     const has = (k) => k in values;
+    // Clothing is sized on waist and hip (convertChart drops any row without both), so a table
+    // missing either is no chart the engine can use.
     let category;
     if (has('foot_length')) category = 'shoes';
-    else if (['waist', 'hip', 'bust'].filter(has).length < 2) return null;
-    else if (has('bust') && has('waist') && !has('hip')) category = 'tops';
+    else if (!has('waist') || !has('hip')) return null;
     else category = has('bust') ? 'general' : 'bottoms';
 
     let sizeSystem = labelSystem && labelSystem !== 'size' ? labelSystem : null;

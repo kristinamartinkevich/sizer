@@ -97,6 +97,18 @@ test('a chart printing cm and inches keeps the cm columns', () => {
   assert.deepEqual(chart.rows.map((r) => [r.waist[0], r.hip[0]]), [[66, 92], [70, 96]]);
 });
 
+test('a unit row under a rowspanned Size header still counts as the unit row', () => {
+  // As the page reader expands <th rowspan="2">Size</th>: the Size cell repeats into the unit row.
+  const chart = parseGuideMatrix([
+    ['Size', 'Waist', 'Waist', 'Hip', 'Hip'],
+    ['Size', 'cm', 'in', 'cm', 'in'],
+    ['S', '64-68', '25-27', '90-94', '35-37'],
+    ['M', '68-72', '27-28', '94-98', '37-38.5'],
+  ], {});
+  assert.equal(chart.unit, 'cm');
+  assert.deepEqual(chart.rows.map((r) => [r.label, r.waist, r.hip]), [['S', [64, 68], [90, 94]], ['M', [68, 72], [94, 98]]]);
+});
+
 test('a header caption naming garment measurements marks the chart garment-measured', () => {
   const chart = parseGuideMatrix([
     ['Garment measurements (cm)', '', ''],
@@ -142,6 +154,51 @@ test('non-charts return null', () => {
     ],
   };
   for (const [name, matrix] of Object.entries(cases)) assert.equal(parseGuideMatrix(matrix, { brand: 'AGOLDE' }), null, name);
+});
+
+test('tables of the models wearing the clothes are not size charts', () => {
+  const cases = {
+    twoModels: [
+      ['Model', 'Height', 'Size worn', 'Bust', 'Waist', 'Hips'],
+      ['Anna', '175', 'S', '82', '63', '90'],
+      ['Bea', '178', 'M', '86', '68', '94'],
+    ],
+    modelPanelAcross: [
+      ['Model Info', 'XS', 'S'],
+      ['Tour de taille', "24''", "25''"],
+      ['Poitrine', "32''", "33''"],
+      ['Hanches', "34''", "35''"],
+    ],
+    captioned: [['Size', 'Waist', 'Hip'], ['S', '63', '90'], ['M', '68', '94']],
+  };
+  assert.equal(parseGuideMatrix(cases.twoModels, {}), null, 'twoModels');
+  assert.equal(parseGuideMatrix(cases.modelPanelAcross, {}), null, 'modelPanelAcross');
+  assert.equal(parseGuideMatrix(cases.captioned, { caption: 'Our models wear' }), null, 'captioned');
+  assert.ok(parseGuideMatrix(cases.captioned, { caption: 'Size guide' }), 'the same table under a size-guide caption still parses');
+});
+
+test('every parsed chart converts through convertChart', () => {
+  const { convertChart } = require('../src/charts.js');
+  const charts = {
+    general: [['Size', 'Bust', 'Waist', 'Hip'], ['S', '84', '66', '92'], ['M', '88', '70', '96']],
+    bottoms: [['UK', 'Waist', 'Hip'], ['8', '64', '89'], ['10', '68', '93']],
+    inches: [['Size', 'Waist', 'Hips'], ['S', '26"', '36"'], ['M', '28"', '38"']],
+    garment: [['Garment measurements (cm)', '', ''], ['Size', 'Waist', 'Hip'], ['S', '70', '98'], ['M', '74', '102']],
+    shoes: [['EU', 'Foot length (cm)'], ['37', '23.5'], ['38', '24.1']],
+  };
+  for (const [name, matrix] of Object.entries(charts)) {
+    const parsed = parseGuideMatrix(matrix, {});
+    assert.ok(parsed, `${name} parses`);
+    const converted = convertChart({ ...parsed, id: name });
+    assert.ok(converted, `${name} converts`);
+    assert.equal(converted.rows.length, parsed.rows.length, `${name} keeps every row`);
+  }
+  assert.equal(convertChart({ ...parseGuideMatrix(charts.inches, {}), id: 'in' }).rows[0].waist, 66);
+});
+
+test('bust and waist without hip is not a chart the engine can use', () => {
+  assert.equal(parseGuideMatrix([['Size', 'Bust', 'Waist'], ['S', '84', '66'], ['M', '88', '70']], {}), null);
+  assert.equal(parseGuideMatrix([['Size', 'Bust', 'Hip'], ['S', '84', '92'], ['M', '88', '96']], {}), null);
 });
 
 test('charts that break the §5 rules return null', () => {

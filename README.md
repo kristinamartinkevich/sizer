@@ -89,7 +89,9 @@ sheet, no picker) for checking every state; serve the folder over HTTP to open i
 `tests/shops.html` runs the reader against saved real product pages in `tests/fixtures/shops/`
 (Zalando, ASOS, Net-a-Porter, Revolve) and checks brand, sizes, stock, fit notes, reviews, size-guide
 tables and the answer. `inline-guide.html` there is synthetic: a fictional brand page that prints
-its size table inline, since none of the four real shops carries its chart in the page. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
+its size table inline, since none of the four real shops carries its chart in the page.
+`aria-guide.html` exercises the size-guide finder alone: an ARIA grid in a size-guide dialog, a
+captioned table, and tables in a cookie banner and in reviews that must be skipped. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
 To add a shop: open the product page in a browser, save `document.documentElement.outerHTML`
 as `tests/fixtures/shops/<shop>.html` (the demo server also accepts `POST /save?name=<shop>`), add
 its expectations to `SHOPS` in `tests/shops.html`, and `python3 tools/render-shop.py <shop> <origin>`

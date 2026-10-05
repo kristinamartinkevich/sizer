@@ -1,0 +1,59 @@
+<!doctype html>
+<!--
+  Synthetic fixture for the size-guide finder's DOM paths, not a product page (the harness runs only
+  the guide checks on it):
+  - an ARIA grid inside a size-guide modal named only by its class, with aria-rowspan and
+    aria-colspan headers and cm and inch columns (dialogs are searched for guides);
+  - a <table> whose own <caption> names it a shoe size chart;
+  - a size table inside a cookie banner and one inside reviews, which must never be read.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Size guide paths</title>
+</head>
+<body>
+  <div class="size-chart-modal" role="dialog" aria-modal="true">
+    <div role="table">
+      <div role="row">
+        <span role="columnheader" aria-rowspan="2">Size</span>
+        <span role="columnheader" aria-colspan="2">Waist</span>
+        <span role="columnheader" aria-colspan="2">Hip</span>
+      </div>
+      <div role="row">
+        <span role="columnheader">cm</span><span role="columnheader">in</span>
+        <span role="columnheader">cm</span><span role="columnheader">in</span>
+      </div>
+      <div role="row"><span role="rowheader">S</span><span role="cell">64-68</span><span role="cell">25-27</span><span role="cell">90-94</span><span role="cell">35-37</span></div>
+      <div role="row"><span role="rowheader">M</span><span role="cell">68-72</span><span role="cell">27-28</span><span role="cell">94-98</span><span role="cell">37-38.5</span></div>
+      <div role="row"><span role="rowheader">L</span><span role="cell">72-76</span><span role="cell">28-30</span><span role="cell">98-102</span><span role="cell">38.5-40</span></div>
+    </div>
+  </div>
+
+  <table>
+    <caption>Shoe size chart</caption>
+    <tr><th>EU</th><th>UK</th><th>Foot length (cm)</th></tr>
+    <tr><td>37</td><td>4</td><td>23.5</td></tr>
+    <tr><td>38</td><td>5</td><td>24.1</td></tr>
+    <tr><td>39</td><td>6</td><td>24.8</td></tr>
+  </table>
+
+  <div class="cookie-banner">
+    <h4>Size guide</h4>
+    <table>
+      <tr><th>Size</th><th>Waist</th><th>Hip</th></tr>
+      <tr><td>XS</td><td>58</td><td>84</td></tr>
+      <tr><td>S</td><td>62</td><td>88</td></tr>
+    </table>
+  </div>
+
+  <section class="reviews">
+    <h4>Size chart from a reviewer</h4>
+    <table>
+      <tr><th>Size</th><th>Waist</th><th>Hip</th></tr>
+      <tr><td>XS</td><td>58</td><td>84</td></tr>
+      <tr><td>S</td><td>62</td><td>88</td></tr>
+    </table>
+  </section>
+</body>
+</html>

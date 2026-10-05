@@ -32,14 +32,20 @@
     // What each saved page must yield. Stock and notes are what the page showed on the capture date.
     // `guide`: null when the page prints no size guide table, else the charts the reader must parse from it.
     // None of the four real shops carries its chart in the DOM; Revolve's two guide tables are the
-    // model's measurements and the garment's dimensions, which must not parse. inline-guide is synthetic.
+    // model's measurements and the garment's dimensions, which must not parse. inline-guide and
+    // aria-guide are synthetic; aria-guide is not a product page, so only its guide is checked.
     const SHOPS = [
       { name: 'zalando', base: 'https://www.zalando.co.uk/', brand: 'rag & bone', title: /STEVIE/, sizes: 8, soldOut: ['25', '27', '28', '29'], fitNote: 'small', size: '28', headline: /Runs small/, guide: null },
       { name: 'asos', base: 'https://www.asos.com/', brand: "Levi's", title: /501/, sizes: 17, soldOut: ['W24 L30', 'W25 L32', 'W26 L32', 'W27 L32', 'W28 L34', 'W29 L32', 'W32 L32'], fitNote: 'large', reviewsMin: 2, reviewsMax: 6, summary: /Fit is between/, size: 'W26 L30', headline: /Runs large/, guide: null },
       { name: 'nap', base: 'https://www.net-a-porter.com/', brand: 'AGOLDE', title: /straight-leg jeans/, sizes: 10, soldOut: [], fitNote: 'tts', size: '28', guide: null },
       { name: 'revolve', base: 'https://www.revolveclothing.fr/', brand: 'AGOLDE', title: /PINCH WAIST/, sizes: 12, soldOut: ['24', '25', '27', '29', '30', '31', '32', '33', '34'], reviewsMin: 3, reviewsMax: 10, noStretch: true, size: '28', guide: [] },
       { name: 'inline-guide', base: 'https://lune-atelier.example/', brand: 'Lune Atelier', title: /Bias silk midi skirt/, sizes: 5, soldOut: ['S'], noStretch: true, size: 'M',
-        guide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L', 'XL'], first: { bust: [80, 84], waist: [62, 66], hip: [88, 92] } }], caption: 'Lune Atelier size guide' },
+        guide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L', 'XL'], first: { bust: [80, 84], waist: [62, 66], hip: [88, 92], foot_length: null } }], caption: 'Lune Atelier size guide' },
+      { name: 'aria-guide', base: 'https://guide-paths.example/', guideOnly: true, caption: 'Shoe size chart',
+        guide: [
+          { category: 'bottoms', unit: 'cm', mentions_brand: false, labels: ['S', 'M', 'L'], first: { bust: null, waist: [64, 68], hip: [90, 94], foot_length: null } },
+          { category: 'shoes', unit: 'cm', mentions_brand: false, labels: ['37', '38', '39'], first: { bust: null, waist: null, hip: null, foot_length: [23.5, 23.5] } },
+        ] },
     ];
     const out = document.getElementById('out');
     const results = [];
@@ -61,6 +67,11 @@
       const checks = [];
       const frame = await load(shop);
       const fdoc = frame.contentDocument;
+      if (shop.guideOnly) {
+        guideChecks(checks, shop, SizerExtract.sizeGuideTables(fdoc, '', ''));
+        frame.remove();
+        return checks;
+      }
       const product = SizerExtract.extractProduct(fdoc, SizerEngine);
       check(checks, 'brand', product.brand === shop.brand, product.brand);
       check(checks, 'title', shop.title.test(product.title), product.title);
@@ -77,15 +88,18 @@
       check(checks, 'size', r.size === shop.size, `${r.size}: ${r.headline}`);
       if (shop.headline) check(checks, 'headline', shop.headline.test(r.headline), r.headline);
       check(checks, 'no cookie text', !/necessary cookies|accepter|cookie policy/i.test(product.text.slice(0, 2000)), product.text.slice(0, 80));
-      const g = product.shopGuide;
+      guideChecks(checks, shop, product.shopGuide);
+      frame.remove();
+      return checks;
+    }
+
+    function guideChecks(checks, shop, g) {
       if (shop.guide === null) check(checks, 'shop guide', g === null, JSON.stringify(g));
       else {
-        const got = g ? g.charts.map((c) => ({ category: c.category, unit: c.unit, mentions_brand: c.mentions_brand, labels: c.rows.map((r) => r.label), first: { bust: c.rows[0].bust, waist: c.rows[0].waist, hip: c.rows[0].hip } })) : null;
+        const got = g ? g.charts.map((c) => ({ category: c.category, unit: c.unit, mentions_brand: c.mentions_brand, labels: c.rows.map((r) => r.label), first: { bust: c.rows[0].bust, waist: c.rows[0].waist, hip: c.rows[0].hip, foot_length: c.rows[0].foot_length } })) : null;
         check(checks, 'shop guide', JSON.stringify(got) === JSON.stringify(shop.guide), JSON.stringify(got));
         if ('caption' in shop) check(checks, 'guide caption', g && g.caption === shop.caption, g && g.caption);
       }
-      frame.remove();
-      return checks;
     }
 
     (async () => {

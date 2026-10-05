@@ -70,8 +70,8 @@ Browser reader checks: `tests/shops.html` served by `python3 tools/serve.py 8766
 browser the session can drive (Playwright MCP or the built-in pane), wait for
 `window.__shopResults`, must print PASS.
 
-1.2 **Pre-commit gate, no exceptions.** Every bundle runs `node --test tests/` (80 pass after B2)
-and, when `src/extract.js` or a fixture changed, the `tests/shops.html` harness (51 checks after B2, PASS).
+1.2 **Pre-commit gate, no exceptions.** Every bundle runs `node --test tests/` (84 pass after B2)
+and, when `src/extract.js` or a fixture changed, the `tests/shops.html` harness (53 checks after B2, PASS).
 B3 also runs `deno test`. Any bundle that adds or changes a file under `supabase/migrations/` runs
 `sh tools/check-migrations.sh` (added in B1), which applies every migration to a throwaway local
 Postgres 16, each file as one transaction the way the SQL editor runs it, and checks what the

@@ -11,8 +11,9 @@
   --sans: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color-scheme: light dark;
 }
+/* Appearance follows the system unless the profile pins light or dark (data-theme on <html>). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --paper: #121212;
     --ink: #f2f2ef;
     --muted: #a3a39e;
@@ -20,8 +21,20 @@
     --accent: #f2f2ef;
     --accent-ink: #121212;
     --signal: #f0998f;
+    color-scheme: dark;
   }
 }
+:root[data-theme="dark"] {
+  --paper: #121212;
+  --ink: #f2f2ef;
+  --muted: #a3a39e;
+  --line: #2c2c2a;
+  --accent: #f2f2ef;
+  --accent-ink: #121212;
+  --signal: #f0998f;
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
 * { box-sizing: border-box; }
 body { width: 320px; margin: 0; padding: 18px 20px 14px; background: var(--paper); color: var(--ink); font: 14px/1.45 var(--sans); }
 button { font: inherit; cursor: pointer; }

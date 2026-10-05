@@ -3,7 +3,7 @@
 (function () {
   const q = new URLSearchParams(location.search);
   if (q.get('profile') === 'filled') {
-    localStorage.setItem('sizer', JSON.stringify({ profile: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: 'rag & bone', type: 'jeans', size: '27', fit: 'tight' }], waist: '70', hip: '97', inseam: '30', unit: 'cm', fitPreference: 'regular' } }));
+    localStorage.setItem('sizer', JSON.stringify({ profile: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: 'rag & bone', type: 'jeans', size: '27', fit: 'perfect' }], waist: '70', hip: '97', inseam: '30', unit: 'cm', fitPreference: 'regular' } }));
   } else if (q.get('profile') === 'none') {
     localStorage.removeItem('sizer');
   }

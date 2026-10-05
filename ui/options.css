@@ -14,8 +14,9 @@
   --sans: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color-scheme: light dark;
 }
+/* Appearance follows the system unless the profile pins light or dark (data-theme on <html>). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --paper: #121212;
     --card: #1c1c1b;
     --ink: #f2f2ef;
@@ -27,8 +28,24 @@
     --accent-soft: #2a2a28;
     --accent-ink: #121212;
     --warn: #f0998f;
+    color-scheme: dark;
   }
 }
+:root[data-theme="dark"] {
+  --paper: #121212;
+  --card: #1c1c1b;
+  --ink: #f2f2ef;
+  --muted: #a3a39e;
+  --faint: #6c6c68;
+  --line: #2c2c2a;
+  --field: #242423;
+  --accent: #f2f2ef;
+  --accent-soft: #2a2a28;
+  --accent-ink: #121212;
+  --warn: #f0998f;
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 var(--sans); }
@@ -38,7 +55,8 @@ input { font: inherit; color: var(--ink); }
 
 .page { max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
 
-.top { display: flex; align-items: center; justify-content: space-between; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.top .status { margin-left: auto; }
 .brandmark { display: flex; align-items: center; gap: 10px; font: 600 17px/1 var(--serif); letter-spacing: -0.01em; }
 .mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #141413; overflow: hidden; }
 .mark img { width: 26px; height: 26px; display: block; }
@@ -131,7 +149,8 @@ h2 { font: 600 26px/1.15 var(--serif); margin: 0; letter-spacing: -0.02em; }
 .read-card h3 { margin: 20px 0 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
 .sizes { list-style: none; margin: 0; padding: 0; }
 .sizes li { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-top: 1px solid rgba(255, 255, 255, 0.14); }
-@media (prefers-color-scheme: dark) { .sizes li { border-top-color: rgba(0, 0, 0, 0.14); } .warn { background: rgba(0, 0, 0, 0.1); } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sizes li { border-top-color: rgba(0, 0, 0, 0.14); } :root:not([data-theme="light"]) .warn { background: rgba(0, 0, 0, 0.1); } }
+:root[data-theme="dark"] .sizes li { border-top-color: rgba(0, 0, 0, 0.14); } :root[data-theme="dark"] .warn { background: rgba(0, 0, 0, 0.1); }
 .sizes li:first-child { border-top: 0; }
 .sizes b { font: 600 19px/1 var(--serif); }
 .fine { margin: 14px 0 0; font-size: 12px; opacity: 0.65; }

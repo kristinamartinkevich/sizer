@@ -33,6 +33,12 @@ function bindSeg(group, value, onPick) {
   });
 }
 
+// 'system' follows the OS; 'light' and 'dark' pin it through data-theme on <html>.
+function applyTheme(theme) {
+  if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+  else delete document.documentElement.dataset.theme;
+}
+
 // ---- measurements ----------------------------------------------------------
 
 const toDisplay = (cm) => (cm === '' || cm == null ? '' : String(+(unit === 'cm' ? +cm : +cm / CM).toFixed(1)));
@@ -228,5 +234,7 @@ chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, ({ profile: stored }
     changed();
   });
   bindSeg($('fit'), profile.fitPreference || 'regular', (v) => { profile.fitPreference = v; changed(); });
+  applyTheme(profile.theme);
+  bindSeg($('theme'), profile.theme || 'system', (v) => { profile.theme = v; applyTheme(v); changed(); });
   renderRead();
 });

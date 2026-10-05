@@ -9,5 +9,6 @@
     footLength: '',
     unit: 'cm',
     fitPreference: 'regular',
+    theme: 'system',
   };
 })(globalThis);

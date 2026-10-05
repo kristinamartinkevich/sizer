@@ -12,6 +12,9 @@
       ?stock=out      the recommended size is sold out
       ?open=why       open the reasoning sheet on load
       ?picker=none    no picker to attach to (fallback pill)
+      ?brand=unknown  a brand with no chart (Ostra Studio, made up): the line says it is looking up
+                      the chart, the stubbed worker answers after 500 ms with a machine-read chart.
+                      Add &lookup=miss for a miss, &lookup=slow for no answer (6 s limit).
   -->
   <script>
     const q = new URLSearchParams(location.search);
@@ -21,27 +24,53 @@
       none: { anchors: [], waist: '', hip: '', inseam: '', unit: 'cm', fitPreference: 'regular' },
     };
     const profile = PROFILES[q.get('profile')] || PROFILES.default;
+    const unknown = q.get('brand') === 'unknown';
+    const BRAND = unknown ? 'Ostra Studio' : 'rag & bone';
+    const TITLE = unknown ? 'MIRA - Straight leg jeans - washed black' : 'WREN - Straight leg jeans - blue denim';
+    // What the lookup-chart function would have stored for the made-up brand, as the worker merges it.
+    const OSTRA = {
+      id: 'lookup:ostra-studio', name: 'Ostra Studio', aliases: ['ostra studio'], fitNotes: [], updatedAt: null,
+      charts: [{
+        id: 'c-ostra', gender: 'women', category: 'jeans', fit_line: null, measurement_basis: 'body', unit: 'cm', size_system: 'denim_waist',
+        source_url: 'https://ostra-studio.example/pages/size-guide', source_archive_url: null, source_type: 'brand_site', retailer: null,
+        status: 'machine_read', read_by: 'lookup-chart', retrieved_on: '2026-10-05', fit_advice: null,
+        rows: ['24', '25', '26', '27', '28', '29', '30'].map((label, i) => ({ label, aliases: {}, waist: [61 + 2.5 * i, 63 + 2.5 * i], hip: [86 + 2.5 * i, 88 + 2.5 * i], bust: null, inseam: null, foot_length: null, extra: {}, suspect: null })),
+      }],
+    };
+    let lookedUp = false;
+    const changed = [];
     window.chrome = {
       runtime: {
         getURL: (p) => '../' + p,
         onMessage: { addListener: () => {} },
         // ?pool=small answers the cross-shop lookup with two other shops' tallies; reports go nowhere.
-        sendMessage: async (m) => (m.type === 'sizer:item-fit' && q.get('pool') === 'small'
-          ? { rows: [{ vendor: 'www.zalando.de', small: 23, large: 2, tts: 9, total: 51 }, { vendor: 'www.net-a-porter.com', small: 11, large: 1, tts: 4, total: 20 }] }
-          : {}),
+        sendMessage: async (m) => {
+          if (m.type === 'sizer:lookup-chart') {
+            if (q.get('lookup') === 'slow') return new Promise(() => {});
+            await new Promise((r) => setTimeout(r, 500));
+            if (q.get('lookup') === 'miss') return { found: false };
+            lookedUp = true;
+            changed.forEach((fn) => fn({ charts: {} }));
+            return { found: true };
+          }
+          return m.type === 'sizer:item-fit' && q.get('pool') === 'small'
+            ? { rows: [{ vendor: 'www.zalando.de', small: 23, large: 2, tts: 9, total: 51 }, { vendor: 'www.net-a-porter.com', small: 11, large: 1, tts: 4, total: 20 }] }
+            : {};
+        },
       },
       storage: {
         sync: { get: (d, cb) => cb({ profile }) },
         // ?charts=1 serves the verified rag & bone chart as the background worker would have stored it.
         local: {
           get: (d, cb) => {
+            if (lookedUp) { cb({ charts: { fetchedAt: 0, brands: [OSTRA] } }); return; }
             if (!q.get('charts')) { cb(d); return; }
             fetch('fixtures/bundle-rag-bone.json').then((r) => r.json()).then((list) => cb({
               charts: { fetchedAt: Date.now(), brands: list.map((b) => ({ id: b.brand_id, name: b.brand_name, aliases: b.aliases || [], charts: b.charts, fitNotes: b.fit_notes || [], updatedAt: b.updated_at })) },
             })).catch(() => cb(d));
           },
         },
-        onChanged: { addListener: () => {} },
+        onChanged: { addListener: (fn) => changed.push(fn) },
       },
     };
     const out = q.get('stock') === 'out' ? ['26', '27', '28'] : ['25'];
@@ -49,7 +78,7 @@
       '@type': 'Product', size, sku: `DEMO-${size}`,
       offers: { '@type': 'Offer', availability: `https://schema.org/${out.includes(size) ? 'OutOfStock' : 'InStock'}` },
     }));
-    document.write(`<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org/', '@type': 'ProductGroup', name: 'WREN - Straight leg jeans', brand: { '@type': 'Brand', name: 'rag & bone' }, hasVariant: variants })}<\/script>`);
+    document.write(`<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org/', '@type': 'ProductGroup', name: TITLE.split(' - ').slice(0, 2).join(' - '), brand: { '@type': 'Brand', name: BRAND }, hasVariant: variants })}<\/script>`);
   </script>
   <style>
     body { margin: 0; font: 15px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; color: #111; background: #fff; }
@@ -91,6 +120,8 @@
     </div>
   </div>
   <script>
+    document.querySelector('.brand').textContent = BRAND;
+    document.querySelector('h1').textContent = TITLE;
     const list = document.getElementById('sizes');
     for (const v of variants) {
       const sold = v.offers.availability.endsWith('OutOfStock');

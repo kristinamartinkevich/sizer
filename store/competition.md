@@ -76,7 +76,7 @@ Sizer does the five things the shelf does not, and two things the retailer vendo
 | Works on every shop, chosen by the shopper | yes | ABODY, FitMatch | never |
 | Learns from your returns | no | none | True Fit, Fit Analytics, Zalando |
 | Shoes | foot length | none | Virtusize, Sizebay |
-| Nothing about you leaves the browser | all but an anonymous review tally | Sizeme, Leonardo | no; account or session on their servers |
+| Nothing about you leaves the browser | all but an anonymous review tally and brand chart lookups | Sizeme, Leonardo | no; account or session on their servers |
 
 The honest gap is returns. True Fit's model is trained on what people kept. Sizer's nearest
 substitute is the post-purchase "did it fit?" prompt, which turns the shopper's own outcomes into

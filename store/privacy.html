@@ -18,7 +18,7 @@
 <body>
   <main>
     <h1>Sizer privacy policy</h1>
-    <p class="date">Effective 3 October 2026</p>
+    <p class="date">Effective 5 October 2026</p>
 
     <p>Sizer is a Chrome extension that shows which clothing size to buy on product pages. It is built to work without collecting anything about you.</p>
 
@@ -26,11 +26,12 @@
     <p>Your fit profile: the measurements you enter, the clothes you add and how they fit, your preferred units and your fit preference. It is saved with Chrome’s own storage in your Chrome profile. If Chrome sync is on, Chrome keeps it in step across your devices, the same way it does for your other extension settings.</p>
 
     <h2>What Sizer reads</h2>
-    <p>On supported shops, and on any page where you click the Sizer icon and ask it to, Sizer reads the product page in your browser: the brand, the product details, the sizes and whether they’re in stock. This happens on your device and nothing from the page is saved or sent anywhere.</p>
+    <p>On supported shops, and on any page where you click the Sizer icon and ask it to, Sizer reads the product page in your browser: the brand, the product details, the sizes and whether they’re in stock. This happens on your device. Nothing from the page is saved, and nothing is sent except the two things described below: a review tally, and the brand, item kind and size-guide table when a brand has no chart yet.</p>
 
     <h2>What Sizer sends</h2>
-    <p>Nothing about you. Once a day Sizer downloads the latest brand size charts from its own database (a Supabase project). That request carries no data from you or from the pages you visit: no profile, no page, no identifier, only the request for the chart list, which is the same for everyone.</p>
+    <p>Nothing about you. Your fit profile never leaves your browser. Once a day Sizer downloads the latest brand size charts from its own database (a Supabase project). That request carries no data from you or from the pages you visit: no profile, no page, no identifier, only the request for the chart list, which is the same for everyone.</p>
     <p>One thing does go the other way. When a product page has customer reviews, Sizer counts how many say the item runs small, runs large or fits true to size, and sends that tally to the same database, so that shoppers looking at the same style on another shop can use it. The tally carries the brand, the style name, the shop’s hostname and the counts. It does not carry your profile, the page address, the review text, or anything that identifies you. A random id generated at install, unrelated to you or your browser, lets a later read of the same page replace the earlier tally instead of adding to it. When Sizer sizes a product it also asks the database for the pooled tally of that style; that request carries only the brand and style name.</p>
+    <p>When a product’s brand has no size chart in the database yet, Sizer asks the database to look one up, so it can size you on the brand’s own chart instead of a generic one. That request carries the brand name, the kind of item (for example jeans or a dress), the shop’s hostname, the same random install id, and, when the page prints a size table in its size guide, the text of that table. It does not carry your profile, your measurements, the page address or anything else from the page. The database finds the brand’s published chart with an AI model (Anthropic’s Claude) and stores it for every shopper, marked as read by machine until a person checks it. If no chart is found, Sizer remembers that for a week and does not ask again for that brand.</p>
     <p>Sizer has no accounts, no analytics and no advertising. It doesn’t sell, share or transfer any data, and it doesn’t use data for anything other than showing you your size.</p>
 
     <h2>Deleting your data</h2>

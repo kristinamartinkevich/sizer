@@ -16,7 +16,7 @@ Your size, right under the size picker, on any shop
 **Topics:** Chrome Extensions · Fashion · E-Commerce · Shopping
 
 **Description** (260 characters max):
-A Chrome extension that tells you which clothing size to buy, right under the shop’s size picker. It reads the brand’s chart, the stretch, the fit notes, the stock and what buyers said in reviews across shops, and shows its reasoning. Free, no account.
+A Chrome extension that tells you which clothing size to buy, right under the shop’s size picker. It reads the brand’s own chart, the stretch, the fit notes, the stock and what buyers said in reviews across shops, and shows its reasoning. Free, no account.
 
 **Gallery** (in this order):
 1. `store/out/marquee-1400x560.png`
@@ -47,7 +47,8 @@ A few things I cared about:
 • It reads reviews across shops. If a style runs small on Zalando, you hear about it on Net-a-Porter.
 • If your size is sold out, it says which sizes are in stock and how far off they are.
 • It is honest when unsure. Thin information gets a “rough guess” label and a note on what would firm it up.
-• Your measurements never leave your browser. No account, no analytics. The only thing it sends is an anonymous count of what reviews said, so the next shopper benefits.
+• It prefers the brand’s own chart over the shop’s generic one. If no shopper has needed a brand before, it looks up the brand’s published chart once, labels it as read by machine, and every shopper after you gets it.
+• Your measurements never leave your browser. No account, no analytics. It sends only anonymous things: a count of what reviews said, and, for a brand it has no chart for, the brand name, the kind of item and the shop’s name.
 
 It is strongest for women’s jeans, trousers and skirts today, with shoes by foot length. I would love to know which brands and shops to add next.
 
@@ -63,4 +64,8 @@ It is strongest for women’s jeans, trousers and skirts today, with shoes by fo
 - [ ] Chrome Web Store listing approved and public
 - [ ] Install from the store on a clean profile and check a live product page
 - [ ] Supabase migration 0003 applied, so the pooled reviews line works on launch day
+- [ ] Supabase migrations 0004 and 0005 applied in the SQL editor, so looked-up charts have a home
+- [ ] `ANTHROPIC_API_KEY` set with `supabase secrets set`, and the function deployed with
+      `supabase functions deploy lookup-chart --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
+- [ ] Open a product from a brand with no chart and confirm the sheet says “chart read by machine” with the brand’s link
 - [ ] Line up a few people to try it on launch morning, and reply to every comment within the hour

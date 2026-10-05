@@ -559,6 +559,19 @@
     }
   }
 
+  // ---- looking up a brand with no chart --------------------------------------
+
+  const LOOKUP_TIMEOUT_MS = 6000;
+
+  // The lookup a sized answer asks for: only when the brand has no chart at all, never to replace one.
+  function lookupFor(r, product) {
+    const brand = String((product && product.brand) || '').trim();
+    if (!r || !r.ok || r.brandKnown !== false || !brand) return null;
+    return { brand, kind: kindOf(product.title) };
+  }
+
+  const lookingUpText = (brand) => `Looking up ${brand}’s size chart`;
+
   // ---- shoes: one dimension, read straight off the chart ---------------------
 
   const cm = (n) => String(+(+n).toFixed(1));
@@ -690,7 +703,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance };
+  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

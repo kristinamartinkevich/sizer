@@ -29,8 +29,12 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 
 1. Measurements are used as given. Otherwise each piece you own becomes body measurements through
    its brand's chart, nudged for pieces marked tight or loose.
-2. Those measurements are placed on the product brand's chart: the verified chart downloaded from
-   the chart database when the brand has one for this kind of item, else the built-in approximation.
+2. Those measurements are placed on the product brand's chart: the chart downloaded from the chart
+   database when the brand has one for this kind of item, else the built-in approximation. A brand
+   with no chart anywhere is looked up once: the line reads "Looking up <brand>'s size chart" for at
+   most 6 s while the `lookup-chart` function finds the brand's published chart (or reads the shop's
+   own size table), and the answer lands in the bundle as machine-read, ranked below checked charts.
+   A miss is remembered for 7 days; a network failure is not, so the next visit tries again.
    Rows the brand page gets visibly wrong are marked suspect in the database and skipped. Charts
    that list garment rather than body measurements get a little ease taken off.
 3. Rigid fabric rounds up when you fall between sizes, high stretch rounds down, and the brand's
@@ -56,7 +60,7 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 |---|---|
 | `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, plus generic charts |
 | `src/charts.js` | Turns the downloaded chart bundle into engine charts: cm, suspect rows dropped, one chart per kind of item |
-| `src/charts-store.js`, `src/background.js` | Daily download of verified charts from the Supabase project into `chrome.storage.local` |
+| `src/charts-store.js`, `src/background.js` | Daily download of charts from the Supabase project into `chrome.storage.local`, and the one-off lookup of a brand with no chart |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
 | `supabase/functions/lookup-chart/` | Edge Function that finds a brand's chart when nobody has one yet, stores it as machine-read; deploy steps in its README |
@@ -69,8 +73,9 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 
 ## Limits
 
-- Only verified charts are downloaded; a brand without one falls back to the built-in approximation,
-  and the sheet says which it used. Women's charts only so far.
+- A looked-up chart is read by a model and is not checked by a person until someone flips it to
+  verified in the dashboard; the sheet says so. A brand nobody can find a chart for falls back to the
+  built-in approximation, and the sheet says which it used. Women's charts only so far.
 - Clothing runs on waist and hip, so it's strongest for jeans, trousers and skirts. Shoes need a foot
   length or a pair you own.
 - Page reading is heuristic. If a shop changes its markup, `src/extract.js` may need a fix.
@@ -86,7 +91,8 @@ The sheet's footer links to the brand page the chart was read from, with the dat
     deno test supabase/functions/  # the lookup-chart Edge Function, no network
 
 `tests/fixture-shop.html` is a demo product page with query switches (first run, sold out, open
-sheet, no picker) for checking every state; serve the folder over HTTP to open it.
+sheet, no picker, and `?brand=unknown` for the chart lookup, with `&lookup=miss` or `&lookup=slow`)
+for checking every state; serve the folder over HTTP to open it.
 
 `tests/shops.html` runs the reader against saved real product pages in `tests/fixtures/shops/`
 (Zalando, ASOS, Net-a-Porter, Revolve) and checks brand, sizes, stock, fit notes, reviews, size-guide

@@ -12,11 +12,26 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 chrome.runtime.onStartup.addListener(() => refreshCharts());
 chrome.alarms.onAlarm.addListener((alarm) => { if (alarm.name === REFRESH_ALARM) refreshCharts(); });
 
-chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
+chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg.type === 'sizer:options') chrome.runtime.openOptionsPage();
   if (msg.type === 'sizer:refresh-charts') { refreshCharts(true).then(reply); return true; }
   if (msg.type === 'sizer:item-fit') { itemFit(msg.key).then(reply, () => reply({ rows: [] })); return true; }
   if (msg.type === 'sizer:report-fit') { reportFit(msg).then(reply, (e) => reply({ ok: false, reason: String(e) })); return true; }
+  if (msg.type === 'sizer:lookup-chart') { lookupChart({ ...msg, shop: shopOf(sender, msg) }).then(reply); return true; }
+});
+
+// The shop is the sending tab's hostname, not whatever the page claims; only the hostname travels.
+function shopOf(sender, msg) {
+  try { return new URL(sender.tab.url).hostname; } catch { return String(msg.shop || ''); }
+}
+
+// ---- a brand nobody has a chart for -----------------------------------------
+
+const lookupChart = Store.createLookup({
+  fetch: (url, init) => fetch(url, init),
+  get: (keys) => chrome.storage.local.get(keys),
+  set: (items) => chrome.storage.local.set(items),
+  installId: () => installId(),
 });
 
 // ---- one style across shops -------------------------------------------------

@@ -5,7 +5,7 @@
   const Engine = globalThis.SizerEngine;
   const { extractProduct, findPicker, optionElements } = globalThis.SizerExtract;
 
-  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false };
+  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null };
   const hosts = {};
   let lastTrigger = null;
 
@@ -89,8 +89,9 @@
 
   function lineHTML() {
     const r = state.result;
-    if (state.phase === 'reading') {
-      return `<div class="line" aria-busy="true">${MARK}<span class="k">Sizing this for you</span><span class="reading" aria-hidden="true"></span></div>`;
+    if (state.phase === 'reading' || state.looking) {
+      const text = state.looking ? Engine.lookingUpText(state.looking) : 'Sizing this for you';
+      return `<div class="line" aria-busy="true">${MARK}<span class="k">${esc(text)}</span><span class="reading" aria-hidden="true"></span></div>`;
     }
     if (r && r.needsProfile) {
       return `<div class="line">${MARK}<span class="answer"><span>Sizer can tell you your size here.</span></span><button class="cta" data-act="profile">Add your sizes</button></div>`;
@@ -134,7 +135,7 @@
 
   function renderPill() {
     const r = state.result;
-    if (!r || (!r.ok && !r.needsProfile)) { drop('sizer-pill'); return; }
+    if (!r || (!r.ok && !r.needsProfile) || state.looking) { drop('sizer-pill'); return; }
     const h = host('sizer-pill', (el) => { if (!el.isConnected) document.documentElement.appendChild(el); });
     const label = r.ok ? `<span>${r.confidence === 'Low' ? 'Rough guess' : 'Your size'}</span><b>${esc(r.size)}</b>` : '<span>Add your sizes</span>';
     const html = `<button class="pill" data-act="${r.ok ? 'why' : 'profile'}" aria-haspopup="${r.ok ? 'dialog' : 'false'}">${MARK}${label}</button>`;
@@ -272,8 +273,33 @@
     state.product = product;
     state.result = result;
     state.phase = 'ready';
+    lookUp(product, result);
     place();
     if (state.sheetOpen) renderSheet();
+  }
+
+  // A brand with no chart at all: ask the background worker to look one up, once per brand and kind
+  // on this page. The line says so for at most LOOKUP_TIMEOUT_MS, then the answer on the standard
+  // chart shows. A chart that arrives lands in storage, and storage.onChanged sizes the page again.
+  function lookUp(product, result) {
+    const want = Engine.lookupFor(result, product);
+    const key = want && Store.missKey(want.brand, want.kind);
+    if (!key) { state.looking = null; return; }
+    if (key in state.lookups) { state.looking = state.lookups[key] === 'looking' ? want.brand : null; return; }
+    state.lookups[key] = 'looking';
+    state.looking = want.brand;
+    const done = (reply) => {
+      if (state.lookups[key] !== 'looking') return;
+      state.lookups[key] = 'done';
+      state.looking = null;
+      if (reply && reply.found) run(); else place();
+    };
+    setTimeout(done, Engine.LOOKUP_TIMEOUT_MS);
+    let asked;
+    try {
+      asked = chrome.runtime.sendMessage({ type: 'sizer:lookup-chart', brand: want.brand, kind: want.kind, shop: location.hostname, shopGuide: product.shopGuide });
+    } catch { asked = null; }
+    Promise.resolve(asked).then(done, () => done());
   }
 
   function reset() {
@@ -282,6 +308,8 @@
     state.result = null;
     state.sheetOpen = false;
     state.forced = false;
+    state.lookups = {};
+    state.looking = null;
     drop('sizer-panel');
     drop('sizer-pill');
     drop('sizer-inline');

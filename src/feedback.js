@@ -15,6 +15,12 @@
   // item answered or dismissed before stays that way when it is sized again.
   function remember(list, sizing, now) {
     const before = (list || []).find((s) => s.itemKey === sizing.itemKey);
+    // A sizing still waiting for its answer keeps what was suggested then, and when: coming back to
+    // the page must not swap in today's suggestion or restart the week.
+    if (before && !before.answered && !before.dismissed && now - before.at <= KEEP_DAYS * DAY) {
+      const rest = (list || []).filter((s) => s.itemKey !== sizing.itemKey && now - s.at <= KEEP_DAYS * DAY);
+      return [before, ...rest].sort((a, b) => b.at - a.at).slice(0, KEEP);
+    }
     const kept = {};
     if (before && before.answered) { kept.answered = before.answered; if (before.outcome) kept.outcome = before.outcome; }
     if (before && before.dismissed) kept.dismissed = true;
@@ -94,6 +100,7 @@
       outcome: answer.outcome,
       areas: answer.outcome === 'right' ? [] : [...new Set((answer.areas || []).filter((a) => AREAS.includes(a)))],
       chart_tier: Number.isInteger(sizing.tier) ? sizing.tier : null,
+      learned_step: [-1, 0, 1].includes(sizing.learned) ? sizing.learned : 0,
     };
   }
 
@@ -114,6 +121,7 @@
       shop: String(shop || '').toLowerCase(),
       size: String(result.size),
       tier,
+      learned: [-1, 0, 1].includes(result.learnedStep) ? result.learnedStep : 0,
       sizes,
       at: now,
     };

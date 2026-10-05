@@ -304,6 +304,15 @@ begin
   -- The first install changes its mind: its answer is replaced, not added.
   perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'www.zalando.de',
     '00000000-0000-4000-8000-000000000001', 'W27', 'W27', 'right', '{}', 2);
+  -- A suggestion that already carried a learned step does not vote (it would vote the step away).
+  perform public.report_fit_outcome(item_key => 'rag and bone|wren', brand => 'rag & bone', kind => 'bottoms',
+    shop => 'www.zalando.de', install => '00000000-0000-4000-8000-000000000098'::uuid, size_bought => 'W28',
+    size_suggested => 'W28', outcome => 'right', learned_step => 1);
+  -- One install answering for ten items of one brand is one vote, and one vote shows nothing.
+  for i in 1..10 loop
+    perform public.report_fit_outcome('solo brand|s' || i, 'Solo Brand', 'bottoms', 'shop.example',
+      '00000000-0000-4000-8000-00000000501a', '30', '30', 'small', '{}', null);
+  end loop;
   -- Three outcomes for another brand stay hidden.
   for i in 1..3 loop
     perform public.report_fit_outcome('mother|looker', 'MOTHER', 'bottoms', 'www.revolve.com',
@@ -324,6 +333,13 @@ begin
     raise exception 'an unknown outcome was accepted';
   exception when raise_exception then
     if sqlerrm not like 'outcome must be%' then raise; end if;
+  end;
+  begin
+    perform public.report_fit_outcome(item_key => 'rag and bone|wren', brand => 'rag & bone', kind => 'bottoms', shop => 'www.zalando.de',
+      install => gen_random_uuid(), size_bought => '27', size_suggested => '27', outcome => 'small', learned_step => 2);
+    raise exception 'a learned step of 2 was accepted';
+  exception when raise_exception then
+    if sqlerrm not like 'learned_step must be%' then raise; end if;
   end;
   begin
     perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'hats', 'www.zalando.de', gen_random_uuid(), '27', '27', 'small', '{}', null);
@@ -383,8 +399,8 @@ end $$;
 reset role;
 do $$
 begin
-  if (select count(*) from public.fit_outcomes where item_key = 'rag and bone|wren') <> 11 then raise exception 'the replaced answer was added instead'; end if;
+  if (select count(*) from public.fit_outcomes where item_key = 'rag and bone|wren') <> 12 then raise exception 'the replaced answer was added instead'; end if;
   if (select shop from public.fit_outcomes limit 1) <> 'www.zalando.de' then raise exception 'the shop was not lower-cased'; end if;
 end $$;
 SQL
-echo "ok   fit_outcomes is written through report_fit_outcome only; anon reads brand_fit counts from ten outcomes"
+echo "ok   fit_outcomes is written through report_fit_outcome only; anon reads brand_fit counts, one vote per install, from ten installs"

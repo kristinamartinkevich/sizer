@@ -16,7 +16,7 @@
   window.chrome = {
     // Answers are saved after 300 ms, as if the background worker had saved them.
     runtime: { getURL: (p) => '../' + p, sendMessage: (m) => (/^sizer:(answer|dismiss)-fit$/.test(m && m.type) ? new Promise((r) => setTimeout(() => r({ ok: true }), 300)) : Promise.resolve(undefined)), onMessage: { addListener: () => {} }, openOptionsPage: () => {} },
-    tabs: { query: async () => [] },
+    tabs: { query: async () => [], onActivated: { addListener: () => {} }, onUpdated: { addListener: () => {} } },
     storage: {
       sync: {
         get: (d, cb) => { const s = localStorage.getItem('sizer'); cb(s ? JSON.parse(s) : d); },

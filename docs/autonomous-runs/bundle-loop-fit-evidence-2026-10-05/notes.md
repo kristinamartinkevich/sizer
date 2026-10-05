@@ -26,8 +26,23 @@ The battery and builders must not share a live tree, so:
 
 ## Ledger
 
-| Bundle | Commits | Findings | Deferrals |
-|---|---|---|---|
-| C5 core | part-commit | | |
-| C6 core | part-commit | | |
-| C2 core | part-commit | | |
+| Bundle | Commits | Review | Findings applied | Deferrals |
+|---|---|---|---|---|
+| C1 fuller profile | 8693e66, 9242c3c, abce7c9 | wf (C1) | 1 BLOCKER, 1 MAJOR, minors | none |
+| C2 areas + weighted reviews | core part, engine part, a45b5cd, a9576c9 | wf_76cdfbea-c03 | 3 MAJOR, 3 MINOR | none |
+| C3 server | 5f4a933 | with C3 client | | |
+| C3 client | c11ae36 (from da9a5b3) | wf_d185200d-764 (running) | | |
+| C4 charts from images, frames, guide pages | 66faf5e, 840b7f1, 7ccd8e1 | wf_69277a80-867 | 2 MAJOR, 4 MINOR | none |
+| C5 Vinted | core part; wiring building | | | |
+| C6 feedback + side panel | core part; wiring building | | | |
+
+## Cross-bundle notes
+- Integrating C3 onto C2's review fix: the dossier's web areas now follow the same rule as chart and
+  review areas, so trousers never take a bust, shoulder or sleeve area from the web (test in
+  tests/dossier.test.js, mutation-checked).
+- C3's dossier move takes the place of the rigid-fabric lean rather than adding to it, so on the
+  rigid demo jeans `?dossier=small` keeps 28 and changes the headline; a stretch page moves a size.
+- The store copy merges C3's dossier request with C4's "which request carries the hostname" fix:
+  five cases, three with the hostname (tally, dossier, chart lookup), two without (image, AI read).
+- Every commit on the branch has git's auto-configured committer identity
+  (`Kristina <kristina@Host-001.lan>`); left for the operator to decide.

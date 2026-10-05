@@ -149,6 +149,7 @@ function rememberSizing(sizing, shop) {
     itemKey: sizing.itemKey.slice(0, 200), brand: String(sizing.brand || '').slice(0, 80), style: String(sizing.style || '').slice(0, 120),
     kind: sizing.kind, type: sizing.type || null, shop: String(shop || '').toLowerCase(), size: String(sizing.size || '').slice(0, 20),
     tier: Number.isInteger(sizing.tier) ? sizing.tier : null,
+    learned: [-1, 0, 1].includes(sizing.learned) ? sizing.learned : 0,
     sizes: Array.isArray(sizing.sizes) ? sizing.sizes.map((s) => String(s).slice(0, 20)).slice(0, 30) : [],
   };
   return withSizings((list) => ({ sizings: Feedback.remember(list, { ...clean, at: Date.now() }, Date.now()), reply: { ok: true } }));
@@ -175,24 +176,34 @@ function dismissFit({ itemKey }) {
 
 // Sends what is waiting, oldest first; whatever fails stays for the next day's try. A refusal
 // (4xx: a bad body) is dropped, so one bad outcome never blocks the rest.
+// An answer that arrives while a send is running asks for another pass, so it goes out now rather
+// than the next day; the outbox is rewritten in the same queue answers are added in, so none is lost.
 let flushing = null;
+let flushAgain = false;
 function flushOutcomes() {
-  if (flushing) return flushing;
+  if (flushing) { flushAgain = true; return flushing; }
   flushing = (async () => {
-    const { outcomeOutbox } = await chrome.storage.local.get({ outcomeOutbox: [] });
-    // Kept as the exact text sent, so an answer changed while this was sending still waits its turn.
-    const sent = new Set();
-    for (const body of outcomeOutbox.slice().reverse()) {
-      const text = JSON.stringify(body);
-      try {
-        const res = await fetch(Store.OUTCOME_URL, { method: 'POST', headers: { ...Store.headers(), 'Content-Type': 'application/json' }, body: text });
-        if (res.ok || (res.status >= 400 && res.status < 500 && res.status !== 429)) sent.add(text);
-      } catch { break; }
-    }
-    if (!sent.size) return;
-    const { outcomeOutbox: now } = await chrome.storage.local.get({ outcomeOutbox: [] });
-    await chrome.storage.local.set({ outcomeOutbox: now.filter((b) => !sent.has(JSON.stringify(b))) });
-  })().catch(() => {}).finally(() => { flushing = null; });
+    let offline = false;
+    do {
+      flushAgain = false;
+      const { outcomeOutbox } = await chrome.storage.local.get({ outcomeOutbox: [] });
+      // Kept as the exact text sent, so an answer changed while this was sending still waits its turn.
+      const sent = new Set();
+      for (const body of outcomeOutbox.slice().reverse()) {
+        const text = JSON.stringify(body);
+        try {
+          const res = await fetch(Store.OUTCOME_URL, { method: 'POST', headers: { ...Store.headers(), 'Content-Type': 'application/json' }, body: text });
+          if (res.ok || (res.status >= 400 && res.status < 500 && res.status !== 429)) sent.add(text);
+        } catch { offline = true; break; }
+      }
+      if (sent.size) {
+        await withSizings(async () => {
+          const { outcomeOutbox: now } = await chrome.storage.local.get({ outcomeOutbox: [] });
+          await chrome.storage.local.set({ outcomeOutbox: now.filter((b) => !sent.has(JSON.stringify(b))) });
+        });
+      }
+    } while (flushAgain && !offline);
+  })().catch(() => {}).finally(() => { flushing = null; flushAgain = false; });
   return flushing;
 }
 

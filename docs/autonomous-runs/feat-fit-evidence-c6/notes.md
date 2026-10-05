@@ -55,7 +55,8 @@ Files:
    single purchase never shows. The engine checks the same threshold.
 4. **The learned tendency moves one whole size** (reason with `+1 size`, headline "Sizer users say
    it runs small, sized up"), only when the page has no fit note at all (true to size included) and
-   the reviews have no verdict; it replaces the researched `brand.tendency`. A true-to-size majority
+   the reviews have no verdict (nor a dossier move); since the review it is added on top of the
+   researched `brand.tendency` and the rigid lean (see Review below). A true-to-size majority
    adds a reason and moves nothing. Shoes use it too.
 5. **`brand_fit` is a separate daily fetch**, stored inside the chart bundle as `brandFit` (the
    HANDOFF allowed either). A failed fetch keeps the last list; `mergeChart` keeps it.
@@ -84,3 +85,38 @@ Files:
   size refused, the 51st outcome of the day refused, anon cannot read or write the table). Mutation
   check: changing the expected `small` count makes the block fail.
 - Not run: any browser check (no browser in this run). See commitments.md.
+
+## Review (1 adversarial + 1 QA, wf_2dfac5ca-a56): 7 confirmed, all applied
+
+- MAJOR: `brand_fit` counted answers against the suggested size, but that suggestion already
+  carried the brand tendency, the rigid lean and possibly the learned step itself, and the learned
+  step then replaced the first two. Now the step is added on top of the tendency and the lean (the
+  answers were given to suggestions that already had them), each sizing records the step it used
+  (`learned_step`, -1, 0 or 1, a new column in the unshipped 0008, with a range check), and answers
+  to a suggestion that already carried a step are not counted, so a step cannot vote itself away.
+  Copy in the privacy policy, listing, Product Hunt text and README names the new field.
+- MAJOR: the ten-answer threshold counted rows, so one install could fill it alone. The view now
+  keeps one vote per install per brand and kind (the latest) and needs ten installs.
+  check-migrations covers a solo install with ten items (hidden) and learned_step 1 (not counted).
+- MAJOR: a revisit overwrote the stored sizing with today's suggestion before the shopper answered
+  the question about the earlier one. `remember` now keeps an unanswered, undismissed entry from
+  the last 60 days as it is.
+- MAJOR: no test combined a researched tendency or rigid fabric with brand_fit rows. Added: RE/DONE
+  keeps its note and moves one step further; rigid keeps its lean, moves one step and offers no
+  alternative; runs large records -1. Mutation-checked.
+- MAJOR: the side panel, the popup's list and the sheet question had never run in a browser. All
+  three now have, through the stub: the sheet question (yes, size, too small, hips, save) on the
+  demo shop; the side panel with two due questions, each keeping its own step while the other is
+  answered; the popup in light and dark, with "Open side panel" and the No path. The stub gained
+  `tabs.onActivated` and `tabs.onUpdated`, without which the side panel stopped at "Reading this page".
+- MINOR: `flushOutcomes` rewrote the outbox outside the queue answers are added in, so an answer
+  given mid-send could be lost, and it waited for the next day. The rewrite now goes through
+  `withSizings`, and an answer during a send asks for another pass (stopped when offline).
+- MINOR: no test for the outbox. Added `tests/outbox.test.js` (background.js in a vm sandbox with
+  storage that honours defaults): an answer given while another is sending goes out in the same
+  run and the outbox empties; offline, the answer waits and the run does not loop. Mutation-checked.
+
+Still open, for the operator: the side panel's Vinted slot shows a placeholder line, because the
+Vinted bundle (C5) does not define `SizerVintedPanel.mount`.
+
+`node --test tests/`: 312/312. `sh tools/check-migrations.sh`: 0001 to 0008 pass.

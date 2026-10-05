@@ -41,7 +41,8 @@ the answer appears under the listing's details; see "On Vinted" below.
 - **An answer** to "Did it fit?" joins the pieces you own in your fit profile, so the next sizes learn from it, and is
   sent anonymously to `report_fit_outcome` (migration 0008): the brand and style name, the kind of
   item, the shop's hostname, the size you bought, the size Sizer suggested, the verdict (too small,
-  right or too big), the areas you picked, the chart tier and the install id. No measurements, no
+  right or too big), the areas you picked, the chart tier, whether the suggestion already used other buyers' answers
+  (`learned_step`) and the install id. No measurements, no
   profile, no page address. An answer that cannot be sent waits in local storage for the next day.
   The recent sizings themselves (the last 50 from 60 days) never leave the browser.
 
@@ -87,10 +88,13 @@ the answer appears under the listing's details; see "On Vinted" below.
    That weighted verdict decides on the device; the plain count is still what is sent to the pool.
    When neither the page, the reviews nor what others say online about the item (step 5) has moved
    the size, what Sizer users who bought the brand reported decides instead: the `brand_fit` view counts "did it fit?" answers per brand and
-   kind of clothing where the size bought was the size Sizer suggested, shows them only from ten
-   answers, and comes down with the daily charts. A clear majority moves the size one step and is
-   named in the sheet ("12 Sizer users who bought this brand say it runs small"); it outranks the
-   brand's researched reputation.
+   kind of clothing where the size bought was the size Sizer suggested and that suggestion carried
+   no learned step, one vote per install, shows them only from ten installs, and comes down with the
+   daily charts. A clear majority moves the size one step and is named in the sheet ("12 Sizer users
+   who bought this brand say it runs small"). The step is added on top of the brand's researched
+   reputation and the fabric lean, because the answers it learns from were given to suggestions that
+   already carried both; and since answers to a suggestion that already carried the step are not
+   counted, a step cannot vote itself away.
 5. Once the first answer is on the page (and any chart lookup has settled), Sizer asks the
    `fit-dossier` function once per item what others say about the fit online. The request carries
    the item key (brand and style name), the brand name, the style name, the kind of item, the shop's

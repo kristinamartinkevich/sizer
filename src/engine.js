@@ -730,7 +730,10 @@
     // say online about this item have not moved it.
     const learned = !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, brand), kind) : null;
     const learnedNote = !!learned && (learned.verdict === 'small' || learned.verdict === 'large');
-    const explicit = pageNote || buyersNote || !!webMove || learnedNote;
+    const explicit = pageNote || buyersNote || !!webMove;
+    const learnedStep = learnedNote ? (learned.verdict === 'small' ? 1 : -1) : 0;
+    // No alternative size once something has moved it, the learned step included.
+    const settled = explicit || learnedNote;
     const elastane = signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : '';
     if (rigid) {
       if (!explicit) adj += 0.35 + (signals.skinny ? 0.15 : 0);
@@ -741,8 +744,9 @@
     } else if (signals.stretch === 'slight') {
       reasons.push({ text: `A little stretch${elastane}, so your usual fit.`, delta: null });
     }
-    // What buyers of the brand reported back outranks the researched tendency.
-    if (brand && brand.tendency && !explicit && !learned) {
+    // The researched tendency stays when Sizer users' answers apply: those answers were given to
+    // suggestions that already carried it, so the learned step corrects what is left.
+    if (brand && brand.tendency && !explicit) {
       adj += brand.tendency;
       if (brand.note) reasons.push({ text: brand.note, delta: null });
     }
@@ -774,14 +778,13 @@
     if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
     if (web) { idx += webMove; reasons.push({ text: webReason(web, webMove, held), delta: webMove || null }); }
     if (learned) {
-      const step = learned.verdict === 'small' ? 1 : learned.verdict === 'large' ? -1 : 0;
-      idx += step;
-      reasons.push({ text: learnedReason(learned), delta: step || null });
+      idx += learnedStep;
+      reasons.push({ text: learnedReason(learned), delta: learnedStep || null });
     }
     if (signals.roomy) reasons.push({ text: 'Relaxed cut, roomy by design. Go one down only if you want it closer.', delta: null });
 
     idx = Math.max(0, Math.min(chart.length - 1, idx));
-    const altIdx = !explicit && frac > 0.25 && frac < 0.75 ? idx + (roundedUp ? -1 : 1) : null;
+    const altIdx = !settled && frac > 0.25 && frac < 0.75 ? idx + (roundedUp ? -1 : 1) : null;
 
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up'
       : signals.fitNote === 'large' ? 'Runs large, sized down'
@@ -856,6 +859,7 @@
       sizedOn: keys,
       garmentToGarment: !!g2g,
       // Where the pick sits on the chart it was read from, for placeLabel.
+      learnedStep,
       pickIndex: idx,
       pickLabel: displayLabel(pick, chartSystem, brand),
       chartSystem,
@@ -1002,10 +1006,13 @@
     const webMove = webMoveFor(web, held);
     const learned = !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, found), 'shoes') : null;
     const learnedNote = !!learned && (learned.verdict === 'small' || learned.verdict === 'large');
-    const explicit = pageNote || buyersNote || !!webMove || learnedNote;
+    const explicit = pageNote || buyersNote || !!webMove;
+    const learnedStep = learnedNote ? (learned.verdict === 'small' ? 1 : -1) : 0;
+    // No alternative size once something has moved it, the learned step included.
+    const settled = explicit || learnedNote;
     let alt = null;
-    if (!explicit && inRow && f.foot >= row.foot[1] - 0.2 && idx < rows.length - 1) alt = { row: rows[idx + 1], why: 'if you like more room' };
-    else if (!explicit && inRow && f.foot <= row.foot[0] + 0.2 && idx > 0) alt = { row: rows[idx - 1], why: 'if you like a closer fit' };
+    if (!settled && inRow && f.foot >= row.foot[1] - 0.2 && idx < rows.length - 1) alt = { row: rows[idx + 1], why: 'if you like more room' };
+    else if (!settled && inRow && f.foot <= row.foot[0] + 0.2 && idx > 0) alt = { row: rows[idx - 1], why: 'if you like a closer fit' };
     if (signals.fitNote === 'small') { idx += 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size up.`, delta: +1 }); }
     if (signals.fitNote === 'large') { idx -= 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size down.`, delta: -1 }); }
     if (signals.fitNote === 'tts') reasons.push({ text: 'The page says it fits true to size.', delta: null });
@@ -1014,9 +1021,8 @@
     if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
     if (web) { idx += webMove; reasons.push({ text: webReason(web, webMove, held), delta: webMove || null }); }
     if (learned) {
-      const step = learned.verdict === 'small' ? 1 : learned.verdict === 'large' ? -1 : 0;
-      idx += step;
-      reasons.push({ text: learnedReason(learned), delta: step || null });
+      idx += learnedStep;
+      reasons.push({ text: learnedReason(learned), delta: learnedStep || null });
     }
     idx = Math.max(0, Math.min(rows.length - 1, idx));
     const pick = rows[idx];
@@ -1066,6 +1072,7 @@
       body: { foot: f.foot, footSource: f.source },
       shoes: true,
       ...(web ? { areas: withWebAreas([], web), dossier: webResult(web, webMove) } : {}),
+      learnedStep,
       pickIndex: idx,
       pickLabel: label(pick),
     };

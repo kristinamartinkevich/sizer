@@ -6,11 +6,23 @@ const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.UTC(2026, 9, 5);
 const sizing = (over = {}) => ({ itemKey: 'agolde|90s', brand: 'Agolde', style: '90s', kind: 'bottoms', type: 'jeans', shop: 'www.revolve.com', size: '26', tier: 1, at: NOW, ...over });
 
-test('a sizing is remembered once per item, the newest replacing the older', () => {
-  let list = Feedback.remember([], sizing({ at: NOW - 3 * DAY, size: '25' }), NOW);
-  list = Feedback.remember(list, sizing(), NOW);
+test('a sizing is remembered once per item; one waiting for its answer keeps what was suggested then', () => {
+  // C6 review: a revisit used to swap in today's suggestion and restart the week, so the answer was
+  // compared with a size the shopper was never shown.
+  let list = Feedback.remember([], sizing({ at: NOW - 3 * DAY, size: '25', learned: 1 }), NOW);
+  list = Feedback.remember(list, sizing({ size: '26', learned: 0 }), NOW);
   assert.strictEqual(list.length, 1);
-  assert.strictEqual(list[0].size, '26');
+  assert.deepStrictEqual([list[0].size, list[0].at, list[0].learned], ['25', NOW - 3 * DAY, 1]);
+  // Once answered, a new visit is a new sizing (the answer is kept, so it is not asked again).
+  list = Feedback.remember([sizing({ at: NOW - 9 * DAY, size: '25', answered: NOW - DAY })], sizing({ size: '26' }), NOW);
+  assert.deepStrictEqual([list[0].size, list[0].at, list[0].answered], ['26', NOW, NOW - DAY]);
+});
+
+test('the outcome says whether the suggestion already carried a learned step', () => {
+  const body = Feedback.outcomeBody(sizing({ learned: -1 }), { sizeBought: '26', outcome: 'right' }, 'id');
+  assert.strictEqual(body.learned_step, -1);
+  assert.strictEqual(Feedback.outcomeBody(sizing({ learned: 7 }), { sizeBought: '26', outcome: 'right' }, 'id').learned_step, 0);
+  assert.strictEqual(Feedback.sizingFrom({ brand: 'B', title: 'T jeans', sizes: [] }, { ok: true, size: '26', kind: 'bottoms', learnedStep: 1 }, 'b|t', 'shop.example', NOW).learned, 1);
 });
 
 test('sizing an item again keeps the answer or dismissal it already has', () => {
@@ -77,7 +89,7 @@ test('the outcome sent carries the item, the sizes and the verdict, never measur
   const body = Feedback.outcomeBody(sizing({ waist: 70, sizes: ['25', '26'] }), { sizeBought: '27', outcome: 'small', areas: ['waist', 'nonsense', 'hip'] }, 'install-1');
   assert.deepStrictEqual(body, {
     item_key: 'agolde|90s', brand: 'Agolde', kind: 'bottoms', shop: 'www.revolve.com', install: 'install-1',
-    size_bought: '27', size_suggested: '26', outcome: 'small', areas: ['waist', 'hip'], chart_tier: 1,
+    size_bought: '27', size_suggested: '26', outcome: 'small', areas: ['waist', 'hip'], chart_tier: 1, learned_step: 0,
   });
 });
 
@@ -98,7 +110,7 @@ test('a "right" answer sends no areas; only a size that did not fit says where',
 
 test('a sizing is built from the answer the page showed, with the page sizes kept for the question', () => {
   const s = Feedback.sizingFrom({ brand: 'AGOLDE', title: '90s Pinch Waist jeans', sizes: [{ label: '25' }, { label: '26' }] }, { ok: true, size: '26', kind: 'bottoms', source: { tier: 2 } }, 'agolde|90s', 'www.revolve.com', NOW);
-  assert.deepStrictEqual(s, { itemKey: 'agolde|90s', brand: 'AGOLDE', style: '90s Pinch Waist jeans', kind: 'bottoms', type: 'jeans', shop: 'www.revolve.com', size: '26', tier: 2, sizes: ['25', '26'], at: NOW });
+  assert.deepStrictEqual(s, { itemKey: 'agolde|90s', brand: 'AGOLDE', style: '90s Pinch Waist jeans', kind: 'bottoms', type: 'jeans', shop: 'www.revolve.com', size: '26', tier: 2, learned: 0, sizes: ['25', '26'], at: NOW });
   assert.strictEqual(Feedback.sizingFrom({ brand: 'X', title: 'Boots', sizes: [] }, { ok: true, size: 'EU 38', shoes: true }, 'x|boots', 'shop.example', NOW).kind, 'shoes');
   assert.strictEqual(Feedback.sizingFrom({ brand: 'X', title: 'Jeans', sizes: [] }, { ok: true, size: '26', kind: 'bottoms' }, 'x|y', 'shop.example', NOW).tier, null);
   assert.strictEqual(Feedback.sizingFrom({ brand: 'X', title: 'Jeans', sizes: [] }, { ok: false }, 'x|y', 'shop.example', NOW), null);
@@ -115,7 +127,7 @@ test('answering adds the piece to the profile, marks the sizing and gives the bo
   assert.strictEqual(out.profile.waist, '70');
   assert.strictEqual(profile.anchors.length, 1, 'the stored profile is not mutated');
   assert.strictEqual(out.body.outcome, 'big');
-  assert.deepStrictEqual(Object.keys(out.body).sort(), ['areas', 'brand', 'chart_tier', 'install', 'item_key', 'kind', 'outcome', 'shop', 'size_bought', 'size_suggested']);
+  assert.deepStrictEqual(Object.keys(out.body).sort(), ['areas', 'brand', 'chart_tier', 'install', 'item_key', 'kind', 'learned_step', 'outcome', 'shop', 'size_bought', 'size_suggested']);
 });
 
 test('answering the same piece twice updates its fit instead of adding a second one', () => {

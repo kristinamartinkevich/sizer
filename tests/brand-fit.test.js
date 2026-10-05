@@ -103,3 +103,35 @@ test('the learned tendencies ride along with the stored chart bundle', () => {
   const merged = Store.mergeChart(bundle, { id: 'lookup:x', name: 'X', aliases: ['x'], charts: [{ id: 'c', category: 'tops' }] });
   assert.deepEqual(merged.brandFit, [fit()], 'a looked-up chart keeps the learned tendencies');
 });
+
+// ---- C6 review: the learned step is added on top, never in place of what it was measured against ----
+
+const step = (a, b) => denimSizes.findIndex((s) => s.label === b) - denimSizes.findIndex((s) => s.label === a);
+
+test('a brand with a researched tendency keeps it, and the learned step is added on top', () => {
+  // RE/DONE is researched to run small (+0.5) with a note. The answers counted for it were given to
+  // suggestions that already carried that tendency, so the step corrects what is left.
+  const redone = { brand: 'RE/DONE', title: '70s stove pipe jeans', text: '92% cotton, 6% polyester, 2% elastane', sizes: denimSizes };
+  const NOTE = 'Vintage-cut rigid denim, widely reported to run small.';
+  const base = recommend(profile, redone, charts([]));
+  const learned = recommend(profile, redone, charts([fit({ brand_key: 're done' })]));
+  assert.ok(base.reasons.some((x) => x.text === NOTE), JSON.stringify(base.reasons));
+  assert.ok(learned.reasons.some((x) => x.text === NOTE), JSON.stringify(learned.reasons));
+  assert.equal(step(base.size, learned.size), 1, `${base.size} then ${learned.size}`);
+  assert.deepEqual([base.learnedStep, learned.learnedStep], [0, 1]);
+});
+
+test('on rigid fabric the lean stays and the learned step is added on top', () => {
+  const rigid = { ...stretchy, title: 'Straight jeans', text: '100% cotton rigid denim, no stretch' };
+  const base = recommend(profile, rigid, charts([]));
+  const learned = recommend(profile, rigid, charts([fit()]));
+  assert.ok(learned.reasons.some((x) => /No stretch/.test(x.text)), JSON.stringify(learned.reasons));
+  assert.equal(step(base.size, learned.size), 1, `${base.size} then ${learned.size}`);
+  assert.equal(learned.alternative, null, 'no alternative size once the learned step moved it');
+});
+
+test('runs large from Sizer users is a step down, recorded as -1', () => {
+  const r = recommend(profile, stretchy, charts([fit({ small: 1, large: 9, tts: 2 })]));
+  assert.equal(r.size, 'W26/L32');
+  assert.equal(r.learnedStep, -1);
+});

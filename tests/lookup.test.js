@@ -309,11 +309,11 @@ test('the privacy policy, listing, launch copy and README name every field a "di
   const root = path.join(__dirname, '..');
   const sizing = { itemKey: 'ostra studio|mira', brand: 'Ostra Studio', style: 'MIRA jeans', kind: 'bottoms', type: 'jeans', shop: 'shop.example', size: '27', tier: 3, sizes: ['26', '27'], at: 0, waist: 70 };
   const body = Feedback.outcomeBody(sizing, { sizeBought: '28', outcome: 'small', areas: ['waist'] }, 'id-1');
-  assert.deepStrictEqual(Object.keys(body).sort(), ['areas', 'brand', 'chart_tier', 'install', 'item_key', 'kind', 'outcome', 'shop', 'size_bought', 'size_suggested'], 'a new field in outcomeBody needs a line in the copy below');
+  assert.deepStrictEqual(Object.keys(body).sort(), ['areas', 'brand', 'chart_tier', 'install', 'item_key', 'kind', 'learned_step', 'outcome', 'shop', 'size_bought', 'size_suggested'], 'a new field in outcomeBody needs a line in the copy below');
   const words = {
     item_key: /style name/, brand: /brand/, kind: /kind of item/, shop: /hostname|shop’s name/, install: /install id/,
     size_bought: /size you bought/, size_suggested: /size Sizer suggested/, outcome: /too small, right or too big/,
-    areas: /areas you picked/, chart_tier: /chart tier/,
+    areas: /areas you picked/, chart_tier: /chart tier/, learned_step: /already used other buyers/,
   };
   // Every field is named in the same passage that introduces the question, not anywhere in the file.
   for (const file of ['store/privacy.html', 'store/LISTING.md', 'store/PRODUCT_HUNT.md', 'README.md']) {

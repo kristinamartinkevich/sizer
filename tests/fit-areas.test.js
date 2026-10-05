@@ -76,6 +76,25 @@ test('when every area is fine the sheet says so in one line', () => {
   assert.strictEqual(areaLine({}), null);
 });
 
+test('trousers never name the bust or shoulders, from the chart or from reviewers', () => {
+  const card = 'About my curves About my height curvy petite Tight in the bust. Sizing true to size';
+  const r = recommend({ ...ME, bust: '120', shoulder: '50' }, reviewed([card, card, card], []), null);
+  assert.ok(!r.areas.some((a) => ['bust', 'shoulder', 'sleeve'].includes(a.area)), JSON.stringify(r.areas));
+  const dress = recommend({ ...ME, bust: '120' }, trousers({ title: 'Midi dress' }), null);
+  assert.ok(dress.areas.some((a) => a.area === 'bust'), JSON.stringify(dress.areas));
+});
+
+test('a weighted verdict of none replaces the plain one, so mixed reviewers like you leave the size alone', () => {
+  const small = 'About my curves About my height curvy petite Ok. Sizing runs small';
+  const large = 'About my curves About my height curvy petite Ok. Sizing runs large';
+  const texts = ['Runs small.', 'Runs small.', 'Runs small.', 'Runs large.', 'Runs large.'];
+  const p = reviewed([small, small, large, large], texts);
+  assert.strictEqual(recommend({ waist: '68', hip: '102', anchors: [] }, { ...p, reviewCards: [] }, null).reviews.verdict, 'small');
+  const r = recommend(ME, p, null);
+  assert.strictEqual(r.reviews.verdict, null);
+  assert.strictEqual(r.size, recommend(ME, trousers(), null).size);
+});
+
 test('with no reviewer details nothing changes', () => {
   const a = recommend(ME, trousers({ reviews: ['Runs small.', 'Runs small.'] }), null);
   assert.strictEqual(a.reviews.verdict, 'small');

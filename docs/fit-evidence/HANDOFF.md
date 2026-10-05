@@ -172,29 +172,35 @@ owned piece with a diagram-free list of what to measure, fit preference per cate
 
 ## 5. C2 — Per-area fit and weighted reviews
 
-Per-area fit: for the chosen size, compare each body measurement the profile has (bust, waist,
-hip, inseam, shoulder, arm) with that size's row. Outcome per area: `tight` (more than 1 cm over the
-row's max for snug-safe areas, 0 for rigid fabric), `close`, `fine`, `roomy` (more than 4 cm under
-the min), plus `long`/`short` for inseam and arm. The result carries `areas: [{ area, verdict,
-text }]`; the sheet shows up to three, the line shows the most important one when it is `tight`
-("May pull across the bust"). Stretch widens the tolerances as the rounding does today.
+Per-area fit (as built): for the chosen size, compare each measurement the profile has among bust,
+waist, hip and shoulder with that size's row. Chart rows are points, not ranges, so the verdict is
+by how far over or under the row value you are: `tight` from 2.5 cm over (1.5 rigid, 3.5 high
+stretch), `close` from 1 cm over, `roomy` from 4 cm under, else `fine`. Bottoms never name the bust,
+shoulders or sleeves. Leg and length come only from reviewers (`long`/`short`); arm length has no
+chart column yet. The result carries `areas: [{ area, verdict, source, text }]`, ordered tight,
+short, long, close, roomy, fine; the sheet shows up to three that are not fine (or one line when
+all are), and the line shows the first when it is `tight` ("May be tight at the hips").
 
-Structured reviews: `extractReviews` keeps returning strings for compatibility and a new
-`reviewDetails(doc)` returns `[{ text, verdict, height, heightBucket, curves, sizeBought,
-usualSize, areas }]`, reading:
+Structured reviews: `extractReviews` keeps returning strings for compatibility, and
+`reviewCards(doc)` returns the whole text of each review container; `parseReview` (in
+`src/review-details.js`) turns one into `{ text, verdict, height, heightBucket, curves, weight,
+sizeBought, usualSize, areas }`, reading:
 - Revolve's fields ("About my height" petite/average/tall, "About my curves" straight hips/some
-  curves/curvy, "Sizing" runs small/true/large, in English and French).
-- Free text: heights ("I'm 5'4", "1m65", "165 cm", "je mesure 1,65"), "I bought a 27", "usually a
-  26", and areas ("tight in the hips", "long in the leg", "serré aux hanches").
+  curves/curvy, "Sizing" runs small/true/large, in English and French, any capitalisation).
+- Free text: heights ("I'm 5'4", "1m65", "165 cm", "je mesure 1,65"; never a price), weights,
+  "I bought a 27", "usually a 26", and areas ("tight in the hips", "long in the leg", "serré aux
+  hanches"; not when negated, and not "the rise is a bit short").
 
-Body similarity (pure, on the device): weight `w = height match × shape match`, height match from
-the reviewer's height or bucket against the user's height (1 within 4 cm, 0.25 beyond 12 cm),
-shape match from curves against the user's hip − waist (straight < 20 cm, curvy ≥ 28 cm). Unknown
-fields count 0.6. Weight, when both you and the reviewer give one, scales the result from 1 (within
-4 kg) to 0.4 (15 kg apart) and is neutral otherwise; it never sizes anything (C1 review fix: the
-weight field's copy promises exactly this use). The weighted verdict replaces the plain count when at least three reviews carry a
-height or shape; the reason says "6 reviewers about your height say it runs small". Area mentions
-are tallied the same way and feed `areas`.
+Body similarity (pure, on the device): weight `w = height match × shape match × weight match`,
+height match from the reviewer's height or bucket against the user's height (1 within 4 cm, 0.25
+beyond 12 cm), shape match from curves against the user's hip − waist (straight < 20 cm, curvy
+≥ 28 cm). Unknown fields count 0.6. Weight, when both you and the reviewer give one, scales the
+result from 1 (within 4 kg) to 0.4 (15 kg apart) and is neutral otherwise; it never sizes anything.
+The weighted verdict replaces the plain count, including with no verdict, when at least three
+reviews carry a height or shape; the plain tally still goes to the pool. The reason says "3
+reviewers about your height and shape say it runs small", counting only reviewers who gave both a
+height and a shape and match (w ≥ 0.6). Area mentions from reviewers like you (w ≥ 0.6) feed
+`areas` when at least two give the same one.
 
 ## 6. C3 — fit-dossier
 

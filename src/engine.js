@@ -467,17 +467,20 @@
 
   // Each measured area against the row of the size picked (body cm, or garment cm when sizing garment
   // to garment): over the row by the fabric's tolerance is tight, a little over is close, well under
-  // is roomy. Then what reviewers like you say about particular areas. Most important first.
-  function fitAreas(have, row, stretch, weighted) {
+  // is roomy. Then what reviewers like you say about particular areas. Most important first. Bottoms
+  // cover no bust, shoulders or sleeves, so those are never named for trousers or a skirt.
+  const UPPER_AREAS = ['bust', 'shoulder', 'sleeve'];
+  function fitAreas(have, row, stretch, weighted, kind) {
     const tightFrom = stretch === 'none' ? 1.5 : stretch === 'high' ? 3.5 : 2.5;
+    const covers = (area) => kind !== 'bottoms' || !UPPER_AREAS.includes(area);
     const out = [];
     for (const area of ['bust', 'waist', 'hip', 'shoulder']) {
-      if (have[area] == null || typeof row[area] !== 'number') continue;
+      if (!covers(area) || have[area] == null || typeof row[area] !== 'number') continue;
       const d = have[area] - row[area];
       const verdict = d >= tightFrom ? 'tight' : d >= 1 ? 'close' : d <= -4 ? 'roomy' : 'fine';
       out.push({ area, verdict, source: 'chart', text: `${AREA_TEXT[verdict]} ${AREA_NAME[area]}` });
     }
-    for (const a of (weighted && weighted.areas) || []) {
+    for (const a of ((weighted && weighted.areas) || []).filter((x) => covers(x.area))) {
       const verdict = REVIEW_VERDICT[a.direction];
       const where = ['inseam', 'length', 'sleeve'].includes(a.area) ? 'in the' : 'at the';
       out.push({ area: a.area, verdict, source: 'reviews', text: `${a.count} reviewers like you found it ${verdict} ${where} ${AREA_NAME[a.area] || a.area}` });
@@ -677,7 +680,7 @@
       ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
       : null;
     const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
-    const areas = fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted);
+    const areas = fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind);
 
     let score = 0.4;
     if (brand) score += 0.2 - tierPenalty(brand);

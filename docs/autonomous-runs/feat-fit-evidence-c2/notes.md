@@ -43,3 +43,18 @@ verdict in `recommend`, `reviewReason`), `src/extract.js` (`reviewCards`), `src/
 - Demo shop `?profile=measured&open=why`: the sheet shows "Where it fits: Roomy at the waist".
 
 Nothing new leaves the browser in C2; the profile and the weighting stay on the device.
+
+## Review (1 adversarial + 1 QA, wf_76cdfbea-c03): 6 confirmed, all applied
+
+- MAJOR: trousers could name the bust or shoulders (from a chart row or from reviewers).
+  `fitAreas` now takes the kind; bottoms skip bust, shoulder and sleeve. Test mutation-checked.
+- MAJOR: "N reviewers about your height and shape" counted reviewers with an unknown field. Similar
+  now needs both a height (or group) and a shape, and w ≥ 0.6. The first weighting test's count drops
+  from 3 to 2: its petite-only reviewer was the overclaim.
+- MAJOR: an area's count included reviewers unlike you. Areas tally only w ≥ 0.6.
+- MINOR: "$1.65" read as a height; "not tight in the hips" read as tight; "the rise is a bit short"
+  read as a short garment. All three fixed, each with a test.
+- MINOR: decision 8 (a weighted null replaces a plain verdict) now has a test.
+- MINOR: HANDOFF §5 rewritten to the build (reviewCards, point thresholds, no arm, the copy).
+
+`node --test tests/`: 201/201.

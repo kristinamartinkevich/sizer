@@ -131,13 +131,41 @@ test('with three or more reviewers who say their height or shape, the verdict is
   ];
   const w = RD.weightedVerdict(details, ME);
   assert.strictEqual(w.verdict, 'small');
-  assert.strictEqual(w.similar, 3);
+  // The petite-only reviewer gave no shape, so is not counted as about your height and shape.
+  assert.strictEqual(w.similar, 2);
   assert.strictEqual(w.described, 6);
 });
 
 test('too few described reviewers, or no height or shape in the profile, gives no weighted verdict', () => {
   assert.strictEqual(RD.weightedVerdict([{ verdict: 'small', height: 162 }, { verdict: 'small', height: 165 }], ME), null);
   assert.strictEqual(RD.weightedVerdict([{ verdict: 'small', height: 162 }, { verdict: 'small', height: 165 }, { verdict: 'small', height: 160 }], {}), null);
+});
+
+test('only reviewers who give both height and shape, and match, count as about your height and shape', () => {
+  const heightOnly = [{ verdict: 'small', height: 162 }, { verdict: 'small', height: 164 }, { verdict: 'small', height: 161 }];
+  const w = RD.weightedVerdict(heightOnly, ME);
+  assert.strictEqual(w.verdict, 'small');
+  assert.strictEqual(w.similar, 0);
+});
+
+test('an area count includes only reviewers like you', () => {
+  const tightHip = [{ area: 'hip', direction: 'tight' }];
+  const details = [
+    { verdict: 'tts', height: 163, curves: 'curvy', areas: tightHip },
+    { verdict: 'tts', height: 162, curves: 'curvy', areas: tightHip },
+    { verdict: 'tts', height: 180, curves: 'straight', areas: tightHip },
+    { verdict: 'tts', height: 181, curves: 'straight', areas: tightHip },
+  ];
+  assert.deepStrictEqual(RD.weightedVerdict(details, ME).areas, [{ area: 'hip', direction: 'tight', count: 2 }]);
+});
+
+test('a price is not a height, "not tight" is not tight, and a short rise is not a short garment', () => {
+  assert.strictEqual(RD.parseReview('Paid $1.65 for the postage.').height, null);
+  assert.strictEqual(RD.parseReview('I am 1.65 and it fits.').height, 165);
+  assert.deepStrictEqual(RD.parseReview('Not tight in the hips at all.').areas, []);
+  assert.deepStrictEqual(RD.parseReview("It isn't tight in the waist.").areas, []);
+  assert.deepStrictEqual(RD.parseReview('The rise is a bit short.').areas, []);
+  assert.deepStrictEqual(RD.parseReview('Lovely, just a bit short.').areas, [{ area: 'length', direction: 'short' }]);
 });
 
 test('areas are tallied by similarity too, and one mention is not enough', () => {

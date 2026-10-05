@@ -22,7 +22,7 @@
   function heightOf(t) {
     let m = t.match(/(?<![\d'’])([4-6])\s*(?:'|’|ft|foot|feet)(?!['’])\s*(\d{1,2})?/i);
     if (m && (!m[2] || +m[2] < 12)) return Math.round((+m[1] * 12 + (+m[2] || 0)) * 2.54);
-    m = t.match(/(?<!\d)1\s?[.,m]\s?(\d{2})(?!\d)(?!\s?€)/i);
+    m = t.match(/(?<![\d$£€.,])1\s?[.,m]\s?(\d{2})(?!\d)(?!\s?(?:€|£|\$|eur|usd))/i);
     if (m) return 100 + +m[1];
     m = t.match(/(?<!\d)(1[4-9]\d)\s?cm\b/i);
     return m ? +m[1] : null;
@@ -66,6 +66,9 @@
     [/(serrée?|ample|large|longue?|courte?)s?\s+(?:aux|à la|au|des|sur les)\s+(hanches|cuisses|taille|épaules|fesses|jambes|poitrine|manches)/gi, 1, 2],
   ];
   const BARE_LENGTH = /(?:trop|too|a\s+bit|slightly|un\s+peu)\s+(long|longue|short|court|courte)\b/gi;
+  // "Not tight in the hips" says the opposite; a short rise or strap is not a short garment.
+  const NEGATED = /\b(?:not|never|no|isn['’]t|wasn['’]t|aren['’]t|weren['’]t|pas)\s+(?:\w+\s+)?$/i;
+  const OTHER_PART = /\b(?:rise|crotch|zip|zipper|straps?|torso|bodice|cuffs?|collar|neck|neckline|slit|fly)\s+(?:is|was|are|were|felt|feels|seems?|est)?\s*$/i;
 
   function areaOf(word) {
     const w = word.toLowerCase();
@@ -82,13 +85,17 @@
         const at = g[g.length - 2];
         const area = areaOf(g[b - 1]);
         const direction = DIR[g[d - 1].toLowerCase()];
-        if (area && direction) found.push({ at, area, direction });
+        if (area && direction && !NEGATED.test(text.slice(Math.max(0, at - 20), at))) found.push({ at, area, direction });
         return ' '.repeat(whole.length);
       });
     }
     BARE_LENGTH.lastIndex = 0;
     let m;
-    while ((m = BARE_LENGTH.exec(rest))) found.push({ at: m.index, area: 'length', direction: DIR[m[1].toLowerCase()] });
+    while ((m = BARE_LENGTH.exec(rest))) {
+      const before = rest.slice(Math.max(0, m.index - 30), m.index);
+      if (NEGATED.test(before) || OTHER_PART.test(before)) continue;
+      found.push({ at: m.index, area: 'length', direction: DIR[m[1].toLowerCase()] });
+    }
     const out = [];
     for (const f of found.sort((a, b) => a.at - b.at)) {
       if (!out.some((o) => o.area === f.area && o.direction === f.direction)) out.push({ area: f.area, direction: f.direction });
@@ -170,6 +177,8 @@
   // The verdict reviews give once each counts by how like you its writer is. Only when at least
   // three reviewers say their height or shape and the profile has a height or a waist and hip;
   // otherwise null and the plain count stands. The winner needs weight 1.2 and a weighted majority.
+  // "Similar" (the count the copy calls "about your height and shape") needs a reviewer who gave both
+  // and matches; an area counts only reviewers that like you, so its number means what it says.
   function weightedVerdict(details, profile) {
     const p = profile || {};
     if (!(+p.height > 0) && !shapeOf(p)) return null;
@@ -182,9 +191,9 @@
       const w = similarity(d, p);
       if (d.verdict) {
         sum[d.verdict] += w;
-        if (w >= SIMILAR) similar[d.verdict] += 1;
+        if (w >= SIMILAR && (d.height || d.heightBucket) && d.curves) similar[d.verdict] += 1;
       }
-      for (const a of d.areas || []) {
+      for (const a of w >= SIMILAR ? d.areas || [] : []) {
         const k = `${a.area}|${a.direction}`;
         const cur = areaSum.get(k) || { area: a.area, direction: a.direction, weight: 0, count: 0 };
         cur.weight += w;

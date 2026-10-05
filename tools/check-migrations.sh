@@ -96,3 +96,107 @@ begin
 end $$;
 SQL
 echo "ok   chart_lookups is written by the service role and closed to anon"
+
+# Fit dossiers (0006): the function (service role) writes dossiers and the ledger; the public key
+# reads dossiers through fit_dossier_public only, and cannot read the tables or write anything.
+run >/dev/null <<'SQL'
+do $$
+declare caps record;
+begin
+  select per_install_per_day, global_per_day into caps from public.fit_dossier_settings;
+  if caps.per_install_per_day <> 40 or caps.global_per_day <> 2000 then raise exception 'fit_dossier_settings seeded with %', caps; end if;
+  if exists (select 1 from pg_class where oid in ('public.fit_dossiers'::regclass, 'public.dossier_requests'::regclass, 'public.fit_dossier_settings'::regclass) and not relrowsecurity) then
+    raise exception 'a fit dossier table has row level security off';
+  end if;
+  if exists (select 1 from pg_policies where schemaname = 'public' and tablename in ('fit_dossiers', 'dossier_requests', 'fit_dossier_settings')) then
+    raise exception 'a fit dossier table has a policy, it should have none';
+  end if;
+  -- The grants are revoked as well as RLS being on, so either alone still keeps the tables closed.
+  if exists (select 1 from unnest(array['public.fit_dossiers', 'public.dossier_requests', 'public.fit_dossier_settings']) t,
+                           unnest(array['anon', 'authenticated']) r,
+                           unnest(array['select', 'insert', 'update', 'delete']) p
+             where has_table_privilege(r, t, p)) then
+    raise exception 'an API role still holds a grant on a fit dossier table';
+  end if;
+  if has_table_privilege('anon', 'public.fit_dossier_public', 'insert') or has_table_privilege('anon', 'public.fit_dossier_public', 'update')
+     or has_table_privilege('anon', 'public.fit_dossier_public', 'delete') then
+    raise exception 'anon holds a write grant on fit_dossier_public';
+  end if;
+end $$;
+set role service_role;
+insert into public.fit_dossiers (item_key, brand, style, kind, verdict, strength, areas, brand_note, sources)
+values ('helsa|wd1', 'Helsa', 'WD1', 'dresses', 'small', 0.7,
+        '[{"area":"bust","direction":"tight","note":"Snug across the bust."}]',
+        'Cuts slim through the bodice.', '[{"url":"https://example.com/review","title":"Review"}]');
+insert into public.fit_dossiers (item_key, brand, style, kind, verdict, strength, areas, brand_note, sources)
+values ('helsa|wd1', 'Helsa', 'WD1', 'dresses', 'large', 0.5, '[]', null, '[]')
+on conflict (item_key) do update set verdict = excluded.verdict, strength = excluded.strength, created_at = now();
+insert into public.dossier_requests (item_key, brand, kind, shop, install, outcome)
+values ('helsa|wd1', 'Helsa', 'dresses', 'revolveclothing.fr', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'pending');
+update public.dossier_requests set outcome = 'dossier' where item_key = 'helsa|wd1';
+do $$
+begin
+  if (select count(*) from public.fit_dossiers) <> 1 then raise exception 'the upsert on item_key added a second dossier'; end if;
+  if (select verdict from public.fit_dossiers) <> 'large' then raise exception 'the upsert on item_key did not replace the dossier'; end if;
+  if (select count(*) from public.dossier_requests where outcome = 'dossier') <> 1 then raise exception 'the service role cannot write dossier_requests'; end if;
+  if (select count(*) from public.fit_dossier_settings) <> 1 then raise exception 'the service role cannot read fit_dossier_settings'; end if;
+end $$;
+reset role;
+set role anon;
+do $$
+declare seen bigint; cols text;
+begin
+  if (select count(*) from public.fit_dossier_public where item_key = 'helsa|wd1') <> 1 then raise exception 'anon cannot read fit_dossier_public'; end if;
+  select string_agg(column_name, ',' order by ordinal_position) into cols
+    from information_schema.columns where table_schema = 'public' and table_name = 'fit_dossier_public';
+  if cols <> 'item_key,verdict,strength,areas,brand_note,sources,created_at' then raise exception 'fit_dossier_public serves %', cols; end if;
+  begin
+    select count(*) into seen from public.fit_dossiers;
+    if seen > 0 then raise exception 'anon can read fit_dossiers (% rows)', seen; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    select count(*) into seen from public.dossier_requests;
+    if seen > 0 then raise exception 'anon can read dossier_requests (% rows)', seen; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    select count(*) into seen from public.fit_dossier_settings;
+    if seen > 0 then raise exception 'anon can read fit_dossier_settings (% rows)', seen; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.fit_dossier_public (item_key, verdict, strength, areas, brand_note, sources)
+    values ('x|y', 'small', 1, '[]', null, '[]');
+    raise exception 'anon can write through fit_dossier_public';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    update public.fit_dossier_public set verdict = 'tts';
+    raise exception 'anon can update through fit_dossier_public';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    delete from public.fit_dossier_public;
+    raise exception 'anon can delete through fit_dossier_public';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.fit_dossiers (item_key, brand, style, kind) values ('x|y', 'x', 'y', 'tops');
+    raise exception 'anon can write fit_dossiers';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.dossier_requests (item_key, brand, kind, shop, install, outcome)
+    values ('x|y', 'x', 'tops', 'example.com', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'pending');
+    raise exception 'anon can write dossier_requests';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    update public.fit_dossier_settings set per_install_per_day = 100000;
+    raise exception 'anon can change fit_dossier_settings';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+SQL
+echo "ok   fit_dossier_public is the only thing anon reads from 0006, and anon writes nothing"

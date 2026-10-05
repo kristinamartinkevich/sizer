@@ -31,6 +31,7 @@ Heartbeat task bbi2lve34 (pid 3605), watchdog cron 7b451094.
 | Bundle | Commit | Findings | Deferrals |
 |---|---|---|---|
 | B1 | 32d6635 | 2 confirmed (1 BLOCKER, 1 MINOR), both applied | 0 |
+| B2 | e3e8161, 366e2bd | 3 confirmed (1 MAJOR, 2 MINOR), all applied; 1 refuted | 0 |
 
 ## Cross-bundle notes
 - B1 added tools/check-migrations.sh and wired it into HANDOFF §1.2/§1.9. B3 must run it for 0005
@@ -40,6 +41,18 @@ Heartbeat task bbi2lve34 (pid 3605), watchdog cron 7b451094.
 - The B1 launch command's "partial index where machine_read" was not buildable in a one-paste
   migration; a plain (brand_id, category, status) index replaced it. B3's cache query should filter
   on status::text in ('verified','machine_read') or on the enum after 0004 is committed.
+
+- B2's parsed charts carry source_type null and no status. B4 must set source_type (from B3's
+  classification) and status machine_read before a shop-table chart reaches convertChart, or
+  tierOf ranks it as tier 1, a verified brand chart (refuted-for-B2 finding, wf_4c6c72bf-b19).
+- B2's parser requires waist and hip for clothing charts (convertChart needs both), so the
+  HANDOFF's "bust+waist → tops" mapping no longer exists. B3's validator should apply the same rule.
+
+## Decisions (cont.)
+- 2026-10-05, operator: "dont stop on test run them in bg and add bundles". B3 was built by a
+  background builder in its own worktree (branched from e3e8161) while B2's battery ran, because
+  the battery diffs the live shared worktree. Its commits are cherry-picked onto the shared branch
+  after its own battery.
 
 ## Pasted plan from the operator (mid-run)
 The operator pasted a broader product plan (reference garments, body-similarity review weighting,

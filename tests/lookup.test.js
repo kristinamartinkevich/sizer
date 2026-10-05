@@ -252,3 +252,16 @@ test('every content script in the manifest ships in the store package', () => {
   assert.ok(scripts.includes('src/guide-table.js'));
   for (const s of scripts) assert.ok(included.some((dir) => s === dir || s.startsWith(`${dir}/`)), s);
 });
+
+test('the privacy policy and launch copy name every field a lookup sends', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const root = path.join(__dirname, '..');
+  const body = Store.lookupBody({ brand: 'Ostra Studio', kind: 'jeans', shop: 'shop.example', shopGuide: { caption: 'Size guide', charts: [{ category: 'jeans', unit: 'cm', rows: [] }] } }, 'id-1');
+  assert.deepStrictEqual(Object.keys(body).sort(), ['brand', 'install', 'kind', 'shop', 'shopGuide'], 'a new field in lookupBody needs a line in the copy below');
+  const words = { brand: /brand name/, kind: /kind of item/, shop: /hostname|shop’s name/, install: /install id/, shopGuide: /size table/ };
+  for (const file of ['store/privacy.html', 'store/PRODUCT_HUNT.md']) {
+    const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/\s+/g, ' ');
+    for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
+  }
+});

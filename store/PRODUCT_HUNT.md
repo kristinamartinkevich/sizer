@@ -48,7 +48,7 @@ A few things I cared about:
 • If your size is sold out, it says which sizes are in stock and how far off they are.
 • It is honest when unsure. Thin information gets a “rough guess” label and a note on what would firm it up.
 • It prefers the brand’s own chart over the shop’s generic one. If no shopper has needed a brand before, it looks up the brand’s published chart once, labels it as read by machine, and every shopper after you gets it.
-• Your measurements never leave your browser. No account, no analytics. It sends only anonymous things: a count of what reviews said, and, for a brand it has no chart for, the brand name, the kind of item and the shop’s name.
+• Your measurements never leave your browser. No account, no analytics. It sends only anonymous things: a count of what reviews said, and, for a brand it has no chart for, the brand name, the kind of item, the shop’s name, a random install id and the shop’s own size table if the page prints one.
 
 It is strongest for women’s jeans, trousers and skirts today, with shoes by foot length. I would love to know which brands and shops to add next.
 

@@ -305,7 +305,8 @@ Scope: §8 of the HANDOFF.
    step 2 updated to match. PRODUCT_HUNT.md checklist gets the deploy + migration lines.
 
 5. tests/fixture-shop.html gets a `?brand=unknown` switch that renders the looking-up state
-   with a stubbed chrome.runtime (tests/chrome-stub.js) answering after 500 ms, for the visual
+   with a stubbed chrome.runtime answering after 500 ms (built inline in the page beside its other
+   stubs, not as tests/chrome-stub.js; amended 2026-10-05, see the B4 notes), for the visual
    check and a store screenshot later.
 
 Tests first: tests/lookup.test.js for mergeChart, missKey and the TTL; a content-level test of

@@ -55,9 +55,9 @@ WHAT YOU SEE
 • Open “Why this size” for the full reasoning and exactly what Sizer read on the page
 
 WHAT IT READS
-• Verified brand size charts, downloaded daily, with a link to the brand page each one came from
+• Brand size charts, downloaded daily, with a link to the brand page each one came from and whether a person has checked it
 • For a brand with no chart yet, its own published chart, looked up once and labelled as read by machine
-• Built-in charts for 40 denim and high-street brands where no verified chart exists yet
+• Built-in charts for 40 denim and high-street brands where no downloaded chart exists yet
 • Stretch: rigid denim leans up a size, high stretch leans down
 • The page’s own fit notes, like “runs small, we recommend sizing up”
 • Buyers’ reviews, on this shop and pooled across other shops selling the same style

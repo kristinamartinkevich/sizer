@@ -40,11 +40,26 @@ Files:
 
 ## Verification
 
-- `node --test tests/`: 102/102. `deno test supabase/functions/`: 44/44. `tests/shops.html`: PASS, 53.
+- `node --test tests/`: 103/103 after the review fixes (102 at bffa044). `deno test supabase/functions/`: 44/44. `tests/shops.html`: PASS, 53.
 - Demo shop `?brand=unknown`: "Sizing this for you" → "Looking up Ostra Studio’s size chart" (~850 ms)
   → "Your size 28" (~1.4 s); sheet reads "Ostra Studio, chart read by machine" with the
   ostra-studio.example link. `&lookup=miss`: generic answer, "no size chart yet". `&lookup=slow`:
   generic answer at ~7 s.
+
+## Review (1 adversarial + 1 QA, base 4ef4474, head bffa044)
+
+Five findings, all confirmed or minor, all copy; none in the code paths (provenance, page address,
+miss on error, first paint were each checked and ruled out). All applied:
+1. MAJOR: PRODUCT_HUNT.md said a lookup sends "only" brand, kind and shop, leaving out the install id
+   and the shop's size table. Fixed, with a regression test in `tests/lookup.test.js` that pins
+   lookupBody's field list and requires privacy.html and PRODUCT_HUNT.md to name each field (fails on
+   the bffa044 copy, which lacks "install id").
+2. MINOR: privacy.html said "two things" are sent and "One thing does go the other way", missing the
+   pooled-tally read. Reworded.
+3. MINOR: LISTING.md and a background.js comment still called the daily bundle "verified" only; it
+   now carries machine-read lookups too. Reworded.
+4. MINOR: privacy.html said a miss stops lookups "for that brand"; the key is brand and kind. Fixed.
+5. MINOR: HANDOFF §3.4 item 5 still named tests/chrome-stub.js. Amended in place.
 
 ## Operator-only (HANDOFF §9)
 

@@ -73,7 +73,7 @@ async function reportFit({ key, brand, style, vendor, counts }) {
   return { ok: true };
 }
 
-// Downloads the verified charts once a day. Offline, the last good bundle is kept; before any
+// Downloads the charts once a day (checked ones and machine-read lookups). Offline, the last good bundle is kept; before any
 // download, the charts shipped with the extension are used.
 async function refreshCharts(force = false) {
   const { charts } = await chrome.storage.local.get('charts');

@@ -8,7 +8,8 @@ fabric's stretch, the page's fit notes and the stock.
 
 1. Open `chrome://extensions` and turn on **Developer mode**.
 2. Click **Load unpacked** and choose this folder.
-3. The fit profile opens on first install. Add measurements, clothes you own, or both.
+3. The fit profile opens on first install. It starts with a piece you own that fits well;
+   measurements come second. Everything in it stays in your browser.
 
 On supported shops (Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE,
 Nordstrom, Zara, Mango, H&M, COS, ARKET and a few brand sites) the answer appears under the size
@@ -27,8 +28,15 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 
 ## How it decides
 
-1. Measurements are used as given. Otherwise each piece you own becomes body measurements through
-   its brand's chart, nudged for pieces marked tight or loose.
+1. Measurements are used as given: bust, waist, hip, shoulder width, inseam, foot length. Otherwise
+   each piece you own becomes body measurements through its brand's chart, nudged for pieces marked
+   tight or loose. With no inseam, height gives a guessed leg length (about 0.45 of it) and the sheet
+   says it is a guess. Weight never sizes anything.
+   Bottoms are sized on waist and hip, tops on the bust, dresses on bust, waist and hip, and coats
+   and jackets on bust and shoulder, each when the chart prints it; otherwise waist and hip. A piece
+   you own can carry flat-lay measurements (measured straight across; widths are doubled). When the
+   product's chart lists garment measurements, such a piece of the same kind is compared garment to
+   garment, with no body estimate in between.
 2. Those measurements are placed on the product brand's chart: the chart downloaded from the chart
    database when the brand has one for this kind of item, else the built-in approximation. A brand
    with no chart anywhere is looked up once: the line reads "Looking up <brand>'s size chart" for at
@@ -37,8 +45,9 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    A miss is remembered for 7 days; a network failure is not, so the next visit tries again.
    Rows the brand page gets visibly wrong are marked suspect in the database and skipped. Charts
    that list garment rather than body measurements get a little ease taken off.
-3. Rigid fabric rounds up when you fall between sizes, high stretch rounds down, and the brand's
-   reputation and your fit preference adjust it.
+3. Between two sizes, your rule wins (go up, or go down); left to the fabric, rigid fabric rounds
+   up and high stretch rounds down. The brand's reputation and your fit preference adjust it, and the
+   preference can be set per kind of clothing (bottoms, tops, dresses, coats and jackets).
 4. A "runs small / size up" note on the page moves it one full size (or down for "runs large").
    When the page says nothing, buyers' reviews stand in: one vote per review, and a verdict only
    when at least two reviews agree and they are the majority of those that mention fit. A shop's
@@ -48,7 +57,9 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    product page asks for the pooled tally of the same style on other shops, so a style's fit
    reputation follows it from Zalando to Net-a-Porter to the brand's own site. Each shop counts
    once, however many people read it. See `store/privacy.html` for exactly what travels.
-5. The result maps to the sizes on the page, using the shop's product data for stock.
+5. The result maps to the sizes on the page, using the shop's product data for stock. Women's sizes
+   from different regions line up through one table (FR/EU = DE, IT = FR + 4, UK = FR − 28,
+   US = UK − 4, and the letters XXS to 4XL), so a UK 10 on the page finds the brand's EU 38 or M.
 6. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
    the brand's shoe chart or a standard EU one.
 
@@ -58,7 +69,7 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 
 | Path | What it is |
 |---|---|
-| `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, plus generic charts |
+| `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, generic charts, and the women's size conversion table (FR/EU, IT, UK, US, DE, letters) |
 | `src/charts.js` | Turns the downloaded chart bundle into engine charts: cm, suspect rows dropped, one chart per kind of item |
 | `src/charts-store.js`, `src/background.js` | Daily download of charts from the Supabase project into `chrome.storage.local`, and the one-off lookup of a brand with no chart |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
@@ -76,8 +87,9 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 - A looked-up chart is read by a model and is not checked by a person until someone flips it to
   verified in the dashboard; the sheet says so. A brand nobody can find a chart for falls back to the
   built-in approximation, and the sheet says which it used. Women's charts only so far.
-- Clothing runs on waist and hip, so it's strongest for jeans, trousers and skirts. Shoes need a foot
-  length or a pair you own.
+- Clothing is strongest for jeans, trousers and skirts. Tops, dresses and coats use the bust and
+  shoulder only when the brand's chart prints them; many built-in charts do not, so those fall back
+  to waist and hip. Shoes need a foot length or a pair you own.
 - Page reading is heuristic. If a shop changes its markup, `src/extract.js` may need a fix.
 
 ## Test and package

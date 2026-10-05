@@ -28,9 +28,9 @@
     <div class="layout">
       <main>
         <!-- 01 Measurements -->
-        <section class="block" aria-labelledby="m-title">
+        <section class="block" id="measure-block" aria-labelledby="m-title">
           <div class="block-head">
-            <span class="num">01</span>
+            <span class="num" id="m-num">01</span>
             <div>
               <h2 id="m-title">Measurements</h2>
               <p class="sub">Measure over underwear with a soft tape, snug but not tight.</p>
@@ -44,6 +44,14 @@
           <div class="measure">
             <svg class="figure" viewBox="0 0 120 312" aria-hidden="true">
               <path class="form" d="M52,30 L52,42 C40,45 30,47 28,56 L30,92 C33,104 40,108 41,116 C40,126 30,136 29,150 L32,200 L38,288 C31,291 28,297 32,302 C37,305 46,304 52,300 L52,288 L56,180 L60,168 L64,180 L68,288 L68,300 C74,304 83,305 88,302 C92,297 89,291 82,288 L88,200 L91,150 C90,136 80,126 79,116 C80,108 87,104 90,92 L92,56 C90,47 80,45 68,42 L68,30 C68,24 64,20 60,20 C56,20 52,24 52,30 Z"/>
+              <g class="line" data-m="shoulder">
+                <path d="M32,52 L88,52"/>
+                <circle cx="32" cy="52" r="2"/><circle cx="88" cy="52" r="2"/>
+              </g>
+              <g class="line" data-m="bust">
+                <ellipse cx="60" cy="78" rx="30" ry="4"/>
+                <circle cx="90" cy="78" r="2"/>
+              </g>
               <g class="line" data-m="waist">
                 <ellipse cx="60" cy="116" rx="21" ry="4"/>
                 <circle cx="81" cy="116" r="2"/>
@@ -63,6 +71,12 @@
             </svg>
 
             <div class="fields">
+              <label class="field" data-m="bust">
+                <span class="f-label">Bust <em>optional</em></span>
+                <span class="f-hint">Fullest part of your chest, tape level all the way round. Sizes tops and dresses.</span>
+                <span class="f-input"><input id="bust" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="bust-error"></span>
+              </label>
               <label class="field" data-m="waist">
                 <span class="f-label">Waist</span>
                 <span class="f-hint">Narrowest part of your torso, usually just above the belly button.</span>
@@ -74,6 +88,18 @@
                 <span class="f-hint">Fullest part of your hips and seat, feet together.</span>
                 <span class="f-input"><input id="hip" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
                 <span class="f-error" id="hip-error"></span>
+              </label>
+              <label class="field" data-m="shoulder">
+                <span class="f-label">Shoulder width <em>optional</em></span>
+                <span class="f-hint">Across your back, from one shoulder point to the other. Sizes coats and jackets.</span>
+                <span class="f-input"><input id="shoulder" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="shoulder-error"></span>
+              </label>
+              <label class="field" data-m="armLength">
+                <span class="f-label">Arm length <em>optional</em></span>
+                <span class="f-hint">Shoulder point to wrist bone, arm relaxed at your side.</span>
+                <span class="f-input"><input id="armLength" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="armLength-error"></span>
               </label>
               <label class="field" data-m="inseam">
                 <span class="f-label">Inseam <em>optional</em></span>
@@ -87,14 +113,26 @@
                 <span class="f-input"><input id="footLength" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
                 <span class="f-error" id="footLength-error"></span>
               </label>
+              <label class="field" data-m="height">
+                <span class="f-label">Height <em>optional</em></span>
+                <span class="f-hint">Without shoes. With no inseam, Sizer guesses your jean length from it and says so.</span>
+                <span class="f-input"><input id="height" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+                <span class="f-error" id="height-error"></span>
+              </label>
+              <label class="field" data-m="weight">
+                <span class="f-label">Weight <em>optional</em></span>
+                <span class="f-hint">Never used to pick a size. Only to weigh reviews from people built like you.</span>
+                <span class="f-input"><input id="weight" inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit-weight></span></span>
+                <span class="f-error" id="weight-error"></span>
+              </label>
             </div>
           </div>
         </section>
 
         <!-- 02 Wardrobe -->
-        <section class="block" aria-labelledby="w-title">
+        <section class="block" id="wardrobe-block" aria-labelledby="w-title">
           <div class="block-head">
-            <span class="num">02</span>
+            <span class="num" id="w-num">02</span>
             <div>
               <h2 id="w-title">Clothes you own</h2>
               <p class="sub">Add pieces you wear often and say how they fit. A pair that’s a little tight tells Sizer as much as one that fits perfectly.</p>
@@ -111,13 +149,31 @@
             <span class="num">03</span>
             <div>
               <h2 id="p-title">How you like things to fit</h2>
-              <p class="sub">When you fall between two sizes, which way should Sizer lean?</p>
+              <p class="sub">How close you like things to sit, and what Sizer does when you fall between two sizes.</p>
             </div>
           </div>
           <div class="prefs" role="radiogroup" aria-label="Fit preference" id="fit">
             <button role="radio" data-v="snug"><b>Close</b><span>Body-skimming, the smaller size</span></button>
             <button role="radio" data-v="regular"><b>Regular</b><span>As the brand intends</span></button>
             <button role="radio" data-v="relaxed"><b>A little room</b><span>Ease to move, the bigger size</span></button>
+          </div>
+          <details class="per-kind" id="per-kind">
+            <summary>Set it for each kind of clothing</summary>
+            <div class="kind-rows">
+              <div class="kind-row"><span>Bottoms</span><div class="seg small" role="radiogroup" aria-label="Fit for bottoms" data-kind="bottoms"><button role="radio" data-v="">As above</button><button role="radio" data-v="snug">Close</button><button role="radio" data-v="regular">Regular</button><button role="radio" data-v="relaxed">Room</button></div></div>
+              <div class="kind-row"><span>Tops</span><div class="seg small" role="radiogroup" aria-label="Fit for tops" data-kind="tops"><button role="radio" data-v="">As above</button><button role="radio" data-v="snug">Close</button><button role="radio" data-v="regular">Regular</button><button role="radio" data-v="relaxed">Room</button></div></div>
+              <div class="kind-row"><span>Dresses</span><div class="seg small" role="radiogroup" aria-label="Fit for dresses" data-kind="dresses"><button role="radio" data-v="">As above</button><button role="radio" data-v="snug">Close</button><button role="radio" data-v="regular">Regular</button><button role="radio" data-v="relaxed">Room</button></div></div>
+              <div class="kind-row"><span>Coats and jackets</span><div class="seg small" role="radiogroup" aria-label="Fit for coats and jackets" data-kind="outerwear"><button role="radio" data-v="">As above</button><button role="radio" data-v="snug">Close</button><button role="radio" data-v="regular">Regular</button><button role="radio" data-v="relaxed">Room</button></div></div>
+            </div>
+          </details>
+          <div class="between">
+            <h3 id="b-title">Between two sizes</h3>
+            <p class="sub">Unless you choose, rigid fabric goes up and stretchy fabric goes down.</p>
+            <div class="seg" role="radiogroup" aria-labelledby="b-title" id="between">
+              <button role="radio" data-v="stretch">Let the fabric decide</button>
+              <button role="radio" data-v="up">Go up</button>
+              <button role="radio" data-v="down">Go down</button>
+            </div>
           </div>
         </section>
       </main>
@@ -130,6 +186,7 @@
             <div class="stats">
               <div><span class="k">Waist</span><span class="v" id="r-waist"></span></div>
               <div><span class="k">Hip</span><span class="v" id="r-hip"></span></div>
+              <div id="r-bust-cell" hidden><span class="k">Bust</span><span class="v" id="r-bust"></span></div>
             </div>
             <p class="from" id="r-from"></p>
             <p class="warn" id="r-warn" hidden></p>
@@ -150,6 +207,7 @@
         <button role="radio" data-v="skirt">Skirt</button>
         <button role="radio" data-v="top">Top</button>
         <button role="radio" data-v="dress">Dress</button>
+        <button role="radio" data-v="jacket">Coat or jacket</button>
         <button role="radio" data-v="shoes">Shoes</button>
       </div>
       <button type="button" class="remove" aria-label="Remove this item">×</button>
@@ -165,7 +223,20 @@
         </div>
         <span class="reading"></span>
       </div>
+      <details class="flat">
+        <summary>Measure this piece</summary>
+        <p class="flat-intro">Lay it flat, buttoned or zipped, and measure straight across. Sizer doubles the widths. Any you skip are fine.</p>
+        <div class="flat-fields"></div>
+      </details>
     </div>
+  </template>
+
+  <template id="flat-tpl">
+    <label class="flat-field">
+      <span class="flat-text"><b class="flat-name"></b><span class="flat-how"></span></span>
+      <span class="flat-input"><input inputmode="decimal" autocomplete="off" placeholder="—"><span class="u" data-unit></span></span>
+      <span class="flat-error"></span>
+    </label>
   </template>
 
   <script src="../src/brands.js"></script>

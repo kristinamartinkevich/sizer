@@ -10,13 +10,18 @@
     bottoms: ['jeans', 'bottoms', 'trousers', 'general'],
     tops: ['tops', 'general', 'dresses'],
     dresses: ['dresses', 'general', 'tops'],
+    // The database has no outerwear category; a brand's tops chart is the closest it prints.
+    outerwear: ['tops', 'general', 'dresses'],
     shoes: ['shoes'],
   };
 
   // A chart that lists garment measurements is read as the body it fits, with a little ease taken off.
-  const GARMENT_EASE_CM = { waist: 2, hip: 3 };
+  // The garment's own numbers are kept too, for comparing garment to garment with a piece you own.
+  const GARMENT_EASE_CM = { waist: 2, hip: 3, bust: 4, shoulder: 0 };
 
   const mid = (range) => (Array.isArray(range) && range.length ? (+range[0] + +range[range.length - 1]) / 2 : null);
+  // Extra columns may print a range or a single number.
+  const midAny = (v) => (Array.isArray(v) ? mid(v) : typeof v === 'number' && isFinite(v) ? v : null);
 
   function sizeValue(label, system) {
     const s = String(label).trim().toUpperCase();
@@ -54,8 +59,13 @@
         const waist = mid(r.waist);
         const hip = mid(r.hip);
         if (waist == null || hip == null) continue;
-        row.waist = +(waist * scale - (garment ? GARMENT_EASE_CM.waist : 0)).toFixed(1);
-        row.hip = +(hip * scale - (garment ? GARMENT_EASE_CM.hip : 0)).toFixed(1);
+        const raw = { waist, hip, bust: mid(r.bust), shoulder: midAny(r.extra && r.extra.shoulder) };
+        if (garment) row.garment = {};
+        for (const key of Object.keys(raw)) {
+          if (raw[key] == null) continue;
+          row[key] = +(raw[key] * scale - (garment ? GARMENT_EASE_CM[key] : 0)).toFixed(1);
+          if (garment) row.garment[key] = +(raw[key] * scale).toFixed(1);
+        }
       }
       rows.push(row);
     }

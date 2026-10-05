@@ -1,6 +1,6 @@
 // Turns a shopper profile + a product page into one size recommendation with reasons.
 (function (root) {
-  const { BRANDS, GENERIC, TO_EU } = root.SizerBrands || require('./brands.js');
+  const { BRANDS, GENERIC, TO_EU, REGION, IN } = root.SizerBrands || require('./brands.js');
   const Charts = root.SizerCharts || require('./charts.js');
 
   const norm = (s) => String(s || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
@@ -45,13 +45,38 @@
 
   // ---- size labels -------------------------------------------------------
 
-  const LETTER_RE = /^(3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)(?![A-Z])/;
-  const LETTER_CANON = { XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS' };
+  const LETTER_RE = /^(4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)(?![A-Z])/;
+  const LETTER_CANON = { XXXXL: '4XL', XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS' };
+
+  // ---- women's sizes across regions ----------------------------------------
+
+  const REGION_SYSTEMS = ['fr', 'eu', 'de', 'it', 'uk', 'us', 'letter'];
+  const regionKey = (v) => String(v).trim().toUpperCase();
+
+  // One size in another region's system, through the table: convertSize(38, 'fr', 'uk') is 10.
+  function convertSize(value, from, to) {
+    if (!REGION_SYSTEMS.includes(from) || !REGION_SYSTEMS.includes(to) || value == null) return null;
+    const row = REGION.find((r) => regionKey(r[from]) === regionKey(value));
+    return row ? row[to] : null;
+  }
+
+  // A labelled size carries its FR/EU number, so sizes from different regions can be lined up.
+  function withEu(p) {
+    const eu = convertSize(p.value, p.system, 'eu');
+    return eu == null ? p : { ...p, eu };
+  }
 
   function parseSizeLabel(raw) {
+    const p = parseLabel(raw);
+    return p && REGION_SYSTEMS.includes(p.system) ? withEu(p) : p;
+  }
+
+  function parseLabel(raw) {
     const s = String(raw || '').toUpperCase().replace(/\s+/g, ' ').trim();
     if (!s || s.length > 24) return null;
     let m;
+    // 2XL, 3XL and 4XL start with a digit, so they are read before the bare numbers.
+    if (/^[2-4]X/.test(s) && (m = s.match(LETTER_RE))) return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], label: m[0] };
     if ((m = s.match(/^W\s?(\d{2})(?:\s?[\/X]?\s?L\s?(\d{2}))?\b/))) return { system: 'denim', value: +m[1], length: m[2] ? +m[2] : null, label: m[0] };
     if ((m = s.match(/^(\d{2})\s?[\/X]\s?(\d{2})\b/)) && +m[1] >= 22 && +m[1] <= 40 && +m[2] >= 26 && +m[2] <= 38) return { system: 'denim', value: +m[1], length: +m[2], label: m[0] };
     // Half sizes are shoes: 38.5, EU 38½, UK 5.5.
@@ -109,6 +134,12 @@
       const e = eu && brand.sizes.find((x) => String(x.value) === eu);
       if (e) return e;
     }
+    if (brand) {
+      // A UK 10 on the page is the brand's EU 38 or its M, through the regional table.
+      const target = convertSize(parsed.value, sys, brand.system);
+      const e = target != null && brand.sizes.find((x) => sameSize(x.value, target));
+      if (e) return e;
+    }
     if (TO_EU[sys]) return GENERIC.eu.find((x) => x.value === TO_EU[sys](parsed.value)) || null;
     return (GENERIC[sys] || []).find((x) => String(x.value) === String(parsed.value)) || null;
   }
@@ -119,7 +150,14 @@
   const FIT_SHIFT_CM = { tight: 1.5, perfect: 0, loose: -1.5 };
   const BOTTOMS = ['jeans', 'trousers', 'skirt', 'shorts'];
 
-  const KIND_OF_TYPE = { jeans: 'bottoms', trousers: 'bottoms', skirt: 'bottoms', shorts: 'bottoms', top: 'tops', dress: 'dresses', shoes: 'shoes' };
+  const KIND_OF_TYPE = { jeans: 'bottoms', trousers: 'bottoms', skirt: 'bottoms', shorts: 'bottoms', top: 'tops', dress: 'dresses', jacket: 'outerwear', shoes: 'shoes' };
+
+  // A typed number from the profile, or null when it is empty or not a number.
+  const num = (v) => (v === '' || v == null || !isFinite(+v) || +v <= 0 ? null : +v);
+  const BODY_KEYS = ['bust', 'waist', 'hip', 'shoulder'];
+  const CIRCUMFERENCE = ['bust', 'waist', 'hip'];
+  // Without an inseam, the leg is guessed from height: inseam is about 0.45 of it.
+  const INSEAM_PER_HEIGHT = 0.45;
 
   function anchorBrand(a, charts) {
     if (!a.brand || a.brand.startsWith('generic')) return null;
@@ -183,10 +221,50 @@
       const m = measure(parsed, brand);
       if (!m) continue;
       const shift = FIT_SHIFT_CM[a.fit] || 0;
-      const name = brand ? brand.name : a.brand && !a.brand.startsWith('generic') ? a.brand : a.type || (a.brand === 'generic-denim' || parsed.system === 'denim' ? 'jeans' : 'size');
-      points.push({ waist: m.waist + shift, hip: m.hip + shift, name: `${name} ${a.size}` });
+      const point = { name: anchorName(a, brand, parsed) };
+      for (const key of BODY_KEYS) if (typeof m[key] === 'number') point[key] = m[key] + (CIRCUMFERENCE.includes(key) ? shift : 0);
+      points.push(point);
     }
     return points;
+  }
+
+  function anchorName(a, brand, parsed) {
+    const name = brand ? brand.name : a.brand && !a.brand.startsWith('generic') ? a.brand : a.type || (a.brand === 'generic-denim' || (parsed && parsed.system === 'denim') ? 'jeans' : 'size');
+    return `${name} ${a.size}`;
+  }
+
+  // ---- flat-lay measurements ------------------------------------------------
+
+  // A piece measured flat across: circumferences are twice the flat width, lengths are as measured.
+  // Chest is the garment's bust. A piece that fits tight asks for a slightly bigger garment.
+  function flatGarment(a) {
+    const f = a && a.flat;
+    if (!f || typeof f !== 'object') return null;
+    const shift = FIT_SHIFT_CM[a.fit] || 0;
+    const out = {};
+    const circ = { waist: num(f.waist), hip: num(f.hip), bust: num(f.chest) };
+    for (const key of Object.keys(circ)) if (circ[key] != null) out[key] = circ[key] * 2 + shift;
+    for (const key of ['shoulder', 'sleeve', 'length', 'inseam']) if (num(f[key]) != null) out[key] = num(f[key]);
+    return Object.keys(out).length ? out : null;
+  }
+
+  // The pieces you own of this kind with flat-lay measurements, averaged, as one garment to compare with.
+  function garmentReference(profile, kind, charts) {
+    const pieces = [];
+    for (const a of profile.anchors || []) {
+      if ((KIND_OF_TYPE[a.type || 'jeans'] || 'bottoms') !== kind) continue;
+      const g = flatGarment(a);
+      if (!g) continue;
+      const brand = anchorBrand(a, charts);
+      pieces.push({ g, name: anchorName(a, brand, parseSizeLabel(a.size)) });
+    }
+    if (!pieces.length) return null;
+    const values = {};
+    for (const key of BODY_KEYS) {
+      const have = pieces.filter((p) => p.g[key] != null);
+      if (have.length) values[key] = have.reduce((s, p) => s + p.g[key], 0) / have.length;
+    }
+    return { values, names: pieces.map((p) => p.name) };
   }
 
   // How one wardrobe item is being read, so the settings page can show it.
@@ -202,20 +280,39 @@
     return { ok: !!measure(parsed, brand), brand: brand ? brand.name : null, system: parsed.system };
   }
 
+  // Your body as Sizer reads it: each measurement as typed, else the average of the pieces you own
+  // that tell it. Weight is never part of it; it only compares you with reviewers.
   function bodyFromProfile(profile, charts) {
     const points = wardrobePoints(profile.anchors, charts);
-    const avg = (k) => points.reduce((s, p) => s + p[k], 0) / points.length;
-    const waist = profile.waist ? +profile.waist : points.length ? avg('waist') : null;
-    const hip = profile.hip ? +profile.hip : points.length ? avg('hip') : null;
+    const fromPoints = (k) => {
+      const have = points.filter((p) => typeof p[k] === 'number');
+      return have.length ? have.reduce((s, p) => s + p[k], 0) / have.length : null;
+    };
+    const read = (k) => (num(profile[k]) != null ? num(profile[k]) : fromPoints(k));
+    const waist = read('waist');
+    const hip = read('hip');
+    const bust = read('bust');
+    const shoulder = read('shoulder');
+    const height = num(profile.height);
+    const typedInseam = num(profile.inseam);
+    const inseam = typedInseam != null ? typedInseam : height ? +((height * INSEAM_PER_HEIGHT) / IN).toFixed(1) : null;
+    const extra = { bust, shoulder, height, inseam, inseamGuess: typedInseam == null && inseam != null };
     const foot = footFromProfile(profile, charts);
-    if (waist == null || hip == null) return foot ? { waist: null, hip: null, sources: [], spread: 0, points, foot: foot.foot, footSource: foot.source } : null;
+    if (waist == null || hip == null) {
+      return foot || bust != null ? { waist: null, hip: null, ...extra, sources: [], spread: 0, points, foot: foot ? foot.foot : null, footSource: foot ? foot.source : null } : null;
+    }
     const spread = points.length ? Math.max(...points.map((p) => Math.abs(p.hip - hip) + Math.abs(p.waist - waist))) : 0;
-    const sources = [];
-    if (profile.waist && profile.hip) sources.push('measurements');
-    else if (profile.waist) sources.push('your waist');
-    else if (profile.hip) sources.push('your hip');
-    if (!(profile.waist && profile.hip)) sources.push(...points.map((p) => p.name));
-    return { waist, hip, sources, spread, points, foot: foot ? foot.foot : null, footSource: foot ? foot.source : null };
+    return { waist, hip, ...extra, sources: sourcesFor(profile, points, ['waist', 'hip']), spread, points, foot: foot ? foot.foot : null, footSource: foot ? foot.source : null };
+  }
+
+  // What the size was read from, for the measurements used: "measurements", "your waist", the pieces.
+  function sourcesFor(profile, points, keys) {
+    const typed = keys.filter((k) => num(profile[k]) != null);
+    if (keys.length && typed.length === keys.length) return ['measurements'];
+    const out = typed.map((k) => `your ${k}`);
+    const missing = keys.filter((k) => !typed.includes(k));
+    out.push(...points.filter((p) => missing.some((k) => typeof p[k] === 'number')).map((p) => p.name));
+    return out;
   }
 
   // ---- page text signals -------------------------------------------------
@@ -237,6 +334,7 @@
     bottoms: /\b(?:jeans?|denim|trousers?|pants?|chinos?|skirts?|shorts|culottes?|leggings|hose|rock)\b/i,
     shoes: /\b(?:sneakers?|trainers?|shoes?|boots?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
+    outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
     tops: /\b(?:t-?shirts?|tees?|shirts?|blouses?|tops?|sweaters?|jumpers?|knits?|cardigans?|hoodies?|sweatshirts?|jackets?|coats?|blazers?|pullover|bluse|hemd|jacke|mantel|chemise|veste|manteau)\b/i,
   };
 
@@ -244,6 +342,8 @@
   function kindOf(title) {
     const t = String(title || '');
     if (RE.shoes.test(t)) return 'shoes';
+    // Before bottoms, so a denim jacket is a jacket.
+    if (RE.outerwear.test(t)) return 'outerwear';
     if (RE.bottoms.test(t)) return 'bottoms';
     if (RE.dress.test(t)) return 'dresses';
     if (RE.tops.test(t)) return 'tops';
@@ -374,6 +474,33 @@
     return system === 'denim' ? `${chart[i].label}½` : `between ${chart[i].label} and ${chart[i + 1].label}`;
   }
 
+  // Which measurements size this kind of item on this chart. Bottoms run on waist and hip; tops on
+  // the bust; dresses on bust, waist and hip; outerwear on bust and shoulder. Each needs the body
+  // value and a number in every row of the chart, else it falls back to waist and hip.
+  function sizingKeys(kind, have, rows) {
+    const ok = (k) => have[k] != null && rows.every((r) => r && typeof r[k] === 'number');
+    const wh = ok('waist') && ok('hip') ? ['waist', 'hip'] : [];
+    if (kind === 'bottoms' || !ok('bust')) return wh;
+    if (kind === 'tops') return ['bust'];
+    if (kind === 'dresses') return ['bust', ...wh];
+    if (kind === 'outerwear') return ok('shoulder') ? ['bust', 'shoulder'] : ['bust'];
+    return wh;
+  }
+
+  // Where the body lands on the chart. Too small is the worse failure, so waist and hip lean on the
+  // larger of the two, and nothing ends up smaller than the bust or shoulders allow.
+  function basePosition(rows, have, keys, rigid) {
+    const at = (k) => position(rows, k, have[k]);
+    const lower = keys.filter((k) => k === 'waist' || k === 'hip').map(at);
+    const upper = keys.filter((k) => k === 'bust' || k === 'shoulder').map(at);
+    const parts = [...upper];
+    if (lower.length) parts.push(rigid ? Math.max(...lower) : 0.4 * Math.min(...lower) + 0.6 * Math.max(...lower));
+    return Math.max(...parts);
+  }
+
+  const PREF_WORDS = { relaxed: 'You like a little room.', snug: 'You like a close fit.' };
+  const KIND_WORDS = { bottoms: 'bottoms', tops: 'tops', dresses: 'dresses', outerwear: 'coats and jackets' };
+
   function recommend(profile, product, charts) {
     const kind = kindOf(product.title);
     const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`);
@@ -382,7 +509,8 @@
     if (kind === 'shoes') return recommendShoes(profile, product, brand, signals, charts, reviews);
 
     const body = bodyFromProfile(profile, charts);
-    if (!body || body.waist == null) return { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
+    const needs = { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
+    if (!body) return needs;
 
     const pageSizes = resolveSizes(product.sizes || [], brand && brand.system);
     const pageSystem = dominantSystem(pageSizes);
@@ -391,14 +519,28 @@
     const chart = brand ? brand.sizes : GENERIC[chartSystem];
     const chartName = brand ? brand.name : 'standard';
 
+    // A garment chart and a piece you measured flat: compare garment to garment, no body in between.
+    const garmentRows = brand && brand.garment && chart.every((r) => r.garment) ? chart.map((r) => r.garment) : null;
+    const reference = garmentRows ? garmentReference(profile, kind, charts) : null;
+    const garmentKeys = reference ? sizingKeys(kind, reference.values, garmentRows) : [];
+    const g2g = garmentKeys.length ? reference : null;
+    const keys = g2g ? garmentKeys : sizingKeys(kind, body, chart);
+    if (!keys.length) {
+      return body.bust != null && body.waist == null
+        ? { ...needs, reason: `${brand ? `${brand.name}’s` : 'This'} chart has no bust, so Sizer needs your waist and hip, or one piece you own.` }
+        : needs;
+    }
+
     const reasons = [];
-    const w = position(chart, 'waist', body.waist);
-    const h = position(chart, 'hip', body.hip);
     const rigid = signals.stretch === 'none';
-    // Too small is the worse failure for bottoms, so lean on the larger dimension.
-    const base = rigid ? Math.max(w, h) : 0.4 * Math.min(w, h) + 0.6 * Math.max(w, h);
-    reasons.push({ text: `Your ${joinNames(body.sources)} fit${body.sources.length === 1 && !/measurements/.test(body.sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
-    if (brand && brand.garment) reasons.push({ text: `${brand.name} lists garment measurements, so Sizer allowed a little ease.`, delta: null });
+    const base = g2g ? basePosition(garmentRows, g2g.values, keys, rigid) : basePosition(chart, body, keys, rigid);
+    if (g2g) {
+      reasons.push({ text: `Compared garment to garment with your ${joinNames(g2g.names)}: like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
+    } else {
+      const sources = sourcesFor(profile, body.points, keys);
+      reasons.push({ text: `Your ${joinNames(sources)} fit${sources.length === 1 && !/measurements/.test(sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
+      if (brand && brand.garment) reasons.push({ text: `${brand.name} lists garment measurements, so Sizer allowed a little ease.`, delta: null });
+    }
 
     let adj = 0;
     // The page's own note comes first; buyers' reports count only when the page says nothing.
@@ -419,18 +561,25 @@
       adj += brand.tendency;
       if (brand.note) reasons.push({ text: brand.note, delta: null });
     }
-    const pref = FIT_PREF[profile.fitPreference] || 0;
+    // A preference set for this kind of clothing wins over the overall one.
+    const ownPref = profile.fitByCategory && FIT_PREF[profile.fitByCategory[kind]] != null ? profile.fitByCategory[kind] : null;
+    const prefName = ownPref || profile.fitPreference;
+    const pref = FIT_PREF[prefName] || 0;
     if (pref) {
       adj += pref;
-      reasons.push({ text: profile.fitPreference === 'relaxed' ? 'You like a little room.' : 'You like a close fit.', delta: null });
+      reasons.push({ text: ownPref ? `${PREF_WORDS[prefName].replace(/\.$/, '')} in ${KIND_WORDS[kind]}.` : PREF_WORDS[prefName], delta: null });
     }
+    if (num(profile.weight) != null) reasons.push({ text: 'Your weight is never used to pick a size.', delta: null });
 
-    const threshold = rigid ? 0.35 : signals.stretch === 'high' ? 0.65 : 0.5;
+    // Between two sizes, your rule wins; otherwise the fabric decides which way to round.
+    const between = profile.betweenSizes === 'up' || profile.betweenSizes === 'down' ? profile.betweenSizes : null;
+    const threshold = between === 'up' ? 0.25 : between === 'down' ? 0.75 : rigid ? 0.35 : signals.stretch === 'high' ? 0.65 : 0.5;
     const raw = base + adj;
     const frac = raw - Math.floor(raw);
     const roundedUp = frac >= threshold;
     let idx = Math.floor(raw) + (roundedUp ? 1 : 0);
     const usual = Math.floor(base) + (base - Math.floor(base) >= 0.5 ? 1 : 0);
+    if (between && frac > 0.25 && frac < 0.75) reasons.push({ text: `Between two sizes, so the ${between === 'up' ? 'bigger' : 'smaller'} one, as you asked.`, delta: null });
 
     if (signals.fitNote === 'small') { idx += 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size up.`, delta: +1 }); }
     if (signals.fitNote === 'large') { idx -= 1; reasons.push({ text: `The page says “${signals.fitNoteText}”, so one size down.`, delta: -1 }); }
@@ -451,11 +600,18 @@
           : signals.stretch === 'high' && idx < usual ? 'Stretchy, sized down'
             : idx > usual ? 'Sized up for you' : idx < usual ? 'Sized down for you' : 'Your usual fit';
 
+    const inseam = body.inseam;
     const pick = chart[idx];
-    const pageMatch = matchPageSize(pick, pageSizes, brand, profile.inseam);
+    const pageMatch = matchPageSize(pick, pageSizes, brand, inseam, keys);
     const alt = altIdx != null && altIdx >= 0 && altIdx < chart.length ? chart[altIdx] : null;
-    const altMatch = alt ? matchPageSize(alt, pageSizes, brand, profile.inseam) : null;
-    const at = (m) => (position(chart, 'waist', m.waist) + position(chart, 'hip', m.hip)) / 2;
+    const altMatch = alt ? matchPageSize(alt, pageSizes, brand, inseam, keys) : null;
+    if (body.inseamGuess && pageSizes.some((s) => s.parsed.length)) {
+      reasons.push({ text: `Leg length is a guess from your height, about ${Math.round(inseam)} in. Add your inseam to be sure.`, delta: null });
+    }
+    const at = (m) => {
+      const ks = keys.filter((k) => typeof m[k] === 'number');
+      return ks.length ? ks.reduce((s, k) => s + position(chart, k, m[k]), 0) / ks.length : null;
+    };
     const inStock = pageMatch && pageMatch.available === false
       ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
       : null;
@@ -466,10 +622,11 @@
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
     if (reviews.verdict) score += 0.1;
-    const corroborated = body.points.length > 1 || (profile.waist && profile.hip);
+    const corroborated = !!g2g || body.points.length > 1 || keys.every((k) => num(profile[k]) != null);
     if (corroborated) score += 0.1;
     if (body.spread > 5) score -= 0.15;
-    if (!signals.bottoms) score -= 0.1;
+    // Clothing sized on waist and hip alone is surest for bottoms; a top sized on the bust is not penalised.
+    if (!signals.bottoms && !keys.includes('bust')) score -= 0.1;
     const confidence = score >= 0.75 ? 'High' : score >= 0.55 ? 'Medium' : 'Low';
     const firmUp = !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
       : tierCaveat(brand) ? tierCaveat(brand)
@@ -498,6 +655,9 @@
       signals,
       reviews,
       body,
+      kind,
+      sizedOn: keys,
+      garmentToGarment: !!g2g,
     };
   }
 
@@ -567,7 +727,9 @@
   function lookupFor(r, product) {
     const brand = String((product && product.brand) || '').trim();
     if (!r || !r.ok || r.brandKnown !== false || !brand) return null;
-    return { brand, kind: kindOf(product.title) };
+    const kind = kindOf(product.title);
+    // The chart database files coats under tops.
+    return { brand, kind: kind === 'outerwear' ? 'tops' : kind };
   }
 
   const lookingUpText = (brand) => `Looking up ${brand}’s size chart`;
@@ -691,19 +853,23 @@
     return entry.label;
   }
 
-  function matchPageSize(target, pageSizes, brand, inseam) {
+  // The page's size nearest the chart row picked, over the measurements that sized it; inseam settles lengths.
+  function matchPageSize(target, pageSizes, brand, inseam, keys = ['waist', 'hip']) {
     let best = null;
     for (const s of pageSizes) {
       const m = measure(s.parsed, brand);
       if (!m) continue;
-      let d = Math.abs(m.waist - target.waist) + Math.abs(m.hip - target.hip);
+      let ks = keys.filter((k) => typeof m[k] === 'number' && typeof target[k] === 'number');
+      if (!ks.length) ks = ['waist', 'hip'].filter((k) => typeof m[k] === 'number' && typeof target[k] === 'number');
+      if (!ks.length) continue;
+      let d = ks.reduce((sum, k) => sum + Math.abs(m[k] - target[k]), 0) * (2 / ks.length);
       if (inseam && s.parsed.length) d += Math.abs(s.parsed.length - inseam) * 0.5;
       if (!best || d < best.d - 0.01 || (Math.abs(d - best.d) <= 0.01 && s.available !== false && best.s.available === false)) best = { s, d };
     }
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS };
+  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -64,16 +64,18 @@ WHAT IT READS
 • Per-size stock from the shop’s product data
 
 YOUR FIT PROFILE
-• Waist, hip, inseam and foot length, in cm or inches
-• Clothes you own, marked a bit tight, just right or a bit loose
-• Whether you like a close fit, a regular fit or a little room
+• Bust, waist, hip, shoulder width, arm length, inseam, foot length and height, in cm or inches
+• Weight, only to compare you with reviewers; it never picks a size
+• Clothes you own, marked a bit tight, just right or a bit loose, with flat-lay measurements if you like
+• Whether you like a close fit, a regular fit or a little room, for each kind of clothing
+• Whether to go up or down when you fall between two sizes
 • Light, dark or system appearance
 
 WORKS ON
 Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE, Nordstrom, Zara, Mango, H&M, COS, ARKET, Selfridges, rag & bone and Levi’s. On any other shop, click the Sizer icon and choose “Check this page anyway”.
 
 JEANS, TROUSERS, SKIRTS, DRESSES, TOPS AND SHOES
-Sizer is built around women’s waist and hip sizing, so it is strongest for jeans, trousers and skirts. Shoes are sized from your foot length. Men’s charts are coming.
+Sizer is built around women’s sizing. Bottoms are sized on waist and hip; tops, dresses and coats on the bust and shoulders when the brand’s chart prints them. FR, EU, IT, UK, US and letter sizes line up through one table. Shoes are sized from your foot length. Men’s charts are coming.
 
 PRIVATE BY DESIGN
 Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. Sizer sends two anonymous things: a tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, so shoppers on other shops can use it, and, when a brand has no size chart yet, a request to look one up carrying the brand name, the kind of item, the shop’s name and the shop’s own size table if the page prints one. No profile, measurement, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html

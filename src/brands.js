@@ -14,23 +14,32 @@
   }
 
   function table(rows) {
-    return rows.map(([value, waist, hip]) => ({ label: String(value), value, waist, hip }));
+    return rows.map(([value, waist, hip, bust]) => (bust ? { label: String(value), value, waist, hip, bust } : { label: String(value), value, waist, hip }));
   }
 
+  // The generic charts carry a bust too, so a top from an unknown brand can be sized on it.
   const GENERIC = {
     denim: denim(22, 40, 0.5, 10.5),
-    eu: table([[30, 56, 84], [32, 60, 88], [34, 64, 91], [36, 68, 94], [38, 72, 97], [40, 76, 100], [42, 81, 104], [44, 86, 108], [46, 92, 113], [48, 98, 118], [50, 104, 123]]),
+    eu: table([[30, 56, 84, 72], [32, 60, 88, 76], [34, 64, 91, 80], [36, 68, 94, 84], [38, 72, 97, 88], [40, 76, 100, 92], [42, 81, 104, 97], [44, 86, 108, 102], [46, 92, 113, 108], [48, 98, 118, 114], [50, 104, 123, 120]]),
     letter: [
-      { label: 'XXS', value: 'XXS', waist: 60, hip: 86 },
-      { label: 'XS', value: 'XS', waist: 64, hip: 90 },
-      { label: 'S', value: 'S', waist: 68, hip: 94 },
-      { label: 'M', value: 'M', waist: 73, hip: 99 },
-      { label: 'L', value: 'L', waist: 79, hip: 104 },
-      { label: 'XL', value: 'XL', waist: 85, hip: 110 },
-      { label: 'XXL', value: 'XXL', waist: 92, hip: 116 },
-      { label: '3XL', value: '3XL', waist: 99, hip: 122 },
+      { label: 'XXS', value: 'XXS', waist: 60, hip: 86, bust: 76 },
+      { label: 'XS', value: 'XS', waist: 64, hip: 90, bust: 80 },
+      { label: 'S', value: 'S', waist: 68, hip: 94, bust: 84 },
+      { label: 'M', value: 'M', waist: 73, hip: 99, bust: 89 },
+      { label: 'L', value: 'L', waist: 79, hip: 104, bust: 95 },
+      { label: 'XL', value: 'XL', waist: 85, hip: 110, bust: 101 },
+      { label: 'XXL', value: 'XXL', waist: 92, hip: 116, bust: 108 },
+      { label: '3XL', value: '3XL', waist: 99, hip: 122, bust: 115 },
     ],
   };
+
+  // Women's clothing sizes across regions, one row per size: FR and EU and DE share a number,
+  // IT is FR + 4, UK is FR − 28, US is UK − 4, and the letter most charts print beside it.
+  const REGION_LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL'];
+  const REGION = REGION_LETTERS.map((letter, i) => {
+    const fr = 32 + 2 * i;
+    return { fr, eu: fr, de: fr, it: fr + 4, uk: fr - 28, us: fr - 32, letter };
+  });
 
   // Other numeric systems convert to EU before lookup.
   // US women's numeric: 0 = EU 32, 2 = EU 34, 4 = EU 36 ... (EU = US + 32).
@@ -77,7 +86,7 @@
     { id: 'other-stories', name: '& Other Stories', aliases: ['& other stories', 'and other stories', 'other stories'], system: 'eu', sizes: table([[32, 62, 88], [34, 66, 92], [36, 70, 96], [38, 74, 100], [40, 78, 104], [42, 83, 108]]), tendency: 0, note: '', guide: 'stories.com size guide' },
   ];
 
-  const api = { BRANDS, GENERIC, TO_EU, IN };
+  const api = { BRANDS, GENERIC, TO_EU, REGION, IN };
   root.SizerBrands = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

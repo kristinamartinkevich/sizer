@@ -43,7 +43,7 @@ document.querySelectorAll('[data-act="why"]').forEach((b) => {
 
 chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) => {
   if (profile.theme === 'light' || profile.theme === 'dark') document.documentElement.dataset.theme = profile.theme;
-  const hasProfile = (profile.waist && profile.hip) || profile.anchors.length || profile.footLength;
+  const hasProfile = (profile.waist && profile.hip) || profile.bust || profile.anchors.length || profile.footLength;
   $('profile').textContent = summary(profile);
   if (!hasProfile) { show('s-setup'); return; }
 

@@ -187,8 +187,17 @@ function changed() {
   $('status').textContent = '';
   saveTimer = setTimeout(() => {
     const out = { ...profile, anchors: profile.anchors.filter((a) => a.size) };
-    chrome.storage.sync.set({ profile: out }, () => { $('status').textContent = 'Saved'; });
+    chrome.storage.sync.set({ profile: out }, () => { $('status').textContent = 'Saved'; toast(); });
   }, 400);
+}
+
+// The header status scrolls away; the toast confirms the save wherever you are on the page.
+let toastTimer;
+function toast() {
+  const t = $('toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
 // Older profiles stored generic chart ids instead of brand names and item types.

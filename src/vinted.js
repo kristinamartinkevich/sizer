@@ -18,6 +18,11 @@
   ];
   const NUM = '(\\d{1,3}(?:[.,]\\d{1,2})?)\\s*(cm|inches|inch|in\\b|"|”|\'\')?';
   const PATTERNS = LABELS.map(([key, words]) => [key, new RegExp(`(?<![\\p{L}])(?:${words})(?![\\p{L}])([^\\d\\n]{0,20}?)${NUM}`, 'giu')]);
+  // "36cm waist, 79cm inside leg": number first, which needs a unit so "worn 2 times" is no measure.
+  const UNIT = '(cm|inches|inch|in\\b|"|”|\'\')';
+  const NUMBER_FIRST = LABELS.map(([key, words]) => [key, new RegExp(`(?<![\\d.,])(\\d{1,3}(?:[.,]\\d{1,2})?)\\s*${UNIT}([^\\d\\n]{0,12}?)(?<![\\p{L}])(?:${words})(?![\\p{L}])`, 'giu')]);
+  const ANY_LABEL = new RegExp(`(?<![\\p{L}])(?:${LABELS.map(([, w]) => w).join('|')})(?![\\p{L}])`, 'iu');
+  const ANY_MEASURE = new RegExp(`(?<![\\d.,])\\d{1,3}(?:[.,]\\d{1,2})?\\s*${UNIT}`, 'iu');
   // A waist or chest at least this wide is a circumference, so it is halved to a flat width.
   const ROUND_FROM_CM = { waistFlat: 55, pit: 70 };
   const round1 = (v) => Math.round(v * 10) / 10;
@@ -25,12 +30,22 @@
   // belongs to something else ("pas de défaut, porté 2 fois").
   const RANGE = { waistFlat: [20, 80], pit: [25, 80], length: [15, 150], inseam: [40, 100], rise: [15, 45], legOpening: [8, 45], shoulder: [25, 60], sleeve: [25, 95], insole: [15, 33] };
 
+  // A seller writes either "waist 36 cm" or "36 cm waist", rarely both: the order is whichever comes
+  // first in the text, a measure with its unit or a label.
+  function numberFirst(text) {
+    const label = text.match(ANY_LABEL);
+    const measure = text.match(ANY_MEASURE);
+    return !!measure && (!label || measure.index < label.index);
+  }
+
   function parseMeasurements(text) {
     let rest = String(text || '');
     const out = {};
-    for (const [key, re] of PATTERNS) {
+    const flip = numberFirst(rest);
+    for (const [key, re] of flip ? NUMBER_FIRST : PATTERNS) {
       re.lastIndex = 0;
-      rest = rest.replace(re, (whole, gap, num, unit) => {
+      rest = rest.replace(re, (whole, a, b, c) => {
+        const [gap, num, unit] = flip ? [c, a, b] : [a, b, c];
         if (out[key] == null) {
           let v = parseFloat(num.replace(',', '.'));
           if (unit && !/cm/i.test(unit)) v *= 2.54;

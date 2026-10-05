@@ -9,6 +9,17 @@ test('reads measurements sellers write in French, English and German', () => {
   assert.deepStrictEqual(Vinted.parseMeasurements('tour de taille 72cm, entrejambe 76'), { waistFlat: 36, inseam: 76 });
 });
 
+test('reads measurements written number first, as many UK sellers do', () => {
+  // A real Vinted UK listing (2026-10-05): read label-first, the waist took the leg's 79 (halved to
+  // 39.5) and the inside leg took the length's 100.
+  assert.deepStrictEqual(Vinted.parseMeasurements('Approximate flat measurements:\n36cm waist,\n79cm inside leg,\n100cm length'), { waistFlat: 36, inseam: 79, length: 100 });
+  assert.deepStrictEqual(Vinted.parseMeasurements('Measured flat: 46 cm pit to pit, 64 cm length'), { pit: 46, length: 64 });
+  assert.deepStrictEqual(Vinted.parseMeasurements('Size 10, worn 2 times. 15" waist, 30" inseam'), { waistFlat: 38.1, inseam: 76.2 });
+  // Label first stays label first, even with a unit straight before the next label.
+  assert.deepStrictEqual(Vinted.parseMeasurements('Waist 36cm length 100cm'), { waistFlat: 36, length: 100 });
+  assert.deepStrictEqual(Vinted.parseMeasurements('Waist: 36cm (when flat)\nRise: 25cm\nInseam: 77cm'), { waistFlat: 36, rise: 25, inseam: 77 });
+});
+
 test('reads Spanish, Italian, Dutch and Polish', () => {
   assert.deepStrictEqual(Vinted.parseMeasurements('axila a axila 50 cm, largo 70 cm'), { pit: 50, length: 70 });
   assert.deepStrictEqual(Vinted.parseMeasurements('ascella ascella 46 cm, lunghezza 60'), { pit: 46, length: 60 });

@@ -16,7 +16,7 @@ import { brandChart, INSTALL, retailerChart, shopGuide, storedChart } from "./te
 // deno-lint-ignore no-explicit-any
 const SizerCharts = (globalThis as any).SizerCharts;
 
-const ctx = { kind: "dresses" as const, shop: "www.revolveclothing.fr", shopGuideSent: false };
+const ctx = { kind: "dresses" as const, shop: "www.revolveclothing.fr", shopGuideSent: false, fetched: ["https://helsastudio.com/pages/size-guide"] };
 
 Deno.test("CHARTS_FOR and tierOf match src/charts.js exactly", () => {
   assert.deepEqual(JSON.parse(JSON.stringify(CHARTS_FOR)), JSON.parse(JSON.stringify(SizerCharts.CHARTS_FOR)));
@@ -197,4 +197,14 @@ Deno.test("usable agrees with convertChart, and pickBest ranks by tier then cate
   assert.equal(pickBest([dressesHouse, generalVerified, dressesMachine], "dresses")?.id, "g");
   assert.equal(pickBest([dressesHouse, dressesMachine], "dresses")?.id, "m");
   assert.equal(pickBest([suspect, noHip], "dresses"), null);
+});
+
+Deno.test("answer: a brand-site chart needs a page on its host that the model fetched", () => {
+  const raw = { found: true, reason: "", chart: brandChart() };
+  const none = validateAnswer(raw, { ...ctx, fetched: [] });
+  assert.equal(none.ok, false);
+  if (!none.ok) assert.match(none.reason, /never read/);
+  assert.equal(validateAnswer(raw, { ...ctx, fetched: ["https://example.org/helsa"] }).ok, false, "another host");
+  assert.equal(validateAnswer(raw, { ...ctx, fetched: ["https://www.helsastudio.com/collections/dresses"] }).ok, true, "same host, www ignored");
+  assert.equal(validateAnswer({ found: true, reason: "", chart: brandChart({ source_url: "https://shop.helsastudio.com/size" }) }, { ...ctx, fetched: ["https://helsastudio.com/"] }).ok, false, "a subdomain is another host");
 });

@@ -231,7 +231,7 @@ export function checkChart(raw: unknown, kind: Kind): { chart: Chart } | { reaso
 // and its address is the shop's own.
 export function validateAnswer(
   raw: unknown,
-  ctx: { kind: Kind; shop: string; shopGuideSent: boolean },
+  ctx: { kind: Kind; shop: string; shopGuideSent: boolean; fetched: readonly string[] },
 ): { ok: true; answer: Answer } | { ok: false; reason: string } {
   if (!isObject(raw)) return { ok: false, reason: "Answer rejected: the answer is not an object." };
   if (typeof raw.found !== "boolean") return { ok: false, reason: "Answer rejected: found is not true or false." };
@@ -244,6 +244,17 @@ export function validateAnswer(
   const chart = checked.chart;
 
   if (chart.source_type === "brand_site") {
+    // The model's word is not enough: a caller-supplied shop guide could otherwise be stored as the
+    // brand's own chart for everyone. The chart's page must be on a host the model really fetched.
+    const host = new URL(chart.source_url).hostname.replace(/^www\./, "");
+    const read = ctx.fetched.some((u) => {
+      try {
+        return new URL(u).hostname.replace(/^www\./, "") === host;
+      } catch {
+        return false;
+      }
+    });
+    if (!read) return { ok: false, reason: "Answer rejected: the brand's page was never read." };
     chart.retailer = null;
   } else {
     if (!ctx.shopGuideSent) return { ok: false, reason: "Answer rejected: a shop chart came back but no shop guide was sent." };

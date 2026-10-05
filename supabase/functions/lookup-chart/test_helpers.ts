@@ -82,7 +82,21 @@ export function retailerChart(mentionsBrand: boolean) {
 
 export interface ModelReply { status?: number; body?: unknown; throws?: boolean }
 
-export function answerMessage(input: unknown, extra: unknown[] = []) {
+// A successful web_fetch server-tool result, as the Messages API returns it in the assistant content.
+export function fetched(url: string) {
+  return {
+    type: "web_fetch_tool_result",
+    tool_use_id: "srvtoolu_test",
+    content: { type: "web_fetch_result", url, retrieved_at: "2026-10-05T11:59:00Z", content: { type: "document", source: { type: "text", media_type: "text/plain", data: "Size guide" } } },
+  };
+}
+
+// The model's final answer. A brand-site chart is only accepted for a page the model fetched, so unless
+// `extra` is given the reply carries a fetch of the chart's own address; pass `[]` to leave it out.
+export function answerMessage(input: unknown, extra?: unknown[]) {
+  // deno-lint-ignore no-explicit-any
+  const chart = (input as any)?.chart;
+  if (!extra) extra = chart?.source_type === "brand_site" && typeof chart.source_url === "string" ? [fetched(chart.source_url)] : [];
   return {
     id: "msg_test",
     type: "message",
@@ -120,7 +134,7 @@ export function scriptedFetch(replies: ModelReply[]) {
 export class FakeDb implements LookupDb {
   brands: BrandRecord[] = [];
   charts: StoredChart[] = [];
-  lookups: (LookupRecord & { created_at: string })[] = [];
+  lookups: (LookupRecord & { created_at: string; id?: string })[] = [];
   calls: string[] = [];
   failOn: string | null = null;
   private seq = 0;
@@ -196,9 +210,24 @@ export class FakeDb implements LookupDb {
     return Promise.resolve();
   }
 
-  recordLookup(record: LookupRecord): Promise<void> {
-    this.hit("recordLookup");
-    this.lookups.push({ ...record, created_at: NOW.toISOString() });
+  async reserveLookup(record: Omit<LookupRecord, "outcome" | "reason">): Promise<string> {
+    this.hit("reserveLookup");
+    await Promise.resolve();
+    const id = `lookup-${++this.seq}`;
+    this.lookups.push({ ...record, outcome: "pending", reason: null, created_at: NOW.toISOString(), id });
+    return id;
+  }
+
+  finishLookup(id: string, outcome: LookupRecord["outcome"], reason: string | null): Promise<void> {
+    this.hit("finishLookup");
+    const row = this.lookups.find((l) => l.id === id);
+    if (row) Object.assign(row, { outcome, reason });
+    return Promise.resolve();
+  }
+
+  cancelLookup(id: string): Promise<void> {
+    this.hit("cancelLookup");
+    this.lookups = this.lookups.filter((l) => l.id !== id);
     return Promise.resolve();
   }
 }

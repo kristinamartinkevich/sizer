@@ -130,7 +130,38 @@ Files:
   monotonic check, the cache hit and the `pause_turn` resume made 7 tests fail; restored.
 - `deno test supabase/functions/`: 38 passed, 0 failed (chart 11, db 6, handler 21).
 - `deno check supabase/functions/lookup-chart/index.ts`: clean. `deno lint supabase/functions/`: clean.
-- `node --test tests/`: 80 passed, 0 failed (unchanged).
+- `node --test tests/`: 80 passed, 0 failed (unchanged), measured on the builder's base e3e8161.
+  On the shared branch after cherry-picking onto 616eca1: 84 passed, 0 failed.
 - `sh tools/check-migrations.sh`: 0001 to 0005 apply, one transaction each; chart_bundle check ok;
   chart_lookups check ok. Mutation: 0005 without RLS and revoke fails the check.
 - `tests/shops.html` not run: `src/extract.js` and the fixtures are unchanged.
+
+## Review findings + resolutions (applied on the shared branch)
+
+Battery wf_18f938ef-f0e: 4 raw → 4 unique → 4 confirmed, 0 refuted, 0 deferrals, 0 escalations.
+- MAJOR handler.ts — caps were read before the model call but the ledger row was written after it,
+  so lookups landing together all passed the cap. Each lookup now writes a 'pending' row first
+  (0005's outcome check gains 'pending'), reads the counts after, gives its row back when over a
+  cap, and turns the row into its outcome at the end. Tests first: the row exists when the model is
+  asked; three concurrent lookups at one remaining global slot make at most one model call and
+  leave no pending rows. APPLIED.
+- MAJOR chart.ts — a brand_site answer was accepted with any address, so a caller's shop guide
+  could be stored as the brand's own chart for everyone (and set brands.website). A brand_site
+  chart now needs its page on a host the model fetched with web_fetch during this lookup (www
+  ignored, subdomains distinct, fetches before a paused turn count). Tests first: unfetched
+  answer → no_chart and no brand row; a shop-address answer with only the brand site fetched →
+  rejected; pause-turn fetch counts; validateAnswer host rules. APPLIED.
+- MINOR HANDOFF §3.3 and §7 still said temperature 0 and 6 tool uses in total. Amended. APPLIED.
+- MINOR this file's node figure was measured on the pre-cherry-pick base. Both figures now
+  stated. APPLIED.
+
+test-edit-approved: supabase/functions/lookup-chart/test_helpers.ts — answerMessage now adds a
+web_fetch result for a brand-site chart's own address unless `extra` is given; FakeDb's
+recordLookup replaced by reserve/finish/cancel to match the new ledger contract.
+test-edit-approved: supabase/functions/lookup-chart/db_test.ts — the writes test exercises
+reserve/finish/cancel instead of recordLookup.
+test-edit-approved: supabase/functions/lookup-chart/chart_test.ts — the shared ctx carries the
+fetched page of the brand chart, as every real brand-site answer now must.
+
+After fixes: deno test 44/44, deno check and deno lint clean, node --test 84/84,
+check-migrations all five apply and both anon checks pass.

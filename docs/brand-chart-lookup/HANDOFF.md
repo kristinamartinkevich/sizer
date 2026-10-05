@@ -235,7 +235,8 @@ must both succeed; if not, hard-stop and name the brew command from §0.
       { chart: null, tier: 'none' }.
    c. caps: chart_lookups counts; 20 per install per day, 300 per day globally; 429 beyond.
    d. the model call (one fetch to https://api.anthropic.com/v1/messages, model
-      claude-sonnet-5, web_search and web_fetch tools with max_uses 6, temperature 0): find the
+      claude-sonnet-5, web_search and web_fetch tools with max_uses 6 each, default sampling; see the
+      B3 notes, Sonnet 5 rejects a temperature override): find the
       brand's own women's size guide for this kind of item on the brand's site; if found return
       the chart in the §5 JSON with source_url, unit, measurement_basis, and tier 'brand_site'.
       If the brand site has none and shopGuide was sent, judge whether the shop's table is that
@@ -399,7 +400,8 @@ Sequence for a miss, as seen by the extension:
    bundle; the page re-renders with the tier-3 wording. The next day's bundle refresh carries it
    for everyone.
 
-Model: `claude-sonnet-5`, temperature 0, `web_search` and `web_fetch` tools, at most 6 tool uses,
+Model: `claude-sonnet-5`, default sampling (it rejects a temperature override, so none is sent),
+`web_search` and `web_fetch` tools, at most 6 uses of each (the API caps per tool),
 final answer forced through a tool with the §5 schema. Haiku was considered and rejected for this
 step: table reading across unfamiliar brand sites is where accuracy matters and the call happens
 once per brand.

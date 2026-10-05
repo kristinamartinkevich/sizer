@@ -3,7 +3,9 @@
 --   brand and kind of item, from which shop, by which install (the random per-install id the
 --   extension already sends with fit reports), and how it ended. The function reads it back for two
 --   things only: the daily caps (20 per install, 300 overall) and the 30-day "no chart" markers that
---   stop it asking the model about the same chartless brand again.
+--   stop it asking the model about the same chartless brand again. A row is written as 'pending'
+--   before the model is asked, so lookups running at the same moment count against the caps, and
+--   updated to its outcome after; a lookup that would pass a cap deletes its own row.
 --   Only the function writes and reads it, with the service-role key. The public key sees nothing:
 --   RLS is on with no policies, and the table grants are revoked from the API roles as well.
 -- Paste into the Supabase SQL editor and run as a whole.
@@ -14,7 +16,7 @@ create table public.chart_lookups (
   kind        text        not null,                     -- bottoms | tops | dresses | shoes
   shop        text        not null,                     -- shop hostname
   install     uuid        not null,
-  outcome     text        not null check (outcome in ('chart', 'no_chart', 'error')),
+  outcome     text        not null check (outcome in ('pending', 'chart', 'no_chart', 'error')),
   reason      text,                                     -- why no chart, or what went wrong, or what was stored
   created_at  timestamptz not null default now(),
   constraint brand_short check (length(brand) between 1 and 80),

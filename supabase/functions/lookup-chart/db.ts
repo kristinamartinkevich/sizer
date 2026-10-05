@@ -98,8 +98,20 @@ export function restDb(supabaseUrl: string, serviceKey: string, f: typeof fetch 
       await call("deleteChart", "DELETE", "size_charts", { id: `eq.${id}` }, { prefer: "return=minimal" });
     },
 
-    async recordLookup(record: LookupRecord) {
-      await call("recordLookup", "POST", "chart_lookups", {}, { body: record, prefer: "return=minimal" });
+    async reserveLookup(record) {
+      const body: LookupRecord = { ...record, outcome: "pending", reason: null };
+      const res = await call("reserveLookup", "POST", "chart_lookups", { select: "id" }, { body, prefer: "return=representation" });
+      const [row] = await res.json() as { id: string }[];
+      if (!row) throw new Error("reserveLookup failed: nothing returned");
+      return row.id;
+    },
+
+    async finishLookup(id, outcome, reason) {
+      await call("finishLookup", "PATCH", "chart_lookups", { id: `eq.${id}` }, { body: { outcome, reason }, prefer: "return=minimal" });
+    },
+
+    async cancelLookup(id) {
+      await call("cancelLookup", "DELETE", "chart_lookups", { id: `eq.${id}` }, { prefer: "return=minimal" });
     },
   };
 }

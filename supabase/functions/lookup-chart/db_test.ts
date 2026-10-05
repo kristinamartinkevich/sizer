@@ -84,7 +84,9 @@ Deno.test("writes: brand insert ignores a duplicate, chart and rows return what 
     { status: 201, body: [{ id: "c1", brand_id: "helsa" }] },
     { status: 201, body: [{ id: "r1", chart_id: "c1" }] },
     { status: 204 },
-    { status: 201 },
+    { status: 201, body: [{ id: "l1" }] },
+    { status: 204 },
+    { status: 204 },
   ]);
   const db = restDb(BASE, SERVICE_KEY, f);
   await db.insertBrand({ id: "helsa", name: "Helsa", aliases: ["helsa"], website: null });
@@ -92,12 +94,19 @@ Deno.test("writes: brand insert ignores a duplicate, chart and rows return what 
   assert.equal((await db.insertChart({ brand_id: "helsa" })).id, "c1");
   assert.equal((await db.insertRows([{ chart_id: "c1" }]))[0].id, "r1");
   await db.deleteChart("c1");
-  await db.recordLookup({ brand: "helsa", kind: "dresses", shop: "revolve.com", install: "3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64", outcome: "chart", reason: null });
+  assert.equal(await db.reserveLookup({ brand: "helsa", kind: "dresses", shop: "revolve.com", install: "3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64" }), "l1");
+  await db.finishLookup("l1", "chart", "brand_site https://helsastudio.com/pages/size-guide");
+  await db.cancelLookup("l1");
 
   assert.deepEqual(seen.map((s) => `${s.method} ${s.url.pathname}`), [
     "POST /rest/v1/brands", "PATCH /rest/v1/brands", "POST /rest/v1/size_charts", "POST /rest/v1/size_chart_rows",
-    "DELETE /rest/v1/size_charts", "POST /rest/v1/chart_lookups",
+    "DELETE /rest/v1/size_charts", "POST /rest/v1/chart_lookups", "PATCH /rest/v1/chart_lookups", "DELETE /rest/v1/chart_lookups",
   ]);
+  assert.deepEqual(seen[5].body, { brand: "helsa", kind: "dresses", shop: "revolve.com", install: "3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64", outcome: "pending", reason: null });
+  assert.match(String(seen[5].headers.get("prefer")), /return=representation/);
+  assert.equal(seen[6].url.searchParams.get("id"), "eq.l1");
+  assert.deepEqual(seen[6].body, { outcome: "chart", reason: "brand_site https://helsastudio.com/pages/size-guide" });
+  assert.equal(seen[7].url.searchParams.get("id"), "eq.l1");
   assert.equal(seen[0].url.searchParams.get("on_conflict"), "id");
   assert.match(String(seen[0].headers.get("prefer")), /resolution=ignore-duplicates/);
   assert.equal(seen[1].url.searchParams.get("id"), "eq.helsa");

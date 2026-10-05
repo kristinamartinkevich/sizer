@@ -38,7 +38,7 @@ export interface LookupRecord {
   kind: string;
   shop: string;
   install: string;
-  outcome: "chart" | "no_chart" | "error";
+  outcome: "pending" | "chart" | "no_chart" | "error";
   reason: string | null;
 }
 
@@ -52,7 +52,10 @@ export interface LookupDb {
   insertChart(record: Record<string, unknown>): Promise<StoredChart>;
   insertRows(rows: Record<string, unknown>[]): Promise<StoredRow[]>;
   deleteChart(id: string): Promise<void>;
-  recordLookup(record: LookupRecord): Promise<void>;
+  // The ledger row is written before the model is asked, so concurrent lookups see each other in the caps.
+  reserveLookup(record: Omit<LookupRecord, "outcome" | "reason">): Promise<string>;
+  finishLookup(id: string, outcome: Exclude<LookupRecord["outcome"], "pending">, reason: string | null): Promise<void>;
+  cancelLookup(id: string): Promise<void>;
 }
 
 export interface Deps {
@@ -102,11 +105,13 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   const tag = `${input.alias}/${input.kind}`;
   const { db } = deps;
 
-  const record = async (outcome: LookupRecord["outcome"], reason: string | null) => {
-    await db.recordLookup({ brand: input.alias, kind: input.kind, shop: input.shop, install: input.install, outcome, reason });
+  let held = "";
+  const record = async (outcome: Exclude<LookupRecord["outcome"], "pending">, reason: string | null) => {
+    await db.finishLookup(held, outcome, reason);
   };
 
-  // b. the shared cache, then c. the caps.
+  // b. the shared cache, then c. the caps. The place in the ledger is taken first and the counts read
+  // after, so lookups landing at the same moment count each other; one over a cap gives its place back.
   try {
     const cached = await storedChartFor(db, input, slug);
     if (cached) {
@@ -118,12 +123,15 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
       log(`lookup-chart: no_chart marker ${tag}`);
       return none(200, marker.reason || "No size chart found.");
     }
+    held = await db.reserveLookup({ brand: input.alias, kind: input.kind, shop: input.shop, install: input.install });
     const since = new Date(now.getTime() - DAY_MS).toISOString();
-    if (await db.countLookups(since, input.install) >= CAPS.perInstallPerDay) {
+    if (await db.countLookups(since, input.install) > CAPS.perInstallPerDay) {
+      await db.cancelLookup(held);
       log(`lookup-chart: install cap ${tag}`);
       return none(429, "Too many lookups from this install today.");
     }
-    if (await db.countLookups(since) >= CAPS.globalPerDay) {
+    if (await db.countLookups(since) > CAPS.globalPerDay) {
+      await db.cancelLookup(held);
       log(`lookup-chart: global cap ${tag}`);
       return none(429, "Too many lookups today.");
     }
@@ -147,7 +155,7 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   // e. the chart, checked.
   let answer: Answer;
   try {
-    const checked = validateAnswer(asked.input, { kind: input.kind, shop: input.shop, shopGuideSent: !!input.shopGuide });
+    const checked = validateAnswer(asked.input, { kind: input.kind, shop: input.shop, shopGuideSent: !!input.shopGuide, fetched: asked.fetched });
     if (!checked.ok || !checked.answer.found) {
       const reason = checked.ok ? checked.answer.reason : checked.reason;
       await record("no_chart", reason);
@@ -216,16 +224,31 @@ async function ensureBrand(db: LookupDb, input: LookupInput, slug: string, websi
 
 // ---- the model call ------------------------------------------------------------------------
 
-type ContentBlock = { type: string; name?: string; input?: unknown };
+type ContentBlock = { type: string; name?: string; input?: unknown; content?: unknown };
 type ModelMessage = { content?: ContentBlock[]; stop_reason?: string };
+
+// Addresses the web_fetch tool actually retrieved in this reply. Failed fetches carry no url.
+function fetchedUrls(content: ContentBlock[]): string[] {
+  const out: string[] = [];
+  for (const b of content) {
+    const c = b.content as { type?: string; url?: unknown } | undefined;
+    if (b.type === "web_fetch_tool_result" && c?.type === "web_fetch_result" && typeof c.url === "string") out.push(c.url);
+  }
+  return out;
+}
 
 // One lookup: the model searches and reads with the web tools and answers through record_lookup.
 // A paused server-tool turn is resent as it is. An answer left in prose gets one follow-up that
-// forces the answer tool through tool_choice.
-async function askModel(input: LookupInput, deps: Deps): Promise<{ ok: true; input: unknown } | { ok: false; reason: string }> {
+// forces the answer tool through tool_choice. Every page the model fetched along the way is
+// returned with the answer, so a brand-site chart can be held to a page that was really read.
+async function askModel(
+  input: LookupInput,
+  deps: Deps,
+): Promise<{ ok: true; input: unknown; fetched: string[] } | { ok: false; reason: string }> {
   const messages: { role: string; content: unknown }[] = [{ role: "user", content: userPrompt(input) }];
   let toolChoice: Record<string, string> = { type: "auto" };
   let forced = false;
+  const fetched: string[] = [];
 
   for (let i = 0; i < MAX_MODEL_REQUESTS; i++) {
     let res: Response;
@@ -256,8 +279,9 @@ async function askModel(input: LookupInput, deps: Deps): Promise<{ ok: true; inp
       return { ok: false, reason: "model reply was not JSON" };
     }
     const content = Array.isArray(msg.content) ? msg.content : [];
+    fetched.push(...fetchedUrls(content));
     const call = content.find((b) => b.type === "tool_use" && b.name === ANSWER_TOOL_NAME);
-    if (call) return { ok: true, input: call.input };
+    if (call) return { ok: true, input: call.input, fetched };
     if (msg.stop_reason === "refusal") return { ok: false, reason: "model declined the request" };
 
     messages.push({ role: "assistant", content });

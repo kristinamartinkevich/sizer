@@ -6,6 +6,7 @@ import {
   answerMessage,
   brandChart,
   collectLogs,
+  fetched,
   DRESS_BODY,
   FakeDb,
   INSTALL,
@@ -334,4 +335,65 @@ Deno.test("no key appears in any response or log line", async () => {
   }
   assert.ok(logs.lines.length > 0);
   for (const line of logs.lines) assert.equal(line.includes(ANTHROPIC_KEY) || line.includes(SERVICE_KEY), false, line);
+});
+
+Deno.test("a lookup holds its place in the ledger before the model is asked", async () => {
+  const db = new FakeDb();
+  const model = scriptedFetch([{ body: answerMessage({ found: true, reason: "", chart: brandChart() }) }]);
+  let pendingWhenAsked = -1;
+  const watching = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    pendingWhenAsked = db.lookups.filter((l) => l.outcome === "pending").length;
+    return await model.fetch(input, init);
+  }) as typeof fetch;
+  await handle(lookupRequest(DRESS_BODY), { ...deps(db, model), fetch: watching });
+  assert.equal(pendingWhenAsked, 1);
+  assert.deepEqual(db.lookups.map((l) => l.outcome), ["chart"], "the held place becomes the outcome");
+});
+
+Deno.test("caps hold under concurrent lookups: one slot left means at most one model call", async () => {
+  const db = new FakeDb();
+  for (let i = 0; i < 299; i++) db.lookups.push({ brand: `b${i}`, kind: "tops", shop: "revolve.com", install: crypto.randomUUID(), outcome: "chart", reason: null, created_at: ago(0.2) });
+  const model = scriptedFetch([
+    { body: answerMessage({ found: true, reason: "", chart: brandChart() }) },
+    { body: answerMessage({ found: true, reason: "", chart: brandChart() }) },
+    { body: answerMessage({ found: true, reason: "", chart: brandChart() }) },
+  ]);
+  const bodies = ["Helsa", "Ganni", "Rixo"].map((brand) => ({ ...DRESS_BODY, brand, install: crypto.randomUUID() }));
+  const statuses = (await Promise.all(bodies.map((b) => handle(lookupRequest(b), deps(db, model))))).map((r) => r.status);
+  assert.ok(model.requests.length <= 1, `model asked ${model.requests.length} times`);
+  assert.ok(statuses.filter((s) => s === 429).length >= 2, statuses.join(","));
+  assert.ok(db.lookups.length <= 300, `${db.lookups.length} ledger rows`);
+  assert.equal(db.lookups.filter((l) => l.outcome === "pending").length, 0, "refused lookups give their place back");
+});
+
+Deno.test("a brand-site answer the model never fetched is rejected, stored as no_chart, and writes no brand", async () => {
+  const db = new FakeDb();
+  const model = scriptedFetch([{ body: answerMessage({ found: true, reason: "", chart: brandChart() }, []) }]);
+  const res = await handle(lookupRequest({ ...DRESS_BODY, shopGuide: shopGuide(true) }), deps(db, model));
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).chart, null);
+  assert.equal(db.charts.length, 0);
+  assert.equal(db.brands.length, 0);
+  assert.deepEqual(db.lookups.map((l) => l.outcome), ["no_chart"]);
+  assert.match(String(db.lookups[0].reason), /never read/);
+});
+
+Deno.test("a brand-site answer on the shop's own address is rejected when only the brand's site was fetched", async () => {
+  const db = new FakeDb();
+  const chart = brandChart({ source_url: "https://www.revolveclothing.fr/r/sizeguide" });
+  const model = scriptedFetch([{ body: answerMessage({ found: true, reason: "", chart }, [fetched("https://helsastudio.com/pages/size-guide")]) }]);
+  const res = await handle(lookupRequest({ ...DRESS_BODY, shopGuide: shopGuide(true) }), deps(db, model));
+  assert.equal((await res.json()).chart, null);
+  assert.equal(db.charts.length, 0);
+});
+
+Deno.test("a page fetched before a paused turn still counts as read", async () => {
+  const db = new FakeDb();
+  const model = scriptedFetch([
+    { body: { content: [fetched("https://www.helsastudio.com/pages/size-guide")], stop_reason: "pause_turn" } },
+    { body: answerMessage({ found: true, reason: "", chart: brandChart() }, []) },
+  ]);
+  const res = await handle(lookupRequest(DRESS_BODY), deps(db, model));
+  assert.equal((await res.json()).tier, "brand_site");
+  assert.equal(db.charts.length, 1);
 });

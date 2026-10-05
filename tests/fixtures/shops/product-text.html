@@ -1,0 +1,44 @@
+<!doctype html>
+<!--
+  Synthetic fixture (fit-evidence C4 review): what "Read this page with AI" sends. The brand is
+  fictional. The header, menu, footer, a dialog and the reviews each carry a marker word that must
+  never reach productText; the size picker's block carries the fit note that must. The picker's own
+  block is short, so the reader grows it to <main>, which also holds a breadcrumb menu, the reviews
+  and a dialog: those must be left out of the grown text too.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pleated wool trousers | Harrow Lane</title>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; }
+    .size-picker { display: flex; gap: 8px; margin: 16px 0; }
+    .size-picker button { width: 56px; height: 40px; }
+  </style>
+</head>
+<body>
+  <header><a href="/">Harrow Lane</a> <h2>HEADERMARK free delivery over 100</h2></header>
+  <main>
+    <nav aria-label="Breadcrumb"><h3>NAVMARK Trousers</h3><a href="/women">NAVMARK Women</a></nav>
+    <div class="product-info">
+      <h1>Pleated wool trousers</h1>
+      <div class="size-picker" role="radiogroup" aria-label="Size">
+        <button type="button">36</button>
+        <button type="button">38</button>
+        <button type="button">40</button>
+      </div>
+      <p>Cut generously at the hip.</p>
+    </div>
+    <div class="product-details">
+      <h2>Details</h2>
+      <p>Pure wool, no stretch. High rise, pressed front pleats, a straight leg to the ankle and a zip fly with a hook and bar.</p>
+    </div>
+    <section class="reviews">
+      <h3>REVIEWMARK What buyers say</h3>
+      <p>REVIEWMARK Runs small, size up.</p>
+    </section>
+    <div role="dialog" aria-label="Newsletter"><h2>DIALOGMARK Join the list</h2><p>DIALOGMARK Ten percent off your first order.</p></div>
+  </main>
+  <footer><h3>FOOTERMARK Customer care</h3><p>FOOTERMARK Returns within 30 days.</p></footer>
+</body>
+</html>

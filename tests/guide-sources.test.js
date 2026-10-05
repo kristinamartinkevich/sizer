@@ -217,3 +217,46 @@ test('applyReadProduct fills only what the page reader missed, and the engine si
   assert.equal(r.ok, true);
   assert.equal(r.signals.stretch !== 'unknown', true, 'the fabric the model read reaches the stretch reading');
 });
+
+// ---- moreGuide: only when the lookup would run (C4 review) ------------------------------------------
+
+const want = { brand: 'Lune Atelier', kind: 'bottoms' };
+const guideDeps = (over = {}) => {
+  const calls = { messages: [], fetches: 0 };
+  let tried = false;
+  const deps = {
+    message: async (m) => { calls.messages.push(m.type); return m.type === 'sizer:lookup-wanted' ? { wanted: true } : { chart: null }; },
+    fetch: async () => { calls.fetches += 1; return { ok: false, status: 404, url: 'x', headers: new Map(), text: async () => '' }; },
+    pageUrl: PAGE,
+    guideFromHtml: () => ({ charts: [], images: [], caption: null }),
+    withImageChart: Store.withImageChart,
+    firstTry: () => !tried && (tried = true),
+    ...over,
+  };
+  return { deps, calls };
+};
+const noTable = { shopGuide: null, guideLink: 'https://www.lune-atelier.example/pages/size-guide', guideImages: [IMAGE] };
+
+test('moreGuide: when the lookup would not run, no guide page is fetched and no image is read', async () => {
+  const { deps, calls } = guideDeps();
+  deps.message = async (m) => { calls.messages.push(m.type); return { wanted: false }; };
+  assert.equal(await G.moreGuide(noTable, want, deps), null);
+  assert.deepEqual(calls.messages, ['sizer:lookup-wanted']);
+  assert.equal(calls.fetches, 0);
+});
+
+test('moreGuide: a page that prints its table asks nothing at all', async () => {
+  const { deps, calls } = guideDeps();
+  const shopGuide = { charts: [{ rows: [{}] }], caption: 'Size guide' };
+  assert.equal(await G.moreGuide({ ...noTable, shopGuide }, want, deps), shopGuide);
+  assert.deepEqual(calls.messages, []);
+  assert.equal(calls.fetches, 0);
+});
+
+test('moreGuide: when wanted, the guide page is fetched once per page, then one image is read', async () => {
+  const { deps, calls } = guideDeps();
+  await G.moreGuide({ ...noTable, guideImages: [IMAGE, `${IMAGE}&2`] }, want, deps);
+  await G.moreGuide(noTable, want, deps);
+  assert.equal(calls.fetches, 1, 'the guide page is tried once per page');
+  assert.deepEqual(calls.messages, ['sizer:lookup-wanted', 'sizer:read-chart-image', 'sizer:lookup-wanted', 'sizer:read-chart-image']);
+});

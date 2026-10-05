@@ -314,30 +314,16 @@
     try { return Promise.resolve(chrome.runtime.sendMessage(msg)).catch(() => null); } catch { return Promise.resolve(null); }
   }
 
-  // When the page prints no size table, look where else the shop keeps its chart before the lookup:
-  // the shop's own size-guide page (fetched once per page, without cookies, 3 s at most), then a size
-  // chart image, read by the read-chart-image function. Skipped when the lookup would not run anyway.
-  async function moreGuide(product, want) {
-    const guide = product.shopGuide;
-    if (guide && guide.charts.length) return guide;
-    const wanted = await message({ type: 'sizer:lookup-wanted', brand: want.brand, kind: want.kind });
-    if (!wanted || !wanted.wanted) return guide;
-    let images = product.guideImages || [];
-    if (!state.guideTried && product.guideLink) {
-      state.guideTried = true;
-      const html = await Guide.fetchGuideText(product.guideLink, { fetch: (u, init) => fetch(u, init), pageUrl: location.href });
-      if (html) {
-        const page = guideFromHtml(html, product.guideLink, want.brand);
-        if (page.charts.length) return { charts: page.charts, caption: page.caption };
-        images = images.concat(page.images.filter((u) => !images.includes(u)));
-      }
-    }
-    // One image, the likeliest: each read counts against the daily caps.
-    if (images.length) {
-      const read = await message({ type: 'sizer:read-chart-image', image_url: images[0], brand: want.brand, kind: want.kind });
-      if (read && read.chart) return Store.withImageChart(guide, read.chart);
-    }
-    return guide;
+  // Where else the shop keeps its chart, before the lookup (see SizerGuideTable.moreGuide).
+  function moreGuide(product, want) {
+    return Guide.moreGuide(product, want, {
+      message,
+      fetch: (u, init) => fetch(u, init),
+      pageUrl: location.href,
+      guideFromHtml,
+      withImageChart: Store.withImageChart,
+      firstTry: () => !state.guideTried && (state.guideTried = true),
+    });
   }
 
   function reset() {

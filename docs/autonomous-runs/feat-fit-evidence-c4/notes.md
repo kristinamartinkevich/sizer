@@ -78,3 +78,26 @@ Run 0007 in the SQL editor; deploy with
 `supabase functions deploy read-chart-image --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
 (no new secret); reload the extension. Then try a shop whose chart is an image, and a page Sizer
 cannot read, from the popup.
+
+## Review (1 adversarial + 1 QA, wf_69277a80-867): 6 confirmed, all applied
+
+- MAJOR: the store listing's data-usage answer said every request carries the shop's hostname and
+  install id. The image and product-text requests carry the install id and no hostname; it now says
+  which is which, four cases.
+- MAJOR: `productText` had no tests. Two synthetic fixtures in `tests/shops.html`: `product-text`
+  (header, breadcrumb menu, reviews, dialog and footer each carry a marker; the picker's block is
+  short so it grows to `<main>` past them) and `product-text-bare` (no picker: the title's block).
+  Mutation-checked: dropping the header, nav and footer exclusions fails both. The first version of
+  the fixture never grew past the product block, so it could not catch a menu leak; rebuilt.
+- MAJOR (same finding): the popup-only gate and the lookup gate were untested.
+  `tests/background.test.js` loads the service worker in a `vm` sandbox; a tab's message is refused,
+  the popup's goes to `/product`. Mutation-checked by removing `!sender.tab`. `moreGuide` moved from
+  `content.js` into `src/guide-table.js` with its effects passed in, so the gate (no page fetch and no
+  image read when the lookup would not run; one guide fetch per page; one image) is tested in node.
+- MINOR: Product Hunt copy now names what the image read and the AI read send.
+- MINOR: popup consent copy names the install id.
+- MINOR: HANDOFF §7 says both reads send the install id.
+- MINOR: LISTING "WHAT IT READS" names the shop's guide (table, frame, guide page, picture) and the
+  AI fallback.
+
+`node --test tests/`: 206/206. `tests/shops.html`: PASS, 72.

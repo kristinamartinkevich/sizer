@@ -265,7 +265,35 @@
     }
   }
 
-  const api = { parseGuideMatrix, mentionsBrand, parseRange, looksLikeSize, PLAUSIBLE, sameShopUrl, chartImageName, fetchGuideText, GUIDE_FETCH_TIMEOUT_MS };
+  // When the page prints no size table, look where else the shop keeps its chart before the lookup:
+  // the shop's own size-guide page (fetched once per page, without cookies, 3 s at most), then one size
+  // chart image, read by the read-chart-image function. Skipped when the lookup would not run anyway,
+  // so neither the page fetch nor the image read happens for a brand already answered or missed.
+  // deps: message (to the service worker), fetch, pageUrl, guideFromHtml, withImageChart, and
+  // firstTry, true the first time it is asked on a page.
+  async function moreGuide(product, want, deps) {
+    const guide = product.shopGuide;
+    if (guide && guide.charts.length) return guide;
+    const wanted = await deps.message({ type: 'sizer:lookup-wanted', brand: want.brand, kind: want.kind });
+    if (!wanted || !wanted.wanted) return guide;
+    let images = product.guideImages || [];
+    if (product.guideLink && deps.firstTry()) {
+      const html = await fetchGuideText(product.guideLink, { fetch: deps.fetch, pageUrl: deps.pageUrl });
+      if (html) {
+        const page = deps.guideFromHtml(html, product.guideLink, want.brand);
+        if (page.charts.length) return { charts: page.charts, caption: page.caption };
+        images = images.concat(page.images.filter((u) => !images.includes(u)));
+      }
+    }
+    // One image, the likeliest: each read counts against the daily caps.
+    if (images.length) {
+      const read = await deps.message({ type: 'sizer:read-chart-image', image_url: images[0], brand: want.brand, kind: want.kind });
+      if (read && read.chart) return deps.withImageChart(guide, read.chart);
+    }
+    return guide;
+  }
+
+  const api = { parseGuideMatrix, mentionsBrand, parseRange, looksLikeSize, PLAUSIBLE, sameShopUrl, chartImageName, fetchGuideText, moreGuide, GUIDE_FETCH_TIMEOUT_MS };
   root.SizerGuideTable = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -59,6 +59,12 @@
         pageGuide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L'], first: { bust: [78, 82], waist: [60, 64], hip: [86, 90], foot_length: null } }],
         pageCaption: 'Fen & Fold size guide',
         pageImages: ['https://guide-link.example/files/shoe-size-chart.png'] },
+      // What "Read this page with AI" sends (C4 review): the picker's block, never the header, menu,
+      // footer, dialogs or reviews; with no picker, the block around the title.
+      { name: 'product-text', base: 'https://harrow-lane.example/', textOnly: true, title: 'Pleated wool trousers',
+        has: [/Cut generously at the hip/, /Pure wool, no stretch/], headings: ['Pleated wool trousers', 'Details'] },
+      { name: 'product-text-bare', base: 'https://ostra.example/', textOnly: true, title: 'Linen wrap dress',
+        has: [/It runs long/, /room at the bust/], headings: ['Linen wrap dress'] },
     ];
     const out = document.getElementById('out');
     const results = [];
@@ -80,6 +86,16 @@
       const checks = [];
       const frame = await load(shop);
       const fdoc = frame.contentDocument;
+      if (shop.textOnly) {
+        const pt = SizerExtract.productText(fdoc, SizerEngine.parseSizeLabel);
+        check(checks, 'text title', pt.title === shop.title, pt.title);
+        for (const re of shop.has) check(checks, `text has ${re.source}`, re.test(pt.picker), pt.picker.slice(0, 120));
+        const leaked = `${pt.picker} ${pt.headings.join(' ')}`.match(/[A-Z]+MARK/g);
+        check(checks, 'no header, menu, footer, dialog or review text', !leaked, leaked ? leaked.join(', ') : 'none');
+        check(checks, 'text headings', JSON.stringify(pt.headings) === JSON.stringify(shop.headings), JSON.stringify(pt.headings));
+        frame.remove();
+        return checks;
+      }
       if (shop.guideOnly) {
         guideChecks(checks, shop, SizerExtract.sizeGuideTables(fdoc, '', ''));
         if ('images' in shop) {

@@ -56,12 +56,14 @@ WHAT YOU SEE
 
 WHAT IT READS
 • Brand size charts, downloaded daily, with a link to the brand page each one came from and whether a person has checked it
+• The shop’s own size guide: a table on the page or in a frame, the shop’s size-guide page, or a size chart picture read by AI
 • For a brand with no chart yet, its own published chart, looked up once and labelled as read by machine
 • Built-in charts for 40 denim and high-street brands where no downloaded chart exists yet
 • Stretch: rigid denim leans up a size, high stretch leans down
 • The page’s own fit notes, like “runs small, we recommend sizing up”
 • Buyers’ reviews, on this shop and pooled across other shops selling the same style
 • Per-size stock from the shop’s product data
+• On a page it cannot read, the page’s product text, read by AI only when you click “Read this page with AI”
 
 YOUR FIT PROFILE
 • Bust, waist, hip, shoulder width, arm length, inseam, foot length and height, in cm or inches
@@ -78,7 +80,7 @@ JEANS, TROUSERS, SKIRTS, DRESSES, TOPS AND SHOES
 Sizer is built around women’s sizing. Bottoms are sized on waist and hip; tops, dresses and coats on the bust and shoulders when the brand’s chart prints them. FR, EU, IT, UK, US and letter sizes line up through one table. Shoes are sized from your foot length. Men’s charts are coming.
 
 PRIVATE BY DESIGN
-Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. Sizer sends two anonymous things: a tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, so shoppers on other shops can use it, and, when a brand has no size chart yet, a request to look one up carrying the brand name, the kind of item, the shop’s name and the shop’s own size table if the page prints one. To find that table Sizer may open the shop’s own size-guide page without your cookies, or send a size chart image’s web address with the brand name, kind of item and a random install id so the chart can be read from the picture. If you click “Read this page with AI” on a page Sizer cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters. No profile, measurement, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html
+Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. Sizer sends two anonymous things: a tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, so shoppers on other shops can use it, and, when a brand has no size chart yet, a request to look one up carrying the brand name, the kind of item, the shop’s name and the shop’s own size table if the page prints one. To find that table Sizer may open the shop’s own size-guide page without your cookies, or send a size chart image’s web address with the brand name, kind of item and a random install id so the chart can be read from the picture. If you click “Read this page with AI” on a page Sizer cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters with web addresses removed, and the random install id. No profile, measurement, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html
 
 GOOD TO KNOW
 Size charts are approximate and brands change them, so check the brand’s guide for important purchases. Sizer is independent and not affiliated with any shop or brand it mentions.
@@ -110,7 +112,7 @@ Shows the shopper which clothing size to buy on a product page, from their own m
 
 **Remote code:** No. All code ships in the package; the size charts are downloaded as data (JSON).
 
-**Data usage.** Tick **Website content** and nothing else. The honest reason: Sizer sends content from the website to Sizer’s database in two cases, each with the shop’s hostname and a random install id. It derives a count from the review text on the page and sends the count; and when the brand has no chart, it sends the brand name, the kind of item and, if the page prints one, the shop’s size table text, so the chart can be looked up. To find that table it may open the shop’s own size-guide page without your cookies (a request to the shop, nothing kept), or send a size chart image’s web address with the brand name and kind of item so the chart can be read from the picture. On request only (“Read this page with AI”), it sends the page title, headings and the text around the size picker, up to 6000 characters, with web addresses removed. No review text, no page address and nothing personal travels. The fit profile never leaves `chrome.storage.sync`. Leaving every box unticked would contradict the privacy policy, and reviewers check the two against each other.
+**Data usage.** Tick **Website content** and nothing else. The honest reason: Sizer sends content from the website to Sizer’s functions in four cases, each with a random install id. With the shop’s hostname: it derives a count from the review text on the page and sends the count; and when the brand has no chart, it sends the brand name, the kind of item and, if the page prints one, the shop’s size table text, so the chart can be looked up. Without the hostname: to find that table it may open the shop’s own size-guide page without your cookies (a request to the shop, nothing kept), or send a size chart image’s web address with the brand name and kind of item so the chart can be read from the picture; and on request only (“Read this page with AI”), it sends the page title, headings and the text around the size picker, up to 6000 characters, with web addresses removed. No review text, no page address and nothing personal travels. The fit profile never leaves `chrome.storage.sync`. Leaving every box unticked would contradict the privacy policy, and reviewers check the two against each other.
 
 **Certifications:** tick all three. Sizer does not sell data, does not use it for anything but the size, and does not use it for creditworthiness or lending.
 

@@ -237,11 +237,11 @@ is cached per item for 7 days locally (errors are not cached).
   vision into the plan 1 §5 chart shape, validated by the same `parseGuideMatrix` rules ported to
   the function (waist and hip required for clothing, foot length for shoes, no model panels).
   Cached per image URL hash for everyone (`chart_images`, migration 0007). The client sends only the
-  image URL (a public asset, not the page address), brand and kind. Results enter the lookup as
+  image URL (a public asset, not the page address), brand, kind and the install id (for the per-install cap). Results enter the lookup as
   `shopGuide` charts with `source_type` from the function and status `machine_read`.
 - Model fallback reader: when "Check this page anyway" finds no brand or no sizes, the popup offers
   "Read this page with AI". It sends the page's cleaned product text (title, headings, the
-  size-picker region's text, at most 6000 characters, no URL) to `read-chart-image`'s sibling route
+  size-picker region's text, at most 6000 characters, web addresses removed, plus the install id) to `read-chart-image`'s sibling route
   `/product` and gets `{ brand, title, kind, sizes, fabric }` back; nothing is cached.
 
 ## 8. C5 — Vinted

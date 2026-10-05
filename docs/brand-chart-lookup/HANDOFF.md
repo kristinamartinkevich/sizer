@@ -196,9 +196,13 @@ Scope: §6 of the HANDOFF only.
    the guide's caption text. The CHROME/REVIEW_AREA exclusions from the existing reader apply.
    extractProduct exposes it as product.shopGuide = { charts, caption } or null.
 
-3. tests/shops.html: Revolve's fixture carries two guide tables (size-guide-measurements-1);
-   assert one parsed chart with letter sizes and waist/hip rows. Zalando, ASOS and Net-a-Porter
-   load their guides by script, so assert shopGuide is null there. Keep the existing 37 checks.
+3. tests/shops.html: none of the four saved shops carries a size chart in its DOM (see §6, corrected
+   2026-10-05 after reading the Revolve fixture). Revolve's two tables inside
+   #size-guide-measurements-1 are the model's measurements and the garment's dimensions; both must be
+   rejected as charts, so assert shopGuide.charts is empty on Revolve and shopGuide is null on the
+   other three. Add a fifth, synthetic fixture tests/fixtures/shops/inline-guide.html (a brand page
+   with an inline women's size table, sizes across the top, cm) and assert one parsed chart there.
+   Keep the existing 37 checks.
 
 Tests first: tests/guide-table.test.js with matrices copied from real guides (Revolve dresses in
 inches, a Zalando brand chart in cm with sizes across the top, an ASOS-style "UK EU US waist hip"
@@ -363,16 +367,22 @@ through `chart_bundle`.
 
 ## 6. Shop guide reading (B2)
 
-What the four saved shops actually expose, verified 2026-10-05 against the fixtures:
-- **Revolve**: two guide tables in the DOM (`size-guide-measurements-1`), the shop's house chart
-  for the department. Parseable deterministically.
+What the four saved shops actually expose, verified 2026-10-05 against the fixtures (Revolve line
+corrected during the run after reading the markup):
+- **Revolve**: two tables in the DOM inside `#size-guide-measurements-1`, but neither is a size
+  chart. One is "Model Info" (the model's waist, bust and hips and the size she wears), the other
+  "Dimensions du produit" (inseam, rise, knee, hem of this garment). The real chart is fetched on
+  click from a same-origin `pdpSizeGuideUrl` (`/r/ajax/sizeguide/views/<markup>.jsp?...`) declared
+  in the page script. The two tables are B2's best negative fixtures. The model row is a useful fit
+  signal for a later plan, not this one.
 - **ASOS**: the guide is fetched from `api.asos.com/api/sizing/...` on click. Not in the DOM.
 - **Net-a-Porter**: a size guide link opens a scripted panel. Not in the DOM.
 - **Zalando**: a size-guide script bundle, loaded on click. Not in the DOM.
 
-So B2's DOM finder will find Revolve and return null on the other three, and that is correct.
-B2 must not click, fetch or wait for anything; the brand-site lookup in B3 is what covers the
-three scripted shops.
+So on the four saved shops B2's finder correctly finds no chart. Its value is on pages that do
+inline the table, which brand sites (Shopify size-guide pages, many DTC labels) commonly do, proven
+by the synthetic fixture. B2 must not click, fetch or wait for anything; the brand-site lookup in
+B3 is what covers the scripted shops.
 
 ---
 

@@ -24,6 +24,7 @@
   <script src="../src/charts-store.js"></script>
   <script src="../src/charts.js"></script>
   <script src="../src/defaults.js"></script>
+  <script src="../src/review-details.js"></script>
   <script src="../src/engine.js"></script>
   <script src="../src/guide-table.js"></script>
   <script src="../src/extract.js"></script>
@@ -38,7 +39,7 @@
       { name: 'zalando', base: 'https://www.zalando.co.uk/', brand: 'rag & bone', title: /STEVIE/, sizes: 8, soldOut: ['25', '27', '28', '29'], fitNote: 'small', size: '28', headline: /Runs small/, guide: null },
       { name: 'asos', base: 'https://www.asos.com/', brand: "Levi's", title: /501/, sizes: 17, soldOut: ['W24 L30', 'W25 L32', 'W26 L32', 'W27 L32', 'W28 L34', 'W29 L32', 'W32 L32'], fitNote: 'large', reviewsMin: 2, reviewsMax: 6, summary: /Fit is between/, size: 'W26 L30', headline: /Runs large/, guide: null },
       { name: 'nap', base: 'https://www.net-a-porter.com/', brand: 'AGOLDE', title: /straight-leg jeans/, sizes: 10, soldOut: [], fitNote: 'tts', size: '28', guide: null },
-      { name: 'revolve', base: 'https://www.revolveclothing.fr/', brand: 'AGOLDE', title: /PINCH WAIST/, sizes: 12, soldOut: ['24', '25', '27', '29', '30', '31', '32', '33', '34'], reviewsMin: 3, reviewsMax: 10, noStretch: true, size: '28', guide: [] },
+      { name: 'revolve', base: 'https://www.revolveclothing.fr/', brand: 'AGOLDE', title: /PINCH WAIST/, sizes: 12, soldOut: ['24', '25', '27', '29', '30', '31', '32', '33', '34'], reviewsMin: 3, reviewsMax: 10, noStretch: true, size: '28', guide: [], reviewer: { heightBucket: 'tall', curves: 'straight', verdict: 'small' } },
       { name: 'inline-guide', base: 'https://lune-atelier.example/', brand: 'Lune Atelier', title: /Bias silk midi skirt/, sizes: 5, soldOut: ['S'], noStretch: true, size: 'M',
         guide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L', 'XL'], first: { bust: [80, 84], waist: [62, 66], hip: [88, 92], foot_length: null } }], caption: 'Lune Atelier size guide' },
       { name: 'aria-guide', base: 'https://guide-paths.example/', guideOnly: true, caption: 'Shoe size chart',
@@ -82,6 +83,10 @@
       const r = SizerEngine.recommend(PROFILE, product, null);
       if ('fitNote' in shop) check(checks, 'page fit note', (signals.fitNote || null) === shop.fitNote, signals.fitNote || 'none');
       if (shop.reviewsMin) check(checks, 'reviews read', product.reviews.length >= shop.reviewsMin && product.reviews.length <= (shop.reviewsMax || 500), `${product.reviews.length}: ${product.reviews.slice(0, 2).map((s) => s.slice(0, 60)).join(' | ')}`);
+      if (shop.reviewer) {
+        const found = (product.reviewCards || []).map(SizerReviewDetails.parseReview).find((d) => d.heightBucket === shop.reviewer.heightBucket && d.curves === shop.reviewer.curves && d.verdict === shop.reviewer.verdict);
+        check(checks, 'reviewer details', !!found, found ? found.text.slice(0, 80) : `${(product.reviewCards || []).length} cards`);
+      }
       if (shop.summary) check(checks, 'fit bar', shop.summary.test(product.reviewSummary), product.reviewSummary);
       if (shop.noStretch) check(checks, 'stretch read', /non-stretch|no stretch/i.test(product.text), /non-stretch|no stretch/i.test(product.text));
       check(checks, 'picker found', !!SizerExtract.findPicker(fdoc, SizerEngine.parseSizeLabel), 'picker');

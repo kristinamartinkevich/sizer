@@ -134,6 +134,25 @@
     return out;
   }
 
+  // A whole review, as review widgets mark it; a list item inside one is a field, not a review.
+  const REVIEW_WHOLE = '[itemprop="review"], .yotpo-review, [class*="review-item" i], [class*="review_item" i], [class*="reviewItem" i], [class*="review-card" i], [class*="reviewCard" i], .review, article';
+
+  // The whole text of each review card. Revolve-style fields ("About my height", "Sizing") survive
+  // here, while extractReviews keeps only the review body. Whole-review containers win, outermost
+  // first; without any, the innermost generic card.
+  function reviewCards(doc) {
+    const out = [];
+    const whole = [...doc.querySelectorAll(REVIEW_WHOLE)].filter((el) => el.closest(REVIEW_AREA) && !el.parentElement.closest(REVIEW_WHOLE));
+    const cards = whole.length ? whole : [...doc.querySelectorAll(REVIEW_CARD)].filter((el) => !el.querySelector(REVIEW_CARD));
+    for (const el of cards) {
+      if (el.closest(OURS) || !el.closest(REVIEW_AREA)) continue;
+      const t = spacedText(el);
+      if (t.length >= 20 && t.length <= 1500 && !out.includes(t)) out.push(t);
+      if (out.length >= 200) break;
+    }
+    return out;
+  }
+
   // A shop's own fit bar from reviews, like "68% say it runs small", or a labelled slider whose
   // accessible name reads "Fit is Runs Small." (ASOS). The review count nearby is kept for the total.
   function reviewSummary(doc) {
@@ -322,6 +341,7 @@
       sizes,
       reviews,
       reviewSummary: reviewSummary(doc),
+      reviewCards: reviewCards(doc),
       shopGuide: sizeGuideTables(doc, brandGuess, location.href),
       url: location.href,
       isProduct: !!ld || (sizes.length >= 2 && !!(brandGuess || title)),

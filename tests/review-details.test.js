@@ -12,6 +12,13 @@ test('reads Revolve’s height, curves and sizing fields from a review card', ()
   assert.strictEqual(d.verdict, 'small');
 });
 
+test('reads the labels however the page capitalises them, as the live Revolve card does', () => {
+  const d = RD.parseReview('SHIRY Z. 🇮🇱 About My Curves About My Height Would You Recommend This Item? straight hips tall yes It is really great fitting. Sizing taille petit Product Quality excellente');
+  assert.strictEqual(d.heightBucket, 'tall');
+  assert.strictEqual(d.curves, 'straight');
+  assert.strictEqual(d.verdict, 'small');
+});
+
 test('reads the same fields in French, and product quality words are not a height', () => {
   const d = RD.parseReview('Marie 🇫🇷 À propos de mes courbes À propos de ma taille en courbes petite Très joli. Tailles taille grand Qualité du produit moyenne');
   assert.strictEqual(d.curves, 'curvy');
@@ -58,6 +65,32 @@ test('free-text verdicts', () => {
   assert.strictEqual(RD.parseReview('Way too big, size down.').verdict, 'large');
   assert.strictEqual(RD.parseReview('True to size for me.').verdict, 'tts');
   assert.strictEqual(RD.parseReview('Lovely colour.').verdict, null);
+});
+
+test('review-details.js loads before engine.js everywhere the engine runs in a page', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const read = (f) => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
+  const manifest = JSON.parse(read('manifest.json')).content_scripts[0].js;
+  assert.ok(manifest.indexOf('src/review-details.js') > -1 && manifest.indexOf('src/review-details.js') < manifest.indexOf('src/engine.js'), 'manifest');
+  for (const [file, a, b] of [
+    ['ui/popup.js', "'src/review-details.js'", "'src/engine.js'"],
+    ['tests/fixture-shop.html', 'src/review-details.js', 'src/engine.js'],
+    ['tests/shops.html', 'src/review-details.js', 'src/engine.js'],
+    ['tools/render-shop.py', "'review-details'", "'engine'"],
+  ]) {
+    const text = read(file);
+    assert.ok(text.indexOf(a) > -1 && text.indexOf(a) < text.indexOf(b), file);
+  }
+});
+
+test('the engine reads raw review cards, keeping only those with a verdict or an area', () => {
+  const { recommend } = require('../src/engine.js');
+  const nav = 'Curvy jeans Tall jeans Petite jeans';
+  const card = 'About my curves About my height curvy petite Nice. Sizing runs small';
+  const product = { brand: 'Ostra', title: 'Straight trousers', text: '', sizes: ['36', '38', '40'].map((label) => ({ label })), reviews: [] };
+  const r = recommend({ anchors: [], waist: '68', hip: '102', height: '160' }, { ...product, reviewCards: [nav, nav, nav, card, card] }, null);
+  assert.strictEqual(r.reviews.weighted, undefined);
 });
 
 const ME = { height: 163, waist: 68, hip: 96 };

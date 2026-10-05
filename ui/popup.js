@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/engine.js', 'src/guide-table.js', 'src/extract.js', 'src/panel-style.js', 'src/mark.js', 'src/content.js'];
+const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/guide-table.js', 'src/extract.js', 'src/panel-style.js', 'src/mark.js', 'src/content.js'];
 
 function show(id) {
   document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));

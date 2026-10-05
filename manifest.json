@@ -76,6 +76,7 @@
         "src/charts-store.js",
         "src/charts.js",
         "src/defaults.js",
+        "src/review-details.js",
         "src/engine.js",
         "src/guide-table.js",
         "src/extract.js",

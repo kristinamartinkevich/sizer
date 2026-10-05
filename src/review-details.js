@@ -10,8 +10,8 @@
   // ---- one review -------------------------------------------------------------
 
   const CURVES = [[/straight hips|hanches droites/i, 'straight'], [/some curves|quelques courbes/i, 'some'], [/\bcurvy\b|en courbes/i, 'curvy']];
-  const HEIGHT_LABEL = /About my height|À propos de ma taille/;
-  const FIELDS_END = /\b(?:Sizing|Tailles|Product Quality|Qualité du produit)\b/;
+  const HEIGHT_LABEL = /About my height|À propos de ma taille/i;
+  const FIELDS_END = /\b(?:Sizing|Tailles|Product Quality|Qualité du produit)\b/i;
   const BUCKET_WORD = { petite: 'petite', average: 'average', tall: 'tall', moyenne: 'average', grande: 'tall' };
   const SIZING_FIELD = /(?:Sizing|Tailles)\s+(taille petit|taille normal|taille grand|runs small|true to size|runs large)/i;
   const SIZING_VERDICT = { 'taille petit': 'small', 'runs small': 'small', 'taille normal': 'tts', 'true to size': 'tts', 'taille grand': 'large', 'runs large': 'large' };

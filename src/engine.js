@@ -2,6 +2,7 @@
 (function (root) {
   const { BRANDS, GENERIC, TO_EU, REGION, IN } = root.SizerBrands || require('./brands.js');
   const Charts = root.SizerCharts || require('./charts.js');
+  const RD = root.SizerReviewDetails || require('./review-details.js');
 
   const norm = (s) => String(s || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
 
@@ -438,11 +439,42 @@
 
   function reviewReason(rv) {
     const what = VERDICT_WORDS[rv.verdict];
+    if (rv.weighted && rv.weighted.verdict === rv.verdict) {
+      return rv.weighted.similar ? `${rv.weighted.similar} reviewer${rv.weighted.similar === 1 ? '' : 's'} about your height and shape say${rv.weighted.similar === 1 ? 's' : ''} it ${what}.`
+        : `Reviewers, weighted by how like you they are, say it ${what}.`;
+    }
     const shops = rv.vendors ? `, across ${rv.vendors + (rv.local.total ? 1 : 0)} shops` : '';
     const basis = rv.fromSummary && !rv.vendors
       ? `${Math.round(rv.share * 100)} % of ${rv.total} reviews`
       : `${rv[rv.verdict]} of ${rv.mentions} reviews that mention fit${shops}`;
     return rv.verdict === 'tts' ? `Buyers say it ${what} (${basis}).` : `Buyers say it ${what}: ${basis}.`;
+  }
+
+  // ---- where it will be tight or loose -------------------------------------
+
+  const AREA_NAME = { bust: 'bust', waist: 'waist', hip: 'hips', shoulder: 'shoulders', inseam: 'leg', length: 'length', sleeve: 'sleeves' };
+  const AREA_TEXT = { tight: 'May be tight at the', close: 'Close fit at the', roomy: 'Roomy at the', fine: 'Fine at the' };
+  const AREA_ORDER = ['tight', 'short', 'long', 'close', 'roomy', 'fine'];
+  const REVIEW_VERDICT = { tight: 'tight', loose: 'roomy', long: 'long', short: 'short' };
+
+  // Each measured area against the row of the size picked (body cm, or garment cm when sizing garment
+  // to garment): over the row by the fabric's tolerance is tight, a little over is close, well under
+  // is roomy. Then what reviewers like you say about particular areas. Most important first.
+  function fitAreas(have, row, stretch, weighted) {
+    const tightFrom = stretch === 'none' ? 1.5 : stretch === 'high' ? 3.5 : 2.5;
+    const out = [];
+    for (const area of ['bust', 'waist', 'hip', 'shoulder']) {
+      if (have[area] == null || typeof row[area] !== 'number') continue;
+      const d = have[area] - row[area];
+      const verdict = d >= tightFrom ? 'tight' : d >= 1 ? 'close' : d <= -4 ? 'roomy' : 'fine';
+      out.push({ area, verdict, source: 'chart', text: `${AREA_TEXT[verdict]} ${AREA_NAME[area]}` });
+    }
+    for (const a of (weighted && weighted.areas) || []) {
+      const verdict = REVIEW_VERDICT[a.direction];
+      const where = ['inseam', 'length', 'sleeve'].includes(a.area) ? 'in the' : 'at the';
+      out.push({ area: a.area, verdict, source: 'reviews', text: `${a.count} reviewers like you found it ${verdict} ${where} ${AREA_NAME[a.area] || a.area}` });
+    }
+    return out.sort((a, b) => AREA_ORDER.indexOf(a.verdict) - AREA_ORDER.indexOf(b.verdict));
   }
 
   // ---- the recommendation ------------------------------------------------
@@ -504,7 +536,7 @@
   function recommend(profile, product, charts) {
     const kind = kindOf(product.title);
     const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`);
-    const reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
+    let reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
     const brand = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
     if (kind === 'shoes') return recommendShoes(profile, product, brand, signals, charts, reviews);
 
@@ -541,6 +573,13 @@
       reasons.push({ text: `Your ${joinNames(sources)} fit${sources.length === 1 && !/measurements/.test(sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
       if (brand && brand.garment) reasons.push({ text: `${brand.name} lists garment measurements, so Sizer allowed a little ease.`, delta: null });
     }
+
+    // Reviewers who say their height or shape count by how like you they are; the plain count, which
+    // is what the pool receives, stays in reviews.local.
+    // A card counts only when it says something about the fit; a menu reading "Curvy jeans" does not.
+    const details = (product.reviewCards || []).map(RD.parseReview).filter((d) => d.verdict || d.areas.length);
+    const weighted = details.length ? RD.weightedVerdict(details, { height: body.height, waist: body.waist, hip: body.hip }) : null;
+    if (weighted) reviews = { ...reviews, verdict: weighted.verdict, weighted };
 
     let adj = 0;
     // The page's own note comes first; buyers' reports count only when the page says nothing.
@@ -594,8 +633,8 @@
 
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up'
       : signals.fitNote === 'large' ? 'Runs large, sized down'
-        : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
-          : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down'
+        : buyersNote && reviews.verdict === 'small' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs small, sized up`
+          : buyersNote && reviews.verdict === 'large' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs large, sized down`
         : rigid && idx > usual ? 'No stretch, sized up'
           : signals.stretch === 'high' && idx < usual ? 'Stretchy, sized down'
             : idx > usual ? 'Sized up for you' : idx < usual ? 'Sized down for you' : 'Your usual fit';
@@ -616,6 +655,7 @@
       ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
       : null;
     const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
+    const areas = fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted);
 
     let score = 0.4;
     if (brand) score += 0.2 - tierPenalty(brand);
@@ -655,6 +695,7 @@
       signals,
       reviews,
       body,
+      areas,
       kind,
       sizedOn: keys,
       garmentToGarment: !!g2g,

@@ -412,9 +412,17 @@
     const b = clip(brand).slice(0, 80);
     const s = clip(style).slice(0, 80) || itemKey.split('|')[1];
     const k = kind === 'outerwear' ? 'tops' : kind;
-    if (!b || !KINDS.includes(k)) return null;
-    return { item_key: itemKey, brand: b, style: s, kind: k, shop: String(shop || '').trim().toLowerCase(), install, tallies: dossierTallies(tallies) };
+    // The function refuses a shop that is not a dotted hostname (localhost, an intranet name, an
+    // address) and an install that is not a uuid; such a page never asks.
+    const host = String(shop || '').trim().toLowerCase();
+    const id = String(install || '').trim().toLowerCase();
+    if (!b || !KINDS.includes(k) || !DOSSIER_HOSTNAME.test(host) || !DOSSIER_UUID.test(id)) return null;
+    return { item_key: itemKey, brand: b, style: s, kind: k, shop: host, install: id, tallies: dossierTallies(tallies) };
   }
+
+  // The fit-dossier function's own shapes for the shop and the install (fit-dossier/dossier.ts).
+  const DOSSIER_HOSTNAME = /^(?=.{1,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+  const DOSSIER_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
   // The reply's dossier, held to the function's shape; null when it is not one. Only web sources.
   function dossierEntry(d) {
@@ -461,7 +469,8 @@
     }
     return function dossier(msg) {
       const key = dossierKey(msg && msg.itemKey);
-      if (!key || !dossierBody(msg, 'check')) return Promise.resolve({ dossier: null, error: 'bad request' });
+      // Checked before the install id is read, with a stand-in of the same shape.
+      if (!key || !dossierBody(msg, '00000000-0000-0000-0000-000000000000')) return Promise.resolve({ dossier: null, error: 'bad request' });
       if (!inFlight.has(key)) {
         inFlight.set(key, ask(msg, key)
           .catch((e) => ({ dossier: null, error: String((e && e.message) || e) }))

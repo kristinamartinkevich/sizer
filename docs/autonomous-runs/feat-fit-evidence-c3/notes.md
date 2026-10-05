@@ -71,3 +71,38 @@ touched here.
   in-flight dedupe (1), README losing "anonymous review counts" (1).
 - `node --check` on `src/content.js` and `src/background.js`: clean.
 - Not run here: anything in a browser (see commitments), `deno test` (server code untouched).
+
+## Integration (coordinator)
+
+Cherry-picked onto the shared branch as c11ae36. Conflicts with C2's review fix and C4's copy fix
+resolved: `fitAreas` keeps C2's kind argument, and the dossier's web areas follow the same rule
+(trousers never take a bust, shoulder or sleeve area from the web; test mutation-checked). The store
+copy merges the dossier request with C4's "which request carries the hostname". C6 later moved the
+sheet into `src/sheet.js`; the web block (checking line, brand note, sources) moved with it, so the
+side panel lists the sources too (test in tests/dossier.test.js). With C6, the order is page note,
+reviews, this item's dossier, then Sizer users' learned brand fit; a dossier move keeps the learned
+fit from moving the size again (test mutation-checked).
+
+Browser, demo shop: `?dossier=small&open=why` shows "Checking what others say about the fit" at
+0.9 s, then "Others online say it runs small, sized up", "Others online find it tight at the hips"
+and two links (no `javascript:`). On these rigid demo jeans the size stays 28: the dossier replaces
+the rigid lean, as a page note does.
+
+## Review (1 adversarial + 1 QA, wf_d185200d-764): 3 confirmed, all applied
+
+- MAJOR: the privacy policy and the listing did not say the function keeps a record of each
+  request (dossier_requests: item key, brand, kind, hostname, install id, time, outcome). Both say
+  so now. The record has no retention limit; whether to add one is a schema decision left to the
+  operator.
+- MINOR: `dossierBody` sent any shop and install, so a tab on localhost, an intranet name or an
+  address made a request the function always refuses, on every page load. It now holds the shop to
+  the function's hostname shape and the install to a uuid; the test mirror checks both.
+- MINOR: no test that a dossier move replaces the rigid lean and the brand tendency. Added: on
+  rigid fabric a dossier lands where the page's own "runs small" note does, with one moving reason;
+  RE/DONE's tendency note steps aside. Mutation-checked by dropping the dossier from `explicit`.
+
+Observation, not changed: the rule that rigid fabric rounds up when you fall between two sizes
+(README step 3) is separate from the lean, so a "runs small" from the page or from the dossier adds
+a size on top of it (40 to 42 becomes 44). That predates C3 and applies to page notes too.
+
+`node --test tests/`: 306/306.

@@ -270,7 +270,7 @@ test('the privacy policy, listing, launch copy and README name every field the f
   const fs = require('node:fs');
   const path = require('node:path');
   const root = path.join(__dirname, '..');
-  const body = Store.dossierBody({ itemKey: 'ostra studio|mira', brand: 'Ostra Studio', style: 'mira', kind: 'bottoms', shop: 'shop.example', tallies: { small: 2, large: 0, tts: 1, total: 4, areas: [{ area: 'hip', direction: 'tight', count: 2 }] } }, 'id-1');
+  const body = Store.dossierBody({ itemKey: 'ostra studio|mira', brand: 'Ostra Studio', style: 'mira', kind: 'bottoms', shop: 'shop.example', tallies: { small: 2, large: 0, tts: 1, total: 4, areas: [{ area: 'hip', direction: 'tight', count: 2 }] } }, INSTALL);
   assert.deepStrictEqual(Object.keys(body).sort(), ['brand', 'install', 'item_key', 'kind', 'shop', 'style', 'tallies'], 'a new field in dossierBody needs a line in the copy below');
   assert.deepStrictEqual(Object.keys(body.tallies).sort(), ['areas', 'large', 'small', 'total', 'tts'], 'a new tally field needs a line in the copy below');
   const words = {

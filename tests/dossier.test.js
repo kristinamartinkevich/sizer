@@ -15,12 +15,18 @@ const ITEM_KEY = /^[a-z0-9 ]+\|[a-z0-9]+$/;
 const AREAS = ['bust', 'chest', 'waist', 'hip', 'length', 'inseam', 'shoulder', 'sleeve', 'foot'];
 const DIRECTIONS = ['tight', 'loose', 'long', 'short'];
 const isCount = (v) => Number.isInteger(v) && v >= 0 && v <= 5000;
+// The function's own shapes (supabase/functions/fit-dossier/dossier.ts).
+const HOSTNAME = /^(?=.{1,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
 function serverAccepts(b) {
   assert.deepStrictEqual(Object.keys(b).sort(), ['brand', 'install', 'item_key', 'kind', 'shop', 'style', 'tallies']);
   assert.ok(ITEM_KEY.test(b.item_key) && b.item_key.length <= 120, b.item_key);
   assert.ok(b.brand.length >= 1 && [...b.brand].length <= 80);
   assert.ok(b.style.length >= 1 && [...b.style].length <= 80);
   assert.ok(['bottoms', 'tops', 'dresses', 'shoes'].includes(b.kind));
+  assert.ok(HOSTNAME.test(b.shop), b.shop);
+  assert.ok(UUID.test(b.install), b.install);
   assert.deepStrictEqual(Object.keys(b.tallies).sort(), ['areas', 'large', 'small', 'total', 'tts']);
   const t = b.tallies;
   assert.ok([t.small, t.large, t.tts, t.total].every(isCount), JSON.stringify(t));
@@ -337,4 +343,31 @@ test('dossier copy has no em dash or exclamation mark', () => {
     for (const x of [r, r2]) texts.push(x.headline, ...x.reasons.map((y) => y.text), ...x.areas.map((a) => a.text));
   }
   for (const t of texts) assert.strictEqual(/—|!/.test(t), false, t);
+});
+
+test('a shop or install id the function would refuse is never sent (C3 review)', () => {
+  for (const shop of ['localhost', '', '[::1]', 'intranet', 'shop_name.example', 'https://www.zalando.de']) {
+    assert.strictEqual(Store.dossierBody({ ...REQ, shop }, INSTALL), null, shop);
+  }
+  assert.strictEqual(Store.dossierBody(REQ, 'not-a-uuid'), null);
+  assert.strictEqual(Store.dossierBody(REQ, undefined), null);
+  serverAccepts(Store.dossierBody({ ...REQ, shop: ' WWW.Zalando.DE ' }, INSTALL.toUpperCase()));
+});
+
+test('a dossier move replaces the rigid lean and the brand tendency, never adds to them (C3 review)', () => {
+  // On rigid fabric a dossier lands exactly where the page's own "runs small" note does: the rigid
+  // lean is off for both, and only one reason moves the size.
+  const rigid = 'Composition: 100% cotton. Rigid denim, no stretch.';
+  const page = recommend(ME, trousers({ text: `${rigid} This style runs small, we recommend sizing up.` }), null);
+  const withWeb = recommend(ME, trousers({ text: rigid, dossier: web() }), null);
+  assert.strictEqual(withWeb.size, page.size);
+  assert.strictEqual(withWeb.reasons.filter((x) => x.delta).length, 1);
+  // RE/DONE's researched tendency (+0.5) and its note apply alone, and step aside for the dossier.
+  const jeans = (over = {}) => ({ brand: 'RE/DONE', title: '70s stove pipe jeans', text: '', sizes: ['24', '25', '26', '27', '28', '29', '30'].map((label) => ({ label })), ...over });
+  const NOTE = 'Vintage-cut rigid denim, widely reported to run small.';
+  const alone = recommend(ME, jeans(), null);
+  const both = recommend(ME, jeans({ dossier: web() }), null);
+  assert.ok(alone.reasons.some((x) => x.text === NOTE), JSON.stringify(alone.reasons));
+  assert.ok(!both.reasons.some((x) => x.text === NOTE), JSON.stringify(both.reasons));
+  assert.strictEqual(both.headline, 'Others online say it runs small, sized up');
 });

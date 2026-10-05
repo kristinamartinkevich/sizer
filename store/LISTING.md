@@ -26,7 +26,10 @@
 
 Common first-review rejections and how this package avoids them: the single purpose is one sentence;
 every permission has a justification; no remote code (the chart bundle is data, not code); the
-privacy policy matches what the data disclosure says.
+privacy policy matches what the data disclosure says. The 1.1.0 submission was rejected on
+2026-10-05 for "excessive keywords" (Spam and Placement, "Yellow Argon"): the description listed
+seventeen shops by name and ended in a keyword line. Keep shop names out of the description except
+where one is the feature (Vinted), and never add a keyword line.
 
 ## Store listing tab
 
@@ -81,7 +84,7 @@ AFTER YOU BUY
 • A side panel with the full reasoning for the page you are on and your recent sizings
 
 WORKS ON
-Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE, Nordstrom, Zara, Mango, H&M, COS, ARKET, Selfridges, rag & bone and Levi’s, and Vinted item pages in every country Vinted serves. On any other shop, click the Sizer icon and choose “Check this page anyway”.
+The large fashion shops in the UK, Europe and the US, and Vinted item pages in every country Vinted serves. On any other shop, click the Sizer icon and choose “Check this page anyway”.
 
 SECOND-HAND ON VINTED
 A listing has one size and no reviews, so Sizer reads the measurements the seller wrote (“pit to pit 48 cm”, “aisselle à aisselle”, “Bundweite”, in seven languages) and compares them with the pieces you own, or with your measurements. With no measurements it places the size on the label on the brand’s chart and says it is the label only. “Ask the seller to measure” copies a short, polite message in the listing’s language asking for exactly what is missing; Sizer never sends anything for you. “Read measurements from the photos” reads a tape measure in the seller’s photos, only when you click it.
@@ -94,8 +97,6 @@ Your measurements and the clothes you own stay in your Chrome profile. There are
 
 GOOD TO KNOW
 Size charts are approximate and brands change them, so check the brand’s guide for important purchases. Sizer is independent and not affiliated with any shop or brand it mentions.
-
-Size finder · size recommendation · what size am I · jeans size · size chart · fit guide · Zalando · ASOS · Net-a-Porter · Revolve · Zara · H&M
 
 **Graphic assets:**
 - Icon: `icons/128.png`

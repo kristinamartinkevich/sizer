@@ -123,16 +123,25 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .body { flex: 1; overflow: auto; padding: 24px 22px 8px; }
 .hero .k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .hero .big { font: 600 64px/1 var(--serif); letter-spacing: -.03em; margin: 6px 0 8px; font-variant-numeric: lining-nums tabular-nums; }
-.hero .headline { font: 500 19px/1.3 var(--serif); }
-.meter { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.hero .headline { display: flex; align-items: center; gap: 10px; font: 500 19px/1.3 var(--serif); }
+.meter { display: inline-flex; align-items: center; }
 .dots { display: inline-flex; gap: 4px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); }
 .dots i.on { background: var(--accent); }
-.firm { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
-.stock { margin-top: 18px; padding: 12px 14px; border-radius: 10px; background: #f6e7e5; color: var(--graphite); }
-.alt { margin: 14px 0 0; color: var(--muted); }
+.firm { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+.stock { margin-top: 16px; padding: 12px 14px; border-radius: 10px; background: #f6e7e5; color: var(--graphite); }
+.stock p { margin: 0; }
+.stock .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.alt { margin: 12px 0 0; color: var(--muted); }
 .alt b { color: var(--graphite); font-weight: 600; }
-h3 { margin: 26px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+h3 { margin: 22px 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.more { margin-top: 20px; border-top: 1px solid var(--hair); }
+.more summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 12px 0; font-size: 13px; color: var(--muted); border-radius: 8px; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary::before { content: ""; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform .2s var(--ease); margin-left: 2px; }
+.more[open] summary::before { transform: rotate(45deg); }
+.more summary:hover { color: var(--graphite); }
+.more .facts { margin-bottom: 12px; }
 ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
 ol li { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--hair); counter-increment: r; }
 ol li:first-child { border-top: 0; padding-top: 2px; }

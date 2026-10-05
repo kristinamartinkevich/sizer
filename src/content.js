@@ -141,20 +141,24 @@
           : ['In stock', inStock.length ? inStock.map(chip).join('') : 'None'],
       stockKnown && soldOut.length ? ['Sold out', soldOut.map(chip).join('')] : null,
     ].filter(Boolean);
+    // Three stops for the eye: the figure, the reasons, and everything else folded away.
+    const nearest = r.inStock ? [r.inStock.size, r.inStock.other && r.inStock.other.size].filter(Boolean).map(norm) : [];
+    const stockChip = (x) => `<span class="chip${nearest.includes(norm(x.label)) ? ' pick' : ''}">${esc(x.label)}</span>`;
     return `
       <div class="hero">
         <div class="k">${r.confidence === 'Low' ? 'Rough guess' : 'Your size'}</div>
         <div class="big">${esc(r.size)}</div>
-        <div class="headline${r.headline === 'Your usual fit' ? '' : ' moved'}">${esc(r.headline)}</div>
-        <div class="meter">${dots(r.confidence)}<span>${r.confidence} confidence</span></div>
+        <div class="headline${r.headline === 'Your usual fit' ? '' : ' moved'}">${esc(r.headline)}<span class="meter" title="${r.confidence} confidence">${dots(r.confidence)}</span></div>
         ${r.firmUp ? `<p class="firm">${esc(r.firmUp)}</p>` : ''}
       </div>
-      ${r.stockText ? `<div class="stock">${esc(r.stockText)}</div>` : ''}
-      ${r.alternative ? `<p class="alt">Or <b>${esc(r.alternative.size)}</b> ${esc(r.alternative.why)}.</p>` : ''}
+      ${r.stockText ? `<div class="stock"><p>${esc(r.stockText)}</p>${inStock.length ? `<div class="chips">${inStock.map(stockChip).join('')}</div>` : ''}</div>`
+        : r.alternative ? `<p class="alt">Or <b>${esc(r.alternative.size)}</b> ${esc(r.alternative.why)}.</p>` : ''}
       <h3>Why this size</h3>
       <ol>${r.reasons.map((x) => `<li><span>${esc(x.text)}</span>${x.delta ? `<em>${x.delta > 0 ? '+' : '−'}${Math.abs(x.delta)} size</em>` : ''}</li>`).join('')}</ol>
-      <h3>Read on this page</h3>
-      <div class="facts">${facts.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
+      <details class="more">
+        <summary>What Sizer read on this page</summary>
+        <div class="facts">${facts.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>
+      </details>`;
   }
 
   function renderSheet() {

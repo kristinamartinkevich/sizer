@@ -1,13 +1,51 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><style>
+<html><head><meta charset="utf-8"><title>Sizer icon</title><style>
   html, body { margin: 0; background: transparent; }
-  .d { position: absolute; top: 4%; left: 4%; border-radius: 50%; background: #2F4A3A; display: grid; place-items: center; }
-  .s { color: #F6F3EC; font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-weight: 500; line-height: 1; transform: translateY(-3%); }
-</style></head><body><div class="d"><span class="s">S</span></div>
+  canvas { display: block; }
+  .sheet { font: 13px/1.4 "Hanken Grotesk", -apple-system, sans-serif; padding: 24px; background: #fff; display: grid; gap: 18px; width: 560px; }
+  .bar { display: flex; align-items: center; gap: 22px; padding: 10px 18px; border-radius: 10px; }
+  .bar.light { background: #f1f3f4; } .bar.dark { background: #35363a; color: #e8eaed; }
+  .bar span { width: 120px; }
+  .bar img { display: block; }
+</style></head><body>
 <script>
-  // ?s=128 renders the mark at 128px; the 4% inset keeps the disc off the edge.
-  const s = +new URLSearchParams(location.search).get('s') || 128;
-  const d = document.querySelector('.d');
-  d.style.cssText += `top:${s * 0.04}px;left:${s * 0.04}px;width:${s * 0.92}px;height:${s * 0.92}px`;
-  document.querySelector('.s').style.fontSize = `${s * 0.6}px`;
+  // The toolbar and store icons, drawn from the chrome mark (brand/logo.png).
+  //   ?s=16|32|48|128   one icon on a transparent canvas, for capture into icons/<s>.png
+  //   ?preview=1        the old and new icons on a light and a dark toolbar, at real size
+  // The mark fills the square with a small inset; at 16 and 32 px the contrast is raised a touch so
+  // the hole and the two lobes still read on a dark toolbar.
+  const q = new URLSearchParams(location.search);
+  const logo = new Image();
+  logo.src = '../brand/logo.png';
+  function draw(size) {
+    const ratio = window.devicePixelRatio > 1 && q.get('preview') ? 2 : 1;
+    const c = document.createElement('canvas');
+    c.width = c.height = size * ratio;
+    c.style.width = c.style.height = `${size}px`;
+    const g = c.getContext('2d');
+    g.imageSmoothingQuality = 'high';
+    if (size <= 48) g.filter = 'brightness(0.78) contrast(1.6)';
+    const inset = size <= 16 ? 0 : size * 0.04;
+    g.drawImage(logo, inset * ratio, inset * ratio, (size - 2 * inset) * ratio, (size - 2 * inset) * ratio);
+    return c;
+  }
+  logo.onload = () => {
+    if (q.get('preview')) {
+      const sheet = document.createElement('div');
+      sheet.className = 'sheet';
+      for (const theme of ['light', 'dark']) {
+        for (const [label, make] of [['Before', (s) => Object.assign(new Image(s, s), { src: `../icons/${s >= 32 ? 32 : 16}.png` })], ['After', draw]]) {
+          const bar = document.createElement('div');
+          bar.className = `bar ${theme}`;
+          bar.innerHTML = `<span>${label}, ${theme}</span>`;
+          for (const s of [16, 32]) bar.appendChild(make(s));
+          sheet.appendChild(bar);
+        }
+      }
+      document.body.appendChild(sheet);
+    } else {
+      document.body.appendChild(draw(+q.get('s') || 128));
+    }
+    document.body.dataset.ready = '1';
+  };
 </script></body></html>

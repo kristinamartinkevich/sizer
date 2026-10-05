@@ -156,6 +156,7 @@
   // A typed number from the profile, or null when it is empty or not a number.
   const num = (v) => (v === '' || v == null || !isFinite(+v) || +v <= 0 ? null : +v);
   const BODY_KEYS = ['bust', 'waist', 'hip', 'shoulder'];
+  const UPPER_TYPES = ['top', 'dress', 'jacket'];
   const CIRCUMFERENCE = ['bust', 'waist', 'hip'];
   // Without an inseam, the leg is guessed from height: inseam is about 0.45 of it.
   const INSEAM_PER_HEIGHT = 0.45;
@@ -223,7 +224,13 @@
       if (!m) continue;
       const shift = FIT_SHIFT_CM[a.fit] || 0;
       const point = { name: anchorName(a, brand, parsed) };
-      for (const key of BODY_KEYS) if (typeof m[key] === 'number') point[key] = m[key] + (CIRCUMFERENCE.includes(key) ? shift : 0);
+      // Trousers or a skirt say nothing about your bust or shoulders, even read through a chart that
+      // prints them; only a piece worn on the upper body does.
+      const upper = UPPER_TYPES.includes(a.type);
+      for (const key of BODY_KEYS) {
+        if (!upper && (key === 'bust' || key === 'shoulder')) continue;
+        if (typeof m[key] === 'number') point[key] = m[key] + (CIRCUMFERENCE.includes(key) ? shift : 0);
+      }
       points.push(point);
     }
     return points;
@@ -306,11 +313,12 @@
     return { waist, hip, ...extra, sources: sourcesFor(profile, points, ['waist', 'hip']), spread, points, foot: foot ? foot.foot : null, footSource: foot ? foot.source : null };
   }
 
-  // What the size was read from, for the measurements used: "measurements", "your waist", the pieces.
+  // What the size was read from, for the measurements used: "measurements", "waist", the pieces.
   function sourcesFor(profile, points, keys) {
     const typed = keys.filter((k) => num(profile[k]) != null);
     if (keys.length && typed.length === keys.length) return ['measurements'];
-    const out = typed.map((k) => `your ${k}`);
+    // Bare names: the reason already opens with "Your", so "your waist" would read "Your your waist".
+    const out = typed.map((k) => k);
     const missing = keys.filter((k) => !typed.includes(k));
     out.push(...points.filter((p) => missing.some((k) => typeof p[k] === 'number')).map((p) => p.name));
     return out;
@@ -578,7 +586,7 @@
     // is what the pool receives, stays in reviews.local.
     // A card counts only when it says something about the fit; a menu reading "Curvy jeans" does not.
     const details = (product.reviewCards || []).map(RD.parseReview).filter((d) => d.verdict || d.areas.length);
-    const weighted = details.length ? RD.weightedVerdict(details, { height: body.height, waist: body.waist, hip: body.hip }) : null;
+    const weighted = details.length ? RD.weightedVerdict(details, { height: body.height, waist: body.waist, hip: body.hip, weight: num(profile.weight) }) : null;
     if (weighted) reviews = { ...reviews, verdict: weighted.verdict, weighted };
 
     let adj = 0;

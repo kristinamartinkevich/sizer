@@ -162,6 +162,19 @@ test('a piece with flat-lay measurements is compared garment to garment with a g
   assert.match(flat.reasons[0].text, /Some Label 27/);
 });
 
+// Review finding (C1 battery, MINOR): only trousers covered the garment-to-garment path.
+test('a top measured flat across the chest is compared with a garment chart’s bust', () => {
+  const rows = [34, 36, 38, 40, 42].map((eu, i) => ({ label: String(eu), aliases: {}, bust: [84 + 4 * i, 86 + 4 * i], waist: [69 + 4 * i, 71 + 4 * i], hip: [95 + 4 * i, 97 + 4 * i], inseam: null, foot_length: null, extra: {}, suspect: null }));
+  const tops = normalise([{ brand_id: 'ostra', brand_name: 'Ostra', aliases: ['ostra'], updated_at: null, fit_notes: [], charts: [chart({ id: 'o2', category: 'tops', size_system: 'eu', measurement_basis: 'garment', rows })] }]);
+  const tee = { brand: 'Ostra', title: 'Cotton T-shirt', text: '', sizes: ['34', '36', '38', '40', '42'].map((label) => ({ label })) };
+  const piece = (chest) => ({ anchors: [{ brand: 'Some Label', type: 'top', size: 'M', fit: 'perfect', flat: { chest } }] });
+  const narrow = recommend(piece('47'), tee, tops);
+  const wide = recommend(piece('49'), tee, tops);
+  assert.match(narrow.reasons[0].text, /garment to garment/);
+  assert.equal(narrow.size, '38');
+  assert.equal(wide.size, '40');
+});
+
 test('flat-lay measurements on a piece of another kind are not used', () => {
   const top = { brand: 'Some Label', type: 'top', size: 'S', fit: 'perfect', flat: { waist: '39', hip: '52' } };
   const r = recommend({ anchors: [owned, top] }, trousers, flatChart('garment'));
@@ -262,4 +275,26 @@ test('the default profile carries the new fields, empty, and lets the fabric dec
   for (const k of ['height', 'weight', 'bust', 'shoulder', 'armLength']) assert.equal(d[k], '', k);
   assert.deepEqual(d.fitByCategory, {});
   assert.equal(d.betweenSizes, 'stretch');
+});
+
+// Review finding (C1 battery, BLOCKER): a bottoms piece read through a chart that prints a bust was
+// lending the profile a bust, so a typed waist and hip stopped sizing tops.
+test('a pair of jeans you own never gives Sizer your bust', () => {
+  const tee = { brand: 'Ostra', title: 'Cotton T-shirt', text: '', sizes: ['XS', 'S', 'M', 'L', 'XL'].map((label) => ({ label })) };
+  const typed = { waist: '76', hip: '102', anchors: [] };
+  const withJeans = { ...typed, anchors: [{ brand: '', type: 'trousers', size: '38', fit: 'perfect' }, { brand: '', type: 'skirt', size: 'M', fit: 'perfect' }] };
+  assert.equal(bodyFromProfile(withJeans, null).bust, null);
+  assert.equal(recommend(withJeans, tee, null).size, recommend(typed, tee, null).size);
+});
+
+// Review finding (C1 battery, MINOR): typed measurements mixed with a piece read "Your your waist".
+test('the first reason names typed measurements and pieces once, without "your your"', () => {
+  const dress = { brand: 'Ostra', title: 'Wrap dress', text: '', sizes: ['34', '36', '38', '40', '42'].map((label) => ({ label })) };
+  const r = recommend({ waist: '72', hip: '97', anchors: [{ brand: '', type: 'top', size: 'M', fit: 'perfect' }] }, dress, null);
+  assert.match(r.reasons[0].text, /^Your waist, hip and top M fit like /);
+});
+
+test('a top or dress you own does tell Sizer your bust', () => {
+  const body = bodyFromProfile({ anchors: [{ brand: '', type: 'top', size: 'M', fit: 'perfect' }] }, null);
+  assert.equal(typeof body.bust, 'number');
 });

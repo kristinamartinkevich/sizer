@@ -28,6 +28,14 @@
     return m ? +m[1] : null;
   }
 
+  // A weight given in pounds or kilos, in kg; 30 to 200 kg only, so a price or a size never reads.
+  function weightOf(t) {
+    const m = t.match(/(?<![\d.,])(\d{2,3}(?:[.,]\d)?)\s?(lbs?|pounds|kg|kilos?)\b/i);
+    if (!m) return null;
+    const v = parseFloat(m[1].replace(',', '.')) * (/^(?:lb|pound)/i.test(m[2]) ? 0.4536 : 1);
+    return v >= 30 && v <= 200 ? Math.round(v) : null;
+  }
+
   function verdictOf(t) {
     const field = t.match(SIZING_FIELD);
     if (field) return SIZING_VERDICT[field[1].toLowerCase()];
@@ -106,6 +114,7 @@
       height,
       heightBucket,
       curves,
+      weight: weightOf(t),
       sizeBought: sizeAfter(t, "sized?\\s+(?:up|down)\\s+to|went\\s+(?:up|down)\\s+to|bought|ordered|purchased|got|went\\s+with|took|j['’]ai\\s+pris|j['’]ai\\s+commandé"),
       usualSize: sizeAfter(t, "usually|normally|typically|always|d['’]habitude|habituellement|normalement"),
       areas: areasOf(t),
@@ -143,7 +152,16 @@
     return NEAR[Math.abs(SHAPES.indexOf(r.curves) - SHAPES.indexOf(mine))];
   }
 
-  const similarity = (r, profile) => +(heightMatch(r, profile || {}) * shapeMatch(r, profile || {})).toFixed(4);
+  // Weight only sharpens a match: when you and the reviewer both give one it scales the weight from 1
+  // (within 4 kg) to 0.4 (15 kg or more apart); when either is missing it changes nothing.
+  function weightMatch(r, profile) {
+    const mine = +profile.weight;
+    if (!(mine > 0) || !r.weight) return 1;
+    const d = Math.abs(r.weight - mine);
+    return d <= 4 ? 1 : d >= 15 ? 0.4 : +(1 - ((d - 4) / 11) * 0.6).toFixed(3);
+  }
+
+  const similarity = (r, profile) => +(heightMatch(r, profile || {}) * shapeMatch(r, profile || {}) * weightMatch(r, profile || {})).toFixed(4);
 
   const SIMILAR = 0.6;
   const MIN_DESCRIBED = 3;

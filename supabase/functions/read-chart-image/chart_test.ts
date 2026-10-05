@@ -6,6 +6,7 @@ import {
   answersFor,
   CHARTS_FOR,
   checkImageChart,
+  KINDS,
   parseImageInput,
   parseProductAnswer,
   parseProductInput,
@@ -20,7 +21,9 @@ import { found, IMAGE_URL, imageChart, INSTALL, notFound, productAnswer, shoeCha
 const g = globalThis as any;
 
 Deno.test("CHARTS_FOR matches src/charts.js and lookup-chart, and the plausible ranges match src/guide-table.js", () => {
-  assert.deepEqual(JSON.parse(JSON.stringify(CHARTS_FOR)), JSON.parse(JSON.stringify(g.SizerCharts.CHARTS_FOR)));
+  // Coats and jackets reach the function as tops (lookupFor in src/engine.js); compare the four kinds served.
+  const served = Object.fromEntries(Object.entries(g.SizerCharts.CHARTS_FOR).filter(([k]) => (KINDS as readonly string[]).includes(k)));
+  assert.deepEqual(JSON.parse(JSON.stringify(CHARTS_FOR)), JSON.parse(JSON.stringify(served)));
   assert.deepEqual(JSON.parse(JSON.stringify(CHARTS_FOR)), JSON.parse(JSON.stringify(LOOKUP_CHARTS_FOR)));
   // The extension's reader rejects a column outside these ranges; the image reader holds the same line.
   assert.deepEqual(JSON.parse(JSON.stringify(PLAUSIBLE)), JSON.parse(JSON.stringify(g.SizerGuideTable.PLAUSIBLE)));

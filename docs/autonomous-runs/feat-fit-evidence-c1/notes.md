@@ -89,3 +89,30 @@ Existing expectations: none changed. All 103 tests at the start pass unmodified.
   now reads 2XL to 4XL as letters and adds an `eu` field. The builder had no browser.
 - Options page: **not checked in a browser.** Static check only: every id the script reads exists in
   the page, and `node --check` passes for `ui/options.js` and `ui/popup.js`.
+
+## Coordinator verification after cherry-pick
+
+- `tests/shops.html`: PASS, 53 checks, on the shared branch with C1 in.
+- Options page, driven in the browser pane with `tests/chrome-stub.js` injected: `?welcome=1` puts
+  "Add a piece you own that fits well" first as 01; the "Measure this piece" fields follow the type
+  (waist, hip, inseam, length for jeans; chest, shoulder, sleeve, length for a coat; hidden for
+  shoes); per-kind preference and "Between two sizes" render; weight switches kg to lb; no errors.
+- Cross-bundle break found on integration: C1 added `outerwear` to `CHARTS_FOR` in `src/charts.js`,
+  and the parity tests in `lookup-chart` and `read-chart-image` (which C1's builder never ran)
+  failed. The functions serve four kinds and the extension asks for coats as tops, so the parity
+  tests now compare the served kinds and pin outerwear to read the same charts as tops.
+
+## Review (1 adversarial + 1 QA, base dae6052, head db568be)
+
+Five findings, all confirmed, all applied:
+1. BLOCKER: a trousers or skirt piece read through the standard EU or letter chart (which C1 gave a
+   bust column) lent the profile a bust, so a typed waist and hip stopped sizing tops. Only a top,
+   dress or jacket now gives bust or shoulder. Regression test in `tests/profile.test.js`
+   (reproduced at bust 88.5 before the fix).
+2. MAJOR: the weight field promised to weigh reviews from people built like you, and nothing did.
+   Kept the promise: C2's similarity now reads reviewer weights and scales by them when both sides
+   give one. Tests in `tests/review-details.test.js`.
+3. MINOR: "Your your waist, your hip and top M". Typed measurements are now bare names. Test added.
+4. MINOR: HANDOFF §4 drift (label name, bust-only charts still dropped). Amended in place.
+5. MINOR: garment-to-garment was covered for trousers only. Added a top measured flat across the
+   chest against a garment chart's bust.

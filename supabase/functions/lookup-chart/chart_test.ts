@@ -3,6 +3,7 @@ import "../../../src/charts.js";
 import {
   brandSlug,
   CHARTS_FOR,
+  KINDS,
   normaliseBrand,
   parseLookupInput,
   pickBest,
@@ -18,8 +19,13 @@ const SizerCharts = (globalThis as any).SizerCharts;
 
 const ctx = { kind: "dresses" as const, shop: "www.revolveclothing.fr", shopGuideSent: false, fetched: ["https://helsastudio.com/pages/size-guide"] };
 
-Deno.test("CHARTS_FOR and tierOf match src/charts.js exactly", () => {
-  assert.deepEqual(JSON.parse(JSON.stringify(CHARTS_FOR)), JSON.parse(JSON.stringify(SizerCharts.CHARTS_FOR)));
+// The extension knows coats and jackets as their own kind but asks the function for a tops chart
+// (lookupFor in src/engine.js), so the function serves four kinds and is compared on those.
+const servedKinds = (all: Record<string, unknown>) => Object.fromEntries(Object.entries(all).filter(([k]) => (KINDS as readonly string[]).includes(k)));
+
+Deno.test("CHARTS_FOR and tierOf match src/charts.js exactly, on the kinds the function serves", () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(CHARTS_FOR)), JSON.parse(JSON.stringify(servedKinds(SizerCharts.CHARTS_FOR))));
+  assert.deepEqual(SizerCharts.CHARTS_FOR.outerwear, SizerCharts.CHARTS_FOR.tops, "outerwear is asked for as tops, so it must read the same charts");
   for (const source_type of ["brand_site", "retailer_brand_chart", "retailer_house_chart", undefined]) {
     for (const status of ["verified", "machine_read", undefined]) {
       assert.equal(tierOf({ source_type, status }), SizerCharts.tierOf({ source_type, status }), `${source_type}/${status}`);

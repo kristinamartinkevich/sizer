@@ -104,6 +104,21 @@ test('similarity is highest for a reviewer of your height and shape', () => {
   assert.strictEqual(RD.similarity({ height: 164 }, {}), 0.36);
 });
 
+test('reads a reviewer’s weight in pounds or kilos, and a size or price is not a weight', () => {
+  assert.strictEqual(RD.parseReview("I'm 5'4 and 130 lbs").weight, 59);
+  assert.strictEqual(RD.parseReview('Je pèse 55 kg, 1m65').weight, 55);
+  assert.strictEqual(RD.parseReview('62kg and usually a 28').weight, 62);
+  assert.strictEqual(RD.parseReview('Bought a 27, paid 130 €').weight, null);
+});
+
+test('weight sharpens the match when both you and the reviewer give one, and is neutral otherwise', () => {
+  const me = { ...ME, weight: 58 };
+  assert.strictEqual(RD.similarity({ height: 164, curves: 'curvy', weight: 59 }, me), 1);
+  assert.ok(RD.similarity({ height: 164, curves: 'curvy', weight: 80 }, me) <= 0.4);
+  assert.strictEqual(RD.similarity({ height: 164, curves: 'curvy' }, me), 1);
+  assert.strictEqual(RD.similarity({ height: 164, curves: 'curvy', weight: 80 }, ME), 1);
+});
+
 test('with three or more reviewers who say their height or shape, the verdict is weighted by similarity', () => {
   const details = [
     { verdict: 'small', height: 162, curves: 'curvy' },

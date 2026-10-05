@@ -154,7 +154,9 @@ garment measurements are compared directly with the product chart when that char
 
 Engine:
 - Tops, dresses and outerwear use bust (and shoulder for outerwear) when the chart has it; bottoms
-  keep waist and hip. `measure`/`position` generalise to any key the chart row carries.
+  keep waist and hip. `measure`/`position` work on bust and shoulder too, but a chart row still
+  needs waist and hip to be kept (as built: a bust-only tops chart is dropped). Only a top, dress or
+  jacket you own can tell Sizer your bust or shoulders (C1 review fix).
 - `kindOf` gains `outerwear` (coat, jacket, blazer, parka, trench, manteau, veste, jacke).
 - Height feeds the inseam guess when inseam is empty (inseam ≈ 0.45 × height, labelled a guess),
   and C2's similarity.
@@ -164,7 +166,7 @@ Engine:
   Tests cover every pair in both directions.
 - `betweenSizes` replaces the stretch threshold when set to `up` or `down`.
 
-Options page: new fields under "Your measurements", a "Measure a piece you own" disclosure per
+Options page: new fields under "Your measurements", a "Measure this piece" disclosure (first drafted as "Measure a piece you own") per
 owned piece with a diagram-free list of what to measure, fit preference per category. Onboarding
 (`?welcome=1`) leads with "Add a piece you own that fits well" and puts measurements second.
 
@@ -187,8 +189,10 @@ usualSize, areas }]`, reading:
 
 Body similarity (pure, on the device): weight `w = height match × shape match`, height match from
 the reviewer's height or bucket against the user's height (1 within 4 cm, 0.25 beyond 12 cm),
-shape match from curves against the user's hip − waist (straight < 20 cm, curvy > 28 cm). Unknown
-fields count 0.6. The weighted verdict replaces the plain count when at least three reviews carry a
+shape match from curves against the user's hip − waist (straight < 20 cm, curvy ≥ 28 cm). Unknown
+fields count 0.6. Weight, when both you and the reviewer give one, scales the result from 1 (within
+4 kg) to 0.4 (15 kg apart) and is neutral otherwise; it never sizes anything (C1 review fix: the
+weight field's copy promises exactly this use). The weighted verdict replaces the plain count when at least three reviews carry a
 height or shape; the reason says "6 reviewers about your height say it runs small". Area mentions
 are tallied the same way and feed `areas`.
 

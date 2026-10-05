@@ -16,7 +16,7 @@ window.chrome = { runtime: { getURL: (p) => 'http://localhost:8766/' + p, sendMe
   storage: { sync: { get: (d, cb) => cb({ profile: { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: '', type: 'jeans', size: '27', fit: 'perfect' }], waist: '', hip: '', inseam: '', footLength: '', unit: 'cm', fitPreference: 'regular', theme: 'system' } }) },
     local: { get: (d, cb) => cb(typeof d === 'string' ? {} : d) }, onChanged: { addListener: () => {} } } };
 </script>
-""" + ''.join(f'<script src="http://localhost:8766/src/{f}.js?v={int(time.time())}"></script>\n' for f in ['brands', 'charts-store', 'charts', 'defaults', 'engine', 'extract', 'panel-style', 'mark', 'content'])
+""" + ''.join(f'<script src="http://localhost:8766/src/{f}.js?v={int(time.time())}"></script>\n' for f in ['brands', 'charts-store', 'charts', 'defaults', 'engine', 'guide-table', 'extract', 'panel-style', 'mark', 'content'])
 # the shop's own scripts must not run again from a file: they would re-render and fight the snapshot
 html = re.sub(r'<script\b(?![^>]*application/ld\+json)[^>]*>.*?</script>', '', html, flags=re.S | re.I)
 # consent banners would sit on top of every render

@@ -77,6 +77,7 @@
         "src/charts.js",
         "src/defaults.js",
         "src/engine.js",
+        "src/guide-table.js",
         "src/extract.js",
         "src/panel-style.js",
         "src/mark.js",

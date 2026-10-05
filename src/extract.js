@@ -5,7 +5,8 @@
 
   const REVIEW_AREA = '[class*="review" i], [id*="review" i], [data-testid*="review" i], [itemprop="review"]';
   // Cookie banners and consent dialogs: never product text.
-  const CHROME = '#onetrust-consent-sdk, [id^="onetrust" i], [id^="ot-" i], [class*="cookie" i], [class*="consent" i], [id*="cookie" i], [role="dialog"]';
+  const CONSENT = '#onetrust-consent-sdk, [id^="onetrust" i], [id^="ot-" i], [class*="cookie" i], [class*="consent" i], [id*="cookie" i]';
+  const CHROME = `${CONSENT}, [role="dialog"]`;
 
   // textContent glues sibling labels together ("Fit:RelaxedShape"), which breaks word matching.
   // `skip` keeps buyers' reviews out of the page's own text, so a reviewer's "runs small" is never read as the shop's.
@@ -225,6 +226,75 @@
     return null;
   }
 
+  const GUIDE_NAME = /size[\s_-]*(guide|chart)|guide des tailles|tableau des tailles|gr(ö|o)(ß|ss)entabelle|tabla de tallas|guida alle taglie/i;
+
+  function namesGuide(el) {
+    for (const a of el.attributes || []) if (/^(id|class|aria-label|title)$|^data-/.test(a.name) && GUIDE_NAME.test(a.value)) return clean(a.name === 'aria-label' || a.name === 'title' ? a.value : '');
+    return null;
+  }
+
+  // The size-guide label a table sits under: on the table, on an ancestor within six levels, or in a
+  // short heading just before either. Returns the caption text ('' when only an attribute names it), or null.
+  function guideCaption(table) {
+    const own = table.querySelector('caption');
+    if (own && GUIDE_NAME.test(own.textContent)) return clean(own.textContent);
+    let el = table;
+    for (let depth = 0; el && el !== el.ownerDocument.body && depth <= 6; depth += 1, el = el.parentElement) {
+      const named = namesGuide(el);
+      let sib = el.previousElementSibling;
+      for (let i = 0; sib && i < 2; i += 1, sib = sib.previousElementSibling) {
+        const t = clean(sib.textContent);
+        if (t.length <= 120 && GUIDE_NAME.test(t)) return t;
+      }
+      if (named != null) return named;
+    }
+    return null;
+  }
+
+  // The table as a grid of cell strings, colspan and rowspan expanded.
+  function tableMatrix(table) {
+    const grid = table.tagName === 'TABLE'
+      ? [...table.rows].map((r) => [...r.cells])
+      : [...table.querySelectorAll('[role="row"]')].filter((r) => r.closest('[role="table"]') === table)
+        .map((r) => [...r.querySelectorAll('[role="cell"], [role="gridcell"], [role="columnheader"], [role="rowheader"]')]);
+    if (!grid.length || grid.length > 40) return null;
+    const out = grid.map(() => []);
+    grid.forEach((cells, r) => {
+      let c = 0;
+      for (const cell of cells) {
+        while (out[r][c] != null) c += 1;
+        const text = spacedText(cell);
+        const span = Math.min(+(cell.getAttribute('colspan') || cell.getAttribute('aria-colspan')) || 1, 20);
+        const down = Math.min(+(cell.getAttribute('rowspan') || cell.getAttribute('aria-rowspan')) || 1, grid.length - r);
+        for (let i = 0; i < down; i += 1) for (let j = 0; j < span; j += 1) out[r + i][c + j] = text;
+        c += span;
+      }
+    });
+    if (out.some((row) => row.length > 20)) return null;
+    return out.map((row) => Array.from(row, (v) => v || ''));
+  }
+
+  // Size tables the page prints in or near its size guide. Guides often live in a modal, so dialogs
+  // are searched; consent banners and buyers' reviews are not.
+  function sizeGuideTables(doc, brand, url) {
+    const G = root.SizerGuideTable;
+    const charts = [];
+    let caption = null;
+    let found = 0;
+    for (const table of doc.querySelectorAll('table, [role="table"]')) {
+      if (found >= 30) break;
+      if (table.closest(OURS) || table.closest(`${REVIEW_AREA}, ${CONSENT}`) || table.querySelector('table, [role="table"]')) continue;
+      const label = guideCaption(table);
+      if (label == null) continue;
+      found += 1;
+      if (caption == null || (!caption && label)) caption = label;
+      const matrix = tableMatrix(table);
+      const chart = matrix && G.parseGuideMatrix(matrix, { brand, caption: label, url });
+      if (chart && !charts.some((c) => JSON.stringify(c.rows) === JSON.stringify(chart.rows))) charts.push(chart);
+    }
+    return found ? { charts, caption: caption || '' } : null;
+  }
+
   function extractProduct(doc, engine) {
     const ld = jsonLdProduct(doc);
     const ldBrand = ld && (typeof ld.brand === 'string' ? ld.brand : ld.brand && ld.brand.name);
@@ -252,10 +322,11 @@
       sizes,
       reviews,
       reviewSummary: reviewSummary(doc),
+      shopGuide: sizeGuideTables(doc, brandGuess, location.href),
       url: location.href,
       isProduct: !!ld || (sizes.length >= 2 && !!(brandGuess || title)),
     };
   }
 
-  root.SizerExtract = { extractProduct, findPicker, optionElements };
+  root.SizerExtract = { extractProduct, findPicker, optionElements, sizeGuideTables };
 })(globalThis);

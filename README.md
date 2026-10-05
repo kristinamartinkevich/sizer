@@ -59,7 +59,8 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 | `src/charts-store.js`, `src/background.js` | Daily download of verified charts from the Supabase project into `chrome.storage.local` |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
-| `src/extract.js` | Reads the product page and finds the size picker |
+| `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide |
+| `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables) |
 | `src/content.js`, `src/panel-style.js`, `src/mark.js` | What Sizer draws on shop pages; the mark is inline SVG so shop CSPs cannot block it |
 | `ui/` | Popup and fit profile page |
 | `store/` | Store listing, privacy policy, Product Hunt kit, image sources and renders |
@@ -86,8 +87,9 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 sheet, no picker) for checking every state; serve the folder over HTTP to open it.
 
 `tests/shops.html` runs the reader against saved real product pages in `tests/fixtures/shops/`
-(Zalando, ASOS, Net-a-Porter, Revolve) and checks brand, sizes, stock, fit notes, reviews and the
-answer. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
+(Zalando, ASOS, Net-a-Porter, Revolve) and checks brand, sizes, stock, fit notes, reviews, size-guide
+tables and the answer. `inline-guide.html` there is synthetic: a fictional brand page that prints
+its size table inline, since none of the four real shops carries its chart in the page. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
 To add a shop: open the product page in a browser, save `document.documentElement.outerHTML`
 as `tests/fixtures/shops/<shop>.html` (the demo server also accepts `POST /save?name=<shop>`), add
 its expectations to `SHOPS` in `tests/shops.html`, and `python3 tools/render-shop.py <shop> <origin>`

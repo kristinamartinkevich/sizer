@@ -168,10 +168,135 @@
     };
   }
 
+  // ---- reading a size chart image, and a page's product text, with AI -------------------------
+
+  const READ_IMAGE_URL = `${SUPABASE_URL}/functions/v1/read-chart-image/image`;
+  const READ_PRODUCT_URL = `${SUPABASE_URL}/functions/v1/read-chart-image/product`;
+  const SHOP_SOURCES = ['retailer_brand_chart', 'retailer_house_chart'];
+  const clip = (s) => String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+  const noAddresses = (s) => clip(String(s == null ? '' : s).replace(/\bhttps?:\/\/\S+|\bwww\.\S+/gi, ' '));
+
+  // What a chart image read sends: the image's public address (never the page's), the brand, the kind
+  // of item and the install id. Null when the image is not a public https address.
+  function imageBody({ image_url, brand, kind }, install) {
+    let u;
+    try { u = new URL(String(image_url || '')); } catch { return null; }
+    if (u.protocol !== 'https:' || u.username || u.password) return null;
+    u.hash = '';
+    const b = clip(brand).slice(0, 80);
+    if (!b || !KINDS.includes(kind) || u.href.length > 2048) return null;
+    return { image_url: u.href, brand: b, kind, install };
+  }
+
+  // The chart the function read, as a shop guide chart: always machine-read, and only a shop's chart.
+  function imageChartEntry(chart) {
+    if (!chart || !Array.isArray(chart.rows) || chart.rows.length < 2 || !SHOP_SOURCES.includes(chart.source_type)) return null;
+    return { ...chart, status: 'machine_read', read_by: 'read-chart-image' };
+  }
+
+  // The page's shop guide with a chart read from an image added, so the brand lookup can judge it.
+  function withImageChart(guide, chart) {
+    const charts = guide && Array.isArray(guide.charts) ? guide.charts : [];
+    return { caption: (guide && guide.caption) || 'Size chart image', charts: charts.concat(chart) };
+  }
+
+  function post(fetch, url, body) {
+    return fetch(url, { method: 'POST', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  }
+
+  // The background worker's image read, with its browser APIs passed in. One request per image, brand
+  // and kind at a time. Any failure is just no chart; the function caches what it read for everyone.
+  function createImageRead({ fetch, installId }) {
+    const inFlight = new Map();
+    async function ask(body) {
+      const res = await post(fetch, READ_IMAGE_URL, body);
+      if (!res.ok) return { chart: null, error: `HTTP ${res.status}` };
+      const data = await res.json();
+      return { chart: imageChartEntry(data && data.chart) };
+    }
+    return async function read(msg) {
+      const body = imageBody(msg || {}, await installId());
+      if (!body) return { chart: null, error: 'bad request' };
+      const key = `${body.image_url}|${body.kind}|${norm(body.brand)}`;
+      if (!inFlight.has(key)) {
+        inFlight.set(key, ask(body)
+          .catch((e) => ({ chart: null, error: String((e && e.message) || e) }))
+          .finally(() => inFlight.delete(key)));
+      }
+      return inFlight.get(key);
+    };
+  }
+
+  const PRODUCT_TEXT_LIMIT = 6000;
+
+  // What "Read this page with AI" sends: the page title, its headings and the text around the size
+  // picker, web addresses taken out, 6000 characters at most, and the install id. Never the address.
+  function productBody({ title, headings, picker }, install) {
+    const t = noAddresses(title).slice(0, 300);
+    const p = noAddresses(picker).slice(0, 3000);
+    let budget = PRODUCT_TEXT_LIMIT - t.length - p.length;
+    const hs = [];
+    for (const h of [].concat(headings || [])) {
+      const x = noAddresses(h).slice(0, 200);
+      if (!x || hs.includes(x)) continue;
+      if (x.length > budget || hs.length >= 20) break;
+      hs.push(x);
+      budget -= x.length;
+    }
+    return { title: t, headings: hs, picker: p, install };
+  }
+
+  function readProductEntry(data) {
+    if (!data || typeof data !== 'object' || !Array.isArray(data.sizes)) return null;
+    const text = (v, n) => (typeof v === 'string' && clip(v) ? clip(v).slice(0, n) : null);
+    return {
+      brand: text(data.brand, 80),
+      title: text(data.title, 200),
+      kind: KINDS.includes(data.kind) ? data.kind : null,
+      sizes: data.sizes.filter((x) => typeof x === 'string' && clip(x)).map(clip).slice(0, 40),
+      fabric: text(data.fabric, 200),
+    };
+  }
+
+  function createProductRead({ fetch, installId }) {
+    return async function read(text) {
+      try {
+        const res = await post(fetch, READ_PRODUCT_URL, productBody(text || {}, await installId()));
+        if (!res.ok) return { error: `HTTP ${res.status}` };
+        const product = readProductEntry(await res.json());
+        return product ? { product } : { error: 'unexpected reply' };
+      } catch (e) {
+        return { error: String((e && e.message) || e) };
+      }
+    };
+  }
+
+  // A word that makes kindOf read the model's kind from the title, used only when the title names none.
+  const KIND_WORD = { bottoms: 'trousers', tops: 'top', dresses: 'dress', shoes: 'shoes' };
+
+  // The page reading with the model's answer filling only what the page reader missed.
+  function applyReadProduct(product, ai, kindOf) {
+    const p = { ...product };
+    if (!ai) return p;
+    if (!clip(p.brand) && ai.brand) p.brand = ai.brand;
+    if (!clip(p.title) && ai.title) p.title = ai.title;
+    // kindOf falls back to bottoms when the title names no kind; a title that names one keeps it.
+    const namesNoKind = kindOf(p.title) === 'bottoms' && kindOf(`${p.title} dress`) === 'dresses';
+    if (ai.kind && namesNoKind && ai.kind !== 'bottoms') {
+      p.title = `${p.title} ${KIND_WORD[ai.kind]}`.trim();
+    }
+    if (!(p.sizes && p.sizes.length) && ai.sizes && ai.sizes.length) p.sizes = ai.sizes.map((label) => ({ label, available: null }));
+    if (ai.fabric) p.text = `${p.text || ''}\nComposition: ${ai.fabric}`.trim();
+    p.isProduct = p.isProduct || !!(p.brand && p.sizes && p.sizes.length);
+    return p;
+  }
+
   root.SizerChartsStore = {
     SUPABASE_URL, SUPABASE_ANON_KEY, BUNDLE_URL, ITEM_FIT_URL, REPORT_URL, LOOKUP_URL, MISS_TTL,
     headers, isFresh, isUsable, normalise, itemKey, poolExcept,
     missKey, isMissFresh, sanitiseShopGuide, lookupBody, lookupEntry, mergeChart, createLookup,
+    READ_IMAGE_URL, READ_PRODUCT_URL, imageBody, imageChartEntry, withImageChart, createImageRead,
+    productBody, readProductEntry, createProductRead, applyReadProduct,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 if (typeof module !== 'undefined') module.exports = globalThis.SizerChartsStore;

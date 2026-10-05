@@ -1,5 +1,7 @@
 // Turns a size table printed on a shop or brand page (a grid of cell strings) into a chart in the
-// shape the chart database stores, or null when the grid is not a size chart.
+// shape the chart database stores, or null when the grid is not a size chart. Also the pure parts of
+// finding a guide elsewhere: a same-shop size-guide link, a chart image's name, the guide page fetch
+// (with fetch passed in).
 (function (root) {
   const clean = (s) => String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
 
@@ -212,7 +214,58 @@
     return readOriented(m.map((r) => r.slice()), hints || {}) || readOriented(transpose(m), hints || {});
   }
 
-  const api = { parseGuideMatrix, mentionsBrand, parseRange, looksLikeSize, PLAUSIBLE };
+  // ---- where else a guide lives: the shop's own size-guide page, a chart image ----------------
+
+  const hostOf = (u) => u.hostname.replace(/^www\./, '');
+
+  // A link's address when it is a page on the shop's own host (www. or not), never the page itself.
+  function sameShopUrl(href, pageUrl) {
+    if (!href) return null;
+    try {
+      const page = new URL(pageUrl);
+      const u = new URL(href, page);
+      if (!/^https?:$/.test(u.protocol) || hostOf(u) !== hostOf(page)) return null;
+      u.hash = '';
+      page.hash = '';
+      return u.href === page.href ? null : u.href;
+    } catch {
+      return null;
+    }
+  }
+
+  // Whether an image's alt text or file name says it is a size chart.
+  const CHART_IMAGE = /size|guide|chart|taille|gr(ö|o)(ß|ss)e|talla|taglia/i;
+  function chartImageName(src, alt) {
+    if (CHART_IMAGE.test(clean(alt))) return true;
+    let file = '';
+    try { file = decodeURIComponent(new URL(src, 'https://x.invalid/').pathname.split('/').pop() || ''); } catch { file = ''; }
+    return CHART_IMAGE.test(file);
+  }
+
+  const GUIDE_FETCH_TIMEOUT_MS = 3000;
+
+  // The size-guide page's HTML: one GET without the shopper's cookies, HTML only, still on the shop's
+  // host after any redirect, abandoned after the time limit. Null on anything else.
+  async function fetchGuideText(url, { fetch, pageUrl, timeoutMs = GUIDE_FETCH_TIMEOUT_MS }) {
+    const target = sameShopUrl(url, pageUrl);
+    if (!target) return null;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(target, { method: 'GET', credentials: 'omit', redirect: 'follow', signal: ctrl.signal, headers: { Accept: 'text/html' } });
+      if (!res.ok) return null;
+      if (res.url && res.url !== target && !sameShopUrl(res.url, pageUrl)) return null;
+      if (!/text\/html|application\/xhtml/i.test(res.headers.get('content-type') || '')) return null;
+      const text = await res.text();
+      return text.slice(0, 3000000);
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  const api = { parseGuideMatrix, mentionsBrand, parseRange, looksLikeSize, PLAUSIBLE, sameShopUrl, chartImageName, fetchGuideText, GUIDE_FETCH_TIMEOUT_MS };
   root.SizerGuideTable = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

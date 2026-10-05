@@ -1,0 +1,29 @@
+<!doctype html>
+<!--
+  Synthetic fixture: a product page whose size guide sits in a same-origin iframe (a srcdoc frame the
+  shop labels "Size guide"), as some guide modals do. The brand and shop are fictional. The table in
+  the labelled frame must be read even though it has no caption of its own. A second frame, labelled
+  as a reviews widget, holds a size-shaped table that is not the guide and must not be read.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wide-leg wool trousers | Ostra Studio</title>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 24px; color: #1d1d1b; }
+    iframe { width: 480px; height: 220px; border: 1px solid #ddd; display: block; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Wide-leg wool trousers</h1>
+    <p>Ostra Studio</p>
+    <div class="guide-modal" role="dialog" aria-label="Find your size">
+      <iframe title="Size guide" srcdoc="<!doctype html><html><head><title>Ostra Studio</title></head><body><table><tr><th>Size</th><th>Waist (cm)</th><th>Hip (cm)</th></tr><tr><td>XS</td><td>60-64</td><td>86-90</td></tr><tr><td>S</td><td>64-68</td><td>90-94</td></tr><tr><td>M</td><td>68-72</td><td>94-98</td></tr><tr><td>L</td><td>72-76</td><td>98-102</td></tr></table></body></html>"></iframe>
+    </div>
+    <div class="widget">
+      <iframe title="Customer photos" srcdoc="<!doctype html><html><head><title>Photos</title></head><body><table><tr><th>Size</th><th>Waist (cm)</th><th>Hip (cm)</th></tr><tr><td>S</td><td>61-65</td><td>87-91</td></tr><tr><td>M</td><td>65-69</td><td>91-95</td></tr><tr><td>L</td><td>69-73</td><td>95-99</td></tr></table></body></html>"></iframe>
+    </div>
+  </main>
+</body>
+</html>

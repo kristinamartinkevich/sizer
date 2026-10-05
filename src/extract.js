@@ -293,25 +293,107 @@
     return out.map((row) => Array.from(row, (v) => v || ''));
   }
 
+  // The documents a guide may sit in: the page, and each same-origin frame the page can read (a guide
+  // modal is often an iframe). A frame the page labels as its size guide counts as a guide throughout.
+  function guideDocs(doc) {
+    const out = [{ doc, label: null }];
+    for (const frame of doc.querySelectorAll('iframe')) {
+      if (frame.closest(OURS)) continue;
+      let d = null;
+      try { d = frame.contentDocument; } catch { d = null; }
+      if (!d || !d.body) continue;
+      const label = guideCaption(frame) ?? (GUIDE_NAME.test(d.title || '') ? clean(d.title) : null);
+      out.push({ doc: d, label });
+    }
+    return out;
+  }
+
   // Size tables the page prints in or near its size guide. Guides often live in a modal, so dialogs
-  // are searched; consent banners and buyers' reviews are not.
-  function sizeGuideTables(doc, brand, url) {
+  // are searched, and readable same-origin frames too; consent banners and buyers' reviews are not.
+  // `whole` is for a page that is itself a size guide: every table counts, labelled with `caption`.
+  function sizeGuideTables(doc, brand, url, { whole = false, caption: pageCaption = '' } = {}) {
     const G = root.SizerGuideTable;
     const charts = [];
     let caption = null;
     let found = 0;
-    for (const table of doc.querySelectorAll('table, [role="table"]')) {
-      if (found >= 30) break;
-      if (table.closest(OURS) || table.closest(`${REVIEW_AREA}, ${CONSENT}`) || table.querySelector('table, [role="table"]')) continue;
-      const label = guideCaption(table);
-      if (label == null) continue;
-      found += 1;
-      if (caption == null || (!caption && label)) caption = label;
-      const matrix = tableMatrix(table);
-      const chart = matrix && G.parseGuideMatrix(matrix, { brand, caption: label, url });
-      if (chart && !charts.some((c) => JSON.stringify(c.rows) === JSON.stringify(chart.rows))) charts.push(chart);
+    for (const { doc: d, label: frameLabel } of whole ? [{ doc, label: null }] : guideDocs(doc)) {
+      const everyTable = whole || frameLabel != null;
+      for (const table of d.querySelectorAll('table, [role="table"]')) {
+        if (found >= 30) break;
+        if (table.closest(OURS) || table.closest(`${REVIEW_AREA}, ${CONSENT}`) || table.querySelector('table, [role="table"]')) continue;
+        let label = guideCaption(table);
+        if (label == null && everyTable) label = frameLabel ?? pageCaption;
+        if (label == null) continue;
+        found += 1;
+        if (caption == null || (!caption && label)) caption = label;
+        const matrix = tableMatrix(table);
+        const chart = matrix && G.parseGuideMatrix(matrix, { brand, caption: label, url });
+        if (chart && !charts.some((c) => JSON.stringify(c.rows) === JSON.stringify(chart.rows))) charts.push(chart);
+      }
     }
     return found ? { charts, caption: caption || '' } : null;
+  }
+
+  // A link to the shop's own size-guide page: its words name a size guide and it stays on the shop's
+  // host. A link in the page body beats one in the footer or menu.
+  function guideLink(doc, pageUrl = doc.baseURI) {
+    const G = root.SizerGuideTable;
+    let fallback = null;
+    for (const a of doc.querySelectorAll('a[href]')) {
+      if (a.closest(OURS) || a.closest(`${REVIEW_AREA}, ${CONSENT}`)) continue;
+      const href = a.getAttribute('href');
+      const words = `${spacedText(a)} ${a.getAttribute('aria-label') || ''} ${a.getAttribute('title') || ''}`;
+      if (!GUIDE_NAME.test(words) && !GUIDE_NAME.test(href)) continue;
+      const url = G.sameShopUrl(href, pageUrl);
+      if (!url) continue;
+      if (!a.closest('footer, nav')) return url;
+      fallback = fallback || url;
+    }
+    return fallback;
+  }
+
+  // Size chart images: an <img> in or next to the size guide whose alt text or file name says size,
+  // guide or chart (on a size-guide page, any such image). Public https addresses only, at most three.
+  function guideImages(doc, baseUrl = doc.baseURI, { whole = false } = {}) {
+    const G = root.SizerGuideTable;
+    const out = [];
+    for (const img of doc.querySelectorAll('img')) {
+      if (img.closest(OURS) || img.closest(`${REVIEW_AREA}, ${CONSENT}`)) continue;
+      const src = ['src', 'data-src', 'data-original'].map((a) => img.getAttribute(a)).find((v) => v && !/^data:/i.test(v));
+      if (!src) continue;
+      let abs;
+      try { abs = new URL(src, baseUrl).href; } catch { continue; }
+      if (!/^https:/i.test(abs) || !G.chartImageName(abs, img.getAttribute('alt'))) continue;
+      if (!whole && guideCaption(img) == null) continue;
+      if (!out.includes(abs)) out.push(abs);
+      if (out.length >= 3) break;
+    }
+    return out;
+  }
+
+  // A fetched size-guide page: its tables, read by the same finder, and its chart images.
+  function guideFromHtml(html, url, brand) {
+    const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+    const h1 = doc.querySelector('h1');
+    const caption = clean((h1 && h1.textContent) || doc.title || '').slice(0, 120);
+    const tables = sizeGuideTables(doc, brand, url, { whole: true, caption });
+    return { charts: tables ? tables.charts : [], caption: (tables && tables.caption) || caption, images: guideImages(doc, url, { whole: true }) };
+  }
+
+  // What "Read this page with AI" may send: the product title, the page's headings and the text of
+  // the size picker's region (or, with no picker, the block around the title). Nothing else.
+  function productText(doc, parse) {
+    const skip = `${OURS}, ${REVIEW_AREA}, ${CHROME}, footer, nav, header`;
+    const h1 = doc.querySelector('h1');
+    const title = clean((h1 && spacedText(h1)) || meta(doc, 'meta[property="og:title"]') || doc.title);
+    const headings = [...doc.querySelectorAll('h1, h2, h3')].filter((h) => !h.closest(skip)).map((h) => spacedText(h)).filter((t) => t && t.length <= 150).slice(0, 20);
+    let region = findPicker(doc, parse) || doc.querySelector('[class*="size" i]:not(body):not(html), [id*="size" i]') || h1;
+    if (region && region.closest(skip)) region = null;
+    // Grown until it holds some text; the shop's header, menu, footer, dialogs and reviews never count.
+    const others = `${REVIEW_AREA}, ${CHROME}, footer, nav, header`;
+    while (region && region.parentElement && region.parentElement !== doc.body && !region.parentElement.closest(skip) && spacedText(region, others).length < 200) region = region.parentElement;
+    const picker = region ? spacedText(region, others).slice(0, 3000) : '';
+    return { title, headings, picker };
   }
 
   function extractProduct(doc, engine) {
@@ -343,10 +425,12 @@
       reviewSummary: reviewSummary(doc),
       reviewCards: reviewCards(doc),
       shopGuide: sizeGuideTables(doc, brandGuess, location.href),
+      guideLink: guideLink(doc),
+      guideImages: guideImages(doc),
       url: location.href,
       isProduct: !!ld || (sizes.length >= 2 && !!(brandGuess || title)),
     };
   }
 
-  root.SizerExtract = { extractProduct, findPicker, optionElements, sizeGuideTables };
+  root.SizerExtract = { extractProduct, findPicker, optionElements, sizeGuideTables, guideLink, guideImages, guideFromHtml, productText };
 })(globalThis);

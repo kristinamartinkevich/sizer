@@ -35,6 +35,10 @@
     // None of the four real shops carries its chart in the DOM; Revolve's two guide tables are the
     // model's measurements and the garment's dimensions, which must not parse. inline-guide and
     // aria-guide are synthetic; aria-guide is not a product page, so only its guide is checked.
+    // iframe-guide and guide-link are synthetic too (fit-evidence C4): a guide in a same-origin frame,
+    // and a link to the shop's own size-guide page (guide-link-page, read through fetchGuideText with
+    // the fixture served in place of the shop) plus chart images. `images`: the chart images the page
+    // offers; `link`: the guide link it must pick; `pageGuide`/`pageImages`: what the linked page yields.
     const SHOPS = [
       { name: 'zalando', base: 'https://www.zalando.co.uk/', brand: 'rag & bone', title: /STEVIE/, sizes: 8, soldOut: ['25', '27', '28', '29'], fitNote: 'small', size: '28', headline: /Runs small/, guide: null },
       { name: 'asos', base: 'https://www.asos.com/', brand: "Levi's", title: /501/, sizes: 17, soldOut: ['W24 L30', 'W25 L32', 'W26 L32', 'W27 L32', 'W28 L34', 'W29 L32', 'W32 L32'], fitNote: 'large', reviewsMin: 2, reviewsMax: 6, summary: /Fit is between/, size: 'W26 L30', headline: /Runs large/, guide: null },
@@ -47,6 +51,14 @@
           { category: 'bottoms', unit: 'cm', mentions_brand: false, labels: ['S', 'M', 'L'], first: { bust: null, waist: [64, 68], hip: [90, 94], foot_length: null } },
           { category: 'shoes', unit: 'cm', mentions_brand: false, labels: ['37', '38', '39'], first: { bust: null, waist: null, hip: null, foot_length: [23.5, 23.5] } },
         ] },
+      { name: 'iframe-guide', base: 'https://ostra-studio.example/', guideOnly: true, caption: 'Size guide',
+        guide: [{ category: 'bottoms', unit: 'cm', mentions_brand: false, labels: ['XS', 'S', 'M', 'L'], first: { bust: null, waist: [60, 64], hip: [86, 90], foot_length: null } }] },
+      { name: 'guide-link', base: 'https://guide-link.example/', guideOnly: true, guide: null,
+        images: ['https://guide-link.example/files/womens-size-chart.jpg'],
+        link: 'https://guide-link.example/pages/size-guide', linkPage: 'guide-link-page', linkBrand: 'Fen & Fold',
+        pageGuide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L'], first: { bust: [78, 82], waist: [60, 64], hip: [86, 90], foot_length: null } }],
+        pageCaption: 'Fen & Fold size guide',
+        pageImages: ['https://guide-link.example/files/shoe-size-chart.png'] },
     ];
     const out = document.getElementById('out');
     const results = [];
@@ -70,6 +82,11 @@
       const fdoc = frame.contentDocument;
       if (shop.guideOnly) {
         guideChecks(checks, shop, SizerExtract.sizeGuideTables(fdoc, '', ''));
+        if ('images' in shop) {
+          const images = SizerExtract.guideImages(fdoc);
+          check(checks, 'guide images', JSON.stringify(images) === JSON.stringify(shop.images), JSON.stringify(images));
+        }
+        if ('link' in shop) await linkChecks(checks, shop, fdoc);
         frame.remove();
         return checks;
       }
@@ -97,6 +114,23 @@
       frame.remove();
       return checks;
     }
+
+    // The linked guide page goes through the real fetchGuideText, with the saved fixture served in
+    // place of the shop's page, and then through guideFromHtml.
+    async function linkChecks(checks, shop, fdoc) {
+      const link = SizerExtract.guideLink(fdoc);
+      check(checks, 'guide link', link === shop.link, link);
+      const served = (url, init) => fetch(`fixtures/shops/${shop.linkPage}.html`, { credentials: init.credentials, signal: init.signal })
+        .then((r) => ({ ok: r.ok, status: r.status, url, headers: r.headers, text: () => r.text() }));
+      const html = await SizerGuideTable.fetchGuideText(link || shop.link, { fetch: served, pageUrl: `${shop.base}products/ribbed-knit-midi-dress` });
+      const page = html ? SizerExtract.guideFromHtml(html, shop.link, shop.linkBrand) : null;
+      const got = page ? page.charts.map(summary) : null;
+      check(checks, 'linked guide page', JSON.stringify(got) === JSON.stringify(shop.pageGuide), JSON.stringify(got));
+      check(checks, 'linked guide caption', page && page.caption === shop.pageCaption, page && page.caption);
+      check(checks, 'linked guide images', page && JSON.stringify(page.images) === JSON.stringify(shop.pageImages), page && JSON.stringify(page.images));
+    }
+
+    const summary = (c) => ({ category: c.category, unit: c.unit, mentions_brand: c.mentions_brand, labels: c.rows.map((r) => r.label), first: { bust: c.rows[0].bust, waist: c.rows[0].waist, hip: c.rows[0].hip, foot_length: c.rows[0].foot_length } });
 
     function guideChecks(checks, shop, g) {
       if (shop.guide === null) check(checks, 'shop guide', g === null, JSON.stringify(g));

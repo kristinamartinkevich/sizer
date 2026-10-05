@@ -43,6 +43,11 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    most 6 s while the `lookup-chart` function finds the brand's published chart (or reads the shop's
    own size table), and the answer lands in the bundle as machine-read, ranked below checked charts.
    A miss is remembered for 7 days; a network failure is not, so the next visit tries again.
+   When the page prints no size table, Sizer looks for one first in a same-origin frame, then on the
+   shop's own size-guide page (one fetch per product page, without cookies, 3 s at most), then in a
+   size chart image: the image's web address, the brand name, the kind of item and the install id go
+   to the `read-chart-image` function, which reads the chart with Claude vision, caches it per image
+   for everyone, and the result joins the lookup as the shop's size table, marked machine-read.
    Rows the brand page gets visibly wrong are marked suspect in the database and skipped. Charts
    that list garment rather than body measurements get a little ease taken off.
 3. Between two sizes, your rule wins (go up, or go down); left to the fabric, rigid fabric rounds
@@ -60,6 +65,11 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 5. The result maps to the sizes on the page, using the shop's product data for stock. Women's sizes
    from different regions line up through one table (FR/EU = DE, IT = FR + 4, UK = FR − 28,
    US = UK − 4, and the letters XXS to 4XL), so a UK 10 on the page finds the brand's EU 38 or M.
+   When "Check this page anyway" in the popup finds no brand or no sizes, it offers "Read this page
+   with AI": on that click only, the page title, its headings and the text around the size picker
+   (at most 6000 characters, web addresses removed) and the install id go to
+   `read-chart-image/product`, which returns the brand, title, kind of item, sizes and fabric.
+   Nothing of it is stored.
 6. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
    the brand's shoe chart or a standard EU one.
 
@@ -75,8 +85,9 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
 | `supabase/functions/lookup-chart/` | Edge Function that finds a brand's chart when nobody has one yet, stores it as machine-read; deploy steps in its README |
-| `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide |
-| `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables) |
+| `supabase/functions/read-chart-image/` | Edge Function that reads a size chart image (cached per image) and, on request, a page's product text, with Claude; deploy steps in its README |
+| `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide, in a same-origin frame or on the shop's size-guide page, and size chart images |
+| `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables); the size-guide page fetch |
 | `src/content.js`, `src/panel-style.js`, `src/mark.js` | What Sizer draws on shop pages; the mark is inline SVG so shop CSPs cannot block it |
 | `ui/` | Popup and fit profile page |
 | `store/` | Store listing, privacy policy, Product Hunt kit, image sources and renders |
@@ -100,7 +111,7 @@ The sheet's footer links to the brand page the chart was read from, with the dat
     sh package.sh        # dist/sizer-<version>.zip for the Chrome Web Store
     sh tools/check-migrations.sh   # applies supabase/migrations/*.sql to a throwaway local Postgres,
                                    # one transaction per file, as the Supabase SQL editor runs them
-    deno test supabase/functions/  # the lookup-chart Edge Function, no network
+    deno test supabase/functions/  # the lookup-chart and read-chart-image Edge Functions, no network
 
 `tests/fixture-shop.html` is a demo product page with query switches (first run, sold out, open
 sheet, no picker, and `?brand=unknown` for the chart lookup, with `&lookup=miss` or `&lookup=slow`)
@@ -110,6 +121,8 @@ for checking every state; serve the folder over HTTP to open it.
 (Zalando, ASOS, Net-a-Porter, Revolve) and checks brand, sizes, stock, fit notes, reviews, size-guide
 tables and the answer. `inline-guide.html` there is synthetic: a fictional brand page that prints
 its size table inline, since none of the four real shops carries its chart in the page.
+`iframe-guide.html`, `guide-link.html` and `guide-link-page.html` are synthetic too: a guide in a
+same-origin frame, and a link to the shop's own size-guide page plus size chart images.
 `aria-guide.html` exercises the size-guide finder alone: an ARIA grid in a size-guide dialog, a
 captioned table, and tables in a cookie banner and in reviews that must be skipped. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
 To add a shop: open the product page in a browser, save `document.documentElement.outerHTML`

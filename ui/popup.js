@@ -26,6 +26,12 @@ async function send(tab, msg) {
   }
 }
 
+function cannotRead() {
+  show('s-idle');
+  $('idle-text').textContent = 'Chrome doesn’t let extensions read this page.';
+  $('idle-try').hidden = true;
+}
+
 document.querySelectorAll('[data-act="profile"]').forEach((b) => (b.onclick = () => chrome.runtime.openOptionsPage()));
 document.querySelectorAll('[data-act="why"]').forEach((b) => {
   b.onclick = async () => {
@@ -34,12 +40,37 @@ document.querySelectorAll('[data-act="why"]').forEach((b) => {
       await send(tab, { type: 'sizer:open' });
       window.close();
     } catch {
-      show('s-idle');
-      $('idle-text').textContent = 'Chrome doesn’t let extensions read this page.';
-      $('idle-try').hidden = true;
+      cannotRead();
     }
   };
 });
+
+// "Check this page anyway": the sheet opens on the page; when it found no brand or no sizes, the
+// popup stays open and offers to read the page with AI instead.
+$('idle-try').onclick = async () => {
+  const tab = await activeTab();
+  let r;
+  try { r = await send(tab, { type: 'sizer:open' }); } catch { cannotRead(); return; }
+  if (r && r.brand && r.sizes) { window.close(); return; }
+  show('s-ai');
+};
+
+// Sends only the cleaned product text (see productBody in src/charts-store.js), on this click alone.
+$('ai-read').onclick = async () => {
+  const tab = await activeTab();
+  $('ai-read').disabled = true;
+  $('ai-text').textContent = 'Reading the page';
+  try {
+    const text = await send(tab, { type: 'sizer:product-text' });
+    const r = await chrome.runtime.sendMessage({ type: 'sizer:read-product', text });
+    if (!r || !r.product) throw new Error((r && r.error) || 'no answer');
+    await send(tab, { type: 'sizer:open', ai: r.product });
+    window.close();
+  } catch {
+    $('ai-text').textContent = 'Sizer couldn’t read this page. Try again later.';
+    $('ai-read').disabled = false;
+  }
+};
 
 chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) => {
   if (profile.theme === 'light' || profile.theme === 'dark') document.documentElement.dataset.theme = profile.theme;

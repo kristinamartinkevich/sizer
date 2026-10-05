@@ -18,6 +18,10 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg.type === 'sizer:item-fit') { itemFit(msg.key).then(reply, () => reply({ rows: [] })); return true; }
   if (msg.type === 'sizer:report-fit') { reportFit(msg).then(reply, (e) => reply({ ok: false, reason: String(e) })); return true; }
   if (msg.type === 'sizer:lookup-chart') { lookupChart({ ...msg, shop: shopOf(sender, msg) }).then(reply); return true; }
+  if (msg.type === 'sizer:lookup-wanted') { lookupWanted(msg).then(reply, () => reply({ wanted: false })); return true; }
+  if (msg.type === 'sizer:read-chart-image') { readChartImage(msg).then(reply); return true; }
+  // Only the popup asks this, on the shopper's click; a page's script cannot.
+  if (msg.type === 'sizer:read-product' && !sender.tab) { readProduct(msg.text).then(reply); return true; }
 });
 
 // The shop is the sending tab's hostname, not whatever the page claims; only the hostname travels.
@@ -31,6 +35,27 @@ const lookupChart = Store.createLookup({
   fetch: (url, init) => fetch(url, init),
   get: (keys) => chrome.storage.local.get(keys),
   set: (items) => chrome.storage.local.set(items),
+  installId: () => installId(),
+});
+
+// Whether a lookup for this brand and kind would reach the function, so the page only looks for a
+// guide page or a chart image when the answer would be used.
+async function lookupWanted({ brand, kind }) {
+  const key = Store.missKey(brand, kind);
+  if (!key) return { wanted: false };
+  const entry = (await chrome.storage.local.get(key))[key];
+  return { wanted: !Store.isMissFresh(entry) };
+}
+
+// ---- a size chart image, and the product-text fallback, read with AI ----------
+
+const readChartImage = Store.createImageRead({
+  fetch: (url, init) => fetch(url, init),
+  installId: () => installId(),
+});
+
+const readProduct = Store.createProductRead({
+  fetch: (url, init) => fetch(url, init),
   installId: () => installId(),
 });
 

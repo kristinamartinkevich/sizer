@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  Synthetic fixture: a product page with no size table of its own, but a link to the shop's own
+  size-guide page (tests/fixtures/shops/guide-link-page.html) and a size chart image inside its size
+  guide panel. The brand and shop are fictional. The reader must pick the in-page link on the shop's
+  host, not the link to another host before it nor the footer link after it, and must take the chart
+  image in the guide panel but not the product photo whose alt text mentions a size.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ribbed knit midi dress | Fen &amp; Fold</title>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 24px; color: #1d1d1b; }
+    img { width: 120px; height: 90px; background: #eee; display: block; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="product-media"><img src="/files/ribbed-dress-front.jpg" alt="Model wears size S"></div>
+    <div class="product-info">
+      <h1>Ribbed knit midi dress</h1>
+      <p>Fen &amp; Fold</p>
+      <p><a href="https://sizes.other.example/size-guide">Size guide by Sizes Inc.</a></p>
+      <p><a href="/pages/size-guide#women">Size guide</a></p>
+      <div class="size-guide-panel">
+        <h3>Size chart</h3>
+        <img src="/files/womens-size-chart.jpg" alt="">
+        <img src="/files/how-to-measure.jpg" alt="How to measure yourself">
+      </div>
+    </div>
+  </main>
+  <footer><a href="/pages/size-chart-all">Size chart</a></footer>
+</body>
+</html>

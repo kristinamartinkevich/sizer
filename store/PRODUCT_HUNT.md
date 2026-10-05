@@ -48,7 +48,7 @@ A few things I cared about:
 • If your size is sold out, it says which sizes are in stock and how far off they are.
 • It is honest when unsure. Thin information gets a “rough guess” label and a note on what would firm it up.
 • It prefers the brand’s own chart over the shop’s generic one. If no shopper has needed a brand before, it looks up the brand’s published chart once, labels it as read by machine, and every shopper after you gets it.
-• Your measurements never leave your browser. No account, no analytics. It sends only anonymous things: a count of what reviews said, and, for a brand it has no chart for, the brand name, the kind of item, the shop’s name, a random install id and the shop’s own size table if the page prints one.
+• Your measurements never leave your browser. No account, no analytics. It sends only anonymous things: a count of what reviews said, and, for a brand it has no chart for, the brand name, the kind of item, the shop’s name, a random install id and the shop’s own size table if the page prints one. If the table is on the shop’s own size-guide page, it opens that page without your cookies; if it is a picture, it sends the image’s web address so the chart can be read from it. And if you click “Read this page with AI” on a page it cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters.
 
 It is strongest for women’s jeans, trousers and skirts today, with shoes by foot length. I would love to know which brands and shops to add next.
 
@@ -68,4 +68,7 @@ It is strongest for women’s jeans, trousers and skirts today, with shoes by fo
 - [ ] `ANTHROPIC_API_KEY` set with `supabase secrets set`, and the function deployed with
       `supabase functions deploy lookup-chart --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
 - [ ] Open a product from a brand with no chart and confirm the sheet says “chart read by machine” with the brand’s link
+- [ ] Supabase migration 0007 applied, and the image reader deployed with
+      `supabase functions deploy read-chart-image --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
+- [ ] On a page Sizer cannot read, check that “Read this page with AI” in the popup fills in the brand and sizes
 - [ ] Line up a few people to try it on launch morning, and reply to every comment within the hour

@@ -265,3 +265,22 @@ test('the privacy policy and launch copy name every field a lookup sends', () =>
     for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
   }
 });
+
+test('the privacy policy, listing, launch copy and README name every field the AI readers send', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const root = path.join(__dirname, '..');
+  const image = Store.imageBody({ image_url: 'https://cdn.shop.example/size-chart.png', brand: 'Ostra Studio', kind: 'bottoms' }, 'id-1');
+  assert.deepStrictEqual(Object.keys(image).sort(), ['brand', 'image_url', 'install', 'kind'], 'a new field in imageBody needs a line in the copy below');
+  const product = Store.productBody({ title: 'Wide-leg trousers', headings: ['Details'], picker: 'XS S M' }, 'id-1');
+  assert.deepStrictEqual(Object.keys(product).sort(), ['headings', 'install', 'picker', 'title'], 'a new field in productBody needs a line in the copy below');
+  const words = {
+    image_url: /image[’']s web address/, brand: /brand name/, kind: /kind of item/, install: /install id/,
+    title: /page title/, headings: /headings/, picker: /size picker/, limit: /6000 characters/,
+    guidePage: /size-guide page/, noCookies: /without (your )?cookies/,
+  };
+  for (const file of ['store/privacy.html', 'store/LISTING.md', 'store/PRODUCT_HUNT.md', 'README.md']) {
+    const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/\s+/g, ' ');
+    for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
+  }
+});

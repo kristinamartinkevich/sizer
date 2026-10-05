@@ -3,9 +3,10 @@
   window.__sizerLoaded = true;
 
   const Engine = globalThis.SizerEngine;
-  const { extractProduct, findPicker, optionElements } = globalThis.SizerExtract;
+  const { extractProduct, findPicker, optionElements, guideFromHtml, productText } = globalThis.SizerExtract;
+  const Guide = globalThis.SizerGuideTable;
 
-  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null };
+  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null, guideTried: false, ai: null };
   const hosts = {};
   let lastTrigger = null;
 
@@ -47,7 +48,8 @@
   }
 
   async function recommendHere(profile, charts) {
-    const product = extractProduct(document, Engine);
+    // What "Read this page with AI" returned fills only what the page reader missed.
+    const product = state.ai ? Store.applyReadProduct(extractProduct(document, Engine), state.ai, Engine.kindOf) : extractProduct(document, Engine);
     if (!(product.isProduct || product.sizes.length || state.forced)) return { product, result: null };
     product.poolFit = await poolFor(product);
     const result = Engine.recommend(profile, product, charts);
@@ -295,11 +297,44 @@
       if (reply && reply.found) run(); else place();
     };
     setTimeout(done, Engine.LOOKUP_TIMEOUT_MS);
-    let asked;
-    try {
-      asked = chrome.runtime.sendMessage({ type: 'sizer:lookup-chart', brand: want.brand, kind: want.kind, shop: location.hostname, shopGuide: product.shopGuide });
-    } catch { asked = null; }
-    Promise.resolve(asked).then(done, () => done());
+    const ask = (shopGuide) => {
+      let asked;
+      try {
+        asked = chrome.runtime.sendMessage({ type: 'sizer:lookup-chart', brand: want.brand, kind: want.kind, shop: location.hostname, shopGuide });
+      } catch { asked = null; }
+      Promise.resolve(asked).then(done, () => done());
+    };
+    moreGuide(product, want).then(ask, () => ask(product.shopGuide));
+  }
+
+  function message(msg) {
+    try { return Promise.resolve(chrome.runtime.sendMessage(msg)).catch(() => null); } catch { return Promise.resolve(null); }
+  }
+
+  // When the page prints no size table, look where else the shop keeps its chart before the lookup:
+  // the shop's own size-guide page (fetched once per page, without cookies, 3 s at most), then a size
+  // chart image, read by the read-chart-image function. Skipped when the lookup would not run anyway.
+  async function moreGuide(product, want) {
+    const guide = product.shopGuide;
+    if (guide && guide.charts.length) return guide;
+    const wanted = await message({ type: 'sizer:lookup-wanted', brand: want.brand, kind: want.kind });
+    if (!wanted || !wanted.wanted) return guide;
+    let images = product.guideImages || [];
+    if (!state.guideTried && product.guideLink) {
+      state.guideTried = true;
+      const html = await Guide.fetchGuideText(product.guideLink, { fetch: (u, init) => fetch(u, init), pageUrl: location.href });
+      if (html) {
+        const page = guideFromHtml(html, product.guideLink, want.brand);
+        if (page.charts.length) return { charts: page.charts, caption: page.caption };
+        images = images.concat(page.images.filter((u) => !images.includes(u)));
+      }
+    }
+    // One image, the likeliest: each read counts against the daily caps.
+    if (images.length) {
+      const read = await message({ type: 'sizer:read-chart-image', image_url: images[0], brand: want.brand, kind: want.kind });
+      if (read && read.chart) return Store.withImageChart(guide, read.chart);
+    }
+    return guide;
   }
 
   function reset() {
@@ -310,6 +345,8 @@
     state.forced = false;
     state.lookups = {};
     state.looking = null;
+    state.guideTried = false;
+    state.ai = null;
     drop('sizer-panel');
     drop('sizer-pill');
     drop('sizer-inline');
@@ -327,8 +364,18 @@
   chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
     if (msg.type === 'sizer:open') {
       state.forced = true;
-      run().then(() => { state.sheetOpen = true; renderSheet(); reply({ ok: true }); });
+      if (msg.ai) state.ai = msg.ai;
+      run().then(() => {
+        state.sheetOpen = true;
+        renderSheet();
+        const p = state.product;
+        reply({ ok: true, brand: !!(p && p.brand), sizes: p ? p.sizes.length : 0 });
+      });
       return true;
+    }
+    if (msg.type === 'sizer:product-text') {
+      reply(productText(document, Engine.parseSizeLabel));
+      return false;
     }
     if (msg.type === 'sizer:analyze') {
       Promise.all([getProfile(), getCharts()]).then(([profile, charts]) => recommendHere(profile, charts)).then(({ product, result }) => {

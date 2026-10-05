@@ -21,6 +21,8 @@
                       The sheet says "Checking what others say about the fit" until then, and the
                       size moves one up unless the page or the reviews already decided.
       ?dossier=none   the same request answered with no dossier after 500 ms: nothing changes.
+      ?ask=1          this product was sized nine days ago and not answered: the line mentions it and
+                      the sheet opens with "Did it fit?" (the stubbed worker saves an answer after 300 ms).
   -->
   <script>
     const q = new URLSearchParams(location.search);
@@ -45,6 +47,8 @@
         rows: ['24', '25', '26', '27', '28', '29', '30'].map((label, i) => ({ label, aliases: {}, waist: [61 + 2.5 * i, 63 + 2.5 * i], hip: [86 + 2.5 * i, 88 + 2.5 * i], bust: null, inseam: null, foot_length: null, extra: {}, suspect: null })),
       }],
     };
+    // ?ask=1: what the background worker kept when this product was sized nine days ago.
+    const ASKED = { itemKey: unknown ? 'ostra studio|mira' : 'rag and bone|wren', brand: BRAND, style: TITLE.split(' - ').slice(0, 2).join(' - '), kind: 'bottoms', type: 'jeans', shop: location.hostname || 'demo.shop', size: '27', tier: null, sizes: ['24', '25', '26', '27', '28', '29', '30'], at: Date.now() - 9 * 24 * 60 * 60 * 1000 };
     let lookedUp = false;
     const changed = [];
     window.chrome = {
@@ -78,6 +82,9 @@
                 ],
               },
             };
+          if (m.type === 'sizer:answer-fit' || m.type === 'sizer:dismiss-fit') {
+            await new Promise((r) => setTimeout(r, 300));
+            return { ok: true };
           }
           return m.type === 'sizer:item-fit' && q.get('pool') === 'small'
             ? { rows: [{ vendor: 'www.zalando.de', small: 23, large: 2, tts: 9, total: 51 }, { vendor: 'www.net-a-porter.com', small: 11, large: 1, tts: 4, total: 20 }] }
@@ -87,13 +94,20 @@
       storage: {
         sync: { get: (d, cb) => cb({ profile }) },
         // ?charts=1 serves the verified rag & bone chart as the background worker would have stored it.
+        // Answers with a callback or a promise, as chrome.storage does.
         local: {
           get: (d, cb) => {
-            if (lookedUp) { cb({ charts: { fetchedAt: 0, brands: [OSTRA] } }); return; }
-            if (!q.get('charts')) { cb(d); return; }
-            fetch('fixtures/bundle-rag-bone.json').then((r) => r.json()).then((list) => cb({
-              charts: { fetchedAt: Date.now(), brands: list.map((b) => ({ id: b.brand_id, name: b.brand_name, aliases: b.aliases || [], charts: b.charts, fitNotes: b.fit_notes || [], updatedAt: b.updated_at })) },
-            })).catch(() => cb(d));
+            const read = (async () => {
+              if (d && 'sizings' in d) return { sizings: q.get('ask') ? [ASKED] : [] };
+              if (lookedUp) return { charts: { fetchedAt: 0, brands: [OSTRA] } };
+              if (!q.get('charts')) return d;
+              try {
+                const list = await (await fetch('fixtures/bundle-rag-bone.json')).json();
+                return { charts: { fetchedAt: Date.now(), brands: list.map((b) => ({ id: b.brand_id, name: b.brand_name, aliases: b.aliases || [], charts: b.charts, fitNotes: b.fit_notes || [], updatedAt: b.updated_at })) } };
+              } catch { return d; }
+            })();
+            if (cb) read.then(cb);
+            return read;
           },
         },
         onChanged: { addListener: (fn) => changed.push(fn) },
@@ -177,6 +191,9 @@
   <script src="../src/extract.js"></script>
   <script src="../src/panel-style.js"></script>
   <script src="../src/mark.js"></script>
+  <script src="../src/feedback.js"></script>
+  <script src="../src/fit-question.js"></script>
+  <script src="../src/sheet.js"></script>
   <script src="../src/content.js"></script>
   <script>
     if (q.get('open') === 'why') {

@@ -271,6 +271,29 @@ test('the dossier’s areas join the areas, marked as from the web', () => {
   assert.ok(r.reasons.some((x) => x.text === 'Sizer also read what others online say about the fit (2 sources).'), JSON.stringify(r.reasons));
 });
 
+test('a dossier that moved the size keeps Sizer users’ brand tendency from moving it again', () => {
+  const learned = { brands: [], brandFit: [{ brand_key: 'ostra', kind: 'bottoms', small: 10, tts: 1, large: 0, total: 11 }] };
+  const plain = recommend(ME, trousers(), null);
+  const fromUsers = recommend(ME, trousers(), learned);
+  const both = recommend(ME, trousers({ dossier: web() }), learned);
+  assert.strictEqual(+fromUsers.size, +plain.size + 2, 'Sizer users alone move it one size');
+  assert.strictEqual(both.size, fromUsers.size, 'the dossier moves it instead, not as well');
+  assert.strictEqual(both.headline, 'Others online say it runs small, sized up');
+  assert.ok(!both.reasons.some((x) => /Sizer users/.test(x.text)), JSON.stringify(both.reasons));
+});
+
+test('the shared sheet lists the dossier’s web sources, escaped, so the side panel shows them too', () => {
+  const Sheet = require('../src/sheet.js');
+  const r = recommend(ME, trousers({ dossier: web({ brand_note: 'Cut <b>slim</b>.', sources: [{ url: 'https://ok.example/a?x="1"', title: '<i>Fit</i>' }, { url: 'javascript:alert(1)', title: 'bad' }] }) }), null);
+  const html = Sheet.body(r, { sizes: [] });
+  assert.match(html, /<h3>What others say online<\/h3>/);
+  assert.match(html, /href="https:\/\/ok\.example\/a\?x=&quot;1&quot;"/);
+  assert.match(html, /&lt;i&gt;Fit&lt;\/i&gt;/);
+  assert.match(html, /Cut &lt;b&gt;slim&lt;\/b&gt;\./);
+  assert.ok(!/javascript:/.test(html));
+  assert.match(Sheet.body(r, { sizes: [] }, { checking: true }), /Checking what others say about the fit/);
+});
+
 test('trousers take no bust, shoulder or sleeve area from the web either', () => {
   const r = recommend(ME, trousers({ dossier: web({ verdict: null, strength: 0, areas: [{ area: 'bust', direction: 'tight', note: 'x' }, { area: 'shoulder', direction: 'tight', note: 'x' }, { area: 'hip', direction: 'tight', note: 'x' }] }) }), null);
   assert.deepStrictEqual(r.areas.filter((a) => a.source === 'web').map((a) => a.area), ['hip']);

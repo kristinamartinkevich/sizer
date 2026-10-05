@@ -5,11 +5,16 @@
   const Engine = globalThis.SizerEngine;
   const { extractProduct, findPicker, optionElements, guideFromHtml, productText } = globalThis.SizerExtract;
   const Guide = globalThis.SizerGuideTable;
+  const Sheet = globalThis.SizerSheet;
+  const Feedback = globalThis.SizerFeedback;
+  const Question = globalThis.SizerFitQuestion;
 
   // dossiers: per item key, 'asking' while the fit-dossier request is out, then the dossier or null.
-  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null, guideTried: false, ai: null, dossiers: {} };
+  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null, guideTried: false, ai: null, ask: null, noted: null, dossiers: {} };
   const hosts = {};
   let lastTrigger = null;
+  // The "did it fit?" question in the sheet keeps its place and its answers across re-renders.
+  let askEl = null;
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const MARK = `<span class="mark" aria-hidden="true">${globalThis.SIZER_MARK_SVG}</span>`;
@@ -48,6 +53,21 @@
     try { chrome.runtime.sendMessage({ type: 'sizer:report-fit', key, brand: product.brand, style, vendor: location.hostname, counts }).catch(() => {}); } catch { /* no worker in the demo pages */ }
   }
 
+  // Keeps this answer in the recent sizings (local storage, through the background worker), once per
+  // page. The list is read first: an item sized on an earlier visit and not yet answered is asked
+  // about in the sheet ("did it fit?").
+  async function noteSizing(product, result) {
+    const key = Store.itemKey(product.brand, product.title);
+    const sizing = Feedback.sizingFrom(product, result, key, location.hostname, Date.now());
+    if (!sizing || state.noted === key) return;
+    state.noted = key;
+    try {
+      const { sizings } = await chrome.storage.local.get({ sizings: [] });
+      state.ask = Feedback.askOnRevisit(sizings, key, Date.now());
+    } catch { state.ask = null; }
+    message({ type: 'sizer:remember-sizing', sizing });
+  }
+
   async function recommendHere(profile, charts) {
     // What "Read this page with AI" returned fills only what the page reader missed.
     const product = state.ai ? Store.applyReadProduct(extractProduct(document, Engine), state.ai, Engine.kindOf) : extractProduct(document, Engine);
@@ -68,7 +88,7 @@
       el.id = id;
       const shadow = el.attachShadow({ mode: 'open' });
       const style = document.createElement('style');
-      style.textContent = globalThis.SIZER_STYLE;
+      style.textContent = globalThis.SIZER_STYLE + Question.STYLE;
       const mount = document.createElement('div');
       shadow.append(style, mount);
       h = hosts[id] = { el, mount };
@@ -107,7 +127,8 @@
     const area = Engine.areaLine(r);
     const stock = r.stockText ? `<span class="note gone">${esc(r.stockText)}</span>`
       : low && r.firmUp ? `<span class="note">${esc(r.firmUp)}</span>`
-        : area ? `<span class="note">${esc(area)}</span>` : '';
+        : area ? `<span class="note">${esc(area)}</span>`
+          : state.ask && !(askEl && /done|dismissed/.test(askEl.dataset.step)) ? '<span class="note">Sized here before. Did it fit? Tell Sizer under Why this size.</span>' : '';
     return `<div class="line${low ? ' low' : ''}">${MARK}
       <span class="answer">
         <span class="k">${low ? 'Rough guess' : 'Your size'}</span>
@@ -152,85 +173,40 @@
 
   // ---- reasoning sheet ----------------------------------------------------
 
-  function dots(conf) {
-    const n = { High: 3, Medium: 2, Low: 1 }[conf] || 0;
-    return `<span class="dots" aria-hidden="true">${[1, 2, 3].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`;
-  }
-
-  // What buyers wrote about fit, as one line for the folded read-out.
-  function reviewsFact(rv) {
-    if (!rv || !rv.total) return null;
-    if (!rv.mentions) return ['Reviews', `${rv.total} read, none mention fit`];
-    const parts = [rv.small && `${rv.small} small`, rv.large && `${rv.large} large`, rv.tts && `${rv.tts} true to size`].filter(Boolean);
-    const where = rv.vendors ? ` on ${rv.vendors + (rv.local.total ? 1 : 0)} shops` : '';
-    return ['Reviews', `${rv.mentions} of ${rv.total}${where} mention fit: ${parts.join(', ')}`];
-  }
-
-  function sheetBody() {
-    const r = state.result;
-    const p = state.product;
-    if (!r) return '<p class="empty">Sizer couldn’t find a product or size picker on this page.</p>';
-    if (r.needsProfile) return `<p class="empty">${esc(r.reason)}</p>`;
-    if (!r.ok) return `<p class="empty">${esc(r.reason)}</p>`;
-    const s = r.signals;
-    const norm = (x) => String(x || '').replace(/\s+/g, '').toUpperCase();
-    const chip = (x) => `<span class="chip${x.available === false ? ' gone' : ''}${norm(x.label) === norm(r.size) ? ' pick' : ''}">${esc(x.label)}</span>`;
-    const stockKnown = p.sizes.some((x) => x.available != null);
-    const inStock = p.sizes.filter((x) => x.available !== false);
-    const soldOut = p.sizes.filter((x) => x.available === false);
-    const facts = [
-      ['Brand', esc(Engine.provenance(r).brandFact)],
-      r.shoes ? null : ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
-      ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : 'None'],
-      s.modelSize && !r.shoes ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
-      reviewsFact(r.reviews),
-      !p.sizes.length ? ['Sizes', 'Not found']
-        : !stockKnown ? ['Sizes', p.sizes.map(chip).join('')]
-          : ['In stock', inStock.length ? inStock.map(chip).join('') : 'None'],
-      stockKnown && soldOut.length ? ['Sold out', soldOut.map(chip).join('')] : null,
-    ].filter(Boolean);
-    // Three stops for the eye: the figure, the reasons, and everything else folded away.
-    const nearest = r.inStock ? [r.inStock.size, r.inStock.other && r.inStock.other.size].filter(Boolean).map(norm) : [];
-    const stockChip = (x) => `<span class="chip${nearest.includes(norm(x.label)) ? ' pick' : ''}">${esc(x.label)}</span>`;
-    return `
-      <div class="hero">
-        <div class="k">${r.confidence === 'Low' ? 'Rough guess' : 'Your size'}</div>
-        <div class="big">${esc(r.size)}</div>
-        <div class="headline${r.headline === 'Your usual fit' ? '' : ' moved'}">${esc(r.headline)}<span class="meter" title="${r.confidence} confidence">${dots(r.confidence)}</span></div>
-        ${r.firmUp ? `<p class="firm">${esc(r.firmUp)}</p>` : ''}
-      </div>
-      ${r.stockText ? `<div class="stock"><p>${esc(r.stockText)}</p>${inStock.length ? `<div class="chips">${inStock.map(stockChip).join('')}</div>` : ''}</div>`
-        : r.alternative ? `<p class="alt">Or <b>${esc(r.alternative.size)}</b> ${esc(r.alternative.why)}.</p>` : ''}
-      ${Engine.sheetAreas(r).length ? `<h3>Where it fits</h3><ul class="areas">${Engine.sheetAreas(r).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-      <h3>Why this size</h3>
-      <ol>${r.reasons.map((x) => `<li><span>${esc(x.text)}</span>${x.delta ? `<em>${x.delta > 0 ? '+' : '−'}${Math.abs(x.delta)} size</em>` : ''}</li>`).join('')}</ol>
-      ${webBlock(r)}
-      <details class="more">
-        <summary>What Sizer read on this page</summary>
-        <div class="facts">${facts.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>
-      </details>`;
-  }
-
   function renderSheet() {
     if (!state.sheetOpen) { drop('sizer-panel'); return; }
     const r = state.result;
     const h = host('sizer-panel', (el) => { if (!el.isConnected) document.documentElement.appendChild(el); });
-    const guide = sourceLine(r);
+    const guide = Sheet.sourceLine(r);
     h.mount.innerHTML = `<section class="sheet" role="dialog" aria-modal="false" aria-labelledby="sizer-title" tabindex="-1">
       <header>${MARK}<span class="title" id="sizer-title">sizer</span><button class="close" data-act="close" aria-label="Close">×</button></header>
-      <div class="body">${sheetBody()}</div>
+      <div class="body">${askHTML()}${Sheet.body(state.result, state.product, { checking: checkingDossier() })}</div>
       <footer><span class="fine">${guide}</span><button class="link" data-act="profile">Edit fit profile</button></footer>
     </section>`;
     bind(h.mount);
+    const slot = h.mount.querySelector('[data-fq-host]');
+    if (slot) slot.replaceWith(askQuestion());
     h.mount.querySelector('.sheet').focus();
   }
 
-  // Where the chart came from, worded by how far it can be trusted, with a link to the page it was read from.
-  function sourceLine(r) {
-    if (!r || !r.ok) return 'Size charts are approximate.';
-    const f = Engine.provenance(r).footer;
-    const link = f.link && f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.link)}</a>` : esc(f.link || '');
-    return `${esc(f.lead)}${link}${esc(f.tail)}`;
+  // A product sized on an earlier visit and not yet answered: the "did it fit?" question, first in the sheet.
+  function askHTML() {
+    return state.ask ? '<section class="ask"><h3>Did it fit?</h3><div data-fq-host></div></section>' : '';
+  }
+
+  function askQuestion() {
+    if (askEl) return askEl;
+    askEl = document.createElement('div');
+    askEl.className = 'fq';
+    const itemKey = state.ask.itemKey;
+    Question.mount(askEl, state.ask, {
+      onAnswer: async (answer) => {
+        const r = await message({ type: 'sizer:answer-fit', itemKey, answer });
+        return r && r.ok;
+      },
+      onDismiss: () => message({ type: 'sizer:dismiss-fit', itemKey }),
+    });
+    return askEl;
   }
 
   function closeSheet() {
@@ -283,6 +259,7 @@
     state.product = product;
     state.result = result;
     state.phase = 'ready';
+    if (result && (product.isProduct || state.forced)) await noteSizing(product, result);
     lookUp(product, result);
     place();
     if (state.sheetOpen) renderSheet();
@@ -321,17 +298,6 @@
     const p = state.product;
     const key = p && Store.itemKey(p.brand, p.title);
     return !!key && state.dossiers[key] === 'asking';
-  }
-
-  // Under the reasons: "Checking what others say" while the dossier is out, then its sources as links.
-  function webBlock(r) {
-    if (checkingDossier()) return '<p class="checking" aria-live="polite">Checking what others say about the fit</p>';
-    const d = r.dossier;
-    const links = d ? d.sources.filter((s) => /^https?:\/\//i.test(String(s.url || ''))) : [];
-    if (!links.length) return '';
-    return `<h3>What others say online</h3>
-      ${d.brand_note ? `<p class="web-note">${esc(d.brand_note)}</p>` : ''}
-      <ul class="sources">${links.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title || s.url)}</a></li>`).join('')}</ul>`;
   }
 
   // A brand with no chart at all: ask the background worker to look one up, once per brand and kind
@@ -389,6 +355,9 @@
     state.looking = null;
     state.guideTried = false;
     state.ai = null;
+    state.ask = null;
+    state.noted = null;
+    askEl = null;
     drop('sizer-panel');
     drop('sizer-pill');
     drop('sizer-inline');
@@ -421,7 +390,8 @@
     }
     if (msg.type === 'sizer:analyze') {
       Promise.all([getProfile(), getCharts()]).then(([profile, charts]) => recommendHere(profile, charts)).then(({ product, result }) => {
-        reply({ result, isProduct: product.isProduct });
+        // The side panel draws the full sheet from this; the popup reads only the result.
+        reply({ result, isProduct: product.isProduct, product: { brand: product.brand || '', title: product.title || '', sizes: product.sizes || [] } });
       });
       return true;
     }

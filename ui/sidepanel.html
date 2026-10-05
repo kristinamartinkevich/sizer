@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sizer</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="top"><span class="mark" aria-hidden="true"><img src="../brand/mark.svg" alt=""></span><span class="word">sizer</span></header>
+
+  <!-- The current tab: the full reasoning, as the sheet on the page shows it. -->
+  <section class="panel-block" id="now" aria-labelledby="now-title">
+    <h2 class="k" id="now-title">This page</h2>
+    <p class="muted small" id="now-text">Reading this page</p>
+    <div id="now-sheet" hidden></div>
+  </section>
+
+  <!-- Hook for the Vinted bundle (C5): shown on Vinted listings only. If ui/sidepanel.js finds
+       globalThis.SizerVintedPanel.mount, it calls mount(slot, { tab, url }) and the Vinted code
+       fills the slot (the seller message tool); until then the placeholder below stays. -->
+  <section class="panel-block" id="vinted-slot" data-hook="vinted" aria-labelledby="vinted-title" hidden>
+    <h2 class="k" id="vinted-title">Vinted</h2>
+    <p class="muted small" data-vinted-placeholder>The seller message tool for this listing will appear here.</p>
+  </section>
+
+  <section class="panel-block" id="recent" aria-labelledby="recent-title">
+    <h2 class="k" id="recent-title">Recent sizings</h2>
+    <p class="muted small" id="recent-empty">Products Sizer sizes for you show up here. A week later it asks whether you bought them and how they fit, so your next sizes learn from it.</p>
+    <div id="recent-list"></div>
+  </section>
+
+  <footer class="foot">
+    <span class="muted small">Your profile stays in your browser.</span>
+    <button class="link" id="profile" type="button">Fit profile</button>
+  </footer>
+
+  <script src="../src/brands.js"></script>
+  <script src="../src/charts.js"></script>
+  <script src="../src/defaults.js"></script>
+  <script src="../src/review-details.js"></script>
+  <script src="../src/engine.js"></script>
+  <script src="../src/panel-style.js"></script>
+  <script src="../src/feedback.js"></script>
+  <script src="../src/fit-question.js"></script>
+  <script src="../src/sheet.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

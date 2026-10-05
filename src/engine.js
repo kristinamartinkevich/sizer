@@ -458,6 +458,34 @@
     return rv.verdict === 'tts' ? `Buyers say it ${what} (${basis}).` : `Buyers say it ${what}: ${basis}.`;
   }
 
+  // ---- what Sizer users who bought the brand said ---------------------------
+
+  const LEARN_FROM = 10;
+
+  // The brand's learned tendency for this kind of clothing, from the anonymous "did it fit?" outcomes
+  // (brand_fit, downloaded with the charts): once ten outcomes are in and a clear share agree.
+  function learnedFit(charts, names, kind) {
+    const rows = charts && Array.isArray(charts.brandFit) ? charts.brandFit : [];
+    const keys = new Set((names || []).map(norm).filter(Boolean));
+    const row = rows.find((r) => r && r.kind === kind && keys.has(norm(r.brand_key)));
+    if (!row || !(row.total >= LEARN_FROM)) return null;
+    const { small = 0, large = 0, tts = 0, total } = row;
+    if (small > large && small / total >= 0.5) return { verdict: 'small', count: small, total };
+    if (large > small && large / total >= 0.5) return { verdict: 'large', count: large, total };
+    if (tts / total >= 0.6) return { verdict: 'tts', count: tts, total };
+    return null;
+  }
+
+  // Every name the brand goes by, so "RAG&BONE" on a shop finds the outcomes filed as "rag & bone".
+  function brandNames(product, brand) {
+    return [product.brand, brand && brand.name].concat((brand && brand.aliases) || []).filter(Boolean);
+  }
+
+  function learnedReason(l) {
+    const who = l.count === l.total ? `${l.count}` : `${l.count} of ${l.total}`;
+    return `${who} Sizer users who bought this brand say it ${VERDICT_WORDS[l.verdict]}.`;
+  }
+
   // ---- where it will be tight or loose -------------------------------------
 
   const AREA_NAME = { bust: 'bust', chest: 'chest', waist: 'waist', hip: 'hips', shoulder: 'shoulders', inseam: 'leg', length: 'length', sleeve: 'sleeves', foot: 'foot' };
@@ -698,7 +726,11 @@
     const web = webDossier(product.dossier);
     const held = signals.fitNote ? { by: 'page', verdict: signals.fitNote } : reviews.verdict ? { by: 'reviews', verdict: reviews.verdict } : null;
     const webMove = webMoveFor(web, held);
-    const explicit = pageNote || buyersNote || !!webMove;
+    // What Sizer users who bought the brand said counts only when the page, its reviews and what others
+    // say online about this item have not moved it.
+    const learned = !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, brand), kind) : null;
+    const learnedNote = !!learned && (learned.verdict === 'small' || learned.verdict === 'large');
+    const explicit = pageNote || buyersNote || !!webMove || learnedNote;
     const elastane = signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : '';
     if (rigid) {
       if (!explicit) adj += 0.35 + (signals.skinny ? 0.15 : 0);
@@ -709,7 +741,8 @@
     } else if (signals.stretch === 'slight') {
       reasons.push({ text: `A little stretch${elastane}, so your usual fit.`, delta: null });
     }
-    if (brand && brand.tendency && !explicit) {
+    // What buyers of the brand reported back outranks the researched tendency.
+    if (brand && brand.tendency && !explicit && !learned) {
       adj += brand.tendency;
       if (brand.note) reasons.push({ text: brand.note, delta: null });
     }
@@ -740,6 +773,11 @@
     if (buyersNote && reviews.verdict === 'large') { idx -= 1; reasons.push({ text: reviewReason(reviews), delta: -1 }); }
     if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
     if (web) { idx += webMove; reasons.push({ text: webReason(web, webMove, held), delta: webMove || null }); }
+    if (learned) {
+      const step = learned.verdict === 'small' ? 1 : learned.verdict === 'large' ? -1 : 0;
+      idx += step;
+      reasons.push({ text: learnedReason(learned), delta: step || null });
+    }
     if (signals.roomy) reasons.push({ text: 'Relaxed cut, roomy by design. Go one down only if you want it closer.', delta: null });
 
     idx = Math.max(0, Math.min(chart.length - 1, idx));
@@ -750,6 +788,7 @@
         : buyersNote && reviews.verdict === 'small' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs small, sized up`
           : buyersNote && reviews.verdict === 'large' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs large, sized down`
             : webMove ? webHeadline(webMove)
+            : learnedNote ? `Sizer users say it ${VERDICT_WORDS[learned.verdict]}, sized ${learned.verdict === 'small' ? 'up' : 'down'}`
         : rigid && idx > usual ? 'No stretch, sized up'
           : signals.stretch === 'high' && idx < usual ? 'Stretchy, sized down'
             : idx > usual ? 'Sized up for you' : idx < usual ? 'Sized down for you' : 'Your usual fit';
@@ -776,7 +815,7 @@
     if (brand) score += 0.2 - tierPenalty(brand);
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
-    if (reviews.verdict) score += 0.1;
+    if (reviews.verdict || learned) score += 0.1;
     const corroborated = !!g2g || body.points.length > 1 || keys.every((k) => num(profile[k]) != null);
     if (corroborated) score += 0.1;
     if (body.spread > 5) score -= 0.15;
@@ -922,7 +961,9 @@
     const web = webDossier(product.dossier);
     const held = signals.fitNote ? { by: 'page', verdict: signals.fitNote } : reviews.verdict ? { by: 'reviews', verdict: reviews.verdict } : null;
     const webMove = webMoveFor(web, held);
-    const explicit = pageNote || buyersNote || !!webMove;
+    const learned = !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, found), 'shoes') : null;
+    const learnedNote = !!learned && (learned.verdict === 'small' || learned.verdict === 'large');
+    const explicit = pageNote || buyersNote || !!webMove || learnedNote;
     let alt = null;
     if (!explicit && inRow && f.foot >= row.foot[1] - 0.2 && idx < rows.length - 1) alt = { row: rows[idx + 1], why: 'if you like more room' };
     else if (!explicit && inRow && f.foot <= row.foot[0] + 0.2 && idx > 0) alt = { row: rows[idx - 1], why: 'if you like a closer fit' };
@@ -933,6 +974,11 @@
     if (buyersNote && reviews.verdict === 'large') { idx -= 1; reasons.push({ text: reviewReason(reviews), delta: -1 }); }
     if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
     if (web) { idx += webMove; reasons.push({ text: webReason(web, webMove, held), delta: webMove || null }); }
+    if (learned) {
+      const step = learned.verdict === 'small' ? 1 : learned.verdict === 'large' ? -1 : 0;
+      idx += step;
+      reasons.push({ text: learnedReason(learned), delta: step || null });
+    }
     idx = Math.max(0, Math.min(rows.length - 1, idx));
     const pick = rows[idx];
 
@@ -951,7 +997,8 @@
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up' : signals.fitNote === 'large' ? 'Runs large, sized down'
       : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
         : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down'
-          : webMove ? webHeadline(webMove) : 'By your foot length';
+          : webMove ? webHeadline(webMove)
+            : learnedNote ? `Sizer users say it ${VERDICT_WORDS[learned.verdict]}, sized ${learned.verdict === 'small' ? 'up' : 'down'}` : 'By your foot length';
     const LEVELS = ['Low', 'Medium', 'High'];
     const notches = !brand ? 0 : tierOfBrand(brand) === 5 ? 2 : tierPenalty(brand) ? 1 : 0;
     const confidence = !brand ? 'Low' : LEVELS[Math.max(0, (f.measured ? 2 : 1) - notches)];
@@ -1033,7 +1080,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas };
+  const api = { recommend, learnedFit, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

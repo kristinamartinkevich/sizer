@@ -67,3 +67,8 @@ button:active:not(:disabled) { transform: scale(.97); }
 .btn.ghost:hover { filter: none; background: var(--line); }
 .link { border-radius: 999px; padding: 4px 8px; margin: 0 -8px; }
 .link:hover { background: var(--line); }
+
+/* "Did it fit?" and the side panel button */
+.fit { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
+.fit h2 { margin: 0 0 4px; font-weight: 400; }
+.panel-btn { margin-top: 14px; }

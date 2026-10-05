@@ -184,6 +184,10 @@ button:active { transform: scale(.96); }
 .fine a:hover { color: var(--graphite); }
 .link { border: 0; background: none; padding: 4px 0; color: var(--accent); font-weight: 600; white-space: nowrap; }
 .empty { color: var(--muted); }
+/* "Did it fit?" on a product sized on an earlier visit, first in the sheet */
+.ask { margin: 0 0 20px; padding: 2px 14px 6px; border-radius: 12px; background: var(--fog); }
+.ask h3 { margin-top: 12px; }
+.ask .fq { border-top: 0; padding-top: 0; }
 
 @media (max-width: 520px) {
   .sheet { top: auto; width: 100vw; max-height: 86vh; border-left: 0; border-top: 1px solid var(--hair); border-radius: 16px 16px 0 0; animation-name: up; }

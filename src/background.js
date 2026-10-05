@@ -1,6 +1,7 @@
-importScripts('charts-store.js');
+importScripts('charts-store.js', 'defaults.js', 'feedback.js');
 
 const Store = globalThis.SizerChartsStore;
+const Feedback = globalThis.SizerFeedback;
 const REFRESH_ALARM = 'sizer:refresh-charts';
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
@@ -9,8 +10,8 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
   refreshCharts();
 });
 
-chrome.runtime.onStartup.addListener(() => refreshCharts());
-chrome.alarms.onAlarm.addListener((alarm) => { if (alarm.name === REFRESH_ALARM) refreshCharts(); });
+chrome.runtime.onStartup.addListener(() => { refreshCharts(); flushOutcomes(); });
+chrome.alarms.onAlarm.addListener((alarm) => { if (alarm.name === REFRESH_ALARM) { refreshCharts(); flushOutcomes(); } });
 
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg.type === 'sizer:options') chrome.runtime.openOptionsPage();
@@ -23,6 +24,11 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg.type === 'sizer:fit-dossier') { fitDossier({ ...msg, shop: shopOf(sender, msg) }).then(reply); return true; }
   // Only the popup asks this, on the shopper's click; a page's script cannot.
   if (msg.type === 'sizer:read-product' && !sender.tab) { readProduct(msg.text).then(reply); return true; }
+  // Recent sizings and "did it fit?": a product page remembers its answer; the popup, the side panel
+  // and the sheet on a revisit send an answer or a dismissal.
+  if (msg.type === 'sizer:remember-sizing' && sender.tab) { rememberSizing(msg.sizing, shopOf(sender, msg)).then(reply, () => reply({ ok: false })); return true; }
+  if (msg.type === 'sizer:answer-fit') { answerFit(msg).then(reply, (e) => reply({ ok: false, reason: String(e) })); return true; }
+  if (msg.type === 'sizer:dismiss-fit') { dismissFit(msg).then(reply, () => reply({ ok: false })); return true; }
 });
 
 // The shop is the sending tab's hostname, not whatever the page claims; only the hostname travels.
@@ -108,15 +114,95 @@ async function reportFit({ key, brand, style, vendor, counts }) {
   return { ok: true };
 }
 
+// ---- did it fit? ----------------------------------------------------------------
+
+// One change to the sizings list at a time, so two tabs sizing at once never lose one.
+let sizingsQueue = Promise.resolve();
+function withSizings(change) {
+  const run = sizingsQueue.then(async () => {
+    const { sizings } = await chrome.storage.local.get({ sizings: [] });
+    const out = await change(sizings);
+    if (out && out.sizings) await chrome.storage.local.set({ sizings: out.sizings });
+    return out ? out.reply : { ok: false };
+  });
+  sizingsQueue = run.catch(() => {});
+  return run;
+}
+
+// The page's sizing, field by field, with the shop from the sending tab and the time from here.
+function rememberSizing(sizing, shop) {
+  if (!sizing || typeof sizing.itemKey !== 'string' || !sizing.itemKey) return Promise.resolve({ ok: false });
+  const clean = {
+    itemKey: sizing.itemKey.slice(0, 200), brand: String(sizing.brand || '').slice(0, 80), style: String(sizing.style || '').slice(0, 120),
+    kind: sizing.kind, type: sizing.type || null, shop: String(shop || '').toLowerCase(), size: String(sizing.size || '').slice(0, 20),
+    tier: Number.isInteger(sizing.tier) ? sizing.tier : null,
+    sizes: Array.isArray(sizing.sizes) ? sizing.sizes.map((s) => String(s).slice(0, 20)).slice(0, 30) : [],
+  };
+  return withSizings((list) => ({ sizings: Feedback.remember(list, { ...clean, at: Date.now() }, Date.now()), reply: { ok: true } }));
+}
+
+// An answer: the piece joins the fit profile (sync storage, never sent), the sizing is marked, and the
+// anonymous outcome (outcomeBody's fields only) goes to the database, or waits if it cannot.
+function answerFit({ itemKey, answer }) {
+  return withSizings(async (list) => {
+    const { profile } = await chrome.storage.sync.get({ profile: globalThis.SIZER_DEFAULT_PROFILE });
+    const out = Feedback.applyAnswer(list, profile, itemKey, answer, await installId(), Date.now());
+    if (!out) return { reply: { ok: false, reason: 'unknown item or incomplete answer' } };
+    await chrome.storage.sync.set({ profile: out.profile });
+    const { outcomeOutbox } = await chrome.storage.local.get({ outcomeOutbox: [] });
+    await chrome.storage.local.set({ outcomeOutbox: Feedback.enqueue(outcomeOutbox, out.body) });
+    flushOutcomes();
+    return { sizings: out.list, reply: { ok: true } };
+  });
+}
+
+function dismissFit({ itemKey }) {
+  return withSizings((list) => ({ sizings: Feedback.dismiss(list, itemKey), reply: { ok: true } }));
+}
+
+// Sends what is waiting, oldest first; whatever fails stays for the next day's try. A refusal
+// (4xx: a bad body) is dropped, so one bad outcome never blocks the rest.
+let flushing = null;
+function flushOutcomes() {
+  if (flushing) return flushing;
+  flushing = (async () => {
+    const { outcomeOutbox } = await chrome.storage.local.get({ outcomeOutbox: [] });
+    // Kept as the exact text sent, so an answer changed while this was sending still waits its turn.
+    const sent = new Set();
+    for (const body of outcomeOutbox.slice().reverse()) {
+      const text = JSON.stringify(body);
+      try {
+        const res = await fetch(Store.OUTCOME_URL, { method: 'POST', headers: { ...Store.headers(), 'Content-Type': 'application/json' }, body: text });
+        if (res.ok || (res.status >= 400 && res.status < 500 && res.status !== 429)) sent.add(text);
+      } catch { break; }
+    }
+    if (!sent.size) return;
+    const { outcomeOutbox: now } = await chrome.storage.local.get({ outcomeOutbox: [] });
+    await chrome.storage.local.set({ outcomeOutbox: now.filter((b) => !sent.has(JSON.stringify(b))) });
+  })().catch(() => {}).finally(() => { flushing = null; });
+  return flushing;
+}
+
 // Downloads the charts once a day (checked ones and machine-read lookups). Offline, the last good bundle is kept; before any
 // download, the charts shipped with the extension are used.
+// What Sizer users who bought each brand said (brand_fit). A failed download keeps the last one.
+async function brandFit(previous) {
+  try {
+    const res = await fetch(Store.BRAND_FIT_URL, { headers: Store.headers() });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return Store.normaliseBrandFit(await res.json());
+  } catch {
+    return previous && Array.isArray(previous.brandFit) ? previous.brandFit : [];
+  }
+}
+
 async function refreshCharts(force = false) {
   const { charts } = await chrome.storage.local.get('charts');
   if (!force && Store.isFresh(charts)) return { ok: true, reason: 'fresh' };
   try {
     const res = await fetch(Store.BUNDLE_URL, { headers: Store.headers() });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const bundle = Store.normalise(await res.json());
+    const bundle = Store.withBrandFit(Store.normalise(await res.json()), await brandFit(charts));
     await chrome.storage.local.set({ charts: bundle });
     return { ok: true, brands: bundle.brands.length };
   } catch (e) {

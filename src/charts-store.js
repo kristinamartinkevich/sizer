@@ -6,6 +6,8 @@
   const BUNDLE_URL = `${SUPABASE_URL}/rest/v1/chart_bundle?select=brand_id,brand_name,aliases,charts,fit_notes,updated_at`;
   const ITEM_FIT_URL = `${SUPABASE_URL}/rest/v1/item_fit_by_vendor?select=vendor,small,large,tts,total,from_summary&item_key=eq.`;
   const REPORT_URL = `${SUPABASE_URL}/rest/v1/rpc/report_item_fit`;
+  const BRAND_FIT_URL = `${SUPABASE_URL}/rest/v1/brand_fit?select=brand_key,kind,small,tts,large,total`;
+  const OUTCOME_URL = `${SUPABASE_URL}/rest/v1/rpc/report_fit_outcome`;
   const DAY = 24 * 60 * 60 * 1000;
 
   // ---- one style across shops ---------------------------------------------
@@ -64,6 +66,24 @@
         updatedAt: b.updated_at || null,
       }));
     return { brands, fetchedAt: now };
+  }
+
+  // ---- what Sizer users who bought a brand said ------------------------------------
+
+  const FIT_KINDS = ['bottoms', 'tops', 'dresses', 'outerwear', 'shoes'];
+
+  // The brand_fit rows as the engine reads them: one per brand and kind, counts as numbers.
+  function normaliseBrandFit(payload) {
+    if (!Array.isArray(payload)) throw new Error('brand fit is not a list');
+    const count = (v) => (Number.isFinite(+v) && +v >= 0 ? Math.floor(+v) : 0);
+    return payload
+      .filter((r) => r && typeof r.brand_key === 'string' && r.brand_key.trim() && FIT_KINDS.includes(r.kind))
+      .map((r) => ({ brand_key: r.brand_key, kind: r.kind, small: count(r.small), tts: count(r.tts), large: count(r.large), total: count(r.total) }));
+  }
+
+  // The learned tendencies travel inside the stored chart bundle, so the engine gets them with the charts.
+  function withBrandFit(bundle, rows) {
+    return { ...bundle, brandFit: rows };
   }
 
   // ---- looking up a brand nobody has a chart for -------------------------------
@@ -400,6 +420,7 @@
 
   root.SizerChartsStore = {
     SUPABASE_URL, SUPABASE_ANON_KEY, BUNDLE_URL, ITEM_FIT_URL, REPORT_URL, LOOKUP_URL, MISS_TTL,
+    BRAND_FIT_URL, OUTCOME_URL, normaliseBrandFit, withBrandFit,
     headers, isFresh, isUsable, normalise, itemKey, poolExcept,
     missKey, isMissFresh, sanitiseShopGuide, lookupBody, lookupEntry, mergeChart, createLookup,
     READ_IMAGE_URL, READ_PRODUCT_URL, imageBody, imageChartEntry, withImageChart, createImageRead,

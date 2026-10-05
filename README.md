@@ -25,6 +25,23 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 - **First run:** with no sizes saved, the line offers **Add your sizes** instead of guessing.
 - **The sheet:** the full reasoning, what Sizer read on the page, and a confidence meter.
 - **The pill:** a bottom-right fallback when there is no picker to attach to.
+- **Did it fit?** Coming back to a product sized on an earlier visit, the line says so and the sheet
+  opens with the question.
+
+## The popup and the side panel
+
+- **The popup** shows the size for the current tab, and a week after a product was sized asks
+  "Did it fit?": did you buy it, which size, too small, right or too big, and optionally where.
+- **The side panel** (**Open side panel** in the popup) shows the current tab's full reasoning, the
+  recent sizings with the same questions (an early answer is welcome), and, on Vinted listings, the
+  slot the Vinted tools fill (`#vinted-slot` in `ui/sidepanel.html`; `ui/sidepanel.js` calls
+  `globalThis.SizerVintedPanel.mount(slot, { tab, url })` when that exists).
+- **An answer** to "Did it fit?" joins the pieces you own in your fit profile, so the next sizes learn from it, and is
+  sent anonymously to `report_fit_outcome` (migration 0008): the brand and style name, the kind of
+  item, the shop's hostname, the size you bought, the size Sizer suggested, the verdict (too small,
+  right or too big), the areas you picked, the chart tier and the install id. No measurements, no
+  profile, no page address. An answer that cannot be sent waits in local storage for the next day.
+  The recent sizings themselves (the last 50 from 60 days) never leave the browser.
 
 ## How it decides
 
@@ -66,6 +83,12 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    "About my curves" fields, or "I'm 5'4" and 130 lbs" in the text), each review counts by how like
    you its writer is, from your height, your hip minus waist and, when both sides give one, weight.
    That weighted verdict decides on the device; the plain count is still what is sent to the pool.
+   When neither the page, the reviews nor what others say online about the item (step 5) has moved
+   the size, what Sizer users who bought the brand reported decides instead: the `brand_fit` view counts "did it fit?" answers per brand and
+   kind of clothing where the size bought was the size Sizer suggested, shows them only from ten
+   answers, and comes down with the daily charts. A clear majority moves the size one step and is
+   named in the sheet ("12 Sizer users who bought this brand say it runs small"); it outranks the
+   brand's researched reputation.
 5. Once the first answer is on the page (and any chart lookup has settled), Sizer asks the
    `fit-dossier` function once per item what others say about the fit online. The request carries
    the item key (brand and style name), the brand name, the style name, the kind of item, the shop's
@@ -109,7 +132,9 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 | `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide, in a same-origin frame or on the shop's size-guide page, and size chart images |
 | `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables); the size-guide page fetch |
 | `src/content.js`, `src/panel-style.js`, `src/mark.js` | What Sizer draws on shop pages; the mark is inline SVG so shop CSPs cannot block it |
-| `ui/` | Popup and fit profile page |
+| `src/sheet.js` | The reasoning sheet's content, shared by the sheet on the page and the side panel |
+| `src/feedback.js`, `src/fit-question.js` | Recent sizings, the "did it fit?" timing, what an answer becomes (a piece you own, an anonymous outcome), and the question itself |
+| `ui/` | Popup, side panel and fit profile page |
 | `store/` | Store listing, privacy policy, Product Hunt kit, image sources and renders |
 | `tests/` | Engine tests and a neutral demo product page for visual checks |
 

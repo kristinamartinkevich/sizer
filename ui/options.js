@@ -135,6 +135,8 @@ function addItem(a, focus) {
   const node = $('item-tpl').content.firstElementChild.cloneNode(true);
   const item = { brand: a.brand || '', type: a.type || 'jeans', size: a.size || '', fit: a.fit || 'perfect' };
   if (a.flat && typeof a.flat === 'object') item.flat = { ...a.flat };
+  // A piece added by a "did it fit?" answer keeps its mark, so a later answer updates it instead of adding another.
+  if (a.fromFeedback) item.fromFeedback = true;
   profile.anchors.push(item);
   const brand = node.querySelector('.i-brand');
   const size = node.querySelector('.i-size');

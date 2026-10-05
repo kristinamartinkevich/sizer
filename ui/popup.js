@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/guide-table.js', 'src/extract.js', 'src/panel-style.js', 'src/mark.js', 'src/content.js'];
+const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/guide-table.js', 'src/extract.js', 'src/panel-style.js', 'src/mark.js', 'src/feedback.js', 'src/fit-question.js', 'src/sheet.js', 'src/content.js'];
 
 function show(id) {
   document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));
@@ -71,6 +71,46 @@ $('ai-read').onclick = async () => {
     $('ai-read').disabled = false;
   }
 };
+
+// ---- did it fit? ------------------------------------------------------------
+
+// Sizings a week old or more, answered here; the background worker saves the piece and sends the outcome.
+function mountQuestion(el, sizing) {
+  SizerFitQuestion.mount(el, sizing, {
+    onAnswer: async (answer) => {
+      const r = await chrome.runtime.sendMessage({ type: 'sizer:answer-fit', itemKey: sizing.itemKey, answer });
+      return r && r.ok;
+    },
+    onDismiss: () => chrome.runtime.sendMessage({ type: 'sizer:dismiss-fit', itemKey: sizing.itemKey }),
+  });
+}
+
+async function showDue() {
+  const style = document.createElement('style');
+  style.textContent = SizerFitQuestion.STYLE;
+  document.head.appendChild(style);
+  const { sizings } = await chrome.storage.local.get({ sizings: [] });
+  const due = SizerFeedback.due(sizings, Date.now()).slice(0, 3);
+  if (!due.length) return;
+  $('s-fit').hidden = false;
+  for (const s of due) {
+    const el = document.createElement('div');
+    el.className = 'fq';
+    $('fit-list').appendChild(el);
+    mountQuestion(el, s);
+  }
+}
+
+// The side panel opens beside the page: the full reasoning, recent sizings and their questions.
+// Chrome opens it only straight from the click, so the window is known before any click.
+let windowId = null;
+if (chrome.windows) chrome.windows.getCurrent((w) => { windowId = w && w.id; });
+$('open-panel').onclick = () => {
+  if (windowId == null || !chrome.sidePanel) { $('open-panel').hidden = true; return; }
+  chrome.sidePanel.open({ windowId }).then(() => window.close(), () => { $('open-panel').hidden = true; });
+};
+
+showDue();
 
 chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) => {
   if (profile.theme === 'light' || profile.theme === 'dark') document.documentElement.dataset.theme = profile.theme;

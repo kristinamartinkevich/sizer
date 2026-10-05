@@ -65,6 +65,7 @@ WHAT IT READS
 • What others say about the fit online, from retailer reviews and fit blogs, gathered once per item for everyone, with the pages it came from
 • Per-size stock from the shop’s product data
 • On a page it cannot read, the page’s product text, read by AI only when you click “Read this page with AI”
+• What Sizer users who bought the brand said about the fit, once ten of them have answered
 
 YOUR FIT PROFILE
 • Bust, waist, hip, shoulder width, arm length, inseam, foot length and height, in cm or inches
@@ -74,6 +75,10 @@ YOUR FIT PROFILE
 • Whether to go up or down when you fall between two sizes
 • Light, dark or system appearance
 
+AFTER YOU BUY
+• A week later, “Did it fit?” in the popup and the side panel; your answer becomes a piece you own, so your next sizes learn from it
+• A side panel with the full reasoning for the page you are on and your recent sizings
+
 WORKS ON
 Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE, Nordstrom, Zara, Mango, H&M, COS, ARKET, Selfridges, rag & bone and Levi’s. On any other shop, click the Sizer icon and choose “Check this page anyway”.
 
@@ -81,7 +86,7 @@ JEANS, TROUSERS, SKIRTS, DRESSES, TOPS AND SHOES
 Sizer is built around women’s sizing. Bottoms are sized on waist and hip; tops, dresses and coats on the bust and shoulders when the brand’s chart prints them. FR, EU, IT, UK, US and letter sizes line up through one table. Shoes are sized from your foot length. Men’s charts are coming.
 
 PRIVATE BY DESIGN
-Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. Sizer sends three anonymous things: a tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, so shoppers on other shops can use it; once per item, a request for what others say about the fit online, carrying the brand name, the style name, the kind of item, the shop’s name, a random install id and the page’s anonymous review counts; and, when a brand has no size chart yet, a request to look one up carrying the brand name, the kind of item, the shop’s name and the shop’s own size table if the page prints one. To find that table Sizer may open the shop’s own size-guide page without your cookies, or send a size chart image’s web address with the brand name, kind of item and a random install id so the chart can be read from the picture. If you click “Read this page with AI” on a page Sizer cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters with web addresses removed, and the random install id. No profile, measurement, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html
+Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. Sizer sends only anonymous things: a tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, so shoppers on other shops can use it; once per item, a request for what others say about the fit online, carrying the brand name, the style name, the kind of item, the shop’s name, a random install id and the page’s anonymous review counts; and, when a brand has no size chart yet, a request to look one up carrying the brand name, the kind of item, the shop’s name and the shop’s own size table if the page prints one. To find that table Sizer may open the shop’s own size-guide page without your cookies, or send a size chart image’s web address with the brand name, kind of item and a random install id so the chart can be read from the picture. If you click “Read this page with AI” on a page Sizer cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters with web addresses removed, and the random install id. When you answer “Did it fit?” a week after a product was sized, the answer becomes a piece you own in your profile and is sent anonymously: the brand and style name, the kind of item, the shop’s name, the size you bought, the size Sizer suggested, too small, right or too big, the areas you picked, the chart tier and the install id. Answers are shared only as counts per brand, from ten answers. No profile, measurement, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html
 
 GOOD TO KNOW
 Size charts are approximate and brands change them, so check the brand’s guide for important purchases. Sizer is independent and not affiliated with any shop or brand it mentions.
@@ -104,16 +109,17 @@ Size finder · size recommendation · what size am I · jeans size · size chart
 Shows the shopper which clothing size to buy on a product page, from their own measurements and the product’s size, fit, stock and review information.
 
 **Permission justifications:**
-- `storage`: Saves the shopper’s fit profile (measurements, clothes they own, fit preference) in Chrome storage, and caches the downloaded size charts.
+- `storage`: Saves the shopper’s fit profile (measurements, clothes they own, fit preference) in Chrome storage, caches the downloaded size charts, and keeps the list of recently sized products so Sizer can ask whether they fitted.
 - `activeTab`: Lets the shopper run Sizer on a shop that is not in the built-in list, only when they click the Sizer icon.
 - `scripting`: Injects Sizer’s page reader into that tab after the shopper clicks “Check this page anyway”.
-- `alarms`: Refreshes the downloaded size charts once a day.
-- Host permission `https://cqvrdsgutpczbucbpiqa.supabase.co/*`: Downloads the size charts, asks Sizer’s own database to look up the chart of a brand it has none for and what others say about an item’s fit, and exchanges anonymous review tallies with it.
+- `alarms`: Refreshes the downloaded size charts once a day, and retries a “did it fit?” answer that could not be sent.
+- `sidePanel`: Shows Sizer’s full reasoning for the current page and the shopper’s recent sizings, with their “did it fit?” questions, in Chrome’s side panel when the shopper opens it.
+- Host permission `https://cqvrdsgutpczbucbpiqa.supabase.co/*`: Downloads the size charts, asks Sizer’s own database to look up the chart of a brand it has none for and what others say about an item’s fit, exchanges anonymous review tallies with it, and sends the shopper’s anonymous “did it fit?” answers.
 - Content script matches (the listed fashion shops): Reads product pages to find the brand, sizes, stock, fit notes and reviews, and shows the size under the size picker.
 
 **Remote code:** No. All code ships in the package; the size charts are downloaded as data (JSON).
 
-**Data usage.** Tick **Website content** and nothing else. The honest reason: Sizer sends content from the website to Sizer’s functions in five cases, each with a random install id. With the shop’s hostname: it derives a count from the review text on the page and sends the count; once per item it asks what others say about the fit online, sending the brand name, the style name, the kind of item and the page’s anonymous review counts (runs small, runs large, true to size, and areas reviewers call tight, loose, long or short); and when the brand has no chart, it sends the brand name, the kind of item and, if the page prints one, the shop’s size table text, so the chart can be looked up. Without the hostname: to find that table it may open the shop’s own size-guide page without your cookies (a request to the shop, nothing kept), or send a size chart image’s web address with the brand name and kind of item so the chart can be read from the picture; and on request only (“Read this page with AI”), it sends the page title, headings and the text around the size picker, up to 6000 characters, with web addresses removed. No review text, no page address and nothing personal travels. The fit profile never leaves `chrome.storage.sync`. Leaving every box unticked would contradict the privacy policy, and reviewers check the two against each other.
+**Data usage.** Tick **Website content** and nothing else. The honest reason: Sizer sends content from the website to Sizer’s functions in five cases, each with a random install id. With the shop’s hostname: it derives a count from the review text on the page and sends the count; once per item it asks what others say about the fit online, sending the brand name, the style name, the kind of item and the page’s anonymous review counts (runs small, runs large, true to size, and areas reviewers call tight, loose, long or short); and when the brand has no chart, it sends the brand name, the kind of item and, if the page prints one, the shop’s size table text, so the chart can be looked up. Without the hostname: to find that table it may open the shop’s own size-guide page without your cookies (a request to the shop, nothing kept), or send a size chart image’s web address with the brand name and kind of item so the chart can be read from the picture; and on request only (“Read this page with AI”), it sends the page title, headings and the text around the size picker, up to 6000 characters, with web addresses removed. When the shopper answers “Did it fit?”, it sends the brand and style name, the kind of item, the shop’s hostname, the size bought, the size Sizer suggested, the verdict and the areas picked, with the chart tier and the install id; that is the shopper’s own answer, not website content, and carries nothing personal. No review text, no page address and nothing personal travels. The fit profile never leaves `chrome.storage.sync`. Leaving every box unticked would contradict the privacy policy, and reviewers check the two against each other.
 
 **Certifications:** tick all three. Sizer does not sell data, does not use it for anything but the size, and does not use it for creditworthiness or lending.
 

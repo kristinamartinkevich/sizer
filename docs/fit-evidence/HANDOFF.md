@@ -284,6 +284,12 @@ revisit of the same product page shows the same question in the sheet. An answer
   `outcomeBody` with a test. A view aggregates outcomes per brand and kind into `brand_fit`
   (small/tts/large counts), which joins the daily bundle as the brand's learned tendency once it has
   10 outcomes, and is named in the sheet ("12 Sizer users who bought this brand say it runs small").
+  As built (C6): `brand_fit` is a second daily fetch stored inside the chart bundle (`brandFit`);
+  it counts only outcomes where the size bought was the size suggested (the ones that say whether
+  Sizer's answer for the brand runs small or large) and shows a row only from 10 outcomes; `kind`
+  is the engine's kind (bottoms, tops, dresses, outerwear, shoes); a clear majority moves the size
+  one step, only when the page and the reviews say nothing about fit, and outranks the researched
+  brand tendency.
 
 Side panel (`chrome.sidePanel`, permission `sidePanel`): the current tab's full reasoning (the sheet
 content, without the shop page's layout limits), the Vinted message tool on Vinted, and recent

@@ -268,3 +268,123 @@ begin
 end $$;
 SQL
 echo "ok   chart_images and its caps row are written by the service role and closed to anon"
+
+# Fit outcomes (0008): the public key writes outcomes only through report_fit_outcome(), which
+# validates them; it cannot read or write fit_outcomes; it reads brand_fit, counts per brand and kind
+# where the size bought was the size suggested, shown only from ten outcomes.
+run >/dev/null <<'SQL'
+do $$
+begin
+  if not (select relrowsecurity from pg_class where oid = 'public.fit_outcomes'::regclass) then raise exception 'fit_outcomes has row level security off'; end if;
+  if exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'fit_outcomes') then raise exception 'fit_outcomes has a policy, it should have none'; end if;
+  if exists (select 1 from unnest(array['anon', 'authenticated']) r, unnest(array['select', 'insert', 'update', 'delete']) p
+             where has_table_privilege(r, 'public.fit_outcomes', p)) then
+    raise exception 'an API role still holds a grant on fit_outcomes';
+  end if;
+  if has_table_privilege('anon', 'public.brand_fit', 'insert') or has_table_privilege('anon', 'public.brand_fit', 'update')
+     or has_table_privilege('anon', 'public.brand_fit', 'delete') then
+    raise exception 'anon holds a write grant on brand_fit';
+  end if;
+end $$;
+set role anon;
+do $$
+declare i integer; seen bigint; cols text; row record;
+begin
+  -- Ten buyers of rag & bone jeans who bought the suggested size: eight too small, two right.
+  for i in 1..10 loop
+    perform public.report_fit_outcome(
+      item_key => 'rag and bone|wren', brand => case when i % 2 = 0 then 'rag & bone' else 'RAG&BONE' end, kind => 'bottoms',
+      shop => 'www.Zalando.de', install => ('00000000-0000-4000-8000-' || lpad(i::text, 12, '0'))::uuid,
+      size_bought => 'W27 ', size_suggested => 'w27', outcome => case when i <= 8 then 'small' else 'right' end,
+      areas => case when i <= 8 then array['waist', 'hip'] else '{}' end, chart_tier => 2);
+  end loop;
+  -- A buyer who chose another size says nothing about Sizer's answer for the brand.
+  perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'www.zalando.de',
+    '00000000-0000-4000-8000-000000000099', '28', '27', 'big', '{}', null);
+  -- The first install changes its mind: its answer is replaced, not added.
+  perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'www.zalando.de',
+    '00000000-0000-4000-8000-000000000001', 'W27', 'W27', 'right', '{}', 2);
+  -- Three outcomes for another brand stay hidden.
+  for i in 1..3 loop
+    perform public.report_fit_outcome('mother|looker', 'MOTHER', 'bottoms', 'www.revolve.com',
+      ('00000000-0000-4000-8000-0000000001' || lpad(i::text, 2, '0'))::uuid, '26', '26', 'small', '{}', 1);
+  end loop;
+
+  select string_agg(column_name, ',' order by ordinal_position) into cols
+    from information_schema.columns where table_schema = 'public' and table_name = 'brand_fit';
+  if cols <> 'brand_key,kind,small,tts,large,total' then raise exception 'brand_fit serves %', cols; end if;
+  if (select count(*) from public.brand_fit) <> 1 then raise exception 'brand_fit shows % rows, expected only rag and bone', (select count(*) from public.brand_fit); end if;
+  select * into row from public.brand_fit;
+  if row.brand_key <> 'rag and bone' or row.kind <> 'bottoms' or row.small <> 7 or row.tts <> 3 or row.large <> 0 or row.total <> 10 then
+    raise exception 'brand_fit row is %', row;
+  end if;
+
+  begin
+    perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'www.zalando.de', gen_random_uuid(), '27', '27', 'meh', '{}', null);
+    raise exception 'an unknown outcome was accepted';
+  exception when raise_exception then
+    if sqlerrm not like 'outcome must be%' then raise; end if;
+  end;
+  begin
+    perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'hats', 'www.zalando.de', gen_random_uuid(), '27', '27', 'small', '{}', null);
+    raise exception 'an unknown kind was accepted';
+  exception when raise_exception then
+    if sqlerrm not like 'unknown kind%' then raise; end if;
+  end;
+  begin
+    perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'www.zalando.de', gen_random_uuid(), '27', '27', 'small', array['waist', 'measurements 70 97'], null);
+    raise exception 'an unknown area was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.report_fit_outcome('https://shop.example/p/1', 'rag & bone', 'bottoms', 'www.zalando.de', gen_random_uuid(), '27', '27', 'small', '{}', null);
+    raise exception 'an item key shaped like an address was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'https://www.zalando.de/p', gen_random_uuid(), '27', '27', 'small', '{}', null);
+    raise exception 'a shop that is not a hostname was accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    perform public.report_fit_outcome('rag and bone|wren', 'rag & bone', 'bottoms', 'www.zalando.de', gen_random_uuid(), ' ', '27', 'small', '{}', null);
+    raise exception 'an empty size bought was accepted';
+  exception when check_violation then null;
+  end;
+
+  -- One install is held to fifty outcomes a day.
+  for i in 1..50 loop
+    perform public.report_fit_outcome('cap test|s' || i, 'Cap Test', 'tops', 'shop.example', '00000000-0000-4000-8000-00000000ca00', 'M', 'M', 'right', '{}', null);
+  end loop;
+  begin
+    perform public.report_fit_outcome('cap test|s51', 'Cap Test', 'tops', 'shop.example', '00000000-0000-4000-8000-00000000ca00', 'M', 'M', 'right', '{}', null);
+    raise exception 'the fifty-first outcome of the day was accepted';
+  exception when raise_exception then
+    if sqlerrm not like 'too many outcomes%' then raise; end if;
+  end;
+
+  begin
+    select count(*) into seen from public.fit_outcomes;
+    if seen > 0 then raise exception 'anon can read fit_outcomes (% rows)', seen; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.fit_outcomes (item_key, brand, kind, shop, install_id, size_bought, size_suggested, outcome)
+    values ('x|y', 'x', 'tops', 'shop.example', gen_random_uuid(), 'M', 'M', 'small');
+    raise exception 'anon can write fit_outcomes directly';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    delete from public.brand_fit;
+    raise exception 'anon can delete through brand_fit';
+  exception when insufficient_privilege or feature_not_supported or object_not_in_prerequisite_state then null;
+  end;
+end $$;
+reset role;
+do $$
+begin
+  if (select count(*) from public.fit_outcomes where item_key = 'rag and bone|wren') <> 11 then raise exception 'the replaced answer was added instead'; end if;
+  if (select shop from public.fit_outcomes limit 1) <> 'www.zalando.de' then raise exception 'the shop was not lower-cased'; end if;
+end $$;
+SQL
+echo "ok   fit_outcomes is written through report_fit_outcome only; anon reads brand_fit counts from ten outcomes"

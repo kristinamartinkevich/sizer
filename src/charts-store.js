@@ -297,8 +297,10 @@
   const LISTING_KINDS = ['top', 'dress', 'jeans', 'trousers', 'shorts', 'skirt', 'outerwear', 'shoes'];
   const MEASUREMENT_KEYS = ['pit', 'length', 'waistFlat', 'rise', 'inseam', 'legOpening', 'shoulder', 'sleeve', 'insole'];
   const MAX_PHOTOS = 4;
-  // Vinted serves listing photos from its own image hosts (images1.vinted.net and the like).
-  const VINTED_HOST = /(^|\.)vinted\.[a-z]{2,3}(\.[a-z]{2})?$/i;
+  // Vinted serves listing photos from its own image hosts, images1.vinted.net and its numbered
+  // siblings, on every country site. Only those: not a Vinted listing page, not a lookalike domain.
+  // Same rule as read-chart-image's measurements.ts; its Deno test holds the two equal.
+  const VINTED_PHOTO_HOST = /^images\d*\.vinted\.net$/i;
 
   // What "Read measurements from the photos" sends: up to four of the listing's photo addresses
   // (public pictures on Vinted's servers, never the listing's address), the kind of item and the
@@ -309,7 +311,7 @@
     for (const raw of [].concat(image_urls || [])) {
       let u;
       try { u = new URL(String(raw)); } catch { continue; }
-      if (u.protocol !== 'https:' || u.username || u.password || !VINTED_HOST.test(u.hostname)) continue;
+      if (u.protocol !== 'https:' || u.username || u.password || !VINTED_PHOTO_HOST.test(u.hostname)) continue;
       u.hash = '';
       if (u.href.length > 2048 || urls.includes(u.href)) continue;
       urls.push(u.href);
@@ -488,7 +490,7 @@
     READ_IMAGE_URL, READ_PRODUCT_URL, imageBody, imageChartEntry, withImageChart, createImageRead,
     productBody, readProductEntry, createProductRead, applyReadProduct,
     DOSSIER_URL, DOSSIER_FOUND_TTL, DOSSIER_MISS_TTL, dossierKey, dossierBody, dossierEntry, createDossier,
-    READ_MEASUREMENTS_URL, LISTING_KINDS, MEASUREMENT_KEYS, measurementsBody, readMeasurementsEntry, createMeasurementsRead,
+    READ_MEASUREMENTS_URL, LISTING_KINDS, MEASUREMENT_KEYS, VINTED_PHOTO_HOST, measurementsBody, readMeasurementsEntry, createMeasurementsRead,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 if (typeof module !== 'undefined') module.exports = globalThis.SizerChartsStore;

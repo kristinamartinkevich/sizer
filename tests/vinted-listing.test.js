@@ -1,5 +1,6 @@
 // C5: the Vinted listing reader's pure half, the label-only answer, the photo read's request body,
-// and the manifest entry. The DOM half (src/vinted-page.js) is checked in tests/shops.html.
+// and the manifest entry. The DOM half (src/vinted-page.js) is checked in tests/shops.html; its timing
+// and message handling in tests/vinted-page.test.js.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
@@ -201,7 +202,7 @@ test('answerFor: no profile asks for your sizes; no size and nothing measured st
 
 test('the popup gets the same answer in its own shape, a label-only answer as a rough guess', () => {
   const measured = Vinted.popupResult(Vinted.answerFor(listing({ have: { pit: 48.5 } }), { anchors: [COS_TOP] }, null, Engine), listing());
-  assert.deepStrictEqual(measured, { ok: true, size: 'S', headline: 'Your size, compared with your COS top in S', confidence: 'High', brand: 'COS', available: null });
+  assert.deepStrictEqual(measured, { ok: true, size: 'S', verdict: 'fits', heading: 'Your size', headline: 'Your size, compared with your COS top in S', confidence: 'High', brand: 'COS', available: null });
   const label = Vinted.popupResult(Vinted.answerFor(listing({ brand: 'Zara', size: '40', kind: 'trousers' }), ME, null, Engine), listing({ brand: 'Zara', size: '40' }));
   assert.strictEqual(label.confidence, 'Low');
   assert.match(label.headline, /by the label/);

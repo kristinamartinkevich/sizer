@@ -93,6 +93,9 @@
     return TEMPLATE[l](joinList(keys.map((k) => NAMES[l][k]), l));
   }
 
+  // A Vinted listing's address path; the catalogue, members and the rest are not listings.
+  const isListingPath = (pathname) => /\/items\//.test(String(pathname || ''));
+
   const LANG_OF_TLD = { fr: 'fr', be: 'fr', lu: 'fr', de: 'de', at: 'de', es: 'es', it: 'it', nl: 'nl', pl: 'pl' };
   function langOf(hostname) {
     const tld = String(hostname || '').toLowerCase().split('.').pop();
@@ -125,7 +128,9 @@
       if (v == null || own == null) continue;
       const width = WIDTHS.includes(to);
       const d = round1(v - (own + (width ? PIECE_FIT_CM[piece.fit] || 0 : 0)));
-      areas.push({ area: to, diff: d, verdict: width ? widthVerdict(d) : lengthVerdict(d) });
+      // diff decides the verdict (it counts how your piece fits you); raw is what a tape measure would
+      // show between the listing and your piece, so the words can state it truthfully.
+      areas.push({ area: to, diff: d, raw: round1(v - own), verdict: width ? widthVerdict(d) : lengthVerdict(d) });
     }
     return areas.some((a) => WIDTHS.includes(a.area)) ? areas : null;
   }
@@ -164,7 +169,8 @@
     if (!areas) return null;
     const verdict = overall(areas);
     const against = best ? pieceName(best.piece) : 'your measurements';
-    return { verdict, against, areas, line: `${HEAD[verdict]}, compared with ${best ? `your ${against}` : against}` };
+    const pieceFit = best && PIECE_FIT_CM[best.piece.fit] ? best.piece.fit : null;
+    return { verdict, against, pieceFit, areas, line: `${HEAD[verdict]}, compared with ${best ? `your ${against}` : against}` };
   }
 
   // ---- where it fits, in words ----------------------------------------------------
@@ -174,8 +180,12 @@
   const BODY_PART = { chest: 'bust', waist: 'waist' };
   const cmText = (v) => `${+Math.abs(v).toFixed(1)} cm`;
 
+  const FIT_NOTE = { loose: ', which fits you loose', tight: ', which is tight on you' };
+
   // One line per area compare() looked at: against a piece, how much narrower, wider, shorter or
-  // longer the listing is; against your measurements, how much room it leaves.
+  // longer the listing is, measured against the piece itself (when the piece fits you loose or tight,
+  // the line says so, since that is why the same width can still be roomy or tight); against your
+  // measurements, how much room it leaves.
   function areaLines(cmp) {
     if (!cmp || !Array.isArray(cmp.areas)) return [];
     const piece = cmp.against !== 'your measurements';
@@ -185,10 +195,12 @@
         const part = BODY_PART[a.area] || a.area;
         return a.diff >= 0 ? `${head}, ${cmText(a.diff)} of room over your ${part}` : `${head}, ${cmText(a.diff)} less than your ${part}`;
       }
-      if (!a.diff) return `${head}, the same as yours`;
       const width = WIDTHS.includes(a.area);
-      const word = width ? (a.diff < 0 ? 'narrower' : 'wider') : (a.diff < 0 ? 'shorter' : 'longer');
-      return `${head}, ${cmText(a.diff)} ${word} than yours`;
+      const d = typeof a.raw === 'number' ? a.raw : a.diff;
+      const note = width && FIT_NOTE[cmp.pieceFit] ? FIT_NOTE[cmp.pieceFit] : '';
+      if (!d) return `${head}, the same as yours${note}`;
+      const word = width ? (d < 0 ? 'narrower' : 'wider') : (d < 0 ? 'shorter' : 'longer');
+      return `${head}, ${cmText(d)} ${word} than yours${note}`;
     });
   }
 
@@ -214,14 +226,16 @@
 
   const clean = (s) => String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
   const words = (list) => new RegExp(`(?<![\\p{L}])(?:${list})(?![\\p{L}])`, 'iu');
-  // Most specific first: a denim jacket is a jacket, a jeans skirt a skirt.
+  // Most specific first: a denim jacket is a jacket, and a denim skirt or denim shorts are a skirt or
+  // shorts, so skirt and shorts come before jeans. German and Dutch write them as one word
+  // (Jeansrock, Jeansshorts, spijkerrok), so those words match as endings too.
   const KIND_WORDS = [
     ['shoes', words('chaussures?|shoes?|schuhe|zapatos|zapatillas|scarpe|schoenen|buty|baskets|sneakers?|trainers|bottes|bottines|boots?|stiefel|stiefeletten|botas|stivali|laarzen|sandales|sandals?|sandalen|sandalias|sandali|escarpins|heels|pumps|mocassins|loafers|ballerines|ballerinas|obuwie|kozaki|botki|sandały|calçado|skor|kengät|sko|topánky|cipők|pantofi|cipele|παπούτσια')],
     ['outerwear', words('manteaux?|vestes?|blousons?|parkas?|trench(?: ?coats?)?|doudounes?|coats?|jackets?|blazers?|outerwear|mäntel|mantel|jacken|jacke|abrigos?|chaquetas?|cazadoras?|cappotti|cappotto|giacche|giacca|giubbotti|jassen|jas|mantels|kurtki|kurtka|płaszcze|płaszcz|marynarki|casacos?|blusões|jackor|jacka|kappor|takit|takki|jakker|jakke|kabáty|bundy|kabátok|dzsekik|geci|jachete|paltoane|jakne|kaputi')],
     ['dress', words('robes?|dress(?:es)?|kleider|kleid|vestidos?|abiti|abito|jurken|jurk|sukienki|sukienka|klänningar|klänning|mekot|mekko|kjoler|kjole|šaty|ruhák|ruha|rochii|rochie|haljine|haljina|φορέματα')],
+    ['skirt', words('jupes?|\\p{L}+röcke|\\p{L}+rock|\\p{L}+rokken|\\p{L}+rok|skirts?|röcke|rock|faldas?|gonne|gonna|rokken|rok|spódnice|spódnica|saias?|kjolar|kjol|hameet|hame|nederdele|nederdel|sukně|sukne|szoknyák|szoknya|fuste|fustă|suknje|suknja|φούστες')],
+    ['shorts', words('shorts?|\\p{L}+shorts?|bermudas?|pantaloncini|korte broeken|szorty|calções|kraťasy|rövidnadrágok|pantaloni scurți|kratke hlače|σορτς')],
     ['jeans', words('jeans?|džíny|farmerky|farmer|dżinsy|blugi|traperice|τζιν')],
-    ['skirt', words('jupes?|skirts?|röcke|rock|faldas?|gonne|gonna|rokken|rok|spódnice|spódnica|saias?|kjolar|kjol|hameet|hame|nederdele|nederdel|sukně|sukne|szoknyák|szoknya|fuste|fustă|suknje|suknja|φούστες')],
-    ['shorts', words('shorts?|bermudas?|pantaloncini|korte broeken|szorty|calções|kraťasy|rövidnadrágok|pantaloni scurți|kratke hlače|σορτς')],
     ['trousers', words('pantalons?|trousers|pants|leggings|hosen|hose|pantalones|pantaloni|broeken|broek|spodnie|calças|byxor|housut|bukser|kalhoty|nohavice|nadrágok|nadrág|hlače|παντελόνια')],
     ['top', words('hauts?|tops?|t-shirts?|chemises?|chemisiers?|blouses?|pulls?|sweats?|gilets?|shirts?|sweaters?|jumpers?|hoodies?|cardigans?|oberteile|blusen|bluse|hemden|pullover|camisetas?|camisas?|blusas?|jerséis|maglie|maglia|magliette|camicie|camicia|bluse|felpe|truien|trui|bloesjes|overhemden|bluzki|bluzka|koszule|swetry|tröjor|toppar|paidat|topit|trøjer|toppe|trička|halenky|felsők|pólók|bluze|topuri|majice|μπλούζες')],
   ];
@@ -361,16 +375,24 @@
     return { mode: 'unknown', message };
   }
 
+  // The popup's heading over the listing's size, in the words the line uses: the size shown is the
+  // seller's, so it is "Your size" only when the verdict says so, and a label-only fit is a rough guess.
+  function popupHeading(verdict, confidence) {
+    if (verdict === 'small' || verdict === 'roomy') return HEAD[verdict];
+    return confidence === 'Low' || !verdict ? 'Rough guess' : HEAD.fits;
+  }
+
   // The same answer in the popup's result shape. A measured answer against a piece you own is the
   // surest Sizer gives; against your measurements a notch less; the label alone is a rough guess.
   function popupResult(answer, listing) {
     if (!answer || (answer.mode !== 'measured' && answer.mode !== 'label')) return null;
     const confidence = answer.mode === 'label' ? 'Low' : answer.byPiece ? 'High' : 'Medium';
-    return { ok: true, size: (listing && listing.size) || '', headline: answer.line, confidence, brand: (listing && listing.brand) || null, available: null };
+    const verdict = answer.verdict || null;
+    return { ok: true, size: (listing && listing.size) || '', verdict, heading: popupHeading(verdict, confidence), headline: answer.line, confidence, brand: (listing && listing.brand) || null, available: null };
   }
 
   const api = {
-    parseMeasurements, wanted, sellerMessage, langOf, compare, NAMES, RANGE,
+    parseMeasurements, wanted, sellerMessage, langOf, compare, NAMES, RANGE, ROUND_FROM_CM, isListingPath,
     areaLines, labelResult, COPY, kindOfListing, engineTitle, sizeLabel, listingFrom, mergeMeasurements,
     answerFor, popupResult, hasProfile,
   };

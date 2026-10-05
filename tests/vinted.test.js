@@ -114,3 +114,82 @@ test('the listing language comes from the Vinted domain', () => {
   assert.strictEqual(Vinted.langOf('www.vinted.at'), 'de');
   assert.strictEqual(Vinted.langOf('www.vinted.lt'), 'en');
 });
+
+// ---- review wf_fdd1e9c0-f4e ---------------------------------------------------------------------
+
+test('a denim skirt or denim shorts are a skirt or shorts, not jeans, in the Vinted languages', () => {
+  const skirts = [
+    [['Femmes', 'Vêtements', 'Jupes', 'Jupes en jean'], ''],
+    [[], 'Jupe en jean Levi’s taille haute'],
+    [['Damen', 'Kleidung', 'Röcke', 'Jeansröcke'], ''],
+    [[], 'Jeansrock von Esprit'],
+    [[], 'Denim skirt, mid length'],
+    [[], 'Falda vaquera de jeans'],
+    [[], 'Gonna di jeans'],
+    [[], 'Spijkerrok maat 38'],
+    [[], 'Spódnica jeansowa'],
+  ];
+  for (const [parts, title] of skirts) assert.strictEqual(Vinted.kindOfListing(parts, title), 'skirt', `${parts.join(' > ')} ${title}`);
+  const shorts = [
+    [[], 'Short en jean taille haute'],
+    [['Women', 'Clothing', 'Shorts', 'Denim shorts'], ''],
+    [[], 'Jeansshorts von Levi’s'],
+    [[], 'Shorts vaqueros jeans'],
+    [[], 'Szorty jeansowe'],
+  ];
+  for (const [parts, title] of shorts) assert.strictEqual(Vinted.kindOfListing(parts, title), 'shorts', `${parts.join(' > ')} ${title}`);
+  // Plain jeans stay jeans, and the message for a denim skirt asks for a skirt's measurements.
+  assert.strictEqual(Vinted.kindOfListing(['Damen', 'Kleidung', 'Jeans', 'Skinny Jeans'], ''), 'jeans');
+  assert.strictEqual(Vinted.kindOfListing([], 'Jean Levi’s 501'), 'jeans');
+  const l = Vinted.listingFrom({ host: 'www.vinted.fr', title: 'Jupe en jean', description: '' });
+  assert.strictEqual(l.kind, 'skirt');
+  assert.ok(!/entrejambe/.test(Vinted.sellerMessage(l)));
+});
+
+test('the popup heading follows the verdict, so it never says "Your size" over a size that is not', () => {
+  const listing = { size: 'S', brand: 'COS' };
+  const small = Vinted.popupResult({ mode: 'measured', verdict: 'small', byPiece: true, line: 'Too small for you, compared with your COS top in S' }, listing);
+  assert.strictEqual(small.heading, 'Too small for you');
+  assert.strictEqual(small.verdict, 'small');
+  assert.strictEqual(Vinted.popupResult({ mode: 'measured', verdict: 'roomy', byPiece: false, line: 'x' }, listing).heading, 'Roomy on you');
+  assert.strictEqual(Vinted.popupResult({ mode: 'measured', verdict: 'fits', byPiece: true, line: 'x' }, listing).heading, 'Your size');
+  assert.strictEqual(Vinted.popupResult({ mode: 'label', verdict: 'small', line: 'x' }, listing).heading, 'Too small for you');
+  assert.strictEqual(Vinted.popupResult({ mode: 'label', verdict: 'fits', line: 'x' }, listing).heading, 'Rough guess');
+  assert.strictEqual(Vinted.popupResult({ mode: 'label', verdict: null, line: 'x' }, listing).heading, 'Rough guess');
+  // The heading uses the line's own words.
+  const cmp = Vinted.compare({ kind: 'jeans', have: { waistFlat: 32.5, inseam: 76 } }, { anchors: PIECES });
+  assert.ok(cmp.line.startsWith(small.heading));
+});
+
+test('against a piece that fits you loose or tight, the stated cm are the real difference from the piece', () => {
+  const loose = { brand: 'Zara', type: 'top', size: 'M', fit: 'loose', flat: { chest: 55, length: 68 } };
+  const same = Vinted.compare({ kind: 'top', have: { pit: 55, length: 68 } }, { anchors: [loose] });
+  assert.strictEqual(same.verdict, 'roomy');
+  assert.deepStrictEqual(Vinted.areaLines(same), ['Roomy at the chest, the same as yours, which fits you loose', 'Fine in length, the same as yours']);
+  const tight = { brand: 'COS', type: 'top', size: 'S', fit: 'tight', flat: { chest: 47 } };
+  const wider = Vinted.compare({ kind: 'top', have: { pit: 47.5 } }, { anchors: [tight] });
+  assert.strictEqual(wider.verdict, 'small');
+  assert.deepStrictEqual(Vinted.areaLines(wider), ['Tight at the chest, 0.5 cm wider than yours, which is tight on you']);
+  // A piece that fits you well reads as before.
+  const perfect = { brand: 'COS', type: 'top', size: 'S', fit: 'perfect', flat: { chest: 49 } };
+  assert.deepStrictEqual(Vinted.areaLines(Vinted.compare({ kind: 'top', have: { pit: 47 } }, { anchors: [perfect] })), ['Tight at the chest, 2 cm narrower than yours']);
+});
+
+test('the photo read sends only addresses on Vinted image hosts, never a lookalike or a listing page', () => {
+  const Store = require('../src/charts-store.js');
+  const INSTALL = '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64';
+  const ok = ['https://images1.vinted.net/t/a.jpeg', 'https://images.vinted.net/t/b.jpeg', 'https://images12.vinted.net/t/c.jpeg'];
+  assert.deepStrictEqual(Store.measurementsBody({ image_urls: ok, kind: 'top' }, INSTALL).image_urls, ok);
+  const refused = [
+    'https://vinted.xyz/a.jpeg',
+    'https://images1.vinted.xyz/a.jpeg',
+    'https://vinted.com.ru/a.jpeg',
+    'https://images1.vinted.com.ru/a.jpeg',
+    'https://www.vinted.fr/items/123-robe',
+    'https://www.vinted.co.uk/a.jpeg',
+    'https://images1.vinted.net.evil.example/a.jpeg',
+    'https://evilvinted.net/a.jpeg',
+    'https://cdn.vinted.net/a.jpeg',
+  ];
+  for (const u of refused) assert.strictEqual(Store.measurementsBody({ image_urls: [u], kind: 'top' }, INSTALL), null, u);
+});

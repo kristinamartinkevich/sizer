@@ -1,7 +1,8 @@
 // Pure helpers for read-chart-image's /measurements route (fit-evidence HANDOFF §8): the request check
 // and the model's answer turned into flat widths and lengths in cm. The model copies what the photos
 // show; the arithmetic (inches to cm, a circumference halved) and the plausibility check happen here.
-// MEASUREMENT_RANGE and the halving rule are copies of src/vinted.js; measurements_test.ts holds them equal.
+// MEASUREMENT_RANGE and the halving rule (ROUND_FROM_CM) are copies of src/vinted.js, and the photo host
+// rule a copy of src/charts-store.js; measurements_test.ts holds each pair equal.
 
 export const LISTING_KINDS = ["top", "dress", "jeans", "trousers", "shorts", "skirt", "outerwear", "shoes"] as const;
 export type ListingKind = typeof LISTING_KINDS[number];
@@ -23,14 +24,15 @@ export const MEASUREMENT_RANGE: Record<MeasurementKey, [number, number]> = {
 };
 
 // A waist or chest at least this wide, not measured flat, is a circumference. Same as src/vinted.js.
-const ROUND_FROM_CM: Partial<Record<MeasurementKey, number>> = { waistFlat: 55, pit: 70 };
+export const ROUND_FROM_CM: Partial<Record<MeasurementKey, number>> = { waistFlat: 55, pit: 70 };
 
 export const MAX_PHOTOS = 4;
 const MAX_URL = 2048;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-// Vinted serves listing photos from its own image hosts (images1.vinted.net and the like). Same rule
-// as measurementsBody in src/charts-store.js; anything else is refused, so the route reads only listings.
-const VINTED_HOST = /(^|\.)vinted\.[a-z]{2,3}(\.[a-z]{2})?$/i;
+// Vinted serves listing photos from its own image hosts, images1.vinted.net and its numbered siblings.
+// Same rule as measurementsBody in src/charts-store.js; anything else (a listing page, a lookalike domain)
+// is refused, so the route reads only Vinted photos.
+export const VINTED_PHOTO_HOST = /^images\d*\.vinted\.net$/i;
 
 export interface MeasurementsInput {
   image_urls: string[];
@@ -55,7 +57,7 @@ function photoAddress(v: unknown): string | null {
   } catch {
     return null;
   }
-  if (u.protocol !== "https:" || u.username || u.password || !VINTED_HOST.test(u.hostname)) return null;
+  if (u.protocol !== "https:" || u.username || u.password || !VINTED_PHOTO_HOST.test(u.hostname)) return null;
   u.hash = "";
   return u.href.length <= MAX_URL ? u.href : null;
 }

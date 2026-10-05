@@ -1,7 +1,7 @@
 # Commitments from feat-fit-evidence-c5
 
-1. **Browser run of `tests/shops.html` owed.** No browser in this session. Expect PASS with every
-   existing check unchanged and 25 new (vinted-measured 12, vinted-label 13).
+1. **Browser run of `tests/shops.html`.** Met: the coordinator ran it in a browser, PASS, 97 checks,
+   including vinted-measured 12 and vinted-label 13.
 2. **A real Vinted listing owes a look, with the extension loaded.** Open one listing on vinted.fr and
    one on another domain: the line sits under the details block, "Ask the seller to measure" shows
    "Copied" and the clipboard holds the message, "Read measurements from the photos" reaches the
@@ -9,8 +9,9 @@
    `src/vinted-page.js` reads (JSON-LD Product, `data-testid="item-attributes-*"` rows or itemprop,
    item-photo images); the fixtures are synthetic, so a mismatch only shows on a real page. If the
    reader misses a field, capture that listing as a fixture and fix the selector.
-3. **Photo host rule to confirm.** The photo read accepts only `*.vinted.<tld>` image hosts (client and
-   function). If a real listing's photos come from another host, widen both rules together.
+3. **Photo host rule to confirm.** The photo read accepts only Vinted's image hosts,
+   `images<n>.vinted.net` (client and function, narrowed in review wf_fdd1e9c0-f4e). If a real
+   listing's photos come from another host, widen both rules together (a Deno test holds them equal).
 4. **In-place navigation to confirm.** The content script is declared on `/items/*`. Going from the
    catalogue to a listing without a reload may not inject it; the popup then injects the Vinted files.
    If that proves common, the bundle loop may widen the match to the Vinted origins with the path gate

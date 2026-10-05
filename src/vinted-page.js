@@ -141,6 +141,10 @@
   let profile = null;
   let charts = null;
   let pool = null;
+  // Counts listings: bumped whenever the address moves to another page, so an answer that arrives
+  // after the shopper left the listing it was asked for is dropped.
+  let page = 0;
+  const onListing = () => Vinted.isListingPath(location.pathname);
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const MARK = `<span class="mark" aria-hidden="true">${globalThis.SIZER_MARK_SVG}</span>`;
@@ -169,14 +173,20 @@
   }
 
   async function run() {
+    // Vinted moves to the catalogue in place: a page that is not a listing is never read as one.
+    if (!onListing()) return;
+    const at = page;
+    const href = location.href;
     const listing = readListing(document, location.hostname);
+    [profile, charts] = await Promise.all([getProfile(), getCharts()]);
+    if (!state.listing || state.listing.title !== listing.title || state.listing.brand !== listing.brand) pool = await poolFor(listing);
+    if (at !== page || location.href !== href) return;
     if (state.listing && state.fromPhoto.length) {
-      // Keep what the photos gave when the page re-reads.
+      // Keep what the photos gave when the page re-reads, including a photo read that finished while
+      // this re-read was waiting.
       const merged = Vinted.mergeMeasurements(listing.have, Object.fromEntries(state.fromPhoto.map((k) => [k, state.listing.have[k]])));
       listing.have = merged.have;
     }
-    [profile, charts] = await Promise.all([getProfile(), getCharts()]);
-    if (!state.listing || state.listing.title !== listing.title || state.listing.brand !== listing.brand) pool = await poolFor(listing);
     state.listing = listing;
     state.phase = 'ready';
     recompute();
@@ -361,21 +371,28 @@
   }
 
   // On this click only: up to four photo addresses go to the read-chart-image function.
+  // The answer lands on the listing it was asked for: if the shopper moved to another listing while
+  // the photos were read, it is dropped; if the page re-read the same listing meanwhile, it goes on
+  // the current read (run() keeps it through later re-reads).
   async function readPhotos() {
     const l = state.listing;
     if (!l || state.photos === 'reading') return;
+    const at = page;
+    const href = location.href;
     state.photos = 'reading';
     state.photosNote = '';
     render();
     const r = await message({ type: 'sizer:read-measurements', image_urls: l.photos.slice(0, 4), kind: l.kind });
+    if (at !== page || location.href !== href || !state.listing) return;
+    const cur = state.listing;
     if (!r || !r.measurements) {
       state.photos = 'idle';
       state.photosNote = 'Sizer couldn’t read the photos. Try again later.';
     } else {
-      const merged = Vinted.mergeMeasurements(l.have, r.measurements);
+      const merged = Vinted.mergeMeasurements(cur.have, r.measurements);
       state.photos = 'done';
       state.fromPhoto = state.fromPhoto.concat(merged.fromPhoto);
-      l.have = merged.have;
+      cur.have = merged.have;
       state.photosNote = merged.fromPhoto.length ? '' : 'No measurements found in the photos.';
       recompute();
     }
@@ -403,13 +420,17 @@
 
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.sheetOpen) closeSheet(); });
 
-  // The popup asks the same questions it asks a shop page.
+  // The popup asks the same questions it asks a shop page. Off a listing (Vinted moved to the
+  // catalogue in place) there is no product here. The popup never offers its AI page read on Vinted
+  // (ui/popup.js), so sizer:open carries no msg.ai here and none is spent.
   chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
     if (msg.type === 'sizer:analyze') {
+      if (!onListing()) { reply({ result: null, isProduct: false }); return false; }
       run().then(() => reply({ result: Vinted.popupResult(state.answer, state.listing), isProduct: !!state.listing }));
       return true;
     }
     if (msg.type === 'sizer:open') {
+      if (!onListing()) { reply({ ok: false, brand: false, sizes: 0 }); return false; }
       run().then(() => {
         state.sheetOpen = true;
         renderSheet();
@@ -442,11 +463,12 @@
   setInterval(() => {
     if (location.href === url) return;
     url = location.href;
+    page++;
     Object.assign(state, { phase: 'reading', listing: null, answer: null, sheetOpen: false, copied: false, photos: 'idle', photosNote: '', fromPhoto: [] });
     drop('sizer-panel');
     drop('sizer-inline');
     drop('sizer-pill');
-    if (!/\/items\//.test(location.pathname)) return;
+    if (!onListing()) return;
     [600, 2000].forEach((ms) => setTimeout(run, ms));
   }, 500);
 })();

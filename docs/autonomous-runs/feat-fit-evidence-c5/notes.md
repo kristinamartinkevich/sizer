@@ -55,9 +55,11 @@ Files:
    and global caps and the same table with no schema change, and the dashboard can still tell the rows
    apart. Recorded as a commitment in case the operator wants a distinct route value later (0009).
 2. **Vinted photo hosts only.** Both the client body and the function refuse any photo address whose
-   host is not `vinted.<tld>` (images1.vinted.net and the like), so the route cannot be used as a
-   general vision reader. If Vinted serves listing photos from another host, the photo read refuses
-   them; a browser check below covers it.
+   host is not one of Vinted's image hosts, `images<n>.vinted.net` (`/^images\d*\.vinted\.net$/i`, the
+   same rule on both sides since review wf_fdd1e9c0-f4e; the first rule also let in lookalike domains
+   such as vinted.xyz and listing pages), so the route cannot be used as a general vision reader. If
+   Vinted serves listing photos from another host, the photo read refuses them; a browser check below
+   covers it.
 3. **The model copies, the function does the maths.** The tool returns `{ value, unit, laid_flat }` per
    measurement; inches to cm, halving a waist or chest measured around (the same 55 / 70 cm rule as
    `parseMeasurements`) and the plausible ranges happen in `measurements.ts`, held equal to
@@ -79,7 +81,9 @@ Files:
    languages; the title is the fallback, a top the default. The engine gets a fixed kind word
    (`engineTitle`) rather than the listing title, so a French or Polish title cannot pick the wrong chart.
 9. **The popup on Vinted** gets the line's answer in its own result shape: a measured answer against a
-   piece is High, against your measurements Medium, the label alone Low ("Rough guess").
+   piece is High, against your measurements Medium, the label alone Low. Its heading follows the
+   verdict in the line's words ("Too small for you", "Roomy on you", "Your size"; "Rough guess" for a
+   label that fits), and it never offers "Read this page with AI" on Vinted (review wf_fdd1e9c0-f4e).
 
 ## Regression fix
 
@@ -94,8 +98,8 @@ jacket you own" fails without it (compare returns null).
 - `sh tools/check-migrations.sh`: passes (no migration touched).
 - `deno lint supabase/functions/read-chart-image/` reports one pre-existing problem (`ImageInput`
   imported and unused in handler.ts since C4), not touched here.
-- `tests/shops.html`: NOT RUN (no browser in this session). Expected PASS with the existing checks
-  unchanged plus 25 new (12 vinted-measured, 13 vinted-label).
+- `tests/shops.html`: not run by the builder (no browser in this session). Since run by the
+  coordinator in a browser: PASS, 97 checks, including vinted-measured 12 and vinted-label 13.
 - Copy: no em dash or exclamation mark in any added line (checked over the diff; a node test also
   scans `src/vinted.js` and `src/vinted-page.js`).
 
@@ -107,3 +111,66 @@ Not run in this session (the caller runs the battery on the shared branch).
 
 Redeploy `read-chart-image` (same flags as before) so `/measurements` exists; no migration, no new
 secret. Reload the extension.
+
+## Review (wf_fdd1e9c0-f4e): 9 confirmed, all applied
+
+Every test below was mutation-checked: with its fix reverted on its own, the named test fails; with
+the fix back, it passes. `tests/vinted-page.test.js` is new: it runs `src/vinted-page.js` and
+`ui/popup.js` in a node vm sandbox with a minimal fake document and chrome.
+
+1. Photo read on the wrong listing (major): `readPhotos` now drops an answer that arrives after the
+   address moved on (a page counter bumped on navigation, plus the address itself), and writes to the
+   current read of the listing rather than the object captured before the await; `run()` keeps photo
+   values after its own awaits, so a re-read that was waiting no longer loses them. Tests: "a photo
+   read that finishes after the shopper moved to another listing is dropped" and "a photo read
+   survives a re-read of the same listing that was waiting when it finished" (vinted-page.test.js);
+   each fails with its half of the fix reverted.
+2. Denim skirts and shorts read as jeans (major): skirt and shorts now come before jeans in
+   `KIND_WORDS`, and German and Dutch one-word compounds (Jeansrock, Jeansröcke, Jeansshorts,
+   spijkerrok) match as endings. Test: "a denim skirt or denim shorts are a skirt or shorts, not
+   jeans, in the Vinted languages" (vinted.test.js, French, German, English, Spanish, Italian, Dutch,
+   Polish); fails with jeans moved back first.
+3. Popup said "Your size" over a too small or roomy verdict (major): `popupResult` now carries
+   `verdict` and a `heading` in the line's words ("Too small for you", "Roomy on you", "Your size";
+   "Rough guess" for a label that fits or no verdict), and `ui/popup.js` shows `res.heading` when
+   present (shops keep their wording). Tests: "the popup heading follows the verdict" (vinted.test.js)
+   and "the popup heading on a Vinted listing follows the verdict" (vinted-page.test.js, the popup in
+   a sandbox); each fails with its half reverted.
+4. AI page read spent on Vinted and discarded (major): chose to not offer it on Vinted. On any
+   `www.vinted.<tld>` page, "Check this page anyway" opens the listing's sheet and closes the popup,
+   or off a listing says "Open a Vinted listing and Sizer will size it."; the AI offer is never
+   shown, so no `sizer:product-text` / `sizer:read-product` call and no daily cap slot is spent.
+   Why not apply the AI answer: it is a shop reader (brand, kinds, a size list for a chart), while a
+   Vinted listing is one second-hand piece whose answer comes from the seller's measurements and the
+   label, and the listing's sheet already says what is missing and copies a message asking the
+   seller. Not offering it is both the honest and the simplest option. Test: "on Vinted the popup
+   never offers the AI page read" (vinted-page.test.js, also checks a shop page still gets the offer);
+   fails with the Vinted branch disabled.
+5. Photo host rule let in lookalikes (minor): both sides now use `/^images\d*\.vinted\.net$/i`
+   (`VINTED_PHOTO_HOST`, exported from `src/charts-store.js` and `measurements.ts`). The fixtures,
+   the Deno helpers and the C5 notes all show photos on images1.vinted.net; www.vinted.<tld> serves
+   listing pages, not photos, so it is not allowed. Tests: "the photo read sends only addresses on
+   Vinted image hosts" (vinted.test.js) and "photos only from Vinted image hosts" (measurements_test.ts,
+   which also checks the two rules are identical and runs the same lookalike list through both);
+   each fails with the old rule restored on its side.
+6. Catalogue read as a product after in-place navigation (minor): `run()` returns at once off an
+   `/items/` page (so the load-time timers and a profile change do nothing there), and the popup's
+   `sizer:analyze` / `sizer:open` reply "no product" without reading. `Vinted.isListingPath` holds the
+   path rule. Test: "after Vinted moves to the catalogue in place, nothing reads it as a listing"
+   (vinted-page.test.js); fails with either guard removed.
+7. Area cm counted the loose/tight adjustment (minor): areas now carry `raw` (listing minus piece),
+   `areaLines` states that, and against a piece marked loose or tight adds ", which fits you loose" /
+   ", which is tight on you" so a roomy verdict at the same width reads true. Test: "against a piece
+   that fits you loose or tight, the stated cm are the real difference from the piece"
+   (vinted.test.js); fails with the adjusted diff restored.
+8. ROUND_FROM_CM claimed but not compared (minor): `measurements.ts` exports `ROUND_FROM_CM`,
+   `src/vinted.js` exports it too, and measurements_test.ts compares them; the header comment now
+   names both copies (and the host rule). Test: "the halving rule matches src/vinted.js"; fails when
+   the server value drifts.
+9. shops.html never run (verifiability): recorded above under Verification and in commitments.md
+   item 1: the coordinator ran it in a browser, PASS, 97 checks, vinted-measured 12 and vinted-label 13.
+
+Verification after the fixes: `node --test tests/` 316/316 (306 before, 10 new); `deno test
+--allow-read supabase/functions/` 126/126 (124 before, 2 new); `sh tools/check-migrations.sh` passes
+(no migration touched). `tests/shops.html` was not re-run after these fixes (no browser here); none
+of its checks read the changed wording, and its photo body check uses images1.vinted.net.

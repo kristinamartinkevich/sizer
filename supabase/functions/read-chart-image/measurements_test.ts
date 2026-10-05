@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import "../../../src/vinted.js";
 import "../../../src/charts-store.js";
 import { handle } from "./handler.ts";
-import { LISTING_KINDS, MEASUREMENT_KEYS, MEASUREMENT_RANGE, parseMeasurementsAnswer, parseMeasurementsInput } from "./measurements.ts";
+import { LISTING_KINDS, MEASUREMENT_KEYS, MEASUREMENT_RANGE, parseMeasurementsAnswer, parseMeasurementsInput, ROUND_FROM_CM, VINTED_PHOTO_HOST } from "./measurements.ts";
 import { MEASURE_TOOL } from "./prompt.ts";
 import {
   ANTHROPIC_KEY,
@@ -43,6 +43,32 @@ Deno.test("the plausible ranges, measurement names and kinds match src/vinted.js
   assert.deepEqual(Object.keys(props.properties).sort(), [...MEASUREMENT_KEYS].sort());
   assert.deepEqual([...props.required].sort(), [...MEASUREMENT_KEYS].sort());
   assert.equal(MEASURE_TOOL.strict, true);
+});
+
+Deno.test("the halving rule matches src/vinted.js (ROUND_FROM_CM)", () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(ROUND_FROM_CM)), JSON.parse(JSON.stringify(g.SizerVinted.ROUND_FROM_CM)));
+});
+
+Deno.test("photos only from Vinted image hosts: lookalike domains and listing pages are refused, same as the extension", () => {
+  assert.equal(VINTED_PHOTO_HOST.source, g.SizerChartsStore.VINTED_PHOTO_HOST.source);
+  assert.equal(VINTED_PHOTO_HOST.flags, g.SizerChartsStore.VINTED_PHOTO_HOST.flags);
+  const ok = ["https://images1.vinted.net/t/a.jpeg", "https://images.vinted.net/t/b.jpeg", "https://images12.vinted.net/t/c.jpeg"];
+  for (const u of ok) assert.ok(parseMeasurementsInput({ ...MEASURE_BODY, image_urls: [u] }).ok, u);
+  const refused = [
+    "https://vinted.xyz/a.jpeg",
+    "https://images1.vinted.xyz/a.jpeg",
+    "https://vinted.com.ru/a.jpeg",
+    "https://images1.vinted.com.ru/a.jpeg",
+    "https://www.vinted.fr/items/123-robe",
+    "https://www.vinted.co.uk/a.jpeg",
+    "https://images1.vinted.net.evil.example/a.jpeg",
+    "https://evilvinted.net/a.jpeg",
+    "https://cdn.vinted.net/a.jpeg",
+  ];
+  for (const u of refused) {
+    assert.equal(parseMeasurementsInput({ ...MEASURE_BODY, image_urls: [u] }).ok, false, u);
+    assert.equal(g.SizerChartsStore.measurementsBody({ image_urls: [u], kind: "top" }, INSTALL), null, u);
+  }
 });
 
 Deno.test("input: one to four public Vinted photo addresses, a kind of item and an install id", () => {

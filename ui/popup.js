@@ -4,6 +4,9 @@ const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/def
 // script yet; it gets the Vinted reader, the same files as the manifest's Vinted entry.
 const VINTED_FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/panel-style.js', 'src/mark.js', 'src/vinted.js', 'src/vinted-page.js'];
 const isVintedItem = (url) => /^https:\/\/www\.vinted\.[a-z.]+\/items\//.test(url || '');
+// Any Vinted page. Sizer reads a Vinted listing from the listing itself, so the AI page read (a shop
+// reader, with a daily cap) is never offered there.
+const isVinted = (url) => /^https:\/\/www\.vinted\.[a-z.]+\//.test(url || '');
 
 function show(id) {
   document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));
@@ -50,11 +53,18 @@ document.querySelectorAll('[data-act="why"]').forEach((b) => {
 });
 
 // "Check this page anyway": the sheet opens on the page; when it found no brand or no sizes, the
-// popup stays open and offers to read the page with AI instead.
+// popup stays open and offers to read the page with AI instead. Not on Vinted: the listing's sheet
+// already says what is missing and asks the seller, and off a listing there is nothing to read.
 $('idle-try').onclick = async () => {
   const tab = await activeTab();
   let r;
   try { r = await send(tab, { type: 'sizer:open' }); } catch { cannotRead(); return; }
+  if (isVinted(tab.url)) {
+    if (r && r.ok) { window.close(); return; }
+    $('idle-text').textContent = 'Open a Vinted listing and Sizer will size it.';
+    $('idle-try').hidden = true;
+    return;
+  }
   if (r && r.brand && r.sizes) { window.close(); return; }
   show('s-ai');
 };
@@ -134,7 +144,8 @@ chrome.storage.sync.get({ profile: SIZER_DEFAULT_PROFILE }, async ({ profile }) 
   if (!res || !res.ok || !r.isProduct) return;
 
   show('s-result');
-  $('r-k').textContent = res.confidence === 'Low' ? 'Rough guess' : 'Your size';
+  // A Vinted answer brings its own heading: the size shown is the seller's, not always yours.
+  $('r-k').textContent = res.heading || (res.confidence === 'Low' ? 'Rough guess' : 'Your size');
   $('r-size').textContent = res.size;
   $('r-headline').textContent = res.headline;
   $('r-headline').classList.toggle('moved', res.headline !== 'Your usual fit');

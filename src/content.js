@@ -6,7 +6,8 @@
   const { extractProduct, findPicker, optionElements, guideFromHtml, productText } = globalThis.SizerExtract;
   const Guide = globalThis.SizerGuideTable;
 
-  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null, guideTried: false, ai: null };
+  // dossiers: per item key, 'asking' while the fit-dossier request is out, then the dossier or null.
+  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null, guideTried: false, ai: null, dossiers: {} };
   const hosts = {};
   let lastTrigger = null;
 
@@ -52,6 +53,9 @@
     const product = state.ai ? Store.applyReadProduct(extractProduct(document, Engine), state.ai, Engine.kindOf) : extractProduct(document, Engine);
     if (!(product.isProduct || product.sizes.length || state.forced)) return { product, result: null };
     product.poolFit = await poolFor(product);
+    // What others say online, once it has landed; until then the engine answers without it.
+    const landed = state.dossiers[Store.itemKey(product.brand, product.title)];
+    product.dossier = landed && landed !== 'asking' ? landed : null;
     const result = Engine.recommend(profile, product, charts);
     reportFit(product, result);
     return { product, result };
@@ -200,6 +204,7 @@
       ${Engine.sheetAreas(r).length ? `<h3>Where it fits</h3><ul class="areas">${Engine.sheetAreas(r).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
       <h3>Why this size</h3>
       <ol>${r.reasons.map((x) => `<li><span>${esc(x.text)}</span>${x.delta ? `<em>${x.delta > 0 ? '+' : '−'}${Math.abs(x.delta)} size</em>` : ''}</li>`).join('')}</ol>
+      ${webBlock(r)}
       <details class="more">
         <summary>What Sizer read on this page</summary>
         <div class="facts">${facts.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>
@@ -281,6 +286,52 @@
     lookUp(product, result);
     place();
     if (state.sheetOpen) renderSheet();
+    if (!state.looking) askDossier(product, result);
+  }
+
+  // How long the sheet says it is checking before it lets the question go. A late reply is still
+  // kept by the background worker, so the next visit to this item uses it.
+  const DOSSIER_WAIT_MS = 90000;
+
+  // What others say about the fit online: asked once per item, only after the first answer is on the
+  // page and any chart lookup has settled, so it never holds the answer up. When it lands, the page
+  // is sized again with it.
+  function askDossier(product, result) {
+    const key = product && Store.itemKey(product.brand, product.title);
+    if (!key || !result || !result.ok || key in state.dossiers) return;
+    state.dossiers[key] = 'asking';
+    const reviews = result.reviews && result.reviews.local;
+    const msg = {
+      type: 'sizer:fit-dossier', itemKey: key, brand: product.brand, style: key.split('|')[1],
+      kind: result.kind || Engine.kindOf(product.title), shop: location.hostname,
+      tallies: { small: reviews ? reviews.small : 0, large: reviews ? reviews.large : 0, tts: reviews ? reviews.tts : 0, total: reviews ? reviews.total : 0, areas: result.reviewAreas || [] },
+    };
+    const settle = (reply) => {
+      if (state.dossiers[key] !== 'asking') return;
+      const dossier = reply && reply.dossier ? reply.dossier : null;
+      state.dossiers[key] = dossier;
+      if (dossier) run(); else if (state.sheetOpen) renderSheet();
+    };
+    setTimeout(() => settle(null), DOSSIER_WAIT_MS);
+    message(msg).then(settle);
+    if (state.sheetOpen) renderSheet();
+  }
+
+  function checkingDossier() {
+    const p = state.product;
+    const key = p && Store.itemKey(p.brand, p.title);
+    return !!key && state.dossiers[key] === 'asking';
+  }
+
+  // Under the reasons: "Checking what others say" while the dossier is out, then its sources as links.
+  function webBlock(r) {
+    if (checkingDossier()) return '<p class="checking" aria-live="polite">Checking what others say about the fit</p>';
+    const d = r.dossier;
+    const links = d ? d.sources.filter((s) => /^https?:\/\//i.test(String(s.url || ''))) : [];
+    if (!links.length) return '';
+    return `<h3>What others say online</h3>
+      ${d.brand_note ? `<p class="web-note">${esc(d.brand_note)}</p>` : ''}
+      <ul class="sources">${links.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title || s.url)}</a></li>`).join('')}</ul>`;
   }
 
   // A brand with no chart at all: ask the background worker to look one up, once per brand and kind
@@ -297,7 +348,9 @@
       if (state.lookups[key] !== 'looking') return;
       state.lookups[key] = 'done';
       state.looking = null;
-      if (reply && reply.found) run(); else place();
+      if (reply && reply.found) { run(); return; }
+      place();
+      askDossier(state.product, state.result);
     };
     setTimeout(done, Engine.LOOKUP_TIMEOUT_MS);
     const ask = (shopGuide) => {

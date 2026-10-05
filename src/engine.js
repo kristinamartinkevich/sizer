@@ -460,7 +460,7 @@
 
   // ---- where it will be tight or loose -------------------------------------
 
-  const AREA_NAME = { bust: 'bust', waist: 'waist', hip: 'hips', shoulder: 'shoulders', inseam: 'leg', length: 'length', sleeve: 'sleeves' };
+  const AREA_NAME = { bust: 'bust', chest: 'chest', waist: 'waist', hip: 'hips', shoulder: 'shoulders', inseam: 'leg', length: 'length', sleeve: 'sleeves', foot: 'foot' };
   const AREA_TEXT = { tight: 'May be tight at the', close: 'Close fit at the', roomy: 'Roomy at the', fine: 'Fine at the' };
   const AREA_ORDER = ['tight', 'short', 'long', 'close', 'roomy', 'fine'];
   const REVIEW_VERDICT = { tight: 'tight', loose: 'roomy', long: 'long', short: 'short' };
@@ -487,6 +487,90 @@
     }
     return out.sort((a, b) => AREA_ORDER.indexOf(a.verdict) - AREA_ORDER.indexOf(b.verdict));
   }
+
+  // Area mentions in this page's reviews, one per review and unweighted, for the fit-dossier request:
+  // the anonymous tally the page already holds, never shaped by the profile.
+  function tallyAreas(details) {
+    const seen = new Map();
+    for (const d of details || []) {
+      for (const a of d.areas || []) {
+        const k = `${a.area}|${a.direction}`;
+        const cur = seen.get(k) || { area: a.area, direction: a.direction, count: 0 };
+        cur.count += 1;
+        seen.set(k, cur);
+      }
+    }
+    return [...seen.values()];
+  }
+
+  // ---- what others say online (the fit dossier) -----------------------------
+
+  const WEB_AREAS = ['bust', 'chest', 'waist', 'hip', 'length', 'inseam', 'shoulder', 'sleeve', 'foot'];
+  const WEB_STRENGTH = 0.6;
+
+  // Only a web address is ever listed or linked; the title falls back to the host.
+  function webSource(s) {
+    if (!s || typeof s.url !== 'string') return null;
+    const url = s.url.trim();
+    if (!/^https?:\/\//i.test(url)) return null;
+    let host;
+    try {
+      const u = new URL(url);
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+      host = u.hostname.replace(/^www\./, '');
+    } catch { return null; }
+    const title = typeof s.title === 'string' && s.title.trim() ? s.title.trim().slice(0, 200) : host;
+    return { url, title };
+  }
+
+  // The dossier the page was handed, held to its shape. With no web source left it says nothing.
+  function webDossier(d) {
+    if (!d || typeof d !== 'object') return null;
+    const sources = (Array.isArray(d.sources) ? d.sources : []).map(webSource).filter(Boolean).slice(0, 8);
+    if (!sources.length) return null;
+    const verdict = VERDICT_WORDS[d.verdict] ? d.verdict : null;
+    const strength = verdict && typeof d.strength === 'number' && isFinite(d.strength) ? Math.max(0, Math.min(1, d.strength)) : 0;
+    const areas = (Array.isArray(d.areas) ? d.areas : []).filter((a) => a && WEB_AREAS.includes(a.area) && REVIEW_VERDICT[a.direction]);
+    const brandNote = typeof d.brand_note === 'string' && d.brand_note.trim() ? d.brand_note.trim().slice(0, 200) : null;
+    if (!verdict && !areas.length && !brandNote) return null;
+    return { verdict, strength, areas, brand_note: brandNote, sources };
+  }
+
+  // One step, and only when nothing on the page has already decided: no fit note, no review verdict.
+  function webMoveFor(web, held) {
+    if (!web || held || web.strength < WEB_STRENGTH) return 0;
+    return web.verdict === 'small' ? 1 : web.verdict === 'large' ? -1 : 0;
+  }
+
+  // held: what already decided, { by: 'page' | 'reviews', verdict }, or null.
+  function webReason(web, move, held) {
+    const n = web.sources.length;
+    const count = `${n} source${n === 1 ? '' : 's'}`;
+    const what = VERDICT_WORDS[web.verdict];
+    if (move) return `Others online say it ${what} (${count}), so one size ${move > 0 ? 'up' : 'down'}.`;
+    if (!web.verdict) return `Sizer also read what others online say about the fit (${count}).`;
+    if (web.verdict === 'tts') return `Others online say it fits true to size (${count}).`;
+    if (web.strength < WEB_STRENGTH) return `Others online lean towards it running ${web.verdict} (${count}), not clearly enough to move the size.`;
+    if (held && held.verdict === web.verdict) return `Others online also say it ${what} (${count}).`;
+    return `Others online say it ${what} (${count}), but what ${held && held.by === 'reviews' ? 'reviewers say' : 'this page says'} comes first.`;
+  }
+
+  const webHeadline = (move) => (move > 0 ? 'Others online say it runs small, sized up' : 'Others online say it runs large, sized down');
+
+  // The dossier's areas beside the chart's and the reviewers', unless reviewers like you said the same.
+  function withWebAreas(areas, web, kind) {
+    const out = areas.slice();
+    for (const a of (web ? web.areas : []).filter((x) => kind !== 'bottoms' || !UPPER_AREAS.includes(x.area))) {
+      const verdict = REVIEW_VERDICT[a.direction];
+      if (out.some((x) => (x.source === 'reviews' || x.source === 'web') && x.area === a.area && x.verdict === verdict)) continue;
+      const text = a.area === 'length' ? `Others online find it ${a.direction} overall`
+        : `Others online find it ${a.direction} ${a.area === 'foot' ? 'across the' : ['inseam', 'sleeve'].includes(a.area) ? 'in the' : 'at the'} ${AREA_NAME[a.area] || a.area}`;
+      out.push({ area: a.area, verdict, source: 'web', text });
+    }
+    return out.sort((a, b) => AREA_ORDER.indexOf(a.verdict) - AREA_ORDER.indexOf(b.verdict));
+  }
+
+  const webResult = (web, move) => ({ verdict: web.verdict, strength: web.strength, moved: move, brand_note: web.brand_note, sources: web.sources });
 
   // The one area worth a word on the line: a tight one, or nothing.
   function areaLine(r) {
@@ -607,10 +691,14 @@
     if (weighted) reviews = { ...reviews, verdict: weighted.verdict, weighted };
 
     let adj = 0;
-    // The page's own note comes first; buyers' reports count only when the page says nothing.
+    // The page's own note comes first; buyers' reports count only when the page says nothing; what
+    // others say online counts only when neither has spoken, true to size included.
     const pageNote = signals.fitNote === 'small' || signals.fitNote === 'large';
     const buyersNote = !pageNote && (reviews.verdict === 'small' || reviews.verdict === 'large');
-    const explicit = pageNote || buyersNote;
+    const web = webDossier(product.dossier);
+    const held = signals.fitNote ? { by: 'page', verdict: signals.fitNote } : reviews.verdict ? { by: 'reviews', verdict: reviews.verdict } : null;
+    const webMove = webMoveFor(web, held);
+    const explicit = pageNote || buyersNote || !!webMove;
     const elastane = signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : '';
     if (rigid) {
       if (!explicit) adj += 0.35 + (signals.skinny ? 0.15 : 0);
@@ -651,6 +739,7 @@
     if (buyersNote && reviews.verdict === 'small') { idx += 1; reasons.push({ text: reviewReason(reviews), delta: +1 }); }
     if (buyersNote && reviews.verdict === 'large') { idx -= 1; reasons.push({ text: reviewReason(reviews), delta: -1 }); }
     if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
+    if (web) { idx += webMove; reasons.push({ text: webReason(web, webMove, held), delta: webMove || null }); }
     if (signals.roomy) reasons.push({ text: 'Relaxed cut, roomy by design. Go one down only if you want it closer.', delta: null });
 
     idx = Math.max(0, Math.min(chart.length - 1, idx));
@@ -660,6 +749,7 @@
       : signals.fitNote === 'large' ? 'Runs large, sized down'
         : buyersNote && reviews.verdict === 'small' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs small, sized up`
           : buyersNote && reviews.verdict === 'large' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs large, sized down`
+            : webMove ? webHeadline(webMove)
         : rigid && idx > usual ? 'No stretch, sized up'
           : signals.stretch === 'high' && idx < usual ? 'Stretchy, sized down'
             : idx > usual ? 'Sized up for you' : idx < usual ? 'Sized down for you' : 'Your usual fit';
@@ -680,7 +770,7 @@
       ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
       : null;
     const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
-    const areas = fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind);
+    const areas = withWebAreas(fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind), web, kind);
 
     let score = 0.4;
     if (brand) score += 0.2 - tierPenalty(brand);
@@ -721,6 +811,8 @@
       reviews,
       body,
       areas,
+      reviewAreas: tallyAreas(details),
+      ...(web ? { dossier: webResult(web, webMove) } : {}),
       kind,
       sizedOn: keys,
       garmentToGarment: !!g2g,
@@ -827,7 +919,10 @@
 
     const pageNote = signals.fitNote === 'small' || signals.fitNote === 'large';
     const buyersNote = !pageNote && (reviews.verdict === 'small' || reviews.verdict === 'large');
-    const explicit = pageNote || buyersNote;
+    const web = webDossier(product.dossier);
+    const held = signals.fitNote ? { by: 'page', verdict: signals.fitNote } : reviews.verdict ? { by: 'reviews', verdict: reviews.verdict } : null;
+    const webMove = webMoveFor(web, held);
+    const explicit = pageNote || buyersNote || !!webMove;
     let alt = null;
     if (!explicit && inRow && f.foot >= row.foot[1] - 0.2 && idx < rows.length - 1) alt = { row: rows[idx + 1], why: 'if you like more room' };
     else if (!explicit && inRow && f.foot <= row.foot[0] + 0.2 && idx > 0) alt = { row: rows[idx - 1], why: 'if you like a closer fit' };
@@ -837,6 +932,7 @@
     if (buyersNote && reviews.verdict === 'small') { idx += 1; reasons.push({ text: reviewReason(reviews), delta: +1 }); }
     if (buyersNote && reviews.verdict === 'large') { idx -= 1; reasons.push({ text: reviewReason(reviews), delta: -1 }); }
     if (!pageNote && reviews.verdict === 'tts') reasons.push({ text: reviewReason(reviews), delta: null });
+    if (web) { idx += webMove; reasons.push({ text: webReason(web, webMove, held), delta: webMove || null }); }
     idx = Math.max(0, Math.min(rows.length - 1, idx));
     const pick = rows[idx];
 
@@ -854,7 +950,8 @@
 
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up' : signals.fitNote === 'large' ? 'Runs large, sized down'
       : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
-        : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down' : 'By your foot length';
+        : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down'
+          : webMove ? webHeadline(webMove) : 'By your foot length';
     const LEVELS = ['Low', 'Medium', 'High'];
     const notches = !brand ? 0 : tierOfBrand(brand) === 5 ? 2 : tierPenalty(brand) ? 1 : 0;
     const confidence = !brand ? 'Low' : LEVELS[Math.max(0, (f.measured ? 2 : 1) - notches)];
@@ -882,6 +979,7 @@
       reviews,
       body: { foot: f.foot, footSource: f.source },
       shoes: true,
+      ...(web ? { areas: withWebAreas([], web), dossier: webResult(web, webMove) } : {}),
     };
   }
 

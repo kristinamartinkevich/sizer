@@ -20,6 +20,7 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg.type === 'sizer:lookup-chart') { lookupChart({ ...msg, shop: shopOf(sender, msg) }).then(reply); return true; }
   if (msg.type === 'sizer:lookup-wanted') { lookupWanted(msg).then(reply, () => reply({ wanted: false })); return true; }
   if (msg.type === 'sizer:read-chart-image') { readChartImage(msg).then(reply); return true; }
+  if (msg.type === 'sizer:fit-dossier') { fitDossier({ ...msg, shop: shopOf(sender, msg) }).then(reply); return true; }
   // Only the popup asks this, on the shopper's click; a page's script cannot.
   if (msg.type === 'sizer:read-product' && !sender.tab) { readProduct(msg.text).then(reply); return true; }
 });
@@ -46,6 +47,15 @@ async function lookupWanted({ brand, kind }) {
   const entry = (await chrome.storage.local.get(key))[key];
   return { wanted: !Store.isMissFresh(entry) };
 }
+
+// ---- what others say about the fit online ------------------------------------
+
+const fitDossier = Store.createDossier({
+  fetch: (url, init) => fetch(url, init),
+  get: (keys) => chrome.storage.local.get(keys),
+  set: (items) => chrome.storage.local.set(items),
+  installId: () => installId(),
+});
 
 // ---- a size chart image, and the product-text fallback, read with AI ----------
 

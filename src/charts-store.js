@@ -291,12 +291,120 @@
     return p;
   }
 
+  // ---- what others say about the fit online (fit-dossier) ---------------------------------------
+
+  const DOSSIER_URL = `${SUPABASE_URL}/functions/v1/fit-dossier`;
+  const DOSSIER_FOUND_TTL = 30 * DAY;
+  const DOSSIER_MISS_TTL = 7 * DAY;
+  // The shapes the function checks (supabase/functions/fit-dossier/dossier.ts).
+  const ITEM_KEY_SHAPE = /^[a-z0-9 ]+\|[a-z0-9]+$/;
+  const DOSSIER_AREAS = ['bust', 'chest', 'waist', 'hip', 'length', 'inseam', 'shoulder', 'sleeve', 'foot'];
+  const DOSSIER_DIRECTIONS = ['tight', 'loose', 'long', 'short'];
+  const DOSSIER_VERDICTS = ['small', 'tts', 'large'];
+  const COUNT_MAX = 5000;
+  const count = (v) => (Number.isInteger(v) && v > 0 ? Math.min(v, COUNT_MAX) : 0);
+
+  const validItemKey = (k) => typeof k === 'string' && k.length <= 120 && ITEM_KEY_SHAPE.test(k);
+  const dossierKey = (itemKey) => (validItemKey(itemKey) ? `dossier:${itemKey}` : null);
+
+  // The page's anonymous review tally as the function takes it: four whole counts inside its limits,
+  // small + large + tts never over total, and area mentions as { area: { direction: count } }.
+  // A shop's fit bar can report more reviews than the limit; the shares are kept, scaled down.
+  function dossierTallies(t) {
+    const src = t && typeof t === 'object' ? t : {};
+    const whole = (v) => (Number.isInteger(v) && v > 0 ? v : 0);
+    const out = { small: whole(src.small), large: whole(src.large), tts: whole(src.tts) };
+    out.total = Math.max(whole(src.total), out.small + out.large + out.tts);
+    if (out.total > COUNT_MAX) {
+      const f = COUNT_MAX / out.total;
+      for (const k of ['small', 'large', 'tts']) out[k] = Math.floor(out[k] * f);
+      out.total = COUNT_MAX;
+    }
+    const areas = {};
+    for (const a of Array.isArray(src.areas) ? src.areas : []) {
+      if (!a || !DOSSIER_AREAS.includes(a.area) || !DOSSIER_DIRECTIONS.includes(a.direction)) continue;
+      const n = count(a.count);
+      if (!n) continue;
+      const at = areas[a.area] || (areas[a.area] = {});
+      at[a.direction] = Math.min((at[a.direction] || 0) + n, COUNT_MAX);
+    }
+    return { small: out.small, large: out.large, tts: out.tts, total: out.total, areas };
+  }
+
+  // What the fit-dossier request sends, field for field: the item key, brand, style, kind of item,
+  // the shop's hostname, the install id and the anonymous review tally. Never the profile, the page
+  // address or review text. Null when the function would refuse it.
+  function dossierBody({ itemKey, brand, style, kind, shop, tallies }, install) {
+    if (!validItemKey(itemKey)) return null;
+    const b = clip(brand).slice(0, 80);
+    const s = clip(style).slice(0, 80) || itemKey.split('|')[1];
+    const k = kind === 'outerwear' ? 'tops' : kind;
+    if (!b || !KINDS.includes(k)) return null;
+    return { item_key: itemKey, brand: b, style: s, kind: k, shop: String(shop || '').trim().toLowerCase(), install, tallies: dossierTallies(tallies) };
+  }
+
+  // The reply's dossier, held to the function's shape; null when it is not one. Only web sources.
+  function dossierEntry(d) {
+    if (!d || typeof d !== 'object') return null;
+    if (d.verdict !== null && !DOSSIER_VERDICTS.includes(d.verdict)) return null;
+    if (typeof d.strength !== 'number' || !(d.strength >= 0 && d.strength <= 1)) return null;
+    if (!Array.isArray(d.areas) || !Array.isArray(d.sources)) return null;
+    const web = (u) => { try { return ['https:', 'http:'].includes(new URL(u).protocol); } catch { return false; } };
+    return {
+      verdict: d.verdict,
+      strength: d.strength,
+      areas: d.areas.filter((a) => a && DOSSIER_AREAS.includes(a.area) && DOSSIER_DIRECTIONS.includes(a.direction))
+        .map((a) => ({ area: a.area, direction: a.direction, note: clip(a.note).slice(0, 140) })),
+      brand_note: typeof d.brand_note === 'string' && clip(d.brand_note) ? clip(d.brand_note).slice(0, 200) : null,
+      sources: d.sources.filter((s) => s && typeof s.url === 'string' && /^https?:\/\//i.test(s.url.trim()) && web(s.url.trim()))
+        .slice(0, 8).map((s) => ({ url: s.url.trim(), title: clip(s.title).slice(0, 200) })),
+    };
+  }
+
+  // The background worker's dossier request, with its browser APIs passed in. One request per item
+  // at a time. A found dossier is kept 30 days and "nothing found" 7 days, per item; an error is kept
+  // for nothing, so the next visit asks again.
+  function createDossier({ fetch, get, set, installId, now = Date.now }) {
+    const inFlight = new Map();
+    async function ask(msg, key) {
+      const cached = (await get(key))[key];
+      if (cached && typeof cached.at === 'number') {
+        const ttl = cached.dossier ? DOSSIER_FOUND_TTL : DOSSIER_MISS_TTL;
+        if (now() - cached.at < ttl) return { dossier: cached.dossier || null };
+      }
+      const body = dossierBody(msg, await installId());
+      if (!body) return { dossier: null, error: 'bad request' };
+      const res = await post(fetch, DOSSIER_URL, body);
+      if (!res.ok) return { dossier: null, error: `HTTP ${res.status}` };
+      const data = await res.json();
+      if (data && data.dossier === null) {
+        await set({ [key]: { at: now(), dossier: null } });
+        return { dossier: null };
+      }
+      const dossier = dossierEntry(data && data.dossier);
+      if (!dossier) return { dossier: null, error: 'unexpected reply' };
+      await set({ [key]: { at: now(), dossier } });
+      return { dossier };
+    }
+    return function dossier(msg) {
+      const key = dossierKey(msg && msg.itemKey);
+      if (!key || !dossierBody(msg, 'check')) return Promise.resolve({ dossier: null, error: 'bad request' });
+      if (!inFlight.has(key)) {
+        inFlight.set(key, ask(msg, key)
+          .catch((e) => ({ dossier: null, error: String((e && e.message) || e) }))
+          .finally(() => inFlight.delete(key)));
+      }
+      return inFlight.get(key);
+    };
+  }
+
   root.SizerChartsStore = {
     SUPABASE_URL, SUPABASE_ANON_KEY, BUNDLE_URL, ITEM_FIT_URL, REPORT_URL, LOOKUP_URL, MISS_TTL,
     headers, isFresh, isUsable, normalise, itemKey, poolExcept,
     missKey, isMissFresh, sanitiseShopGuide, lookupBody, lookupEntry, mergeChart, createLookup,
     READ_IMAGE_URL, READ_PRODUCT_URL, imageBody, imageChartEntry, withImageChart, createImageRead,
     productBody, readProductEntry, createProductRead, applyReadProduct,
+    DOSSIER_URL, DOSSIER_FOUND_TTL, DOSSIER_MISS_TTL, dossierKey, dossierBody, dossierEntry, createDossier,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 if (typeof module !== 'undefined') module.exports = globalThis.SizerChartsStore;

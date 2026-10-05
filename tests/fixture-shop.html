@@ -15,6 +15,12 @@
       ?brand=unknown  a brand with no chart (Ostra Studio, made up): the line says it is looking up
                       the chart, the stubbed worker answers after 500 ms with a machine-read chart.
                       Add &lookup=miss for a miss, &lookup=slow for no answer (6 s limit).
+      ?dossier=small  what others say online: the stubbed worker answers the fit-dossier request
+                      after 500 ms with a made-up dossier (runs small, strength 0.8, tight at the
+                      hips, two sources plus one javascript: address that must not be listed).
+                      The sheet says "Checking what others say about the fit" until then, and the
+                      size moves one up unless the page or the reviews already decided.
+      ?dossier=none   the same request answered with no dossier after 500 ms: nothing changes.
   -->
   <script>
     const q = new URLSearchParams(location.search);
@@ -54,6 +60,24 @@
             lookedUp = true;
             changed.forEach((fn) => fn({ charts: {} }));
             return { found: true };
+          }
+          if (m.type === 'sizer:fit-dossier') {
+            const mode = q.get('dossier');
+            if (mode !== 'small' && mode !== 'none') return { dossier: null };
+            await new Promise((r) => setTimeout(r, 500));
+            if (mode === 'none') return { dossier: null };
+            return {
+              dossier: {
+                verdict: 'small', strength: 0.8,
+                areas: [{ area: 'hip', direction: 'tight', note: 'Snug through the hips and thighs.' }],
+                brand_note: 'Demo note: this brand’s denim is cut slim.',
+                sources: [
+                  { url: 'https://fit-notes.example/wren-straight-jeans', title: 'Wren straight jeans, fit notes (made up)' },
+                  { url: 'https://reviews.example/rag-bone-wren', title: '' },
+                  { url: 'javascript:alert(1)', title: 'Must not be listed' },
+                ],
+              },
+            };
           }
           return m.type === 'sizer:item-fit' && q.get('pool') === 'small'
             ? { rows: [{ vendor: 'www.zalando.de', small: 23, large: 2, tts: 9, total: 51 }, { vendor: 'www.net-a-porter.com', small: 11, large: 1, tts: 4, total: 20 }] }

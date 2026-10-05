@@ -66,10 +66,22 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    "About my curves" fields, or "I'm 5'4" and 130 lbs" in the text), each review counts by how like
    you its writer is, from your height, your hip minus waist and, when both sides give one, weight.
    That weighted verdict decides on the device; the plain count is still what is sent to the pool.
-5. The chosen size is checked area by area against your measurements: the sheet says where it will
+5. Once the first answer is on the page (and any chart lookup has settled), Sizer asks the
+   `fit-dossier` function once per item what others say about the fit online. The request carries
+   the item key (brand and style name), the brand name, the style name, the kind of item, the shop's
+   hostname, the install id and the page's anonymous review counts (small, large, true to size, and
+   areas reviewers call tight, loose, long or short); never the profile, the page address or review
+   text. The sheet says "Checking what others say about the fit" until it lands. The function
+   searches the web with Claude and caches the dossier per item for everyone for 30 days; the
+   browser keeps it 30 days, or 7 days when nothing was found, and errors are not kept. On the
+   device, a "runs small" or "runs large" with strength 0.6 or more moves the size one step, but
+   only when neither the page's note nor the reviews have already decided (true to size included).
+   Its areas join the areas below ("Others online find it tight at the hips") and its sources are
+   listed as links under the reasons.
+6. The chosen size is checked area by area against your measurements: the sheet says where it will
    be tight, close, roomy or fine, and adds what reviewers like you say about particular areas
    ("3 reviewers like you found it tight at the hips"). The line names a tight area only.
-6. The result maps to the sizes on the page, using the shop's product data for stock. Women's sizes
+7. The result maps to the sizes on the page, using the shop's product data for stock. Women's sizes
    from different regions line up through one table (FR/EU = DE, IT = FR + 4, UK = FR − 28,
    US = UK − 4, and the letters XXS to 4XL), so a UK 10 on the page finds the brand's EU 38 or M.
    When "Check this page anyway" in the popup finds no brand or no sizes, it offers "Read this page
@@ -77,7 +89,7 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
    (at most 6000 characters, web addresses removed) and the install id go to
    `read-chart-image/product`, which returns the brand, title, kind of item, sizes and fabric.
    Nothing of it is stored.
-7. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
+8. Shoes are sized by foot length alone, typed into the fit profile or taken from a pair you own, on
    the brand's shoe chart or a standard EU one.
 
 The sheet's footer links to the brand page the chart was read from, with the date it was read.
@@ -88,10 +100,11 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 |---|---|
 | `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, generic charts, and the women's size conversion table (FR/EU, IT, UK, US, DE, letters) |
 | `src/charts.js` | Turns the downloaded chart bundle into engine charts: cm, suspect rows dropped, one chart per kind of item |
-| `src/charts-store.js`, `src/background.js` | Daily download of charts from the Supabase project into `chrome.storage.local`, and the one-off lookup of a brand with no chart |
+| `src/charts-store.js`, `src/background.js` | Daily download of charts from the Supabase project into `chrome.storage.local`, the one-off lookup of a brand with no chart, and the per-item fit-dossier request |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
 | `supabase/functions/lookup-chart/` | Edge Function that finds a brand's chart when nobody has one yet, stores it as machine-read; deploy steps in its README |
+| `supabase/functions/fit-dossier/` | Edge Function that gathers what others say about an item's fit online, sources checked against real search results, cached per item for everyone; deploy steps in its README |
 | `supabase/functions/read-chart-image/` | Edge Function that reads a size chart image (cached per image) and, on request, a page's product text, with Claude; deploy steps in its README |
 | `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide, in a same-origin frame or on the shop's size-guide page, and size chart images |
 | `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables); the size-guide page fetch |

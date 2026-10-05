@@ -266,6 +266,23 @@ test('the privacy policy and launch copy name every field a lookup sends', () =>
   }
 });
 
+test('the privacy policy, listing, launch copy and README name every field the fit-dossier request sends', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const root = path.join(__dirname, '..');
+  const body = Store.dossierBody({ itemKey: 'ostra studio|mira', brand: 'Ostra Studio', style: 'mira', kind: 'bottoms', shop: 'shop.example', tallies: { small: 2, large: 0, tts: 1, total: 4, areas: [{ area: 'hip', direction: 'tight', count: 2 }] } }, 'id-1');
+  assert.deepStrictEqual(Object.keys(body).sort(), ['brand', 'install', 'item_key', 'kind', 'shop', 'style', 'tallies'], 'a new field in dossierBody needs a line in the copy below');
+  assert.deepStrictEqual(Object.keys(body.tallies).sort(), ['areas', 'large', 'small', 'total', 'tts'], 'a new tally field needs a line in the copy below');
+  const words = {
+    what: /what others say about (the|an item’s|an item's) fit/, brand: /brand name/, item_key: /style name/, style: /style name/,
+    kind: /kind of item/, shop: /hostname|shop’s name/, install: /install id/, tallies: /anonymous review counts/,
+  };
+  for (const file of ['store/privacy.html', 'store/LISTING.md', 'store/PRODUCT_HUNT.md', 'README.md']) {
+    const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/\s+/g, ' ');
+    for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
+  }
+});
+
 test('the privacy policy, listing, launch copy and README name every field the AI readers send', () => {
   const fs = require('node:fs');
   const path = require('node:path');

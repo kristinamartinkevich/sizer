@@ -148,6 +148,11 @@ ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
 .areas { list-style: none; margin: 0 0 18px; padding: 0; }
 .areas li { padding: 6px 0; border-top: 1px solid var(--hair); font-size: 14px; }
 .areas li:first-child { border-top: 0; }
+.checking { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+.web-note { margin: 0 0 6px; font-size: 14px; }
+.sources { list-style: none; margin: 0; padding: 0; }
+.sources li { padding: 5px 0; font-size: 13px; overflow-wrap: anywhere; }
+.sources a { color: var(--graphite); }
 ol li { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--hair); counter-increment: r; }
 ol li:first-child { border-top: 0; padding-top: 2px; }
 ol li::before { content: counter(r); flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-wash); font: 600 11px/22px var(--serif); text-align: center; color: var(--graphite); }

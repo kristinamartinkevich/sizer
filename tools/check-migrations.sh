@@ -200,3 +200,71 @@ begin
 end $$;
 SQL
 echo "ok   fit_dossier_public is the only thing anon reads from 0006, and anon writes nothing"
+
+# The chart image reader (0007): the function (service role) writes and reads chart_images and the
+# caps row; the public key can do neither; a product-text call keeps nothing about the page.
+run >/dev/null <<'SQL'
+set role service_role;
+insert into public.chart_images (route, url_hash, image_url, brand, kind, install, outcome, chart)
+values ('image', repeat('a', 64), 'https://cdn.example/size-chart.png', 'helsa', 'dresses', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'chart', '{"category":"general"}'),
+       ('product', null, null, null, null, '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'read', null);
+do $$
+begin
+  if (select count(*) from public.chart_images) <> 2 then raise exception 'the service role cannot read chart_images'; end if;
+  if (select per_install_per_day from public.chart_image_settings) <> 40 or (select global_per_day from public.chart_image_settings) <> 2000
+    then raise exception 'the caps row is missing or not 40 and 2000'; end if;
+  update public.chart_image_settings set per_install_per_day = 41;
+  begin
+    insert into public.chart_image_settings (id) values (false);
+    raise exception 'chart_image_settings took a second row';
+  exception when check_violation then null;
+  end;
+  begin
+    insert into public.chart_images (route, image_url, install, outcome)
+    values ('product', 'https://shop.example/p/1', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'read');
+    raise exception 'a product row kept a page address';
+  exception when check_violation then null;
+  end;
+  begin
+    insert into public.chart_images (route, url_hash, image_url, brand, kind, install, outcome)
+    values ('image', repeat('b', 64), 'http://cdn.example/size-chart.png', 'helsa', 'dresses', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'no_chart');
+    raise exception 'an image row took a non-https address';
+  exception when check_violation then null;
+  end;
+end $$;
+reset role;
+do $$
+declare t text;
+begin
+  foreach t in array array['chart_images', 'chart_image_settings'] loop
+    if not (select relrowsecurity from pg_class where oid = ('public.' || t)::regclass) then raise exception '% has row level security off', t; end if;
+    if exists (select 1 from pg_policies where schemaname = 'public' and tablename = t) then raise exception '% has a policy, it should have none', t; end if;
+  end loop;
+end $$;
+set role anon;
+do $$
+declare seen bigint;
+begin
+  begin
+    select count(*) into seen from public.chart_images;
+    if seen > 0 then raise exception 'anon can read chart_images (% rows)', seen; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    select count(*) into seen from public.chart_image_settings;
+    if seen > 0 then raise exception 'anon can read chart_image_settings'; end if;
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.chart_images (route, install, outcome) values ('product', '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64', 'read');
+    raise exception 'anon can write chart_images';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    update public.chart_image_settings set global_per_day = 1000000;
+    if found then raise exception 'anon can change the caps'; end if;
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+SQL
+echo "ok   chart_images and its caps row are written by the service role and closed to anon"

@@ -212,7 +212,7 @@
     return readOriented(m.map((r) => r.slice()), hints || {}) || readOriented(transpose(m), hints || {});
   }
 
-  const api = { parseGuideMatrix, mentionsBrand, parseRange, looksLikeSize };
+  const api = { parseGuideMatrix, mentionsBrand, parseRange, looksLikeSize, PLAUSIBLE };
   root.SizerGuideTable = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

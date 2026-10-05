@@ -462,7 +462,7 @@
     const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
 
     let score = 0.4;
-    if (brand) score += 0.2;
+    if (brand) score += 0.2 - tierPenalty(brand);
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
     if (reviews.verdict) score += 0.1;
@@ -472,6 +472,7 @@
     if (!signals.bottoms) score -= 0.1;
     const confidence = score >= 0.75 ? 'High' : score >= 0.55 ? 'Medium' : 'Low';
     const firmUp = !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
+      : tierCaveat(brand) ? tierCaveat(brand)
       : body.spread > 5 ? 'Some of your sizes disagree. Check them in your fit profile.'
         : !corroborated ? 'Add another piece you own to firm this up.'
           : signals.stretch === 'unknown' ? 'The page doesn’t say how stretchy this is.'
@@ -487,6 +488,7 @@
       alternative: alt ? { size: altMatch ? altMatch.label : displayLabel(alt, chartSystem, brand), why: altIdx > idx ? 'if you like more room' : 'if you like a closer fit' } : null,
       headline,
       confidence,
+      score,
       firmUp,
       brand: brand ? brand.name : product.brand || null,
       brandKnown: !!brand,
@@ -497,6 +499,64 @@
       reviews,
       body,
     };
+  }
+
+  // ---- where the chart came from -------------------------------------------
+
+  const tierOfBrand = (brand) => (brand && brand.source && brand.source.tier) || 0;
+
+  // A chart nobody has checked yet is one notch less sure; a shop's house chart is two.
+  function tierPenalty(brand) {
+    const tier = tierOfBrand(brand);
+    return tier === 5 ? 0.2 : tier === 3 || tier === 4 ? 0.1 : 0;
+  }
+
+  // "revolve.com" → "Revolve": the shop as people name it, from the chart's retailer or its address.
+  function shopName(source) {
+    let host = source.retailer || '';
+    if (!host && source.url) { try { host = new URL(source.url).hostname; } catch { host = ''; } }
+    const label = host.replace(/^www\./, '').split('.')[0];
+    return label ? label.charAt(0).toUpperCase() + label.slice(1) : 'the shop';
+  }
+
+  function hostOf(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
+  }
+
+  function tierCaveat(brand) {
+    const tier = tierOfBrand(brand);
+    if (tier === 3 || tier === 4) return 'This chart was read by machine and not yet checked by a person.';
+    if (tier === 5) return `This is ${shopName(brand.source)}’s general chart, not ${brand.name}’s own.`;
+    return null;
+  }
+
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function shortDate(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}` : '';
+  }
+
+  // The Brand fact and the sheet footer for a result, worded by where its chart came from.
+  // The footer is lead + an optional link + tail, so the page can make the link without parsing text.
+  function provenance(r) {
+    const name = r && r.brand;
+    const plain = (lead) => ({ lead, link: null, url: null, tail: '' });
+    if (!name) return { brandFact: 'Not found', footer: plain('Size charts are approximate.') };
+    if (!r.brandKnown) return { brandFact: `${name}, no size chart yet`, footer: plain('Size charts are approximate.') };
+    const s = r.source;
+    if (!s || !s.url) return { brandFact: name, footer: plain(r.guide ? `Charts are approximate. Check the ${r.guide}.` : 'Size charts are approximate.') };
+    const when = shortDate(s.retrievedOn);
+    const shop = shopName(s);
+    const unchecked = 'not yet checked by a person';
+    // Machine-read charts carry addresses no person typed, so only a web address becomes a link.
+    const url = /^https?:\/\//i.test(s.url) ? s.url : null;
+    switch (s.tier) {
+      case 2: return { brandFact: name, footer: { lead: 'Chart from ', link: `${name}’s size guide on ${shop}`, url, tail: when ? `, ${when}` : '' } };
+      case 3: return { brandFact: `${name}, chart read by machine`, footer: { lead: 'Chart read from ', link: url ? hostOf(url) : 'an unlinked page', url, tail: when ? ` on ${when}, ${unchecked}` : `, ${unchecked}` } };
+      case 4: return { brandFact: `${name}, chart read by machine`, footer: { lead: 'Chart read from ', link: `${name}’s guide on ${shop}`, url, tail: when ? `, ${when}, ${unchecked}` : `, ${unchecked}` } };
+      case 5: return { brandFact: `${name}, using ${shop}’s general chart`, footer: { lead: '', link: `${shop}’s general size guide`, url, tail: `, not ${name}’s own${when ? `, ${when}` : ''}` } };
+      default: return { brandFact: name, footer: { lead: 'Chart from ', link: `${name}’s size guide`, url, tail: when ? `, ${when}` : '' } };
+    }
   }
 
   // ---- shoes: one dimension, read straight off the chart ---------------------
@@ -554,8 +614,11 @@
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up' : signals.fitNote === 'large' ? 'Runs large, sized down'
       : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
         : buyersNote && reviews.verdict === 'large' ? 'Buyers say it runs large, sized down' : 'By your foot length';
-    const confidence = brand && f.measured ? 'High' : brand ? 'Medium' : 'Low';
+    const LEVELS = ['Low', 'Medium', 'High'];
+    const notches = !brand ? 0 : tierOfBrand(brand) === 5 ? 2 : tierPenalty(brand) ? 1 : 0;
+    const confidence = !brand ? 'Low' : LEVELS[Math.max(0, (f.measured ? 2 : 1) - notches)];
     const firmUp = !brand ? 'There’s no shoe chart for this brand yet, so this uses a standard EU chart.'
+      : tierCaveat(brand) ? tierCaveat(brand)
       : !f.measured ? 'Add your foot length to firm this up.' : null;
 
     return {
@@ -627,7 +690,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf };
+  const api = { recommend, analyzeText, analyzeReviews, parseSizeLabel, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

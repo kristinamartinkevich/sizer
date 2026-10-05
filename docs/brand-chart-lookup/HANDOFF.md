@@ -72,7 +72,10 @@ browser the session can drive (Playwright MCP or the built-in pane), wait for
 
 1.2 **Pre-commit gate, no exceptions.** Every bundle runs `node --test tests/` (currently 54 pass)
 and, when `src/extract.js` or a fixture changed, the `tests/shops.html` harness (37 checks, PASS).
-B3 also runs `deno test`. State the counts in chat before committing.
+B3 also runs `deno test`. Any bundle that adds or changes a file under `supabase/migrations/` runs
+`sh tools/check-migrations.sh` (added in B1), which applies every migration to a throwaway local
+Postgres 16, each file as one transaction the way the SQL editor runs it, and checks what the
+anonymous role can read. State the counts in chat before committing.
 
 1.3 **No external libraries.** The extension is plain scripts, no bundler, no npm. The Edge
 Function uses only Deno's standard library and `fetch`. No Anthropic SDK: the Messages API is one
@@ -100,8 +103,9 @@ saved pages already contain.
 
 1.9 **Migrations are numbered, append-only, and pasted by the operator.** The next free number is
 `0004`. Write it to run cleanly on a project that has 0001 to 0003 applied. Never edit 0001 to 0003.
-A migration is verified by the operator running it; the bundle verifies its SQL by reading it
-against the schema in 0001/0002 and by the bundle-view tests in 1.5.
+A bundle verifies its migration with `sh tools/check-migrations.sh` (see 1.2) and extends that
+script's anonymous-role checks when it changes what anon may read. The operator's paste into the
+dashboard is the deploy, not the test.
 
 1.10 **Commits end with** `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
 

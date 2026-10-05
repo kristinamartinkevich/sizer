@@ -170,7 +170,7 @@
     const inStock = p.sizes.filter((x) => x.available !== false);
     const soldOut = p.sizes.filter((x) => x.available === false);
     const facts = [
-      ['Brand', r.brand ? `${esc(r.brand)}${r.brandKnown ? '' : ', no size chart yet'}` : 'Not found'],
+      ['Brand', esc(Engine.provenance(r).brandFact)],
       r.shoes ? null : ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
       ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : 'None'],
       s.modelSize && !r.shoes ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
@@ -214,20 +214,12 @@
     h.mount.querySelector('.sheet').focus();
   }
 
-  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  function shortDate(iso) {
-    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
-    return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}` : '';
-  }
-
-  // Where the chart came from: a link to the brand's own guide when it is a verified chart, a caveat otherwise.
+  // Where the chart came from, worded by how far it can be trusted, with a link to the page it was read from.
   function sourceLine(r) {
-    if (r && r.source && r.source.url) {
-      const when = shortDate(r.source.retrievedOn);
-      return `Chart from <a href="${esc(r.source.url)}" target="_blank" rel="noopener">${esc(r.source.name)}’s size guide</a>${when ? `, ${when}` : ''}`;
-    }
-    if (r && r.guide) return `Charts are approximate. Check the ${esc(r.guide)}.`;
-    return 'Size charts are approximate.';
+    if (!r || !r.ok) return 'Size charts are approximate.';
+    const f = Engine.provenance(r).footer;
+    const link = f.link && f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.link)}</a>` : esc(f.link || '');
+    return `${esc(f.lead)}${link}${esc(f.tail)}`;
   }
 
   function closeSheet() {

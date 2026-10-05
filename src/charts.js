@@ -60,19 +60,41 @@
       rows.push(row);
     }
     if (rows.length < 2) return null;
-    return { id: chart.id, category: chart.category, system, garment, shoes, rows, fitAdvice: chart.fit_advice || null, source: { url: chart.source_url, archiveUrl: chart.source_archive_url || null, retrievedOn: chart.retrieved_on || null } };
+    const status = chart.status || 'verified';
+    const sourceType = chart.source_type || 'brand_site';
+    return {
+      id: chart.id, category: chart.category, system, garment, shoes, rows, fitAdvice: chart.fit_advice || null,
+      source: {
+        id: chart.id, url: chart.source_url, archiveUrl: chart.source_archive_url || null, retrievedOn: chart.retrieved_on || null,
+        tier: tierOf(chart), status, sourceType, retailer: chart.retailer || null, readBy: chart.read_by || null,
+      },
+    };
   }
 
+  // Where a chart came from, best first: 1 the brand's own guide, 2 the brand's guide as a shop prints it,
+  // 3 and 4 the same read by machine and not yet checked, 5 a shop's house chart. A chart from an older
+  // bundle carries no provenance and was verified from the brand's site, so it counts as 1.
+  function tierOf(chart) {
+    const sourceType = chart.source_type || 'brand_site';
+    const machine = chart.status === 'machine_read';
+    if (sourceType === 'retailer_house_chart') return 5;
+    if (sourceType === 'retailer_brand_chart') return machine ? 4 : 2;
+    return machine ? 3 : 1;
+  }
+
+  // The brand's best chart for this kind of item: provenance first, then how well the category fits.
   function pickChart(entry, kind) {
     const order = CHARTS_FOR[kind] || CHARTS_FOR.bottoms;
-    for (const category of order) {
+    const candidates = [];
+    order.forEach((category, rank) => {
       for (const c of entry.charts || []) {
         if (c.category !== category) continue;
         const converted = convertChart(c);
-        if (converted) return converted;
+        if (converted) candidates.push({ converted, tier: converted.source.tier, rank });
       }
-    }
-    return null;
+    });
+    candidates.sort((a, b) => a.tier - b.tier || a.rank - b.rank);
+    return candidates.length ? candidates[0].converted : null;
   }
 
   // The brand's own fit note for this kind of item, if the research recorded one.
@@ -110,7 +132,7 @@
     GENERIC_SHOES.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(eu - 33), us: String(eu - 30.5) } });
   }
 
-  const api = { toBrand, convertChart, pickChart, GENERIC_SHOES, CHARTS_FOR };
+  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, CHARTS_FOR };
   root.SizerCharts = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

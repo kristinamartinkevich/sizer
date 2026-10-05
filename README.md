@@ -79,6 +79,8 @@ The sheet's footer links to the brand page the chart was read from, with the dat
     python3 tools/serve.py 8766   # demo shop page and store frames, served without caching
                                   # http://localhost:8766/tests/fixture-shop.html?open=why&charts=1
     sh package.sh        # dist/sizer-<version>.zip for the Chrome Web Store
+    sh tools/check-migrations.sh   # applies supabase/migrations/*.sql to a throwaway local Postgres,
+                                   # one transaction per file, as the Supabase SQL editor runs them
 
 `tests/fixture-shop.html` is a demo product page with query switches (first run, sold out, open
 sheet, no picker) for checking every state; serve the folder over HTTP to open it.

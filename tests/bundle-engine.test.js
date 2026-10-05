@@ -119,3 +119,102 @@ test('bundle aliases find brands the built-in table does not list', () => {
   assert.equal(findBrand('SÉZANE Paris trousers', bundle).id, 'sezane');
   assert.equal(findBrand('SÉZANE Paris trousers'), null);
 });
+
+// ---- provenance tiers --------------------------------------------------------
+
+const { provenance } = require('../src/engine.js');
+
+const dressRows = [['XS', 60, 64, 86, 90], ['S', 64, 68, 90, 94], ['M', 68, 72, 94, 98], ['L', 72, 76, 98, 102], ['XL', 76, 80, 102, 106]]
+  .map(([label, w0, w1, h0, h1]) => ({ label, aliases: {}, bust: null, inseam: null, foot_length: null, extra: {}, suspect: null, waist: [w0, w1], hip: [h0, h1] }));
+
+// The same Helsa dress chart from five sources, listed worst first so arrival order cannot win.
+const helsaCharts = {
+  house: { id: 'h5', category: 'dresses', status: 'verified', source_type: 'retailer_house_chart', retailer: 'revolve.com', source_url: 'https://www.revolve.com/sizeguide', retrieved_on: '2026-10-05', read_by: null },
+  shopMachine: { id: 'h4', category: 'dresses', status: 'machine_read', source_type: 'retailer_brand_chart', retailer: 'revolve.com', source_url: 'https://www.revolve.com/helsa/sizeguide', retrieved_on: '2026-10-05', read_by: 'lookup-chart' },
+  brandMachine: { id: 'h3', category: 'dresses', status: 'machine_read', source_type: 'brand_site', retailer: null, source_url: 'https://helsastudio.com/pages/size-guide', retrieved_on: '2026-10-05', read_by: 'lookup-chart' },
+  shopVerified: { id: 'h2', category: 'dresses', status: 'verified', source_type: 'retailer_brand_chart', retailer: 'revolve.com', source_url: 'https://www.revolve.com/helsa/sizeguide', retrieved_on: '2026-09-12', read_by: null },
+  brandVerified: { id: 'h1', category: 'dresses', status: 'verified', source_type: 'brand_site', retailer: null, source_url: 'https://helsastudio.com/pages/size-guide', retrieved_on: '2026-09-12', read_by: null },
+};
+const chartOf = (c) => ({ gender: 'women', fit_line: null, measurement_basis: 'body', unit: 'cm', size_system: 'letter', source_archive_url: null, fit_advice: null, rows: dressRows, ...c });
+const helsaWith = (...keys) => normalise([{ brand_id: 'helsa', brand_name: 'Helsa', aliases: ['helsa'], updated_at: '2026-10-05T00:00:00Z', fit_notes: [], charts: keys.map((k) => chartOf(helsaCharts[k])) }]);
+const dress = { brand: 'Helsa', title: 'The Margaux polo dress in thick crepe', text: '96% polyester, 4% elastane', sizes: ['XS', 'S', 'M', 'L', 'XL'].map((label) => ({ label })) };
+const sized = { waist: '69', hip: '95', fitPreference: 'regular', anchors: [] };
+
+test('the brand’s own verified chart outranks every other source of the same chart', () => {
+  const r = recommend(sized, dress, helsaWith('house', 'shopMachine', 'brandMachine', 'shopVerified', 'brandVerified'));
+  assert.equal(r.source.tier, 1);
+  assert.equal(r.source.url, helsaCharts.brandVerified.source_url);
+  assert.equal(r.size, 'S');
+});
+
+test('the tiers fall through in order: brand verified, shop verified, brand machine-read, shop machine-read, house chart', () => {
+  assert.equal(recommend(sized, dress, helsaWith('house', 'shopMachine', 'brandMachine', 'shopVerified')).source.tier, 2);
+  assert.equal(recommend(sized, dress, helsaWith('house', 'shopMachine', 'brandMachine')).source.tier, 3);
+  assert.equal(recommend(sized, dress, helsaWith('house', 'shopMachine')).source.tier, 4);
+  assert.equal(recommend(sized, dress, helsaWith('house')).source.tier, 5);
+});
+
+test('a higher tier wins even when a lower tier has the closer category', () => {
+  const mixed = normalise([{ brand_id: 'helsa', brand_name: 'Helsa', aliases: ['helsa'], updated_at: null, fit_notes: [], charts: [chartOf({ ...helsaCharts.brandVerified, category: 'general' }), chartOf(helsaCharts.brandMachine)] }]);
+  const r = recommend(sized, dress, mixed);
+  assert.equal(r.source.tier, 1);
+  assert.equal(r.source.id, 'h1');
+});
+
+test('a chart from an older bundle without provenance fields counts as the brand’s verified chart', () => {
+  const r = recommend(measured, { brand: 'rag & bone', title: 'Jeans', text: '2% elastane', sizes: denim }, bundle);
+  assert.equal(r.source.tier, 1);
+  assert.equal(r.source.status, 'verified');
+  assert.equal(r.source.sourceType, 'brand_site');
+});
+
+test('a machine-read chart costs 0.1 of confidence, a house chart 0.2, and each says why', () => {
+  const verified = recommend(sized, dress, helsaWith('brandVerified'));
+  const machine = recommend(sized, dress, helsaWith('brandMachine'));
+  const shopMachine = recommend(sized, dress, helsaWith('shopMachine'));
+  const house = recommend(sized, dress, helsaWith('house'));
+  assert.ok(Math.abs(verified.score - machine.score - 0.1) < 1e-9, `${verified.score} vs ${machine.score}`);
+  assert.ok(Math.abs(verified.score - shopMachine.score - 0.1) < 1e-9);
+  assert.ok(Math.abs(verified.score - house.score - 0.2) < 1e-9);
+  assert.equal(verified.firmUp, null);
+  assert.equal(machine.firmUp, 'This chart was read by machine and not yet checked by a person.');
+  assert.equal(shopMachine.firmUp, 'This chart was read by machine and not yet checked by a person.');
+  assert.equal(house.firmUp, 'This is Revolve’s general chart, not Helsa’s own.');
+});
+
+test('the Brand fact and the footer name the tier in the HANDOFF wording', () => {
+  const line = (keys) => provenance(recommend(sized, dress, helsaWith(...keys)));
+  assert.deepEqual(line(['brandVerified']), { brandFact: 'Helsa', footer: { lead: 'Chart from ', link: 'Helsa’s size guide', url: helsaCharts.brandVerified.source_url, tail: ', 12 Sep 2026' } });
+  assert.deepEqual(line(['shopVerified']), { brandFact: 'Helsa', footer: { lead: 'Chart from ', link: 'Helsa’s size guide on Revolve', url: helsaCharts.shopVerified.source_url, tail: ', 12 Sep 2026' } });
+  assert.deepEqual(line(['brandMachine']), { brandFact: 'Helsa, chart read by machine', footer: { lead: 'Chart read from ', link: 'helsastudio.com', url: helsaCharts.brandMachine.source_url, tail: ' on 5 Oct 2026, not yet checked by a person' } });
+  assert.deepEqual(line(['shopMachine']), { brandFact: 'Helsa, chart read by machine', footer: { lead: 'Chart read from ', link: 'Helsa’s guide on Revolve', url: helsaCharts.shopMachine.source_url, tail: ', 5 Oct 2026, not yet checked by a person' } });
+  assert.deepEqual(line(['house']), { brandFact: 'Helsa, using Revolve’s general chart', footer: { lead: '', link: 'Revolve’s general size guide', url: helsaCharts.house.source_url, tail: ', not Helsa’s own, 5 Oct 2026' } });
+});
+
+test('a chart address that is not http or https is named but never linked', () => {
+  for (const url of ['javascript:alert(1)', 'data:text/html,<b>x</b>', ' JavaScript:alert(1)']) {
+    const keys = normalise([{ brand_id: 'helsa', brand_name: 'Helsa', aliases: ['helsa'], updated_at: null, fit_notes: [], charts: [chartOf({ ...helsaCharts.brandMachine, source_url: url })] }]);
+    const f = provenance(recommend(sized, dress, keys)).footer;
+    assert.equal(f.url, null, url);
+  }
+});
+
+test('the built-in and generic cases keep today’s wording', () => {
+  const builtin = provenance(recommend(measured, { brand: 'rag & bone', title: 'Jeans', text: '', sizes: denim }, null));
+  assert.deepEqual(builtin, { brandFact: 'rag & bone', footer: { lead: 'Charts are approximate. Check the rag-bone.com size guide.', link: null, url: null, tail: '' } });
+  const generic = provenance(recommend(sized, dress, null));
+  assert.deepEqual(generic, { brandFact: 'Helsa, no size chart yet', footer: { lead: 'Size charts are approximate.', link: null, url: null, tail: '' } });
+  assert.equal(provenance(recommend(sized, { ...dress, brand: '' }, null)).brandFact, 'Not found');
+});
+
+test('a machine-read shoe chart is one notch less sure, a house shoe chart two', () => {
+  const shoe = (extra) => normalise([{ ...veja, charts: [{ ...veja.charts[0], ...extra }] }]);
+  const ask = (b) => recommend({ ...measured, footLength: '24.5' }, { brand: 'Veja', title: 'Campo sneakers', text: '', sizes: ['37', '38', '39'].map((label) => ({ label })) }, b);
+  assert.equal(ask(shoe({ status: 'verified', source_type: 'brand_site' })).confidence, 'High');
+  const machine = ask(shoe({ status: 'machine_read', source_type: 'brand_site', read_by: 'lookup-chart' }));
+  assert.equal(machine.confidence, 'Medium');
+  assert.equal(machine.firmUp, 'This chart was read by machine and not yet checked by a person.');
+  const house = ask(shoe({ status: 'verified', source_type: 'retailer_house_chart', retailer: 'zalando.de' }));
+  assert.equal(house.confidence, 'Low');
+  assert.equal(house.firmUp, 'This is Zalando’s general chart, not Veja’s own.');
+});

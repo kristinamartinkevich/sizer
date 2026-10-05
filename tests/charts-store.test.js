@@ -39,6 +39,15 @@ test('normalise refuses a payload that is not a list', () => {
   assert.throws(() => store.normalise({ message: 'No API key found in request' }), /not a list/);
 });
 
+test('normalise keeps each chart’s provenance so the engine can rank it', () => {
+  const payload = [{ brand_id: 'helsa', brand_name: 'Helsa', aliases: ['helsa'], fit_notes: [], updated_at: null, charts: [
+    { id: 'a', category: 'dresses', status: 'machine_read', source_type: 'brand_site', retailer: null, read_by: 'lookup-chart', rows: [] },
+    { id: 'b', category: 'dresses', status: 'verified', source_type: 'retailer_house_chart', retailer: 'revolve.com', read_by: null, rows: [] },
+  ] }];
+  const [brand] = store.normalise(payload, now).brands;
+  assert.deepEqual(brand.charts.map((c) => [c.status, c.source_type, c.retailer, c.read_by]), [['machine_read', 'brand_site', null, 'lookup-chart'], ['verified', 'retailer_house_chart', 'revolve.com', null]]);
+});
+
 test('the bundle URL points at the read-only view on the project', () => {
   assert.match(store.BUNDLE_URL, /^https:\/\/cqvrdsgutpczbucbpiqa\.supabase\.co\/rest\/v1\/chart_bundle\?select=/);
 });

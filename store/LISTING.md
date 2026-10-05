@@ -1,46 +1,85 @@
 # Chrome Web Store listing
 
-Upload `dist/sizer-1.0.0.zip` (built by `sh package.sh`).
+## How to publish, start to finish
+
+1. **Developer account.** Sign in at https://chrome.google.com/webstore/devconsole with the Google
+   account you want to own the extension, pay the one-time $5 registration fee, and verify the
+   account email. This needs your sign-in and card, so it is yours to do.
+2. **Host the privacy policy.** It is required now that the review tally leaves the browser. Easiest:
+   repo Settings → Pages → deploy from `main`, folder `/` (root). The policy is then at
+   `https://kristinamartinkevich.github.io/sizer/store/privacy.html`. Takes about a minute to go live.
+3. **Build the package.** `sh package.sh` writes `dist/sizer-1.0.0.zip`. Bump `version` in
+   `manifest.json` before every later upload; the store refuses a repeat version.
+4. **New item.** Dashboard → **New item** → upload the zip. Chrome reads name, version, icons and
+   permissions from the manifest.
+5. **Store listing tab.** Paste the summary, description and category below. Upload the screenshots,
+   small promo tile and marquee from `store/out/`. Set the language to English.
+6. **Privacy practices tab.** Paste the single purpose, the permission justifications and the data
+   disclosure below, then the privacy policy URL from step 2, and tick the three certifications.
+7. **Distribution tab.** Visibility **Public**, all regions, free.
+8. **Submit for review.** Save draft → **Submit for review**. Leave "publish automatically after
+   review" ticked. Reviews take a few hours to a few days; a first submission with host permissions
+   usually lands at the slow end. You get an email either way, and a rejection names the policy.
+9. **After approval.** The listing URL is `https://chromewebstore.google.com/detail/sizer/<id>`.
+   Put it in `README.md`, the Product Hunt post and the privacy page, then install from the store on
+   a clean profile and open a real product page before telling anyone.
+
+Common first-review rejections and how this package avoids them: the single purpose is one sentence;
+every permission has a justification; no remote code (the chart bundle is data, not code); the
+privacy policy matches what the data disclosure says.
 
 ## Store listing tab
 
-**Name:** Sizer
+**Name:** Sizer – Clothing Size Finder
 
-**Summary** (132 characters max):
-Your size on clothing product pages, worked out from your measurements, clothes you own and the item’s fit notes.
+Search on the store matches the name first. "Clothing size finder" and "what size am I" are the two
+phrases people type; the dash form keeps "Sizer" as the brand. The manifest `name` stays "Sizer";
+the store name is set separately in the listing.
+
+**Summary** (132 characters max, shown in search results):
+Find your clothing size on any shop. Reads the brand’s size chart, stretch, fit notes, stock and buyers’ reviews. Jeans to shoes.
 
 **Category:** Shopping · **Language:** English
 
 **Description:**
 
-Sizer puts your size right under the size picker on clothing product pages.
+Sizer is a clothing size finder for Chrome. It puts your size right under the size picker on product pages, and shows why.
 
-Tell it your measurements, or a few things you already own and how they fit. On a product page, Sizer reads the brand, the fabric and the fit notes, then tells you which size to pick, and why.
+Tell it your measurements, or a few things you already own and how they fit, and it works out your size for every brand. On a product page it reads the brand’s size chart, the fabric’s stretch, the page’s fit notes, which sizes are in stock, and what buyers said in the reviews.
 
-What it reads
-• The brand’s size chart, for 40 denim and high-street brands
-• Stretch: no-stretch denim leans up, high-stretch leans down
-• The page’s own fit notes, like “runs small, we recommend sizing up”
-• Which sizes are in stock
-
-What you see
+WHAT YOU SEE
 • Your size, under the shop’s size picker, with the matching option marked
-• A one-line reason, like “No stretch, sized up”
+• A one-line reason: “No stretch, sized up” or “Buyers say it runs small, sized up”
 • If your size is sold out, the nearest sizes in stock and how far off they are
-• Every answer shows its working: open “Why this size” for the full reasoning
+• Open “Why this size” for the full reasoning and exactly what Sizer read on the page
 
-Your fit profile
-• Waist, hip and inseam, in cm or inches
+WHAT IT READS
+• Verified brand size charts, downloaded daily, with a link to the brand page each one came from
+• Built-in charts for 40 denim and high-street brands where no verified chart exists yet
+• Stretch: rigid denim leans up a size, high stretch leans down
+• The page’s own fit notes, like “runs small, we recommend sizing up”
+• Buyers’ reviews, on this shop and pooled across other shops selling the same style
+• Per-size stock from the shop’s product data
+
+YOUR FIT PROFILE
+• Waist, hip, inseam and foot length, in cm or inches
 • Clothes you own, marked a bit tight, just right or a bit loose
 • Whether you like a close fit, a regular fit or a little room
+• Light, dark or system appearance
 
-Works on Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE, Nordstrom, Zara, Mango, H&M, COS and ARKET. On other shops, click the Sizer icon and choose “Check this page anyway”.
+WORKS ON
+Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE, Nordstrom, Zara, Mango, H&M, COS, ARKET, Selfridges, rag & bone and Levi’s. On any other shop, click the Sizer icon and choose “Check this page anyway”.
 
-Private by design: your measurements stay in your Chrome profile. Sizer has no servers, no accounts and no tracking.
+JEANS, TROUSERS, SKIRTS, DRESSES, TOPS AND SHOES
+Sizer is built around women’s waist and hip sizing, so it is strongest for jeans, trousers and skirts. Shoes are sized from your foot length. Men’s charts are coming.
 
-Good to know: size charts are approximate and brands change them, so check the brand’s guide for important purchases. Sizer is built around women’s waist and hip sizing, so it’s strongest for jeans, trousers and skirts.
+PRIVATE BY DESIGN
+Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. The one thing Sizer sends is an anonymous tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, so shoppers on other shops can use it. No profile, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html
 
-Sizer is independent and not affiliated with any shop or brand it mentions.
+GOOD TO KNOW
+Size charts are approximate and brands change them, so check the brand’s guide for important purchases. Sizer is independent and not affiliated with any shop or brand it mentions.
+
+Size finder · size recommendation · what size am I · jeans size · size chart · fit guide · Zalando · ASOS · Net-a-Porter · Revolve · Zara · H&M
 
 **Graphic assets:**
 - Icon: `icons/128.png`
@@ -51,16 +90,20 @@ Sizer is independent and not affiliated with any shop or brand it mentions.
 ## Privacy practices tab
 
 **Single purpose:**
-Shows the shopper which clothing size to buy on a product page, based on their own measurements and the product’s size and fit information.
+Shows the shopper which clothing size to buy on a product page, from their own measurements and the product’s size, fit, stock and review information.
 
 **Permission justifications:**
-- `storage`: Saves the shopper’s fit profile (measurements, clothes they own, fit preference) in Chrome storage.
-- `activeTab`: Lets the shopper run Sizer on a shop that isn’t in the built-in list, only when they click the Sizer icon.
+- `storage`: Saves the shopper’s fit profile (measurements, clothes they own, fit preference) in Chrome storage, and caches the downloaded size charts.
+- `activeTab`: Lets the shopper run Sizer on a shop that is not in the built-in list, only when they click the Sizer icon.
 - `scripting`: Injects Sizer’s page reader into that tab after the shopper clicks “Check this page anyway”.
-- Host permissions (content script matches): Reads product pages on the listed fashion shops to find the brand, sizes, stock and fit notes, and shows the size under the size picker.
+- `alarms`: Refreshes the downloaded size charts once a day.
+- Host permission `https://cqvrdsgutpczbucbpiqa.supabase.co/*`: Downloads the verified size charts and exchanges anonymous review tallies with Sizer’s own database.
+- Content script matches (the listed fashion shops): Reads product pages to find the brand, sizes, stock, fit notes and reviews, and shows the size under the size picker.
 
-**Remote code:** No, all code is in the package.
+**Remote code:** No. All code ships in the package; the size charts are downloaded as data (JSON).
 
-**Data usage:** Sizer does not collect or transmit any user data. The fit profile is kept in `chrome.storage.sync` in the user’s own Chrome profile and never sent to the developer or any third party. Leave every data type unchecked.
+**Data usage.** Tick **Website content** and nothing else. The honest reason: Sizer derives a count from the review text on the page and sends it, with the shop’s hostname and a random install id, to Sizer’s database. That is content from the website, even though no text, no page address and nothing personal travels. The fit profile never leaves `chrome.storage.sync`. Leaving every box unticked would contradict the privacy policy, and reviewers check the two against each other.
 
-**Privacy policy URL:** Optional, since no user data is collected. If you want one, host `store/privacy.html` and paste its URL.
+**Certifications:** tick all three. Sizer does not sell data, does not use it for anything but the size, and does not use it for creditworthiness or lending.
+
+**Privacy policy URL:** `https://kristinamartinkevich.github.io/sizer/store/privacy.html` once Pages is on.

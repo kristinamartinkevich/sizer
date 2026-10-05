@@ -20,10 +20,13 @@ A Chrome extension that tells you which clothing size to buy, right under the sh
 
 **Gallery** (in this order):
 1. `store/out/marquee-1400x560.png`
-2. `store/out/screenshot-1.png`: the size under the picker
-3. `store/out/screenshot-2.png`: the reasoning
-4. `store/out/screenshot-3.png`: the sold-out fallback
+2. `store/out/screenshot-1.png`: Zalando, rag & bone jeans. The shop's own "runs small" note read, size 28 sold out, the nearest sizes in stock named
+3. `store/out/screenshot-2.png`: ASOS, Levi's 501. The reasoning sheet, with ASOS's returns-data note turned into "one size down"
+4. `store/out/screenshot-3.png`: Net-a-Porter, AGOLDE. The answer ringed in the shop's own size grid
 5. `store/out/screenshot-4.png`: the fit profile
+
+All shop screenshots are real product pages captured on 5 October 2026 with Sizer running; nothing
+on them is edited. The listing says Sizer is not affiliated with the shops.
 
 **Thumbnail:** `store/out/thumbnail-240.png`
 

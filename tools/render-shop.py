@@ -21,7 +21,7 @@ window.chrome = { runtime: { getURL: (p) => 'http://localhost:8766/' + p, sendMe
 html = re.sub(r'<script\b(?![^>]*application/ld\+json)[^>]*>.*?</script>', '', html, flags=re.S | re.I)
 # consent banners would sit on top of every render
 html = re.sub(r'<div[^>]+id="onetrust-consent-sdk"[^>]*>.*?</div>\s*</div>\s*</div>\s*</div>', '', html, flags=re.S)
-stub = '<style>#onetrust-consent-sdk, #onetrust-banner-sdk, [id^="onetrust"], [class*="cookie-banner" i], [class*="cookieBanner" i], [id*="cookie-banner" i], [class*="consent" i][role="dialog"] { display: none !important }</style>\n' + stub
+stub = '<style>#onetrust-consent-sdk, #onetrust-banner-sdk, [id^="onetrust"], [class*="cookie-banner" i], [class*="cookieBanner" i], [id*="cookie-banner" i], [class*="consent" i][role="dialog"], #tc-privacy-wrapper, #ca-cookie-overlay, [id^="footer_tc_privacy"], #chrome-welcome-mat, [data-testid="welcome-message"] { display: none !important }</style>\n' + stub
 html = html.replace('</body>', stub + '</body>', 1)
 out = root / 'store/render' / f'{name}.html'
 out.parent.mkdir(parents=True, exist_ok=True)

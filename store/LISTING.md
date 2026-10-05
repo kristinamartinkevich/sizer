@@ -84,7 +84,11 @@ Size finder · size recommendation · what size am I · jeans size · size chart
 
 **Graphic assets:**
 - Icon: `icons/128.png`
-- Screenshots (1280×800): `store/out/screenshot-1.png` to `screenshot-4.png`
+- Screenshots (1280×800), in this order: `store/out/screenshot-1.png` (Zalando: fit note read,
+  sold out, nearest in stock), `screenshot-2.png` (ASOS: the reasoning sheet), `screenshot-3.png`
+  (Net-a-Porter: the answer ringed in the size grid), `screenshot-4.png` (fit profile),
+  `screenshot-5.png` (Revolve: sold-out sizes read from the grid). Real pages captured with Sizer
+  running, unedited; the description's "not affiliated" line covers the shops' marks.
 - Small promo tile (440×280): `store/out/promo-440x280.png`
 - Marquee (1400×560): `store/out/marquee-1400x560.png`
 

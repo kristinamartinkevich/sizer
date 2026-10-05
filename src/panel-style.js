@@ -19,6 +19,8 @@
   color: var(--graphite);
   -webkit-font-smoothing: antialiased;
 }
+/* A shop's own "* { font: inherit }" can restyle the host element itself and beat :host; the shadow's children are out of its reach. */
+:host > * { font: 14px/1.45 var(--sans); color: var(--graphite); }
 * { box-sizing: border-box; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

@@ -82,3 +82,11 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 
 `tests/fixture-shop.html` is a demo product page with query switches (first run, sold out, open
 sheet, no picker) for checking every state; serve the folder over HTTP to open it.
+
+`tests/shops.html` runs the reader against saved real product pages in `tests/fixtures/shops/`
+(Zalando, ASOS, Net-a-Porter, Revolve) and checks brand, sizes, stock, fit notes, reviews and the
+answer. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
+To add a shop: open the product page in a browser, save `document.documentElement.outerHTML`
+as `tests/fixtures/shops/<shop>.html` (the demo server also accepts `POST /save?name=<shop>`), add
+its expectations to `SHOPS` in `tests/shops.html`, and `python3 tools/render-shop.py <shop> <origin>`
+builds a copy with Sizer injected at `store/render/<shop>.html` for a look or a store screenshot.

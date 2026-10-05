@@ -9,6 +9,10 @@
 //     f. store and return it          the plan 1 §5 shape, machine_read, for a shop guide in a lookup
 //   POST /read-chart-image/product  { title, headings, picker, install } → { brand, title, kind, sizes, fabric }
 //     the same check and caps, one text call, nothing cached, nothing about the page stored.
+//   POST /read-chart-image/measurements  { image_urls (1 to 4 Vinted photos), kind, install } → { measurements, note }
+//     the same caps and ledger, one vision call, nothing cached, nothing about the listing stored; the
+//     ledger row is a 'product' row (no address, brand or answer) with reason 'measurements', so no
+//     migration is needed for it (fit-evidence HANDOFF §8).
 // Written against injected clients so the tests never touch the network; index.ts wires the real ones.
 import {
   answersFor,
@@ -30,12 +34,17 @@ import {
   chartUserContent,
   forceAnswer,
   MAX_TOKENS,
+  MEASURE_SYSTEM,
+  MEASURE_TOOL,
+  MEASURE_TOOL_NAME,
+  measureUserContent,
   MODEL,
   PRODUCT_SYSTEM,
   PRODUCT_TOOL,
   PRODUCT_TOOL_NAME,
   productUserContent,
 } from "./prompt.ts";
+import { parseMeasurementsAnswer, parseMeasurementsInput } from "./measurements.ts";
 
 export interface CallRecord {
   route: "image" | "product";
@@ -90,10 +99,11 @@ function json(status: number, body: unknown): Response {
 const noChart = (status: number, note: string) => json(status, { chart: null, note });
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
-function routeOf(req: Request): "image" | "product" | null {
+function routeOf(req: Request): "image" | "product" | "measurements" | null {
   const path = new URL(req.url).pathname.replace(/\/+$/, "");
   if (/\/read-chart-image(\/image)?$/.test(path)) return "image";
   if (/\/read-chart-image\/product$/.test(path)) return "product";
+  if (/\/read-chart-image\/measurements$/.test(path)) return "measurements";
   return null;
 }
 
@@ -101,14 +111,15 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   if (req.method !== "POST") return json(405, { error: "Use POST." });
   const route = routeOf(req);
-  if (!route) return json(404, { error: "Use /image or /product." });
+  if (!route) return json(404, { error: "Use /image, /product or /measurements." });
   let body: unknown;
   try {
     body = await req.json();
   } catch {
     return json(400, { error: "The body is not JSON." });
   }
-  return route === "image" ? await readImage(body, deps) : await readProduct(body, deps);
+  if (route === "image") return await readImage(body, deps);
+  return route === "product" ? await readProduct(body, deps) : await readMeasurements(body, deps);
 }
 
 // Takes a place in the ledger, then reads the counts, so calls landing at the same moment count each
@@ -233,6 +244,53 @@ async function readProduct(body: unknown, deps: Deps): Promise<Response> {
   } catch (e) {
     log(`read-chart-image: database error after the product read: ${message(e)}`);
     return json(500, { error: "The page could not be read." });
+  }
+}
+
+// ---- the measurements route ------------------------------------------------------------------
+
+const MEASUREMENTS = "measurements";
+
+// A Vinted listing's photos, read on the shopper's click. Same caps and ledger as the other routes;
+// the ledger row is a product-shaped row (install and outcome only) marked 'measurements' in reason.
+// Nothing is cached and no photo address is stored or logged.
+async function readMeasurements(body: unknown, deps: Deps): Promise<Response> {
+  const log = deps.log ?? (() => {});
+  const now = (deps.now ?? (() => new Date()))();
+  const parsed = parseMeasurementsInput(body);
+  if (!parsed.ok) return json(400, { error: parsed.error });
+  const input = parsed.input;
+  const { db } = deps;
+  const tag = `${input.kind}, ${input.image_urls.length} photo${input.image_urls.length === 1 ? "" : "s"}`;
+
+  let held: string;
+  try {
+    const place = await holdPlace(db, { route: "product", url_hash: null, image_url: null, brand: null, kind: null, install: input.install }, now);
+    if ("refused" in place) {
+      log(`read-chart-image: measurements cap ${tag}`);
+      return json(429, { error: place.refused });
+    }
+    held = place.id;
+  } catch (e) {
+    log(`read-chart-image: database error before the measurements read: ${message(e)}`);
+    return json(500, { error: "The photos could not be read." });
+  }
+
+  const asked = await askModel(deps, MEASURE_SYSTEM, measureUserContent(input), MEASURE_TOOL, MEASURE_TOOL_NAME);
+  const answer = asked.ok ? parseMeasurementsAnswer(asked.input) : null;
+  try {
+    if (!answer) {
+      const reason = asked.ok ? "the answer was not usable" : asked.reason;
+      log(`read-chart-image: measurements error ${tag}: ${reason}`);
+      await db.finishCall(held, "error", `${MEASUREMENTS}: ${reason}`, null);
+      return json(502, { error: "The photos could not be read, try again later." });
+    }
+    await db.finishCall(held, "read", MEASUREMENTS, null);
+    log(`read-chart-image: measurements read ${tag}: ${Object.keys(answer.measurements).length} found`);
+    return json(200, answer);
+  } catch (e) {
+    log(`read-chart-image: database error after the measurements read: ${message(e)}`);
+    return json(500, { error: "The photos could not be read." });
   }
 }
 

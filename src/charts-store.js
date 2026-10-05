@@ -291,6 +291,59 @@
     };
   }
 
+  // ---- measurements read from a Vinted listing's photos ---------------------------------------
+
+  const READ_MEASUREMENTS_URL = `${SUPABASE_URL}/functions/v1/read-chart-image/measurements`;
+  const LISTING_KINDS = ['top', 'dress', 'jeans', 'trousers', 'shorts', 'skirt', 'outerwear', 'shoes'];
+  const MEASUREMENT_KEYS = ['pit', 'length', 'waistFlat', 'rise', 'inseam', 'legOpening', 'shoulder', 'sleeve', 'insole'];
+  const MAX_PHOTOS = 4;
+  // Vinted serves listing photos from its own image hosts (images1.vinted.net and the like).
+  const VINTED_HOST = /(^|\.)vinted\.[a-z]{2,3}(\.[a-z]{2})?$/i;
+
+  // What "Read measurements from the photos" sends: up to four of the listing's photo addresses
+  // (public pictures on Vinted's servers, never the listing's address), the kind of item and the
+  // install id. Null when no photo is a public https address on a Vinted host, or the kind is unknown.
+  function measurementsBody({ image_urls, kind }, install) {
+    if (!LISTING_KINDS.includes(kind)) return null;
+    const urls = [];
+    for (const raw of [].concat(image_urls || [])) {
+      let u;
+      try { u = new URL(String(raw)); } catch { continue; }
+      if (u.protocol !== 'https:' || u.username || u.password || !VINTED_HOST.test(u.hostname)) continue;
+      u.hash = '';
+      if (u.href.length > 2048 || urls.includes(u.href)) continue;
+      urls.push(u.href);
+      if (urls.length >= MAX_PHOTOS) break;
+    }
+    return urls.length ? { image_urls: urls, kind, install } : null;
+  }
+
+  // The function's answer cut to the measurement names, numbers only; src/vinted.js checks the ranges.
+  function readMeasurementsEntry(data) {
+    const m = data && data.measurements;
+    if (!m || typeof m !== 'object' || Array.isArray(m)) return null;
+    const out = {};
+    for (const k of MEASUREMENT_KEYS) if (typeof m[k] === 'number' && Number.isFinite(m[k])) out[k] = m[k];
+    return out;
+  }
+
+  // The background worker's photo read, on the shopper's click only. Nothing is cached: the function
+  // reads the photos again each time, within the same daily caps as the other reads.
+  function createMeasurementsRead({ fetch, installId }) {
+    return async function read(msg) {
+      try {
+        const body = measurementsBody(msg || {}, await installId());
+        if (!body) return { error: 'bad request' };
+        const res = await post(fetch, READ_MEASUREMENTS_URL, body);
+        if (!res.ok) return { error: `HTTP ${res.status}` };
+        const measurements = readMeasurementsEntry(await res.json());
+        return measurements ? { measurements } : { error: 'unexpected reply' };
+      } catch (e) {
+        return { error: String((e && e.message) || e) };
+      }
+    };
+  }
+
   // A word that makes kindOf read the model's kind from the title, used only when the title names none.
   const KIND_WORD = { bottoms: 'trousers', tops: 'top', dresses: 'dress', shoes: 'shoes' };
 
@@ -426,6 +479,7 @@
     READ_IMAGE_URL, READ_PRODUCT_URL, imageBody, imageChartEntry, withImageChart, createImageRead,
     productBody, readProductEntry, createProductRead, applyReadProduct,
     DOSSIER_URL, DOSSIER_FOUND_TTL, DOSSIER_MISS_TTL, dossierKey, dossierBody, dossierEntry, createDossier,
+    READ_MEASUREMENTS_URL, LISTING_KINDS, MEASUREMENT_KEYS, measurementsBody, readMeasurementsEntry, createMeasurementsRead,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 if (typeof module !== 'undefined') module.exports = globalThis.SizerChartsStore;

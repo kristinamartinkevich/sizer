@@ -18,7 +18,29 @@ export function imageRequest(body: unknown, method = "POST", path = "/read-chart
 
 export const productRequest = (body: unknown) => imageRequest(body, "POST", "/read-chart-image/product");
 
+export const measurementsRequest = (body: unknown) => imageRequest(body, "POST", "/read-chart-image/measurements");
+
 export const IMAGE_BODY = { image_url: IMAGE_URL, brand: "Lune Atelier", kind: "dresses", install: INSTALL };
+
+export const PHOTO_URLS = [1, 2, 3].map((n) => `https://images1.vinted.net/t/01_00a/f800/17000000${n}.jpeg?s=ab12`);
+export const MEASURE_BODY = { image_urls: PHOTO_URLS, kind: "dress", install: INSTALL };
+
+const unread = { pit: null, length: null, waistFlat: null, rise: null, inseam: null, legOpening: null, shoulder: null, sleeve: null, insole: null };
+
+// What the model records for listing photos, in the measurement tool's schema: numbers as written.
+export function measurementsAnswer(over: Record<string, unknown> = {}, found = true) {
+  return {
+    found,
+    measurements: {
+      ...unread,
+      pit: { value: 46, unit: "cm", laid_flat: true },
+      length: { value: 44, unit: "in", laid_flat: null },
+      waistFlat: { value: 72, unit: "cm", laid_flat: false },
+      ...over,
+    },
+    note: "A tape across the chest and down the back in photo 2.",
+  };
+}
 
 export const PRODUCT_BODY = {
   title: "Bias silk midi skirt",
@@ -92,6 +114,7 @@ export function toolMessage(name: string, input: unknown) {
 
 export const chartMessage = (input: unknown) => toolMessage("record_chart", input);
 export const productMessage = (input: unknown) => toolMessage("record_product", input);
+export const measurementsMessage = (input: unknown) => toolMessage("record_measurements", input);
 
 export function textMessage(text: string, stopReason = "end_turn") {
   return { id: "msg_text", type: "message", role: "assistant", model: "claude-sonnet-5", content: [{ type: "text", text }], stop_reason: stopReason };

@@ -28,6 +28,8 @@
   <script src="../src/engine.js"></script>
   <script src="../src/guide-table.js"></script>
   <script src="../src/extract.js"></script>
+  <script src="../src/vinted.js"></script>
+  <script src="../src/vinted-page.js"></script>
   <script>
     const PROFILE = { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }, { brand: '', type: 'jeans', size: '27', fit: 'perfect' }], waist: '', hip: '', inseam: '', footLength: '', unit: 'cm', fitPreference: 'regular' };
     // What each saved page must yield. Stock and notes are what the page showed on the capture date.
@@ -66,6 +68,47 @@
       { name: 'product-text-bare', base: 'https://ostra.example/', textOnly: true, title: 'Linen wrap dress',
         has: [/It runs long/, /room at the bust/], headings: ['Linen wrap dress'] },
     ];
+    // Vinted listings (fit-evidence C5), both synthetic: read by src/vinted-page.js, answered by
+    // src/vinted.js and the engine. vinted-measured has JSON-LD and data-testid rows and the seller's
+    // measurements in the description; vinted-label has itemprop and label-text details only and no
+    // measurements, so the label size is placed on Zara's built-in chart.
+    const ROUJE_DRESS = { anchors: [{ brand: 'Rouje', type: 'dress', size: '36', fit: 'perfect', flat: { chest: 46.5, waist: 36, length: 110 } }] };
+    const BODY = { anchors: [], waist: '68', hip: '102' };
+    const VINTED = [
+      { name: 'vinted-measured', base: 'https://www.vinted.fr/items/5012345678-robe-midi-sezane', profile: ROUJE_DRESS,
+        brand: 'Sézane', size: 'S', sizeRaw: 'S / 36 / 8', kind: 'dress', condition: 'Très bon état', lang: 'fr', have: { pit: 46, length: 112 }, photos: 5,
+        mode: 'measured', verdict: 'fits', line: /compared with your Rouje dress in 36/, ask: /tour de taille à plat/, notAsked: /aisselle|longueur/, body: 4 },
+      { name: 'vinted-label', base: 'https://www.vinted.de/items/5098765432-zara-stoffhose', profile: BODY,
+        brand: 'Zara', size: 'M', sizeRaw: 'M / 38 / 10', kind: 'trousers', condition: 'Sehr gut', lang: 'de', have: {}, photos: 2,
+        mode: 'label', verdict: 'small', line: /by the label$/, ask: /^Hallo.*Bundweite.*Innenbeinlänge/, notAsked: /Gesamtlänge/, body: 2 },
+    ];
+
+    async function runVinted(shop) {
+      const checks = [];
+      const frame = await load(shop);
+      const fdoc = frame.contentDocument;
+      const host = new URL(shop.base).hostname;
+      const l = SizerVintedPage.readListing(fdoc, host);
+      check(checks, 'brand', l.brand === shop.brand, l.brand);
+      check(checks, 'size label', l.size === shop.size && l.sizeRaw === shop.sizeRaw, `${l.size} from ${l.sizeRaw}`);
+      check(checks, 'kind', l.kind === shop.kind, l.kind);
+      check(checks, 'condition', l.condition === shop.condition, l.condition);
+      check(checks, 'language', l.lang === shop.lang, l.lang);
+      check(checks, 'seller measurements', JSON.stringify(l.have) === JSON.stringify(shop.have), JSON.stringify(l.have));
+      check(checks, 'photos', l.photos.length === shop.photos && l.photos.every((u) => /^https:\/\/images1\.vinted\.net\//.test(u)), l.photos.length);
+      const a = SizerVinted.answerFor(l, shop.profile, null, SizerEngine);
+      check(checks, 'answer', a.mode === shop.mode && a.verdict === shop.verdict, `${a.mode} ${a.verdict}`);
+      check(checks, 'line', shop.line.test(a.line), a.line);
+      if (shop.mode === 'label') check(checks, 'label flag', a.flag === 'Label only, the seller has not measured it', a.flag);
+      check(checks, 'seller message', shop.ask.test(a.message || '') && !shop.notAsked.test(a.message || ''), a.message);
+      const body = SizerChartsStore.measurementsBody({ image_urls: l.photos, kind: l.kind }, '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64');
+      check(checks, 'photo read body', body && body.image_urls.length === shop.body && Object.keys(body).sort().join() === 'image_urls,install,kind', body && JSON.stringify(body.image_urls));
+      const anchor = SizerVintedPage.anchorFor(fdoc);
+      check(checks, 'line anchor', !!anchor && /(^| )details-list( |$)/.test(anchor.className), anchor && anchor.className);
+      frame.remove();
+      return checks;
+    }
+
     const out = document.getElementById('out');
     const results = [];
     const check = (list, label, pass, got) => { list.push({ label, pass, got }); };
@@ -159,9 +202,9 @@
 
     (async () => {
       let failed = 0;
-      for (const shop of SHOPS) {
+      for (const shop of [...SHOPS, ...VINTED]) {
         let checks;
-        try { checks = await run(shop); } catch (e) { checks = [{ label: 'crashed', pass: false, got: String(e.stack || e) }]; }
+        try { checks = await (shop.profile ? runVinted(shop) : run(shop)); } catch (e) { checks = [{ label: 'crashed', pass: false, got: String(e.stack || e) }]; }
         const h = document.createElement('h2'); h.textContent = shop.name; out.appendChild(h);
         const ul = document.createElement('ul');
         for (const c of checks) {

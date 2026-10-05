@@ -104,7 +104,8 @@
   // Listing measurement → the matching flat-lay field on a piece you own (C1's `flat`, in cm).
   const TO_PIECE = { pit: 'chest', waistFlat: 'waist', shoulder: 'shoulder', length: 'length', inseam: 'inseam', sleeve: 'sleeve' };
   const WIDTHS = ['chest', 'waist', 'shoulder'];
-  const SAME_KIND = { jeans: ['jeans', 'trousers'], trousers: ['trousers', 'jeans'], shorts: ['shorts', 'jeans', 'trousers'] };
+  // The options page files coats under 'jacket', so a coat listing is compared with a jacket you own.
+  const SAME_KIND = { jeans: ['jeans', 'trousers'], trousers: ['trousers', 'jeans'], shorts: ['shorts', 'jeans', 'trousers'], outerwear: ['jacket'] };
   // A piece marked a bit loose is about a size too wide for you, a bit tight about a size too narrow.
   const PIECE_FIT_CM = { loose: -2.5, tight: 2.5, perfect: 0 };
   const HEAD = { fits: 'Your size', small: 'Too small for you', roomy: 'Roomy on you' };
@@ -166,7 +167,213 @@
     return { verdict, against, areas, line: `${HEAD[verdict]}, compared with ${best ? `your ${against}` : against}` };
   }
 
-  const api = { parseMeasurements, wanted, sellerMessage, langOf, compare, NAMES };
+  // ---- where it fits, in words ----------------------------------------------------
+
+  const AREA_WORD = { chest: 'chest', waist: 'waist', shoulder: 'shoulders', length: 'length', inseam: 'leg', sleeve: 'sleeves' };
+  const VERDICT_WORD = { tight: 'Tight at the', roomy: 'Roomy at the', fine: 'Fine at the', short: 'Short in the', long: 'Long in the' };
+  const BODY_PART = { chest: 'bust', waist: 'waist' };
+  const cmText = (v) => `${+Math.abs(v).toFixed(1)} cm`;
+
+  // One line per area compare() looked at: against a piece, how much narrower, wider, shorter or
+  // longer the listing is; against your measurements, how much room it leaves.
+  function areaLines(cmp) {
+    if (!cmp || !Array.isArray(cmp.areas)) return [];
+    const piece = cmp.against !== 'your measurements';
+    return cmp.areas.map((a) => {
+      const head = a.area === 'length' ? `${VERDICT_WORD[a.verdict].split(' ')[0]} in length` : `${VERDICT_WORD[a.verdict]} ${AREA_WORD[a.area] || a.area}`;
+      if (!piece) {
+        const part = BODY_PART[a.area] || a.area;
+        return a.diff >= 0 ? `${head}, ${cmText(a.diff)} of room over your ${part}` : `${head}, ${cmText(a.diff)} less than your ${part}`;
+      }
+      if (!a.diff) return `${head}, the same as yours`;
+      const width = WIDTHS.includes(a.area);
+      const word = width ? (a.diff < 0 ? 'narrower' : 'wider') : (a.diff < 0 ? 'shorter' : 'longer');
+      return `${head}, ${cmText(a.diff)} ${word} than yours`;
+    });
+  }
+
+  // ---- the label alone ----------------------------------------------------------------
+
+  const COPY = {
+    flag: 'Label only, the seller has not measured it',
+    ask: 'Ask the seller to measure',
+    copied: 'Copied',
+    photos: 'Read measurements from the photos',
+    fromPhoto: 'read from a photo',
+  };
+
+  // The engine's answer for a label alone: how many sizes the label sits from the one Sizer picks for
+  // you (Engine.placeLabel), in words. Null when the label could not be placed.
+  function labelResult(steps) {
+    if (typeof steps !== 'number') return null;
+    const verdict = steps === 0 ? 'fits' : steps < 0 ? 'small' : 'roomy';
+    return { verdict, line: `${HEAD[verdict]} by the label`, flag: COPY.flag };
+  }
+
+  // ---- reading the listing --------------------------------------------------------------
+
+  const clean = (s) => String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+  const words = (list) => new RegExp(`(?<![\\p{L}])(?:${list})(?![\\p{L}])`, 'iu');
+  // Most specific first: a denim jacket is a jacket, a jeans skirt a skirt.
+  const KIND_WORDS = [
+    ['shoes', words('chaussures?|shoes?|schuhe|zapatos|zapatillas|scarpe|schoenen|buty|baskets|sneakers?|trainers|bottes|bottines|boots?|stiefel|stiefeletten|botas|stivali|laarzen|sandales|sandals?|sandalen|sandalias|sandali|escarpins|heels|pumps|mocassins|loafers|ballerines|ballerinas|obuwie|kozaki|botki|sandały|calçado|skor|kengät|sko|topánky|cipők|pantofi|cipele|παπούτσια')],
+    ['outerwear', words('manteaux?|vestes?|blousons?|parkas?|trench(?: ?coats?)?|doudounes?|coats?|jackets?|blazers?|outerwear|mäntel|mantel|jacken|jacke|abrigos?|chaquetas?|cazadoras?|cappotti|cappotto|giacche|giacca|giubbotti|jassen|jas|mantels|kurtki|kurtka|płaszcze|płaszcz|marynarki|casacos?|blusões|jackor|jacka|kappor|takit|takki|jakker|jakke|kabáty|bundy|kabátok|dzsekik|geci|jachete|paltoane|jakne|kaputi')],
+    ['dress', words('robes?|dress(?:es)?|kleider|kleid|vestidos?|abiti|abito|jurken|jurk|sukienki|sukienka|klänningar|klänning|mekot|mekko|kjoler|kjole|šaty|ruhák|ruha|rochii|rochie|haljine|haljina|φορέματα')],
+    ['jeans', words('jeans?|džíny|farmerky|farmer|dżinsy|blugi|traperice|τζιν')],
+    ['skirt', words('jupes?|skirts?|röcke|rock|faldas?|gonne|gonna|rokken|rok|spódnice|spódnica|saias?|kjolar|kjol|hameet|hame|nederdele|nederdel|sukně|sukne|szoknyák|szoknya|fuste|fustă|suknje|suknja|φούστες')],
+    ['shorts', words('shorts?|bermudas?|pantaloncini|korte broeken|szorty|calções|kraťasy|rövidnadrágok|pantaloni scurți|kratke hlače|σορτς')],
+    ['trousers', words('pantalons?|trousers|pants|leggings|hosen|hose|pantalones|pantaloni|broeken|broek|spodnie|calças|byxor|housut|bukser|kalhoty|nohavice|nadrágok|nadrág|hlače|παντελόνια')],
+    ['top', words('hauts?|tops?|t-shirts?|chemises?|chemisiers?|blouses?|pulls?|sweats?|gilets?|shirts?|sweaters?|jumpers?|hoodies?|cardigans?|oberteile|blusen|bluse|hemden|pullover|camisetas?|camisas?|blusas?|jerséis|maglie|maglia|magliette|camicie|camicia|bluse|felpe|truien|trui|bloesjes|overhemden|bluzki|bluzka|koszule|swetry|tröjor|toppar|paidat|topit|trøjer|toppe|trička|halenky|felsők|pólók|bluze|topuri|majice|μπλούζες')],
+  ];
+
+  function kindIn(text) {
+    const t = clean(text);
+    if (!t) return null;
+    const hit = KIND_WORDS.find(([, re]) => re.test(t));
+    return hit ? hit[0] : null;
+  }
+
+  // The kind of item from Vinted's category path, read from its most specific part up, else from
+  // the title. A top when nothing says.
+  function kindOfListing(parts, title) {
+    const list = [].concat(parts || []).map(clean).filter(Boolean);
+    for (let i = list.length - 1; i >= 0; i--) {
+      const k = kindIn(list[i]);
+      if (k) return k;
+    }
+    return kindIn(title) || 'top';
+  }
+
+  // A word src/engine.js's kindOf reads as the same kind, so the engine picks the right chart.
+  const ENGINE_WORD = { top: 'top', dress: 'dress', jeans: 'jeans', trousers: 'trousers', shorts: 'shorts', skirt: 'skirt', outerwear: 'jacket', shoes: 'shoes' };
+  const engineTitle = (kind) => ENGINE_WORD[kind] || 'top';
+
+  const NO_SIZE = /^(?:taille unique|one size|einheitsgröße|talla única|taglia unica|one-size|onesize|universal|autre|other|andere|otro|altro|anders|inna|inny)$/i;
+
+  // "M / 38 / 10" → "M": Vinted prints the letter, then the FR/EU and UK numbers; the first one is
+  // what the engine reads. Null for one-size and "other".
+  function sizeLabel(raw) {
+    if (NO_SIZE.test(clean(raw))) return null;
+    const s = clean(raw).replace(/^(?:taille|size|größe|grösse|talla|taglia|maat|rozmiar|tamanho|storlek|koko|størrelse|velikost|veľkosť|méret|mărime|veličina|μέγεθος)\s*:?\s*/i, '');
+    if (!s || NO_SIZE.test(s)) return null;
+    const first = clean(s.split(/[\/|]/)[0]);
+    return first && !NO_SIZE.test(first) ? first.slice(0, 24) : null;
+  }
+
+  const CONDITION = { NewCondition: 'New', UsedCondition: 'Used', RefurbishedCondition: 'Refurbished', DamagedCondition: 'Damaged' };
+
+  function ldText(v) {
+    if (v == null) return '';
+    if (typeof v === 'string' || typeof v === 'number') return clean(v);
+    if (Array.isArray(v)) return ldText(v[0]);
+    if (typeof v === 'object') return clean(v.name || v.value || '');
+    return '';
+  }
+
+  function ldImages(v) {
+    return [].concat(v || []).map((x) => (typeof x === 'string' ? x : x && (x.url || x.contentUrl))).filter((x) => typeof x === 'string');
+  }
+
+  function httpsOnly(urls) {
+    const out = [];
+    for (const raw of urls) {
+      let u;
+      try { u = new URL(String(raw)); } catch { continue; }
+      if (u.protocol !== 'https:') continue;
+      u.hash = '';
+      if (!out.includes(u.href)) out.push(u.href);
+    }
+    return out.slice(0, 8);
+  }
+
+  // One listing from what the page gave: its structured data (JSON-LD Product) first, the visible
+  // details second. `raw` is { host, ld, brand, title, size, condition, category, description, photos },
+  // every field but host optional, read by src/vinted-page.js.
+  function listingFrom(raw) {
+    const r = raw || {};
+    const ld = r.ld && typeof r.ld === 'object' ? r.ld : {};
+    const category = ldText(ld.category) ? ldText(ld.category).split(/\s*[>/›»]\s*/) : [].concat(r.category || []);
+    const title = ldText(ld.name) || clean(r.title);
+    const description = ldText(ld.description) || clean(r.description);
+    const sizeRaw = ldText(ld.size) || clean(r.size);
+    const schema = String(ldText(ld.itemCondition) || '').split('/').pop();
+    return {
+      brand: ldText(ld.brand) || clean(r.brand),
+      title,
+      sizeRaw,
+      size: sizeLabel(sizeRaw),
+      kind: kindOfListing(category, title),
+      condition: clean(r.condition) || CONDITION[schema] || '',
+      description,
+      photos: httpsOnly(ldImages(ld.image).concat(r.photos || [])),
+      lang: langOf(r.host),
+      have: parseMeasurements(description),
+    };
+  }
+
+  // What a photo read adds: only measurements the description did not give, and only plausible ones.
+  function mergeMeasurements(have, read) {
+    const out = { ...(have || {}) };
+    const fromPhoto = [];
+    for (const [k, v] of Object.entries(read || {})) {
+      if (!RANGE[k] || out[k] != null || typeof v !== 'number' || v < RANGE[k][0] || v > RANGE[k][1]) continue;
+      out[k] = round1(v);
+      fromPhoto.push(k);
+    }
+    return { have: out, fromPhoto };
+  }
+
+  // ---- the answer -------------------------------------------------------------------------
+
+  const hasProfile = (p) => !!p && ((+p.waist > 0 && +p.hip > 0) || +p.bust > 0 || +p.footLength > 0 || (Array.isArray(p.anchors) && p.anchors.length > 0));
+
+  // What the Vinted line says, from the listing and your profile. The seller's measurements against
+  // your pieces or body come first; else the label on the brand's chart through the engine (passed in,
+  // so this stays pure), with the brand's tendency and pooled reviews in its reasons. The message asks
+  // for whatever the listing leaves out, in every mode.
+  function answerFor(listing, profile, charts, engine, poolFit) {
+    const l = listing || {};
+    const message = sellerMessage({ kind: l.kind, lang: l.lang, have: l.have });
+    const cmp = compare({ kind: l.kind, have: l.have || {} }, profile);
+    if (cmp) {
+      return { mode: 'measured', verdict: cmp.verdict, line: cmp.line, areas: areaLines(cmp), against: cmp.against, byPiece: cmp.against !== 'your measurements', message };
+    }
+    if (!hasProfile(profile)) return { mode: 'needsProfile', message };
+    if (l.size && engine) {
+      const placed = engine.placeLabel(profile, { brand: l.brand, title: engineTitle(l.kind), text: l.description || '', label: l.size, poolFit }, charts);
+      const r = placed.result;
+      if (r && r.needsProfile) return { mode: 'needsProfile', message };
+      if (r && r.ok) {
+        const label = labelResult(placed.steps);
+        return {
+          mode: 'label',
+          verdict: label ? label.verdict : null,
+          line: label ? label.line : `Sizer would pick ${r.pickLabel} for you`,
+          flag: COPY.flag,
+          pick: r.pickLabel,
+          // The brand's note is brand-level knowledge even when the engine had no reason to apply it.
+          reasons: r.reasons.map((x) => x.text).concat(placed.brandNote && !r.reasons.some((x) => x.text === placed.brandNote) ? [placed.brandNote] : []),
+          brandFact: engine.provenance(r).brandFact,
+          message,
+        };
+      }
+    }
+    return { mode: 'unknown', message };
+  }
+
+  // The same answer in the popup's result shape. A measured answer against a piece you own is the
+  // surest Sizer gives; against your measurements a notch less; the label alone is a rough guess.
+  function popupResult(answer, listing) {
+    if (!answer || (answer.mode !== 'measured' && answer.mode !== 'label')) return null;
+    const confidence = answer.mode === 'label' ? 'Low' : answer.byPiece ? 'High' : 'Medium';
+    return { ok: true, size: (listing && listing.size) || '', headline: answer.line, confidence, brand: (listing && listing.brand) || null, available: null };
+  }
+
+  const api = {
+    parseMeasurements, wanted, sellerMessage, langOf, compare, NAMES, RANGE,
+    areaLines, labelResult, COPY, kindOfListing, engineTitle, sizeLabel, listingFrom, mergeMeasurements,
+    answerFor, popupResult, hasProfile,
+  };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SizerVinted = api;
 })(globalThis);

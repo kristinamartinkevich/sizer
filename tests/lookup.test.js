@@ -248,7 +248,7 @@ test('every content script in the manifest ships in the store package', () => {
   const pkg = fs.readFileSync(path.join(root, 'package.sh'), 'utf8');
   const zipLine = pkg.split('\n').find((l) => /^\s*zip /.test(l));
   const included = zipLine.split(/\s+/).filter((w) => !w.startsWith('-') && !w.startsWith('"'));
-  const scripts = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8')).content_scripts[0].js;
+  const scripts = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8')).content_scripts.flatMap((c) => c.js);
   assert.ok(scripts.includes('src/guide-table.js'));
   for (const s of scripts) assert.ok(included.some((dir) => s === dir || s.startsWith(`${dir}/`)), s);
 });

@@ -1,0 +1,62 @@
+<!doctype html>
+<!--
+  Synthetic fixture (fit-evidence C5): a realistic Vinted-like listing page on vinted.de, not a
+  capture. Older markup with no structured data: details by itemprop (brand, size) and by label text
+  only (Zustand), a breadcrumb list, photos in an item-photos gallery, and a description with no
+  measurements, so only the label size can be placed. The seller, photos and text are made up.
+-->
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Zara Stoffhose mit Bundfalten | Vinted</title>
+  <meta property="og:title" content="Zara Stoffhose mit Bundfalten">
+  <meta property="og:image" content="https://images1.vinted.net/t/03_01f2c/f800/1728100001.jpeg?s=9a7c">
+  <style>
+    body { font: 14px/1.5 -apple-system, Helvetica, Arial, sans-serif; margin: 0; color: #111; }
+    .item-page { display: flex; gap: 24px; max-width: 1100px; margin: 24px auto; }
+    .item-photos { flex: 2; display: flex; gap: 6px; }
+    .item-photos img { width: 48%; aspect-ratio: 3 / 4; background: #eee; }
+    .details-list__item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="header"><a href="/">Vinted</a></div>
+  <ul class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a itemprop="item" href="/"><span itemprop="name">Startseite</span></a></li>
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a itemprop="item" href="/catalog/1904-women"><span itemprop="name">Damen</span></a></li>
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a itemprop="item" href="/catalog/4-clothing"><span itemprop="name">Kleidung</span></a></li>
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a itemprop="item" href="/catalog/9-trousers"><span itemprop="name">Hosen</span></a></li>
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a itemprop="item" href="/catalog/1072-tailored-trousers"><span itemprop="name">Stoffhosen</span></a></li>
+  </ul>
+  <div class="item-page">
+    <div class="item-photos">
+      <a class="item-thumbnail"><img src="https://images1.vinted.net/t/03_01f2c/f800/1728100001.jpeg?s=9a7c" alt="Zara Stoffhose"></a>
+      <a class="item-thumbnail"><img src="https://images1.vinted.net/t/03_01f2c/f800/1728100002.jpeg?s=9a7c" alt="Zara Stoffhose"></a>
+    </div>
+    <div class="item-sidebar">
+      <h1 class="item-title">Zara Stoffhose mit Bundfalten</h1>
+      <div class="item-price">12,00 €</div>
+      <div class="details-list">
+        <div class="details-list__item">
+          <div class="details-list__item-title">Marke</div>
+          <div class="details-list__item-value" itemprop="brand"><a href="/brand/12-zara"><span itemprop="name">Zara</span></a></div>
+        </div>
+        <div class="details-list__item">
+          <div class="details-list__item-title">Größe</div>
+          <div class="details-list__item-value" itemprop="size">M / 38 / 10</div>
+        </div>
+        <div class="details-list__item">
+          <div class="details-list__item-title">Zustand</div>
+          <div class="details-list__item-value">Sehr gut</div>
+        </div>
+        <div class="details-list__item">
+          <div class="details-list__item-title">Farbe</div>
+          <div class="details-list__item-value" itemprop="color">Schwarz</div>
+        </div>
+      </div>
+      <div class="item-description" itemprop="description">Zara Hose, kaum getragen. Sehr guter Zustand. Nichtraucherhaushalt.</div>
+      <button>Kaufen</button> <button>Nachricht</button>
+    </div>
+  </div>
+</body>
+</html>

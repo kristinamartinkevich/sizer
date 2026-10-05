@@ -1,5 +1,9 @@
 const $ = (id) => document.getElementById(id);
 const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/guide-table.js', 'src/extract.js', 'src/panel-style.js', 'src/mark.js', 'src/feedback.js', 'src/fit-question.js', 'src/sheet.js', 'src/content.js'];
+// A Vinted listing reached without a reload (Vinted moves between pages in place) has no content
+// script yet; it gets the Vinted reader, the same files as the manifest's Vinted entry.
+const VINTED_FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/panel-style.js', 'src/mark.js', 'src/vinted.js', 'src/vinted-page.js'];
+const isVintedItem = (url) => /^https:\/\/www\.vinted\.[a-z.]+\/items\//.test(url || '');
 
 function show(id) {
   document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));
@@ -21,7 +25,7 @@ async function send(tab, msg) {
   try {
     return await chrome.tabs.sendMessage(tab.id, msg);
   } catch {
-    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: FILES });
+    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: isVintedItem(tab.url) ? VINTED_FILES : FILES });
     return chrome.tabs.sendMessage(tab.id, msg);
   }
 }

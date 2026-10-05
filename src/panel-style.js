@@ -189,6 +189,17 @@ button:active { transform: scale(.96); }
 .ask h3 { margin-top: 12px; }
 .ask .fq { border-top: 0; padding-top: 0; }
 
+/* ---- Vinted: the answer line under the listing's details, and its two actions ---- */
+.line.vinted { flex-wrap: wrap; }
+.line .actions { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px; padding-left: 36px; }
+.ghost { border: 1px solid var(--hair); border-radius: 999px; padding: 6px 12px; background: var(--paper); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.ghost:hover { border-color: var(--muted); }
+.ghost[disabled] { opacity: .6; cursor: default; }
+.ghost.done { background: var(--accent); border-color: var(--accent); color: var(--fog); }
+.msg { margin: 0 0 10px; padding: 12px 14px; border-radius: 10px; background: var(--fog); font-size: 14px; }
+.tag { color: var(--muted); font-size: 12px; }
+.sheet .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+
 @media (max-width: 520px) {
   .sheet { top: auto; width: 100vw; max-height: 86vh; border-left: 0; border-top: 1px solid var(--hair); border-radius: 16px 16px 0 0; animation-name: up; }
   @keyframes up { from { transform: translateY(24px); opacity: 0; } }

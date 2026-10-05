@@ -29,6 +29,8 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg.type === 'sizer:remember-sizing' && sender.tab) { rememberSizing(msg.sizing, shopOf(sender, msg)).then(reply, () => reply({ ok: false })); return true; }
   if (msg.type === 'sizer:answer-fit') { answerFit(msg).then(reply, (e) => reply({ ok: false, reason: String(e) })); return true; }
   if (msg.type === 'sizer:dismiss-fit') { dismissFit(msg).then(reply, () => reply({ ok: false })); return true; }
+  // Only Sizer's own script on a Vinted listing asks this, on the shopper's click.
+  if (msg.type === 'sizer:read-measurements' && fromVinted(sender)) { readMeasurements(msg).then(reply); return true; }
 });
 
 // The shop is the sending tab's hostname, not whatever the page claims; only the hostname travels.
@@ -74,6 +76,17 @@ const readProduct = Store.createProductRead({
   fetch: (url, init) => fetch(url, init),
   installId: () => installId(),
 });
+
+// ---- measurements read from a Vinted listing's photos ---------------------------
+
+const readMeasurements = Store.createMeasurementsRead({
+  fetch: (url, init) => fetch(url, init),
+  installId: () => installId(),
+});
+
+function fromVinted(sender) {
+  try { return /^www\.vinted\.[a-z.]+$/.test(new URL(sender.tab.url).hostname); } catch { return false; }
+}
 
 // ---- one style across shops -------------------------------------------------
 

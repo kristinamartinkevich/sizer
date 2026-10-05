@@ -855,7 +855,46 @@
       kind,
       sizedOn: keys,
       garmentToGarment: !!g2g,
+      // Where the pick sits on the chart it was read from, for placeLabel.
+      pickIndex: idx,
+      pickLabel: displayLabel(pick, chartSystem, brand),
+      chartSystem,
     };
+  }
+
+  // ---- one labelled size, as on a second-hand listing ------------------------
+
+  // How many sizes a single label sits from the size Sizer picks for you on the same chart: 0 is
+  // your size, below 0 smaller, above 0 bigger. The label is the only size on offer, so it settles
+  // which system the chart is read in; the pick still comes from your profile, the brand's chart,
+  // its reputation and any pooled reviews. Null steps when there is no answer or no label to place.
+  function placeLabel(profile, product, charts) {
+    const label = String((product && product.label) || '').trim();
+    const result = recommend(profile, { ...product, sizes: label ? [{ label, available: true }] : [] }, charts);
+    const kind = kindOf(product && product.title);
+    const brand = findBrand(product && product.brand, charts, kind) || findBrand(product && product.title, charts, kind);
+    // The brand's reputation, for the sheet, whether or not it moved the pick.
+    const brandNote = (brand && brand.note) || null;
+    const done = (steps) => ({ result, steps, brandNote });
+    if (!result.ok || !label || typeof result.pickIndex !== 'number') return done(null);
+    if (result.shoes) {
+      const b = brand && brand.shoes ? brand : null;
+      const rows = b ? b.sizes : Charts.GENERIC_SHOES;
+      const [s] = resolveSizes([{ label }], 'eu');
+      const row = s && shoeRow(s.parsed, rows, b ? b.system : 'eu');
+      return done(row ? rows.indexOf(row) - result.pickIndex : null);
+    }
+    const chart = brand ? brand.sizes : GENERIC[result.chartSystem];
+    const [s] = resolveSizes([{ label }], brand && brand.system);
+    const m = s && measure(s.parsed, brand);
+    if (!m || !chart) return done(null);
+    let at = chart.indexOf(m);
+    if (at < 0) {
+      const ks = [...new Set([...(result.sizedOn || []), 'waist', 'hip'])].filter((k) => typeof m[k] === 'number' && chart.every((r) => typeof r[k] === 'number'));
+      if (!ks.length) return done(null);
+      at = Math.round(ks.reduce((t, k) => t + position(chart, k, m[k]), 0) / ks.length);
+    }
+    return done(at - result.pickIndex);
   }
 
   // ---- where the chart came from -------------------------------------------
@@ -1027,6 +1066,8 @@
       body: { foot: f.foot, footSource: f.source },
       shoes: true,
       ...(web ? { areas: withWebAreas([], web), dossier: webResult(web, webMove) } : {}),
+      pickIndex: idx,
+      pickLabel: label(pick),
     };
   }
 
@@ -1080,7 +1121,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, learnedFit, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas };
+  const api = { recommend, learnedFit, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas, placeLabel };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

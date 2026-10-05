@@ -1,13 +1,16 @@
 # read-chart-image
 
-A Supabase Edge Function with two routes, both answered by Claude (`claude-sonnet-5`). See
-`docs/fit-evidence/HANDOFF.md` §7.
+A Supabase Edge Function with three routes, all answered by Claude (`claude-sonnet-5`). See
+`docs/fit-evidence/HANDOFF.md` §7 and §8.
 
 - **`/image`** (also the function's root): reads a shop's size chart image into the plan 1 §5 chart
   shape, so the extension can hand it to `lookup-chart` as a shop guide. One read per image address,
   stored for every shopper.
 - **`/product`**: the popup's "Read this page with AI". Reads a product page's cleaned text into
   `{ brand, title, kind, sizes, fabric }`. Nothing is cached and nothing about the page is stored.
+- **`/measurements`**: the Vinted line's "Read measurements from the photos". Reads any tape
+  measure or written measurements in up to four of a listing's photos into flat widths and lengths in
+  cm. Nothing is cached and nothing about the listing is stored.
 
 ```
 POST /functions/v1/read-chart-image/image
@@ -24,6 +27,13 @@ POST /functions/v1/read-chart-image/product
 { "title": "...", "headings": ["..."], "picker": "text around the size picker", "install": "<uuid>" }
 
 200 { "brand": "Lune Atelier" | null, "title": "..." | null, "kind": "bottoms" | null, "sizes": ["XS", "S"], "fabric": "100% silk" | null }
+400 / 429 / 502 / 500 { "error": "..." }
+
+POST /functions/v1/read-chart-image/measurements
+{ "image_urls": ["https://images1.vinted.net/t/.../1.jpeg", "..."], "kind": "dress", "install": "<uuid>" }
+
+200 { "measurements": { "pit": 46, "length": 111.8, "waistFlat": 36 }, "note": "..." }   only what was read, in cm
+200 { "measurements": {}, "note": "<why none>" }
 400 / 429 / 502 / 500 { "error": "..." }
 ```
 
@@ -50,6 +60,16 @@ The product route checks the input (title, headings and picker text, at most 600
 together, web addresses removed again), enforces the same caps, asks the model with a strict
 `record_product` tool, and returns the cleaned answer. Its ledger row keeps only the install id and
 the outcome; the migration refuses a product row that carries anything else.
+
+The measurements route checks the input (exactly `image_urls`, one to four https addresses on a
+Vinted image host, duplicates and fragments dropped; `kind`, one of top, dress, jeans, trousers,
+shorts, skirt, outerwear, shoes; `install`), enforces the same caps, sends the photos by address with
+a strict `record_measurements` tool, and turns the answer into numbers the extension can use. The
+model only copies what a photo shows (value, unit, whether the tape lies flat); the function converts
+inches to cm, halves a waist or chest that was measured around (the same rule as `src/vinted.js`), and
+drops anything outside `src/vinted.js`'s plausible ranges (`measurements_test.ts` holds the two equal).
+Its ledger row is a `product`-shaped row (install id and outcome only, no address, brand or answer)
+with `reason` set to `measurements`, so it counts against the same caps without a new migration.
 
 ## Deploy
 
@@ -100,7 +120,8 @@ touches the network. `chart_test.ts` loads `src/charts.js`, `src/guide-table.js`
 | File | What it is |
 |---|---|
 | `index.ts` | The `Deno.serve` entry: reads the environment and wires the real clients |
-| `handler.ts` | The two routes against injected database and fetch clients |
+| `handler.ts` | The three routes against injected database and fetch clients |
 | `chart.ts` | Input checks, the ported chart rules, the §5 shape, the product answer |
-| `prompt.ts` | The two system prompts and the two strict tool schemas |
+| `measurements.ts` | The measurements route's input check and the answer's arithmetic and ranges |
+| `prompt.ts` | The three system prompts and the three strict tool schemas |
 | `db.ts` | The database client: Supabase's REST endpoint through `fetch` with the service-role key |

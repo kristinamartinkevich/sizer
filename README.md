@@ -14,6 +14,8 @@ fabric's stretch, the page's fit notes and the stock.
 On supported shops (Zalando, ASOS, Net-a-Porter, Mytheresa, Farfetch, Revolve, Shopbop, SSENSE,
 Nordstrom, Zara, Mango, H&M, COS, ARKET and a few brand sites) the answer appears under the size
 picker. On any other shop, click the Sizer icon and choose **Check this page anyway**.
+On Vinted item pages (all 22 country sites, matched one by one as `https://www.vinted.<tld>/items/*`)
+the answer appears under the listing's details; see "On Vinted" below.
 
 ## What appears on a product page
 
@@ -117,6 +119,28 @@ picker. On any other shop, click the Sizer icon and choose **Check this page any
 
 The sheet's footer links to the brand page the chart was read from, with the date it was read.
 
+## On Vinted
+
+`src/vinted-page.js` reads the listing (JSON-LD first, then the details rows by itemprop, test id or
+label text): brand, size label, category path (which gives the kind of item), condition,
+description and photo addresses. `src/vinted.js` does the rest on the device:
+
+- **Measurements the seller wrote** ("aisselle à aisselle 48 cm", "pit to pit 19 in", "Bundweite",
+  in FR/EN/DE/ES/IT/NL/PL) are compared with the nearest piece you own of the same kind that has
+  flat-lay measurements, else with your body measurements plus ease. The line says **Your size**,
+  **Too small for you** or **Roomy on you**, and the sheet says where and by how much.
+- **No measurements:** the label size is placed on the brand's chart by the engine
+  (`placeLabel`), flagged "Label only, the seller has not measured it", with the brand's tendency
+  and the pooled review verdict listed as brand-level knowledge.
+- **Ask the seller to measure** copies a short message in the listing's language (fr, en, de, es,
+  it, nl, pl; others get English) asking only for what the description leaves out. Sizer never
+  sends anything on Vinted.
+- **Read measurements from the photos**, on that click only: the web addresses of up to four of the
+  listing's photos (Vinted image hosts only), the kind of item and the install id go to
+  `read-chart-image/measurements`, which reads any tape measure in them with Claude vision and
+  returns flat widths and lengths in cm. Not cached, nothing of it stored; it shares the daily caps
+  and the ledger with the other reads. Values read this way are labelled "read from a photo".
+
 ## Layout
 
 | Path | What it is |
@@ -128,10 +152,11 @@ The sheet's footer links to the brand page the chart was read from, with the dat
 | `supabase/` | Schema migrations, the research seed and the script that builds it |
 | `supabase/functions/lookup-chart/` | Edge Function that finds a brand's chart when nobody has one yet, stores it as machine-read; deploy steps in its README |
 | `supabase/functions/fit-dossier/` | Edge Function that gathers what others say about an item's fit online, sources checked against real search results, cached per item for everyone; deploy steps in its README |
-| `supabase/functions/read-chart-image/` | Edge Function that reads a size chart image (cached per image) and, on request, a page's product text, with Claude; deploy steps in its README |
+| `supabase/functions/read-chart-image/` | Edge Function that reads a size chart image (cached per image) and, on request, a page's product text or a Vinted listing's photo measurements, with Claude; deploy steps in its README |
 | `src/extract.js` | Reads the product page, finds the size picker and any size table the page prints in its size guide, in a same-origin frame or on the shop's size-guide page, and size chart images |
 | `src/guide-table.js` | Turns a printed size table into a chart, or rejects it (model measurements, garment dimensions, delivery tables); the size-guide page fetch |
 | `src/content.js`, `src/panel-style.js`, `src/mark.js` | What Sizer draws on shop pages; the mark is inline SVG so shop CSPs cannot block it |
+| `src/vinted.js`, `src/vinted-page.js` | Vinted: measurements from the description, the comparison, the label-only answer and the seller message (pure); the listing reader and the line (DOM) |
 | `src/sheet.js` | The reasoning sheet's content, shared by the sheet on the page and the side panel |
 | `src/feedback.js`, `src/fit-question.js` | Recent sizings, the "did it fit?" timing, what an answer becomes (a piece you own, an anonymous outcome), and the question itself |
 | `ui/` | Popup, side panel and fit profile page |
@@ -168,6 +193,9 @@ tables and the answer. `inline-guide.html` there is synthetic: a fictional brand
 its size table inline, since none of the four real shops carries its chart in the page.
 `iframe-guide.html`, `guide-link.html` and `guide-link-page.html` are synthetic too: a guide in a
 same-origin frame, and a link to the shop's own size-guide page plus size chart images.
+`vinted-measured.html` and `vinted-label.html` are synthetic Vinted-like listings: one with JSON-LD,
+test-id rows and the seller's measurements, one with itemprop and label-text details and the label
+size alone.
 `aria-guide.html` exercises the size-guide finder alone: an ARIA grid in a size-guide dialog, a
 captioned table, and tables in a cookie banner and in reviews that must be skipped. Open it at `http://localhost:8766/tests/shops.html` after any change to `src/extract.js`.
 To add a shop: open the product page in a browser, save `document.documentElement.outerHTML`

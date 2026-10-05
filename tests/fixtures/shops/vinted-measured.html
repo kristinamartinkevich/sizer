@@ -1,0 +1,95 @@
+<!doctype html>
+<!--
+  Synthetic fixture (fit-evidence C5): a realistic Vinted-like listing page, not a capture. Newer
+  markup: JSON-LD Product and BreadcrumbList, details rows by data-testid, photos in item-photo
+  figures, and a description in which the seller gives armpit to armpit and length. The seller,
+  photos and text are made up.
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Robe midi Sézane | Vinted</title>
+  <meta property="og:title" content="Robe midi Sézane">
+  <meta property="og:image" content="https://images1.vinted.net/t/01_00a1b/f800/1728000001.jpeg?s=3f1e">
+  <meta name="description" content="Robe midi Sézane, taille S / 36 / 8, très bon état.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Robe midi Sézane",
+    "description": "Robe midi Sézane portée deux fois, très bon état. Mesures à plat : aisselle à aisselle 46 cm, longueur 112 cm. Pas de défaut.",
+    "brand": { "@type": "Brand", "name": "Sézane" },
+    "image": [
+      "https://images1.vinted.net/t/01_00a1b/f800/1728000001.jpeg?s=3f1e",
+      "https://images1.vinted.net/t/01_00a1b/f800/1728000002.jpeg?s=3f1e",
+      "https://images1.vinted.net/t/01_00a1b/f800/1728000003.jpeg?s=3f1e"
+    ],
+    "itemCondition": "https://schema.org/UsedCondition",
+    "offers": { "@type": "Offer", "price": "38.00", "priceCurrency": "EUR", "availability": "https://schema.org/InStock" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.vinted.fr/" },
+      { "@type": "ListItem", "position": 2, "name": "Femmes", "item": "https://www.vinted.fr/catalog/1904-women" },
+      { "@type": "ListItem", "position": 3, "name": "Vêtements", "item": "https://www.vinted.fr/catalog/4-clothing" },
+      { "@type": "ListItem", "position": 4, "name": "Robes", "item": "https://www.vinted.fr/catalog/10-dresses" },
+      { "@type": "ListItem", "position": 5, "name": "Robes midi", "item": "https://www.vinted.fr/catalog/1056-midi-dresses" }
+    ]
+  }
+  </script>
+  <style>
+    body { font: 14px/1.5 -apple-system, Helvetica, Arial, sans-serif; margin: 0; color: #111; }
+    .page { display: flex; gap: 24px; max-width: 1100px; margin: 24px auto; }
+    .photos { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .photos img { width: 100%; aspect-ratio: 3 / 4; background: #eee; display: block; }
+    .sidebar { flex: 1; }
+    .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <header data-testid="header"><a href="/">Vinted</a> <input aria-label="Rechercher des articles" placeholder="Rechercher des articles"></header>
+  <nav aria-label="Fil d’Ariane" class="breadcrumbs"><ol><li>Accueil</li><li>Femmes</li><li>Vêtements</li><li>Robes</li><li>Robes midi</li></ol></nav>
+  <main class="page">
+    <section class="photos item-photos">
+      <figure data-testid="item-photo-1"><img src="https://images1.vinted.net/t/01_00a1b/f800/1728000001.jpeg?s=3f1e" alt="Robe midi Sézane"></figure>
+      <figure data-testid="item-photo-2"><img src="https://images1.vinted.net/t/01_00a1b/f800/1728000002.jpeg?s=3f1e" alt="Robe midi Sézane"></figure>
+      <figure data-testid="item-photo-3"><img src="https://images1.vinted.net/t/01_00a1b/f800/1728000003.jpeg?s=3f1e" alt="Robe midi Sézane"></figure>
+      <figure data-testid="item-photo-4"><img src="https://images1.vinted.net/t/01_00a1b/f800/1728000004.jpeg?s=3f1e" alt="Robe midi Sézane"></figure>
+      <figure data-testid="item-photo-5"><img src="https://images1.vinted.net/t/01_00a1b/f800/1728000005.jpeg?s=3f1e" alt="Robe midi Sézane"></figure>
+    </section>
+    <aside class="sidebar" data-testid="item-sidebar">
+      <h1 class="web_ui__Text__title">Robe midi Sézane</h1>
+      <div data-testid="item-price"><p>38,00 €</p></div>
+      <div class="details-list details-list--details" data-testid="item-attributes">
+        <div class="row" data-testid="item-attributes-brand">
+          <span class="details-list__item-title">Marque</span>
+          <span class="details-list__item-value" data-testid="item-attributes-brand-value"><a href="/brand/sezane">Sézane</a></span>
+        </div>
+        <div class="row" data-testid="item-attributes-size">
+          <span class="details-list__item-title">Taille</span>
+          <span class="details-list__item-value" data-testid="item-attributes-size-value">S / 36 / 8</span>
+        </div>
+        <div class="row" data-testid="item-attributes-status">
+          <span class="details-list__item-title">État</span>
+          <span class="details-list__item-value" data-testid="item-attributes-status-value">Très bon état</span>
+        </div>
+        <div class="row" data-testid="item-attributes-color">
+          <span class="details-list__item-title">Couleur</span>
+          <span class="details-list__item-value" data-testid="item-attributes-color-value">Bleu</span>
+        </div>
+        <div class="row" data-testid="item-attributes-upload_date">
+          <span class="details-list__item-title">Ajouté</span>
+          <span class="details-list__item-value" data-testid="item-attributes-upload_date-value">il y a 2 jours</span>
+        </div>
+      </div>
+      <div data-testid="item-description"><span class="web_ui__Text__format">Robe midi Sézane portée deux fois, très bon état. Mesures à plat : aisselle à aisselle 46 cm, longueur 112 cm. Pas de défaut.</span></div>
+      <div class="actions"><button>Acheter</button> <button>Faire une offre</button> <button>Message</button></div>
+      <div data-testid="item-seller"><img src="https://images1.vinted.net/t/02_00c/f100/avatar.jpeg" alt="Avatar"> <span>margaux_dressing</span></div>
+    </aside>
+  </main>
+</body>
+</html>

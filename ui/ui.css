@@ -60,3 +60,10 @@ p { margin: 0 0 14px; }
 
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
 .link { border: 0; background: none; padding: 2px 0; color: var(--accent); font-weight: 600; font-size: 13px; }
+
+/* Micro-interactions: soft hover, a small press, one focus ring */
+button { transition: background-color .2s ease, border-color .2s ease, color .2s ease, filter .2s ease, transform .15s ease, opacity .2s ease; }
+button:active:not(:disabled) { transform: scale(.97); }
+.btn.ghost:hover { filter: none; background: var(--line); }
+.link { border-radius: 999px; padding: 4px 8px; margin: 0 -8px; }
+.link:hover { background: var(--line); }

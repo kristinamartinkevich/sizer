@@ -126,12 +126,20 @@
     if (r.needsProfile) return `<p class="empty">${esc(r.reason)}</p>`;
     if (!r.ok) return `<p class="empty">${esc(r.reason)}</p>`;
     const s = r.signals;
+    const norm = (x) => String(x || '').replace(/\s+/g, '').toUpperCase();
+    const chip = (x) => `<span class="chip${x.available === false ? ' gone' : ''}${norm(x.label) === norm(r.size) ? ' pick' : ''}">${esc(x.label)}</span>`;
+    const stockKnown = p.sizes.some((x) => x.available != null);
+    const inStock = p.sizes.filter((x) => x.available !== false);
+    const soldOut = p.sizes.filter((x) => x.available === false);
     const facts = [
       ['Brand', r.brand ? `${esc(r.brand)}${r.brandKnown ? '' : ', no size chart yet'}` : 'Not found'],
       r.shoes ? null : ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
       ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : 'None'],
       s.modelSize && !r.shoes ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
-      ['Sizes', p.sizes.length ? p.sizes.map((x) => (x.available === false ? `<s>${esc(x.label)}</s>` : esc(x.label))).join(' · ') : 'Not found'],
+      !p.sizes.length ? ['Sizes', 'Not found']
+        : !stockKnown ? ['Sizes', p.sizes.map(chip).join('')]
+          : ['In stock', inStock.length ? inStock.map(chip).join('') : 'None'],
+      stockKnown && soldOut.length ? ['Sold out', soldOut.map(chip).join('')] : null,
     ].filter(Boolean);
     return `
       <div class="hero">
@@ -146,7 +154,7 @@
       <h3>Why this size</h3>
       <ol>${r.reasons.map((x) => `<li><span>${esc(x.text)}</span>${x.delta ? `<em>${x.delta > 0 ? '+' : '−'}${Math.abs(x.delta)} size</em>` : ''}</li>`).join('')}</ol>
       <h3>Read on this page</h3>
-      <dl>${facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
+      <div class="facts">${facts.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`;
   }
 
   function renderSheet() {

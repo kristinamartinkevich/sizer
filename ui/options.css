@@ -169,3 +169,18 @@ h2 { font: 600 26px/1.15 var(--serif); margin: 0; letter-spacing: -0.02em; }
   .item-row, .prefs { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Micro-interactions: soft hover, a small press, one focus ring, in the HeroUI register */
+button, .field, .mini input, .types button, .prefs button { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, opacity 0.2s ease; }
+button:active:not(:disabled) { transform: scale(0.97); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.seg button:hover:not([aria-checked="true"]) { background: var(--accent-soft); color: var(--ink); }
+.seg button[aria-checked="true"]:hover { opacity: 0.88; }
+.types button:hover:not([aria-checked="true"]) { border-color: var(--faint); color: var(--ink); background: var(--field); }
+.field:hover:not(.on) { border-color: var(--faint); }
+.mini input:hover:not(:focus) { border-color: var(--faint); }
+.prefs button:hover:not([aria-checked="true"]) { border-color: var(--faint); background: var(--field); }
+.prefs button[aria-checked="true"]:hover { box-shadow: 0 0 0 4px var(--accent-soft); }
+.add:active { transform: scale(0.995); }
+.remove:active { transform: scale(0.9); }
+.read-card { transition: background-color 0.2s ease, color 0.2s ease; }

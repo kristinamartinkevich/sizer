@@ -81,6 +81,12 @@
       { name: 'vinted-label', base: 'https://www.vinted.de/items/5098765432-zara-stoffhose', profile: BODY,
         brand: 'Zara', size: 'M', sizeRaw: 'M / 38 / 10', kind: 'trousers', condition: 'Sehr gut', lang: 'de', have: {}, photos: 2,
         mode: 'label', verdict: 'small', line: /by the label$/, ask: /^Hallo.*Bundweite.*Innenbeinlänge/, notAsked: /Gesamtlänge/, body: 2 },
+      // Vinted's October 2026 markup: label and value share a class, the label first, and the size row
+      // is size_familiar. The reader found no size, and took "État" for the condition.
+      { name: 'vinted-current', base: 'https://www.vinted.fr/items/10269668297-jupe-paloma-wool-neuve', profile: BODY,
+        brand: 'Paloma Wool', size: 'EU 36', sizeRaw: 'EU 36', kind: 'skirt', condition: 'Neuf avec étiquette', lang: 'fr', have: {}, photos: 2,
+        mode: 'label', verdict: 'small', line: /by the label$/, ask: /^Bonjour.*tour de taille/, notAsked: /hanches|entrejambe/, body: 2,
+        anchor: /(^| )details-list--(details|main-info)( |$)/, bare: { sizeRaw: 'EU 36', condition: 'Neuf avec étiquette' } },
     ];
 
     async function runVinted(shop) {
@@ -103,8 +109,16 @@
       check(checks, 'seller message', shop.ask.test(a.message || '') && !shop.notAsked.test(a.message || ''), a.message);
       const body = SizerChartsStore.measurementsBody({ image_urls: l.photos, kind: l.kind }, '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64');
       check(checks, 'photo read body', body && body.image_urls.length === shop.body && Object.keys(body).sort().join() === 'image_urls,install,kind', body && JSON.stringify(body.image_urls));
+      if (shop.bare) {
+        // With every itemprop and the JSON-LD gone, only the detail rows are left, and the label that
+        // comes first in each row must not be taken for the value.
+        fdoc.querySelectorAll('[itemprop]').forEach((el) => el.removeAttribute('itemprop'));
+        fdoc.querySelectorAll('script[type="application/ld+json"]').forEach((el) => el.remove());
+        const b = SizerVintedPage.readListing(fdoc, host);
+        check(checks, 'rows without itemprop', b.sizeRaw === shop.bare.sizeRaw && b.condition === shop.bare.condition, `${b.sizeRaw} / ${b.condition}`);
+      }
       const anchor = SizerVintedPage.anchorFor(fdoc);
-      check(checks, 'line anchor', !!anchor && /(^| )details-list( |$)/.test(anchor.className), anchor && anchor.className);
+      check(checks, 'line anchor', !!anchor && (shop.anchor || /(^| )details-list( |$)/).test(anchor.className), anchor && anchor.className);
       frame.remove();
       return checks;
     }

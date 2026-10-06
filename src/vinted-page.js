@@ -35,31 +35,40 @@
 
   // The details Vinted prints beside the photos, each a label and a value. Read by itemprop, by the
   // row's test id, then by the label's text in any of the Vinted languages.
+  // Vinted renamed the size row to size_familiar (itemprop and test id) in 2026; both names are read.
   const DETAIL = {
-    brand: { prop: 'brand', test: 'brand', label: 'marque|brand|marke|marca|merk|marka|prekės ženklas|značka|márka|brand|tuotemerkki|mærke|varumärke|μάρκα' },
-    size: { prop: 'size', test: 'size', label: 'taille|size|größe|grösse|talla|taglia|maat|rozmiar|dydis|velikost|veľkosť|méret|mărime|veličina|tamanho|storlek|koko|størrelse|μέγεθος' },
-    condition: { prop: 'itemCondition', test: 'status', label: 'état|condition|zustand|estado|condizioni|staat|stan|būklė|stav|állapot|stare|stanje|kunto|stand|skick|κατάσταση' },
+    brand: { prop: ['brand'], test: ['brand'], label: 'marque|brand|marke|marca|merk|marka|prekės ženklas|značka|márka|brand|tuotemerkki|mærke|varumärke|μάρκα' },
+    size: { prop: ['size', 'size_familiar'], test: ['size', 'size_familiar'], label: 'taille|size|größe|grösse|talla|taglia|maat|rozmiar|dydis|velikost|veľkosť|méret|mărime|veličina|tamanho|storlek|koko|størrelse|μέγεθος' },
+    condition: { prop: ['itemCondition', 'status'], test: ['status'], label: 'état|condition|zustand|estado|condizioni|staat|stan|būklė|stav|állapot|stare|stanje|kunto|stand|skick|κατάσταση' },
   };
 
-  function rowValue(row) {
+  // A row's value, never its label: Vinted gives the label and the value the same class
+  // (details-list__item-value), the label first, so any element that reads as the label is skipped.
+  const rowSelector = (d) => d.test.flatMap((t) => [`[data-testid="item-attributes-${t}"]`, `[data-testid="item-details-${t}"]`]).join(', ');
+
+  function rowValue(row, label) {
     if (!row) return '';
-    const value = row.querySelector('[data-testid$="-value"], [class*="value" i], [itemprop]');
-    if (value && value !== row) return clean(value.getAttribute('content') || value.textContent);
+    const text = (el) => clean(el.getAttribute('content') || el.textContent);
+    const picks = [...row.querySelectorAll('[itemprop], [data-testid$="-value"], [class*="value" i]')]
+      .filter((el) => el !== row && text(el) && !label.test(text(el)));
+    const value = picks.find((el) => el.hasAttribute('itemprop')) || picks[0];
+    if (value) return text(value);
     const kids = [...row.children];
-    return kids.length >= 2 ? clean(kids[kids.length - 1].textContent) : clean(row.textContent);
+    const last = kids.length >= 2 ? clean(kids[kids.length - 1].textContent) : '';
+    return last && !label.test(last) ? last : '';
   }
 
   function detail(doc, key) {
     const d = DETAIL[key];
-    const prop = doc.querySelector(`[itemprop="${d.prop}"]`);
+    const label = new RegExp(`^(?:${d.label})\\s*:?$`, 'i');
+    const prop = doc.querySelector(d.prop.map((p) => `[itemprop="${p}"]`).join(', '));
     if (prop && !prop.closest('script')) {
       const v = clean(prop.getAttribute('content') || (prop.querySelector('[itemprop="name"]') || prop).textContent);
       if (v) return v;
     }
-    const row = doc.querySelector(`[data-testid="item-attributes-${d.test}"], [data-testid="item-details-${d.test}"]`);
-    const v = rowValue(row);
+    const row = doc.querySelector(rowSelector(d));
+    const v = rowValue(row, label);
     if (v) return v;
-    const label = new RegExp(`^(?:${d.label})\\s*:?$`, 'i');
     for (const el of doc.querySelectorAll('dt, th, span, div')) {
       if (el.children.length || !label.test(clean(el.textContent))) continue;
       const next = el.nextElementSibling;
@@ -113,7 +122,7 @@
   // above the size row); failing that, under the size row's parent, then the title's.
   const BLOCK = /item-details|details-list|item-attributes(?!-)/i;
   function anchorFor(doc) {
-    const sizeRow = doc.querySelector('[data-testid="item-attributes-size"], [data-testid="item-details-size"], [itemprop="size"]');
+    const sizeRow = doc.querySelector(`${rowSelector(DETAIL.size)}, ${DETAIL.size.prop.map((p) => `[itemprop="${p}"]`).join(', ')}`);
     let block = null;
     let el = sizeRow;
     for (let depth = 0; el && el !== doc.body && depth < 6; depth++, el = el.parentElement) {

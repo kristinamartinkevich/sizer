@@ -20,7 +20,8 @@
 8. **Submit for review.** Save draft → **Submit for review**. Leave "publish automatically after
    review" ticked. Reviews take a few hours to a few days; a first submission with host permissions
    usually lands at the slow end. You get an email either way, and a rejection names the policy.
-9. **After approval.** The listing URL is `https://chromewebstore.google.com/detail/sizer/<id>`.
+9. **After approval.** The listing is live at
+   https://chromewebstore.google.com/detail/cgindocdpbnlbkcimegofgphpobmfinm (approved 2026-10-06).
    Put it in `README.md`, the Product Hunt post and the privacy page, then install from the store on
    a clean profile and open a real product page before telling anyone.
 

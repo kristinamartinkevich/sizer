@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <title>Sizer store frames</title>
   <!--
-    Store and launch imagery at 1280×800. ?n=1..5 picks the screenshot, ?kind=promo|marquee the tiles.
+    Store and launch imagery at 1280×800. ?n=1..5 picks the screenshot, ?kind=promo|marquee|thumb the tiles
+    (thumb is the 240 px Product Hunt thumbnail).
     Shots 1 to 4 frame a real shop page with Sizer running (store/render/, built by
     tools/render-shop.py from the saved pages), zoomed onto the product details so the size reads at
     a glance. Each crop starts below the shop's header, so no shop logo is in the picture; anything
@@ -38,6 +39,8 @@
     .tile .t { font: 600 34px/1.08 var(--sans); letter-spacing: -.015em; margin-top: 22px; }
     .marquee { width: 1400px; height: 560px; padding: 0 110px; }
     .marquee .t { font-size: 64px; max-width: 900px; }
+    .thumb { width: 240px; height: 240px; display: grid; place-items: center; background: var(--accent); }
+    .thumb img { width: 176px; height: 176px; display: block; }
     .marquee .sub { font-size: 21px; opacity: .8; margin-top: 18px; max-width: 760px; }
   </style>
 </head>
@@ -59,7 +62,9 @@
           'out/_options.png', 'Sizer · Your fit profile', null],
     };
     const kind = q.get('kind');
-    if (kind === 'promo' || kind === 'marquee') {
+    if (kind === 'thumb') {
+      document.write('<div class="thumb"><img src="../brand/logo.png" alt=""></div>');
+    } else if (kind === 'promo' || kind === 'marquee') {
       document.write(`<div class="tile ${kind === 'marquee' ? 'marquee' : ''}"><img class="logo" src="../brand/logo.png" alt="">
         <div class="t">Your size, on every product page.</div>
         ${kind === 'marquee' ? '<div class="sub">Sizer reads the brand, the fabric and the fit notes, and puts your size under the size picker.</div>' : ''}</div>`);

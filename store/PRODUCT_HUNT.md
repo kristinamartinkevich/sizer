@@ -1,75 +1,106 @@
-# Product Hunt launch kit
+# Launch kit: Product Hunt and LinkedIn
 
-Launch **after** the Chrome Web Store listing is approved, so the link works on launch day.
-Schedule it for 12:01 am Pacific (launch days run midnight to midnight PT). Tuesday to Thursday
-are the busiest days; a Sunday launch faces less competition and suits a solo maker.
+Sizer is live on the Chrome Web Store:
+https://chromewebstore.google.com/detail/cgindocdpbnlbkcimegofgphpobmfinm
 
-## Post
+Both posts go out from your own accounts. Schedule Product Hunt for 12:01 am Pacific (launch days
+run midnight to midnight PT, which is 8:01 am in London). Tuesday to Thursday are the busiest days; a
+Sunday launch faces less competition and suits a solo maker. Post on LinkedIn the same morning and
+point people at the Product Hunt page.
+
+## Product Hunt post
 
 **Name:** Sizer
 
 **Tagline** (60 characters max):
 Your size, right under the size picker, on any shop
 
-**Link:** the Chrome Web Store URL once approved
+**Link:** https://chromewebstore.google.com/detail/cgindocdpbnlbkcimegofgphpobmfinm
 
 **Topics:** Chrome Extensions · Fashion · E-Commerce · Shopping
 
 **Description** (260 characters max):
 A Chrome extension that tells you which clothing size to buy, right under the shop’s size picker. It reads the brand’s own chart, the stretch, the fit notes, the stock and what buyers said in reviews across shops, and shows its reasoning. Free, no account.
 
-**Gallery** (in this order):
-1. `store/out/marquee-1400x560.png`
-2. `store/out/screenshot-1.png`: Zalando, rag & bone jeans. The shop's own "runs small" note read, size 28 sold out, the nearest sizes in stock named
-3. `store/out/screenshot-2.png`: ASOS, Levi's 501. The reasoning sheet, with ASOS's returns-data note turned into "one size down"
-4. `store/out/screenshot-3.png`: Net-a-Porter, AGOLDE. The answer ringed in the shop's own size grid
-5. `store/out/screenshot-4.png`: the fit profile
+**Thumbnail:** `store/out/thumbnail-240.png` (the chrome S on graphite; rebuild with
+`store/frames.html?kind=thumb` at 240×240)
 
-All shop screenshots are real product pages captured on 5 October 2026 with Sizer running; nothing
-on them is edited. The listing says Sizer is not affiliated with the shops.
+**Gallery** (Product Hunt shows 1270×760; the 1280×800 shots fit with no crop worth noticing), in
+this order:
+1. `store/out/screenshot-1.png`: Zalando. The shop’s own “runs small” note read, the size sold out, the nearest sizes in stock named
+2. `store/out/screenshot-2.png`: ASOS. The “Why this size” sheet with the full reasoning
+3. `store/out/screenshot-3.png`: Net-a-Porter. The answer marked in the shop’s own size grid
+4. `store/out/screenshot-4.png`: Vinted. A seller’s measurements checked against a pair you own
+5. `store/out/screenshot-5.png`: the fit profile
 
-**Thumbnail:** `store/out/thumbnail-240.png`
+The shop shots are real product pages with Sizer running, framed below each shop’s header so no
+shop logo appears. Leave the marquee out: at 1400×560 Product Hunt letterboxes it.
 
 **Pricing:** Free
 
 ## Maker’s first comment
 
-Draft. Add a line or two of your own story at the top; it is the part people respond to.
+Add a line or two of your own at the top, like the last pair of jeans you sent back. It is the part
+people respond to.
 
 Hi Product Hunt, I’m Kristina.
 
-Buying jeans online usually means guessing. Every brand cuts differently, the useful information like “no stretch” or “runs small” is buried in the product details, and the reviews that would tell you are on a different shop.
+Buying clothes online usually means guessing. Every brand cuts differently, the useful details like “no stretch” or “runs small” are buried in the product page, and the reviews that would tell you are on a different shop.
 
 So I built Sizer. You tell it your measurements, or a few things you own and how they fit. On a product page it reads the brand’s size chart, the fabric, the fit notes, the stock and the reviews, and puts your size right under the size picker.
 
-A few things I cared about:
-• It shows its working. Every answer has a plain-English reason, like “Buyers say it runs small, sized up”.
-• It reads reviews across shops. If a style runs small on Zalando, you hear about it on Net-a-Porter.
+What I cared about:
+• It shows its working. Every answer has a plain reason, like “Buyers say it runs small, sized up”.
+• It reads reviews across shops. If a style runs small on one shop, you hear about it on another.
 • If your size is sold out, it says which sizes are in stock and how far off they are.
-• It is honest when unsure. Thin information gets a “rough guess” label and a note on what would firm it up.
-• It works on Vinted. A second-hand listing has one size and no reviews, so Sizer compares the seller’s measurements with the clothes you own, or places the label size on the brand’s chart and says it is the label only. One click copies a polite message in the listing’s language asking the seller for what is missing; it never sends anything for you.
-• It prefers the brand’s own chart over the shop’s generic one. If no shopper has needed a brand before, it looks up the brand’s published chart once, labels it as read by machine, and every shopper after you gets it.
-• Your measurements never leave your browser. No account, no analytics. It sends only anonymous things: a count of what reviews said; once per item, to learn what others say about the fit online, the brand name, the style name, the kind of item, the shop’s hostname, a random install id and the page’s anonymous review counts; and, for a brand it has no chart for, the brand name, the kind of item, the shop’s name, a random install id and the shop’s own size table if the page prints one. If the table is on the shop’s own size-guide page, it opens that page without your cookies; if it is a picture, it sends the image’s web address, the brand name, the kind of item and the install id so the chart can be read from it. And if you click “Read this page with AI” on a page it cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters with web addresses removed, and the install id. On Vinted, only if you click “Read measurements from the photos”, it sends the web addresses of up to four of the listing’s photos, the kind of item and the install id, and nothing of it is kept. A week after it sizes something it asks “Did it fit?”; your answer becomes a piece you own in your profile, and is sent anonymously (did it fit: the brand and style name, the kind of item, the shop’s name, the size you bought, the size Sizer suggested, too small, right or too big, the areas you picked, the chart tier, whether the suggestion already used other buyers’ answers and the install id, never your measurements) so that once ten people have answered, everyone sees how the brand runs.
+• It says when it is unsure. A thin answer is labelled a rough guess, with what would firm it up.
+• It works on Vinted. It compares the seller’s measurements with clothes you own, and one click copies a polite message asking the seller for what is missing.
+• Your measurements stay in your browser. No account, no analytics, no ads. What it does send is anonymous and listed in the privacy policy.
 
-It is strongest for women’s jeans, trousers and skirts today, with shoes by foot length. I would love to know which brands and shops to add next.
+It is strongest for women’s jeans, trousers and skirts today, with tops, dresses and shoes too. I would love to know which brands and shops to add next.
 
 ## Replies you will need
 
-- **"How is this different from True Fit?"** True Fit is a widget the retailer buys, so it only exists on shops that paid, and it needs an account. Sizer is yours, works on any shop, and reads reviews, which none of the retailer tools do.
+- **"How is this different from True Fit?"** True Fit is a widget the retailer buys, so it only exists on shops that paid, and it needs an account. Sizer is yours, works across shops, and reads reviews, which none of the retailer tools do.
 - **"How accurate is it?"** As accurate as the brand’s chart plus the page. It links to the chart it used and labels a thin answer a rough guess. I am not publishing a returns percentage because nobody in this market audits theirs.
-- **"Men’s?"** Charts are women’s today. Men’s denim is next on the list.
-- **"Does it work on [shop]?"** Click the icon and “Check this page anyway”. Tell me the shop and I will add it to the built-in list.
+- **"Men’s?"** Charts are women’s today. Men’s denim is next.
+- **"Does it work on [shop]?"** Click the Sizer icon and “Check this page anyway”. Tell me the shop and I will add it to the built-in list.
+- **"What data does it send?"** Nothing personal. Your measurements and clothes never leave your browser; the policy lists every anonymous request, field by field.
+- **"Safari or Firefox?"** Chrome only for now, which covers Edge, Brave and Arc too.
+
+## LinkedIn post
+
+Post it as text with one image (`store/out/screenshot-1.png`). LinkedIn shows fewer people a post
+with a link in it, so put the Product Hunt link in the first comment and say so in the last line.
+
+> I built a Chrome extension, and today it’s on Product Hunt.
+>
+> It’s called Sizer, and it answers the question I ask every time I buy clothes online: which size?
+>
+> Every brand cuts differently. The details that settle it, like “no stretch” or “runs small”, are buried halfway down the product page, and the reviews that would tell you are on another shop. So most of us order two sizes and send one back.
+>
+> Sizer reads all of that for you. Tell it your measurements, or a few things you own and how they fit. On a product page it reads the brand’s size chart, the fabric, the fit notes, the stock and the reviews, and puts your size right under the size picker, with the reason in one line.
+>
+> It works on the big fashion shops in the UK, Europe and the US, and on Vinted, where it checks the seller’s measurements against clothes you already wear.
+>
+> It’s free, there’s no account, and your measurements never leave your browser.
+>
+> If you shop online, I’d love you to try it and tell me where it gets your size wrong. Link in the first comment.
+
+**First comment:**
+> On Product Hunt today: [your Product Hunt post link]. Or straight from the Chrome Web Store: https://chromewebstore.google.com/detail/cgindocdpbnlbkcimegofgphpobmfinm
 
 ## Before you schedule
 
-- [ ] Chrome Web Store listing approved and public
+- [x] Chrome Web Store listing approved and public
+- [x] Supabase migrations 0001 to 0008 applied
 - [ ] Install from the store on a clean profile and check a live product page
-- [ ] Supabase migration 0003 applied, so the pooled reviews line works on launch day
-- [ ] Supabase migrations 0004 and 0005 applied in the SQL editor, so looked-up charts have a home
-- [ ] `ANTHROPIC_API_KEY` set with `supabase secrets set`, and the function deployed with
+- [ ] `ANTHROPIC_API_KEY` set in Supabase (Edge Functions → Secrets). Until it is, the brand chart
+      lookup, the size chart picture reader, “Read this page with AI”, “Read measurements from the
+      photos” and the online fit summary all fail, and the listing promises them
+- [ ] lookup-chart deployed with
       `supabase functions deploy lookup-chart --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
 - [ ] Open a product from a brand with no chart and confirm the sheet says “chart read by machine” with the brand’s link
-- [ ] Supabase migration 0007 applied, and the image reader deployed with
-      `supabase functions deploy read-chart-image --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
-- [ ] On a page Sizer cannot read, check that “Read this page with AI” in the popup fills in the brand and sizes
+- [ ] Both PRs merged, so the hosted privacy policy matches what 1.1.1 sends (the store and the
+      Product Hunt replies both point at it)
 - [ ] Line up a few people to try it on launch morning, and reply to every comment within the hour

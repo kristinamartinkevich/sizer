@@ -4,6 +4,8 @@ A Chrome extension that puts your size right under the size picker on clothing p
 It works from your measurements and the clothes you own, then reads the brand's size chart, the
 fabric's stretch, the page's fit notes and the stock.
 
+**Install:** [Sizer on the Chrome Web Store](https://chromewebstore.google.com/detail/cgindocdpbnlbkcimegofgphpobmfinm)
+
 ## Install for development
 
 1. Open `chrome://extensions` and turn on **Developer mode**.

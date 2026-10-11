@@ -828,6 +828,16 @@ test("men's US shoe numbers are a size and a half under women's", () => {
 // Found shopping as a man with a 27.5 cm foot, 2026-10-12. Nike's chart puts 27.5 cm at men's US 9.5
 // and UK 8.5; Sizer said US 11 on Nike and UK 10 on JD Sports, reading UK as EU less 33 all the way up.
 // On John Lewis's women's boots in UK 3 to 8 it said "EU 43", a size no button on the page has.
+// Converse US, 2026-10-12: the sizes load later, and the answer said "EU 36" to a shopper whose
+// profile holds a Converse US 5.5.
+test('shoes on a page with no sizes yet are named in the shopper’s own sizes', () => {
+  const her = { anchors: [{ brand: 'Converse', type: 'shoes', size: 'US 5.5', fit: 'perfect' }] };
+  const us = recommend(her, { brand: 'Converse', title: 'Run Star Crush Leather Unisex Low Top Shoe', text: '', sizes: [], host: 'www.converse.com' });
+  assert.equal(us.size, 'US 5.5');
+  const uk = recommend(her, { brand: 'Converse', title: 'Run Star Crush Leather Unisex Low Top Shoe', text: '', sizes: [], host: 'www.converse.com', url: 'https://www.converse.com/uk/en/shop/p/run-star', currency: 'GBP' });
+  assert.equal(uk.size, 'UK 3');
+});
+
 test('shoe sizes follow the foot: men’s US 9.5 for 27.5 cm, the nearest half size up, and a page that stops short says so', () => {
   const foot = { anchors: [], footLength: '27.5', unit: 'cm' };
   const nike = recommend(foot, { brand: 'Nike', title: "Nike Air Max Metro Men's Shoes", text: '', sizes: offered(['7', '8', '9', '9.5', '10', '10.5', '11', '12']), host: 'www.nike.com', url: 'https://www.nike.com/t/air-max-metro' });

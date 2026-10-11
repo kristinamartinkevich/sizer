@@ -1462,7 +1462,11 @@
     const label = (r) => (system === 'eu' ? `EU ${r.label}` : r.label);
     // A size the page doesn't have is named the way the page names its sizes: UK 8.5 among UK numbers.
     const pageSystem = pageSizes.length && pageSizes.every((p) => p.parsed.system === pageSizes[0].parsed.system) ? pageSizes[0].parsed.system : null;
-    const named = (r) => (!brand && (pageSystem === 'uk' || pageSystem === 'us') && r.aliases && r.aliases[pageSystem] ? `${pageSystem.toUpperCase()} ${r.aliases[pageSystem]}` : label(r));
+    // A page that shows no sizes yet (Converse loads them later) gets the shopper's own sizes: UK on
+    // a UK shop, else the region of the sizes in their profile.
+    const ownSystem = !brand && !pageSizes.length ? (ukShop(product) ? 'uk' : profileRegion(profile)) : null;
+    const nameIn = pageSystem || ownSystem;
+    const named = (r) => (!brand && (nameIn === 'uk' || nameIn === 'us') && r.aliases && r.aliases[nameIn] ? `${nameIn.toUpperCase()} ${r.aliases[nameIn]}` : label(r));
     const pageMatch = matchOf(pick);
     const altMatch = alt ? matchOf(alt.row) : null;
     // Steps count the page's own buttons: Zalando's 7.5 beside a sold-out 8 is one size down, though

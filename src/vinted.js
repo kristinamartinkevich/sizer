@@ -235,9 +235,11 @@
   function labelResult(steps, from) {
     if (typeof steps !== 'number') return null;
     const verdict = steps === 0 ? 'fits' : steps < 0 ? 'small' : 'roomy';
+    // Three sizes or more up is more than roomy.
+    const head = steps >= 3 ? 'Too big for you' : HEAD[verdict];
     return from === 'title'
-      ? { verdict, line: `${HEAD[verdict]} by the title`, flag: COPY.titleFlag }
-      : { verdict, line: `${HEAD[verdict]} by the label`, flag: COPY.flag };
+      ? { verdict, line: `${head} by the title`, flag: COPY.titleFlag }
+      : { verdict, line: `${head} by the label`, flag: COPY.flag };
   }
 
   // ---- reading the listing --------------------------------------------------------------
@@ -422,7 +424,8 @@
     if (!answer || (answer.mode !== 'measured' && answer.mode !== 'label')) return null;
     const confidence = answer.mode === 'label' ? 'Low' : answer.byPiece ? 'High' : 'Medium';
     const verdict = answer.verdict || null;
-    return { ok: true, size: (listing && listing.size) || '', verdict, heading: popupHeading(verdict, confidence), headline: answer.line, confidence, brand: (listing && listing.brand) || null, available: null };
+    const heading = /^Too big for you/.test(answer.line || '') ? 'Too big for you' : popupHeading(verdict, confidence);
+    return { ok: true, size: (listing && listing.size) || '', verdict, heading, headline: answer.line, confidence, brand: (listing && listing.brand) || null, available: null };
   }
 
   const api = {

@@ -253,6 +253,35 @@ test('a T-shirt says nothing about how it fits at the hips or waist', () => {
   assert.ok(!tee.areas.some((a) => a.area === 'hip' || a.area === 'waist'), JSON.stringify(tee.areas));
 });
 
+test('denim is a fabric: a denim dress is a dress and a denim shirt a top', () => {
+  const { kindOf } = require('../src/engine.js');
+  assert.equal(kindOf('MIDI DRESS NMJOSEFINA - Denim dress'), 'dresses');
+  assert.equal(kindOf('Oversized denim shirt'), 'tops');
+  assert.equal(kindOf('Denim skirt'), 'bottoms');
+  assert.equal(kindOf('Denim jacket'), 'outerwear');
+  assert.equal(kindOf('Mid blue denim'), 'bottoms', 'denim on its own still means jeans');
+  // Zalando UK, Noisy May: the answer is one of the page's UK sizes, not a denim waist.
+  const r = recommend(maya, { brand: 'Noisy May', title: 'MIDI DRESS NMJOSEFINA - Denim dress', text: '95% cotton, 5% elastane', sizes: offered(['8', '10', '12', '14', '16']), host: 'www.zalando.co.uk' });
+  assert.equal(r.kind, 'dresses');
+  assert.equal(r.matchedOnPage, true, r.size);
+});
+
+test('a letter size with a length, like Mx32, is read and picked with your inseam', () => {
+  const { parseSizeLabel } = require('../src/engine.js');
+  assert.deepEqual(parseSizeLabel('Mx32'), { system: 'letter', value: 'M', length: 32, label: 'Mx32', eu: 38 });
+  assert.equal(parseSizeLabel('XS x 30').length, 30);
+  const labels = ['XSx30', 'XSx32', 'Sx30', 'Sx32', 'Sx34', 'Mx30', 'Mx32', 'Mx34', 'Lx30', 'Lx32', 'Lx34'];
+  const r = recommend({ ...maya, inseam: '31.5' }, { brand: 'ONLY', title: 'Flared jeans', text: '94% cotton, 6% elastane', sizes: offered(labels), host: 'www.zalando.co.uk' });
+  assert.equal(r.matchedOnPage, true, r.size);
+  assert.match(r.size, /x32$/);
+});
+
+test('a bra is not sized on a clothing chart', () => {
+  const r = recommend(maya, { brand: 'Fleur du Mal', title: 'Le Stretch Micro U-Plunge Bra', text: '67% nylon, 33% elastane', sizes: offered(['32', '34', '36', '38']) });
+  assert.equal(r.ok, false);
+  assert.match(r.reason, /bras/);
+});
+
 test('when your size is not among the page’s sizes, the answer says so and names what is offered', () => {
   const r = recommend(maya, { brand: 'Issey Miyake', title: 'Pleated maxi dress', text: '', sizes: offered(['2']), host: 'www.ssense.com' });
   assert.equal(r.matchedOnPage, false);

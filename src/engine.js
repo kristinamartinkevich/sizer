@@ -78,6 +78,10 @@
     let m;
     // 2XL, 3XL and 4XL start with a digit, so they are read before the bare numbers.
     if (/^[2-4]X/.test(s) && (m = s.match(LETTER_RE))) return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], label: m[0] };
+    // A letter with a leg length, as ONLY and Vero Moda print it on Zalando: Mx32, XS x 30.
+    if ((m = s.match(/^(4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)\s?[X\/]\s?(2[6-9]|3[0-8])$/))) {
+      return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], length: +m[2], label: String(raw).trim() };
+    }
     if ((m = s.match(/^W\s?(\d{2})(?:\s?[\/X]?\s?L\s?(\d{2}))?\b/))) return { system: 'denim', value: +m[1], length: m[2] ? +m[2] : null, label: m[0] };
     if ((m = s.match(/^(\d{2})\s?[\/X]\s?(\d{2})\b/)) && +m[1] >= 22 && +m[1] <= 40 && +m[2] >= 26 && +m[2] <= 38) return { system: 'denim', value: +m[1], length: +m[2], label: m[0] };
     // Half sizes are shoes: 38.5, EU 38½, UK 5.5.
@@ -107,6 +111,8 @@
   function inferNumberSystem(values, hint, uk) {
     const nums = values.filter((v) => typeof v === 'number');
     const small = nums.length && nums.every((n) => n <= 24);
+    // A denim waist starts at 22, so 8 to 16 under a denim chart are dress sizes, not waists.
+    if (hint === 'denim' && nums.length && nums.every((n) => n < 22)) return uk ? 'uk' : 'us';
     if (hint === 'denim' || hint === 'us' || hint === 'uk') return hint;
     if (small) return uk ? 'uk' : 'us';
     if (hint === 'eu') return hint;
@@ -387,6 +393,7 @@
     modelHeight: /(?:model'?s?\s+height|model\s+is|größe\s+des\s+models|modelgröße)[^.\d]{0,20}(\d{3})\s*cm/i,
     modelHeightFt: /model[^.\d]{0,30}?(\d)\s*['’]\s*(\d{1,2})/i,
     bottoms: /\b(?:jeans?|denim|trousers?|pants?|chinos?|skirts?|shorts|culottes?|leggings|hose|rock)\b/i,
+    bra: /\b(?:bras?|bralettes?|soutien-gorge|bh)\b/i,
     shoes: /\b(?:sneakers?|trainers?|shoes?|boots?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
@@ -399,7 +406,9 @@
     if (RE.shoes.test(t)) return 'shoes';
     // Before bottoms, so a denim jacket is a jacket.
     if (RE.outerwear.test(t)) return 'outerwear';
-    if (RE.bottoms.test(t)) return 'bottoms';
+    // Denim is a fabric: a denim dress is a dress and a denim shirt a top. Alone, it means jeans.
+    const noDenim = t.replace(/\bdenim\b/gi, '');
+    if (RE.bottoms.test(noDenim)) return 'bottoms';
     if (RE.dress.test(t)) return 'dresses';
     if (RE.tops.test(t)) return 'tops';
     return 'bottoms';
@@ -744,8 +753,11 @@
     const kind = kindOf(product.title);
     const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`);
     let reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
-    const brand = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
-    if (kind === 'shoes') return recommendShoes(profile, product, brand, signals, charts, reviews);
+    const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
+    if (kind === 'shoes') return recommendShoes(profile, product, found, signals, charts, reviews);
+    if (RE.bra.test(product.title || '')) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };
+    // A brand known only for its jeans chart says nothing about its dresses or tops.
+    const brand = found && found.system === 'denim' && kind !== 'bottoms' ? null : found;
 
     const body = bodyFromProfile(profile, charts);
     const needs = { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
@@ -965,6 +977,16 @@
     const chart = brand ? brand.sizes : GENERIC[result.chartSystem];
     const [s] = resolveSizes([{ label }], brand && brand.system, ukShop(product));
     const m = s && measure(s.parsed, brand);
+    if (!m && chart && s && typeof s.parsed.value === 'number' && s.parsed.system === result.chartSystem) {
+      // Beyond either end of the chart ("W54" on a chart that stops at 34): counted on past the last
+      // row at the chart's own step between sizes.
+      const values = chart.map((r) => r.value).filter((v) => typeof v === 'number');
+      const lo = Math.min(...values);
+      const hi = Math.max(...values);
+      const step = values.length > 1 ? (hi - lo) / (values.length - 1) : 1;
+      if (values.length && s.parsed.value > hi) return done(chart.length - 1 - result.pickIndex + Math.ceil((s.parsed.value - hi) / step));
+      if (values.length && s.parsed.value < lo) return done(-result.pickIndex - Math.ceil((lo - s.parsed.value) / step));
+    }
     if (!m || !chart) return done(null);
     let at = chart.indexOf(m);
     if (at < 0) {

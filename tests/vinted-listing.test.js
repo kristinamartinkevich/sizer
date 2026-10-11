@@ -160,6 +160,19 @@ test('placeLabel: the label Sizer would pick is your size, one below is too smal
   assert.strictEqual(Engine.placeLabel(ME, product(String(+same + 2)), null).steps, 1);
 });
 
+// Found crawling: Levi's 501 listed as "W54 | FR 64" said only "Sizer would pick W29 for you".
+test('placeLabel: a label beyond the end of the brand’s chart is still placed, far bigger or smaller', () => {
+  const at = (label) => Engine.placeLabel(ME, { brand: "Levi's", title: "Levi's 501 jeans", text: '', label }, null).steps;
+  assert.ok(at('W54') > at('W40'), `W54 ${at('W54')}, W40 ${at('W40')}`);
+  assert.ok(at('W18') < 0, `W18 ${at('W18')}`);
+  const listing = { kind: 'jeans', lang: 'fr', size: 'W54', brand: "Levi's", have: {} };
+  const a = Vinted.answerFor(listing, ME, null, Engine);
+  assert.strictEqual(a.verdict, 'roomy');
+  assert.strictEqual(a.line, 'Too big for you by the label', 'three sizes or more up is not just roomy');
+  assert.strictEqual(Vinted.labelResult(1).line, 'Roomy on you by the label');
+  assert.strictEqual(Vinted.popupResult(a, listing).heading, 'Too big for you', 'the popup heading agrees with the line');
+});
+
 test('placeLabel: a letter label on an EU brand, a UK label through the region table', () => {
   const at = (label) => Engine.placeLabel(ME, { brand: 'Zara', title: 'trousers', text: '', label }, null).steps;
   assert.strictEqual(at('L'), at('40'));

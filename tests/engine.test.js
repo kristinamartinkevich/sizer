@@ -698,6 +698,20 @@ test('a petite size the page does not list is named like the page: 00 among US n
   assert.equal(c.size, 'UK 4');
 });
 
+// JD Sports, 2026-10-11: "New Balance 530 Women's" names only the model, so it read as no clothing.
+test('a trainer named only by its model is shoes by its half sizes', () => {
+  const her = { anchors: [{ brand: 'Clarks', type: 'shoes', size: 'UK 7', fit: 'perfect' }] };
+  const product = { brand: 'Kestrel', title: "Kestrel 530 Women's", text: '', sizes: offered(['3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8']), host: 'www.jdsports.co.uk', currency: 'GBP' };
+  const r = recommend(her, product);
+  assert.equal(r.ok, true, r.reason);
+  assert.match(r.size, /^7(\.5)?$/);
+  const eu = recommend(her, { ...product, host: 'www.jdsports.fr', currency: 'EUR', sizes: offered(['36', '36.5', '37.5', '38', '38.5', '40', '40.5', '41']) });
+  assert.equal(eu.ok, true, eu.reason);
+  // Whole sizes alone stay ambiguous, and a named garment stays a garment.
+  assert.notEqual(recommend(her, { ...product, sizes: offered(['4', '5', '6', '7', '8']) }).ok, true);
+  assert.notEqual(recommend(her, { ...product, title: "Kestrel 530 Women's Jeans", sizes: offered(['26', '26.5', '27', '27.5']) }).size, '7');
+});
+
 // M&S, 2026-10-11: a shopper whose M&S UK 18 trousers fit perfectly, with typed measurements that
 // read as a UK 20 to 22, was told 24 for M&S jeans. The piece from this brand is the surest evidence.
 test('a piece you own from this brand, of this kind, names the size there', () => {

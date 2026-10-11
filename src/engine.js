@@ -505,6 +505,19 @@
     return 'bottoms';
   }
 
+  // A trainer named only by its model ("New Balance 530 Women's") shows what it is in its sizes: half
+  // sizes, all UK/US shoe numbers or all EU ones. Clothing has no half sizes there; a garment the
+  // title names stays a garment.
+  function productKind(product) {
+    const title = String((product && product.title) || '');
+    const kind = kindOf(title);
+    if (kind === 'shoes' || [RE.outerwear, RE.bottoms, RE.dress, RE.tops, RE.onePiece].some((re) => re.test(title))) return kind;
+    const nums = ((product && product.sizes) || []).map((s) => String(s.label || '').replace(/^\s*(?:uk|us|eu)\s*/i, '').trim())
+      .map((t) => (/^\d{1,2}(?:[.,]5|½)?$/.test(t) ? parseFloat(t.replace(',', '.').replace('½', '.5')) : NaN));
+    if (nums.length < 3 || nums.some(Number.isNaN) || nums.every(Number.isInteger)) return kind;
+    return nums.every((n) => n >= 1 && n <= 15) || nums.every((n) => n >= 33 && n <= 50) ? 'shoes' : kind;
+  }
+
   function analyzeText(text, title) {
     // Shopbop's stretch scale ("Non-Stretch to Super-Stretch") names both ends whatever the fabric.
     // A fit scale names small, true to size and large at once, so it says none of them.
@@ -894,7 +907,7 @@
   const KIND_WORDS = { bottoms: 'bottoms', tops: 'tops', dresses: 'dresses', outerwear: 'coats and jackets' };
 
   function recommend(profile, product, charts) {
-    const kind = kindOf(product.title);
+    const kind = productKind(product);
     const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`, product.title);
     let reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
     const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
@@ -1274,7 +1287,7 @@
   function lookupFor(r, product) {
     const brand = String((product && product.brand) || '').trim();
     if (!r || !r.ok || r.brandKnown !== false || !brand) return null;
-    const kind = kindOf(product.title);
+    const kind = productKind(product);
     // The chart database files coats under tops.
     return { brand, kind: kind === 'outerwear' ? 'tops' : kind };
   }

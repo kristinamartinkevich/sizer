@@ -217,6 +217,8 @@
     '[data-testid*="size" i] button', '[data-testid*="size" i] li', '[data-testid*="size" i] label', '[data-testid*="size" i] [role="option"]',
     // PrettyLittleThing and boohoo: data-test-id, hyphenated, on the button itself.
     'button[data-test-id*="size" i]',
+    // JD Sports: unnamed buttons, each tagged for the Fit Analytics size widget.
+    'button[data-fit-analytics-select-size]',
     '[class*="size" i] button', '[class*="size" i] li', '[class*="size" i] label', '[class*="size" i] [role="option"]', '[class*="size" i] [role="radio"]',
     '[id*="size" i] button', '[id*="size" i] li', '[id*="size" i] option',
     '[role="listbox"] [role="option"]', '[role="radiogroup"] [role="radio"]',
@@ -238,7 +240,10 @@
     // option's own data-available says which really are.
     if (el.dataset && el.dataset.available === 'true') return false;
     if (input && (input.disabled || input.getAttribute('aria-disabled') === 'true' || input.dataset.qty === '0' || input.dataset.available === 'false')) return true;
-    const cls = `${typeof el.className === 'string' ? el.className : ''} ${el.parentElement && typeof el.parentElement.className === 'string' ? el.parentElement.className : ''}`;
+    // Tailwind's "disabled:opacity-20" styles a button for when it is disabled, it does not say it is:
+    // classes with a variant prefix are left out (JD Sports).
+    const cls = `${typeof el.className === 'string' ? el.className : ''} ${el.parentElement && typeof el.parentElement.className === 'string' ? el.parentElement.className : ''}`
+      .split(/\s+/).filter((c) => !c.includes(':')).join(' ');
     // Coast draws a sold-out size as a "crossed" overlay just before the button.
     const prev = el.previousElementSibling;
     if (prev && typeof prev.className === 'string' && /\bcrossed\b|strike-?through/i.test(prev.className)) return true;

@@ -157,6 +157,11 @@
   const num = (v) => (v === '' || v == null || !isFinite(+v) || +v <= 0 ? null : +v);
   const BODY_KEYS = ['bust', 'waist', 'hip', 'shoulder'];
   const UPPER_TYPES = ['top', 'dress', 'jacket'];
+  // A top or a jacket hangs from the shoulders, so its chart's waist and hip are not yours; a dress
+  // is fitted through both and still tells them.
+  const NO_LOWER_TYPES = ['top', 'jacket'];
+  // How far a piece marked tight may sit under you (or loose, over you) and still agree, in cm.
+  const FIT_SLACK_CM = 4;
   const CIRCUMFERENCE = ['bust', 'waist', 'hip'];
   // Without an inseam, the leg is guessed from height: inseam is about 0.45 of it.
   const INSEAM_PER_HEIGHT = 0.45;
@@ -220,15 +225,23 @@
       let parsed = parseSizeLabel(a.size);
       if (!parsed) continue;
       if (parsed.system === 'number') parsed = { ...parsed, system: anchorNumberSystem(a, brand, parsed.value) };
-      const m = measure(parsed, brand);
+      let m = measure(parsed, brand);
       if (!m) continue;
+      // Most built-in brand charts are for bottoms and print no bust; for a top, the standard chart
+      // for the same label gives one, the way an unknown brand is read.
+      if (UPPER_TYPES.includes(a.type) && typeof m.bust !== 'number' && brand) {
+        const std = measure(parsed, null);
+        if (std && typeof std.bust === 'number') m = { ...m, bust: std.bust, shoulder: typeof m.shoulder === 'number' ? m.shoulder : std.shoulder };
+      }
       const shift = FIT_SHIFT_CM[a.fit] || 0;
-      const point = { name: anchorName(a, brand, parsed) };
+      const point = { name: anchorName(a, brand, parsed), fit: a.fit || 'perfect' };
       // Trousers or a skirt say nothing about your bust or shoulders, even read through a chart that
-      // prints them; only a piece worn on the upper body does.
+      // prints them; only a piece worn on the upper body does. The reverse holds for a top.
       const upper = UPPER_TYPES.includes(a.type);
+      const noLower = NO_LOWER_TYPES.includes(a.type);
       for (const key of BODY_KEYS) {
         if (!upper && (key === 'bust' || key === 'shoulder')) continue;
+        if (noLower && (key === 'waist' || key === 'hip')) continue;
         if (typeof m[key] === 'number') point[key] = m[key] + (CIRCUMFERENCE.includes(key) ? shift : 0);
       }
       points.push(point);
@@ -309,8 +322,28 @@
     if (waist == null || hip == null) {
       return foot || bust != null ? { waist: null, hip: null, ...extra, sources: [], spread: 0, points, foot: foot ? foot.foot : null, footSource: foot ? foot.source : null } : null;
     }
-    const spread = points.length ? Math.max(...points.map((p) => Math.abs(p.hip - hip) + Math.abs(p.waist - waist))) : 0;
+    const lower = points.filter((p) => typeof p.waist === 'number' && typeof p.hip === 'number');
+    const spread = lower.length ? Math.max(...lower.map((p) => offBy(p, waist, hip))) : 0;
     return { waist, hip, ...extra, sources: sourcesFor(profile, points, ['waist', 'hip']), spread, points, foot: foot ? foot.foot : null, footSource: foot ? foot.source : null };
+  }
+
+  // How far a piece you own sits from your waist and hip, in cm. A piece marked tight is expected to
+  // sit a little under you and one marked loose a little over, so that much is not held against it.
+  function offBy(p, waist, hip) {
+    let total = 0;
+    for (const [mine, its] of [[waist, p.waist], [hip, p.hip]]) {
+      let d = mine - its;
+      if (p.fit === 'tight' && d > 0) d = Math.max(0, d - FIT_SLACK_CM);
+      if (p.fit === 'loose' && d < 0) d = Math.min(0, d + FIT_SLACK_CM);
+      total += Math.abs(d);
+    }
+    return total;
+  }
+
+  // The pieces you own that don't agree with the rest of your profile, by name.
+  function disagreeing(body) {
+    if (!body || body.waist == null || body.hip == null) return [];
+    return body.points.filter((p) => typeof p.waist === 'number' && typeof p.hip === 'number' && offBy(p, body.waist, body.hip) > 5).map((p) => p.name);
   }
 
   // What the size was read from, for the measurements used: "measurements", "waist", the pieces.
@@ -1128,7 +1161,7 @@
     return best && best.d < 6 ? { label: best.s.label, available: best.s.available } : null;
   }
 
-  const api = { recommend, learnedFit, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas, placeLabel };
+  const api = { recommend, learnedFit, analyzeText, analyzeReviews, parseSizeLabel, convertSize, findBrand, bodyFromProfile, disagreeing, resolveSizes, explainAnchor, kindOf, provenance, lookupFor, lookingUpText, LOOKUP_TIMEOUT_MS, areaLine, sheetAreas, placeLabel };
   root.SizerEngine = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

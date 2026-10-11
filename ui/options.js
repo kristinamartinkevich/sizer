@@ -243,7 +243,7 @@ function renderRead() {
   const leg = body.inseamGuess ? ` Leg length about ${unit === 'in' ? `${Math.round(body.inseam)} in` : `${Math.round(body.inseam * CM)} cm`}, a guess from your height.` : '';
   $('r-from').textContent = (from + foot + leg).trim();
 
-  const off = body.waist == null ? [] : body.points.filter((p) => Math.abs(p.hip - body.hip) + Math.abs(p.waist - body.waist) > 5).map((p) => p.name);
+  const off = SizerEngine.disagreeing(body);
   $('r-warn').hidden = !off.length;
   $('r-warn').textContent = off.length ? `${off.join(', ')} ${off.length > 1 ? 'don’t' : 'doesn’t'} quite agree with the rest. Check the size, or mark how ${off.length > 1 ? 'they fit' : 'it fits'}.` : '';
 

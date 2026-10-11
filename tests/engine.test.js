@@ -63,7 +63,7 @@ test('reads German Zalando fit notes', () => {
   assert.equal(s.stretch, 'none');
 });
 
-const { bodyFromProfile } = require('../src/engine.js');
+const { bodyFromProfile, disagreeing } = require('../src/engine.js');
 
 test('wardrobe items accept a typed brand name and resolve to its chart', () => {
   const typed = bodyFromProfile({ anchors: [{ brand: 'Zara', type: 'trousers', size: '38', fit: 'perfect' }] });
@@ -95,6 +95,35 @@ test('measurements win over wardrobe, and the wardrobe still reports disagreemen
   assert.equal(b.waist, 70);
   assert.equal(b.hip, 96);
   assert.ok(b.spread > 5);
+});
+
+// QA 2026-10-11: a COS top in S read as a waist and hip, pulled the hip down from 101.6 to 98.8 cm
+// and took Mango jeans from EU 40 to EU 38.
+test('a top you own says nothing about your waist or hip, so it never moves a jeans size', () => {
+  const jeans = { brand: "Levi's", type: 'jeans', size: 'W29 L32', fit: 'perfect' };
+  const top = { brand: 'COS', type: 'top', size: 'S', fit: 'perfect' };
+  const page = { brand: 'Mango', title: 'Straight jeans', text: '', sizes: [] };
+  const alone = bodyFromProfile({ anchors: [jeans] });
+  const both = bodyFromProfile({ anchors: [jeans, top] });
+  assert.equal(both.hip, alone.hip);
+  assert.equal(both.waist, alone.waist);
+  assert.equal(recommend({ anchors: [jeans, top] }, page).size, recommend({ anchors: [jeans] }, page).size);
+  assert.ok(both.bust > 0, 'the top still tells the bust');
+});
+
+test('a dress you own still tells the waist and hip', () => {
+  const b = bodyFromProfile({ anchors: [{ brand: 'Zara', type: 'dress', size: 'M', fit: 'perfect' }] });
+  assert.ok(b.waist > 0 && b.hip > 0);
+});
+
+// QA 2026-10-11: Zara trousers in M marked "a bit tight" on a 102 cm hip were flagged as disagreeing,
+// though a tight pair is exactly what that hip predicts.
+test('a piece marked tight that sits under your measurements does not count as disagreeing', () => {
+  const zara = (fit) => ({ waist: '74', hip: '102', anchors: [{ brand: 'Zara', type: 'trousers', size: 'M', fit }] });
+  assert.deepStrictEqual(disagreeing(bodyFromProfile(zara('tight'))), []);
+  assert.ok(bodyFromProfile(zara('tight')).spread <= 5);
+  assert.deepStrictEqual(disagreeing(bodyFromProfile(zara('perfect'))), ['Zara M'], 'the same pair marked just right still disagrees');
+  assert.deepStrictEqual(disagreeing(bodyFromProfile({ waist: '70', hip: '96', anchors: [{ brand: 'Zara', size: '44', fit: 'tight' }] })), ['Zara 44'], 'tight does not excuse a pair bigger than you');
 });
 
 // ---- the answer in plain words, stock fallback, first run ------------------

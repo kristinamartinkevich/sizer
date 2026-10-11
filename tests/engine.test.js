@@ -359,7 +359,7 @@ test('a letter size with a length, like Mx32, is read and picked with your insea
   assert.deepEqual(parseSizeLabel('Mx32'), { system: 'letter', value: 'M', length: 32, label: 'Mx32', eu: 38 });
   assert.equal(parseSizeLabel('XS x 30').length, 30);
   const labels = ['XSx30', 'XSx32', 'Sx30', 'Sx32', 'Sx34', 'Mx30', 'Mx32', 'Mx34', 'Lx30', 'Lx32', 'Lx34'];
-  const r = recommend({ ...maya, inseam: '31.5' }, { brand: 'ONLY', title: 'Flared jeans', text: '94% cotton, 6% elastane', sizes: offered(labels), host: 'www.zalando.co.uk' });
+  const r = recommend({ ...maya, inseam: '80' }, { brand: 'ONLY', title: 'Flared jeans', text: '94% cotton, 6% elastane', sizes: offered(labels), host: 'www.zalando.co.uk' });
   assert.equal(r.matchedOnPage, true, r.size);
   assert.match(r.size, /x32$/);
 });
@@ -665,6 +665,23 @@ test('plus letter sizes are read as letters: 5XL, 6XL, XXXXXL, and US 1X to 5X a
   assert.deepEqual([parseSizeLabel('18W').system, parseSizeLabel('18W').value], ['us', 18]);
   // A denim waist with a length stays denim.
   assert.equal(parseSizeLabel('28X32').system, 'denim');
+  // Amazon writes the waist and leg with their letters after: "28W / 30L", "30W x 32L". A plus "18W"
+  // with no leg stays a US plus size.
+  assert.deepEqual([parseSizeLabel('28W / 30L').system, parseSizeLabel('28W / 30L').value, parseSizeLabel('28W / 30L').length], ['denim', 28, 30]);
+  assert.deepEqual([parseSizeLabel('30W x 32L').system, parseSizeLabel('30W x 32L').value, parseSizeLabel('30W x 32L').length], ['denim', 30, 32]);
+  assert.equal(parseSizeLabel('18W').system, 'us');
+});
+
+test('an inseam typed in cm picks the leg length on the page, which is in inches', () => {
+  // Found on Amazon UK, 2026-10-12: Levi's 724 in "34W / 30L" (sold out) and "34W / 32L" (in stock),
+  // inseam 77 cm. The profile stores cm; the engine read 77 as inches, no leg came within reach, and
+  // Sizer said "W34 is not offered on this page" with 34W / 32L listed.
+  const labels = ['30W / 30L', '32W / 30L', '33W / 32L', '34W / 30L', '34W / 32L'];
+  const sizes = labels.map((label) => ({ label, available: label !== '34W / 30L' }));
+  const r = recommend({ anchors: [], waist: '92', hip: '114', inseam: '82', unit: 'cm', fitPreference: 'regular' },
+    { brand: "Levi's", title: "Levi's Women's 724 High Rise Straight Jeans", text: '6% elastane', sizes, host: 'www.amazon.co.uk', currency: 'GBP' });
+  assert.equal(r.matchedOnPage, true, r.size);
+  assert.equal(r.size, '34W / 32L');
 });
 
 test('a plus-size body gets a plus size, not the top of a chart that stops at UK 22', () => {

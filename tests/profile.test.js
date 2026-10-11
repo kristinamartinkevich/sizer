@@ -214,7 +214,7 @@ test('with no inseam, height guesses the leg length and says it is a guess', () 
 });
 
 test('a typed inseam beats the height guess', () => {
-  const r = recommend({ ...measured, height: '190', inseam: '30' }, jeans);
+  const r = recommend({ ...measured, height: '190', inseam: '76' }, jeans);
   assert.equal(r.size, 'W27/L30');
   assert.ok(!r.reasons.some((x) => /guess/i.test(x.text)));
 });

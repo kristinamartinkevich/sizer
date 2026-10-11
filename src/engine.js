@@ -119,6 +119,8 @@
       return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], length: +m[2], label: String(raw).trim() };
     }
     if ((m = s.match(/^W\s?(\d{2})(?:\s?[\/X]?\s?L\s?(\d{2}))?\b/))) return { system: 'denim', value: +m[1], length: m[2] ? +m[2] : null, label: m[0] };
+    // Amazon's "28W / 30L" and "30W x 32L": the letters after the numbers. Without the L, 18W is a US plus size.
+    if ((m = s.match(/^(\d{2}) ?W ?[\/X]? ?(\d{2}) ?L\b/)) && +m[1] >= 22 && +m[1] <= 48) return { system: 'denim', value: +m[1], length: +m[2], label: String(raw).trim() };
     if ((m = s.match(/^(\d{2})\s?[\/X]\s?(\d{2})\b/)) && +m[1] >= 22 && +m[1] <= 40 && +m[2] >= 26 && +m[2] <= 38) return { system: 'denim', value: +m[1], length: +m[2], label: m[0] };
     // Third sizes are shoes too, as Adidas prints them: EU 40 2/3, 36⅓.
     if ((m = s.match(/^(EU|FR|DE|UK|US)?\s?(\d{1,2})\s?([12])\/3|^(EU|FR|DE|UK|US)?\s?(\d{1,2})\s?([⅓⅔])/))) {
@@ -411,7 +413,8 @@
     const bust = read('bust');
     const shoulder = read('shoulder');
     const height = num(profile.height);
-    const typedInseam = num(profile.inseam);
+    // Stored in cm like every measurement; leg lengths on labels (32L, Mx32) are inches.
+    const typedInseam = num(profile.inseam) != null ? +(num(profile.inseam) / IN).toFixed(1) : null;
     const inseam = typedInseam != null ? typedInseam : height ? +((height * INSEAM_PER_HEIGHT) / IN).toFixed(1) : null;
     const extra = { bust, shoulder, height, inseam, inseamGuess: typedInseam == null && inseam != null };
     const foot = footFromProfile(profile, charts);

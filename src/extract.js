@@ -261,6 +261,8 @@
     // not this product's.
     '[class*="refine" i]', '[id*="refine" i]', '[class*="facet" i]', '[id*="facet" i]', '[class*="filter" i]', '[id*="filter" i]',
     '[id*="storestock" i]', '[class*="store-stock" i]', '[class*="storestock" i]',
+    // Amazon's hidden "report a lower price" form: day and month selects, 01 to 31.
+    '[id*="feedback" i]', '[id*="calendar" i]',
     // A site menu's "shop by size" links (schuh).
     'nav', '[role="navigation"]',
   ].join(',');
@@ -554,12 +556,15 @@
   function extractProduct(doc, engine) {
     const ld = jsonLdProduct(doc);
     const ldBrand = ld && (typeof ld.brand === 'string' ? ld.brand : ld.brand && ld.brand.name);
-    const h1El = doc.querySelector('h1');
+    // Amazon opens with a hidden "Product summary" h1; its title is span#productTitle.
+    const h1El = doc.querySelector('#productTitle') || doc.querySelector('h1');
     const h1 = h1El ? spacedText(h1El) : '';
     const title = clean((ld && ld.name) || meta(doc, 'meta[property="og:title"]') || h1 || doc.title);
-    const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i]');
+    const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i], #bylineInfo');
     // A site's tagline after a bar is not the brand: "Gymshark | We Do Gym".
-    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? spacedText(brandEl) : '').slice(0, 60)).replace(/\s\|\s.*$/, '');
+    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? spacedText(brandEl) : '').slice(0, 60)).replace(/\s\|\s.*$/, '')
+      // Amazon's byline: "Visit the Levi's Store", "Brand: Levi's".
+      .replace(/^visit the (.+) store$/i, '$1').replace(/^brand: */i, '');
 
     const description = clean(ld && ld.description);
     let text = [description, detailText(doc), fitNoteText(doc)].filter(Boolean).join('\n');

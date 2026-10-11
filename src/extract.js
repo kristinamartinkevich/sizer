@@ -232,6 +232,12 @@
     '[id*="qty" i]', '[class*="qty" i]', '[name*="qty" i]', '[id*="quantity" i]', '[class*="quantity" i]', '[name*="quantity" i]',
     '[id*="look" i]', '[class*="the-look" i]', '[class*="thelook" i]', '[data-testid*="look" i]',
     '[class*="recommend" i]', '[data-testid*="recommend" i]', '[id*="recommend" i]',
+    // A category page's filter sidebar and schuh's "find in store" size select: sizes to filter by,
+    // not this product's.
+    '[class*="refine" i]', '[id*="refine" i]', '[class*="facet" i]', '[id*="facet" i]', '[class*="filter" i]', '[id*="filter" i]',
+    '[id*="storestock" i]', '[class*="store-stock" i]', '[class*="storestock" i]',
+    // A site menu's "shop by size" links (schuh).
+    'nav', '[role="navigation"]',
   ].join(',');
 
   // An option's text as a size label: "Size: M" is M, SSENSE's "WAIST US 24 - Sold Out" is W24, and
@@ -332,7 +338,7 @@
   // The element Sizer's answer line goes directly after.
   function findPicker(doc, parse) {
     for (const el of doc.querySelectorAll(PICKER_SEL)) {
-      if (el.tagName === 'INPUT' || el.closest(OURS) || !visible(el)) continue;
+      if (el.tagName === 'INPUT' || el.closest(OURS) || el.closest(NOT_THIS_PRODUCT) || !visible(el)) continue;
       return el;
     }
     // A single size button can be 40 px wide (PrettyLittleThing), narrower than a picker.

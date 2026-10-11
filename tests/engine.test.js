@@ -117,6 +117,16 @@ test('a product card or a details list is not a fit note', () => {
   assert.match(analyzeText('Customers say these fit tight around the ankle.').fitDetail, /tight around the ankle/);
 });
 
+// RIXO, 2026-10-11: the reviews' fit scale labels its ends "How it fits Small Just Right Big", whatever
+// the reviews say, and Sizer read "fits Small" as the page saying it runs small. The same kind of scale
+// reads "Runs Small True to Size Runs Large" elsewhere, which named all three at once.
+test('a fit scale naming both ends is not a fit note', () => {
+  assert.strictEqual(analyzeText('Reviews Close Lucina Midi Dress How it fits Small Just Right Big Customer Gallery').fitNote, null);
+  assert.strictEqual(analyzeText('Fit Runs Small True to Size Runs Large').fitNote, null);
+  assert.strictEqual(analyzeText('Fit: runs small – true to size – runs large').fitNote, null);
+  assert.strictEqual(analyzeText('This style runs small, so we recommend sizing up.').fitNote, 'small');
+});
+
 // Nike, 2026-10-11: "Nike Sportswear Women's Tight Off-Shoulder Long-Sleeve Top" was shown as the
 // page's fit note, because the product's own name has a fit word and a body area in it.
 test("the product's own name is not a fit note", () => {

@@ -1,0 +1,71 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping as a UK 4 persona, 2026-10-11): schuh's category pages carry a
+  "find in store" size select inside the refine sidebar, and Sizer read it as the page's size picker,
+  so a page of 2,000 styles got "Rough guess UK 4" as if it were one product. A filter sidebar is
+  never this product's picker. Markup trimmed from schuh's women's shoes page; names are fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Women's Shoes &amp; Footwear | Kestrel Shoes</title>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #111; }
+    main { display: grid; grid-template-columns: 240px 1fr; gap: 24px; max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; list-style: none; padding: 0; }
+    .tiles li { border: 1px solid #ddd; padding: 12px; }
+    .refineSize { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; }
+    .refineSize button { width: 64px; height: 36px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul id="navigationMenu" class="navigation">
+        <li class="menuItem">Sale
+          <ul class="navLinks">
+            <li class="shopbysize-option">Shop by size
+              <ul class="shopbysize-submenu">
+                <li class="navTitle"><a href="/sale/?size=3">UK 3</a></li><li class="navTitle"><a href="/sale/?size=4">UK 4</a></li>
+                <li class="navTitle"><a href="/sale/?size=5">UK 5</a></li><li class="navTitle"><a href="/sale/?size=6">UK 6</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <aside id="refineBranch" class="refinement">
+      <section id="branch-accordion" class="refineContainer">
+        <h2>Find in store</h2>
+        <div id="storeStockFinder">
+          <label for="branchSizes">Size</label>
+          <select id="branchSizes">
+            <option value="">Select size</option>
+            <option>UK 2</option><option>UK 3</option><option>UK 4</option><option>UK 5</option>
+            <option>UK 6</option><option>UK 7</option><option>UK 8</option><option>UK 9</option>
+          </select>
+        </div>
+      </section>
+    </aside>
+    <section>
+      <div class="refineContainer">
+        <h2>Size</h2>
+        <ul class="refineSize">
+          <li><button type="button">UK 3</button></li><li><button type="button">UK 4</button></li>
+          <li><button type="button">UK 5</button></li><li><button type="button">UK 6</button></li>
+          <li><button type="button">UK 7</button></li><li><button type="button">UK 8</button></li>
+        </ul>
+      </div>
+      <h1>Women's shoes</h1>
+      <p>Time to upgrade your footwear collection? Trainers, heels, boots and slippers.</p>
+      <ul class="tiles">
+        <li><a href="/womens/kestrel-wren-boot/1234/">Kestrel Wren Boot</a> <span>£95.00</span></li>
+        <li><a href="/womens/kestrel-loop-trainer/1235/">Kestrel Loop Trainer</a> <span>£70.00</span></li>
+        <li><a href="/womens/kestrel-mule/1236/">Kestrel Mule</a> <span>£55.00</span></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

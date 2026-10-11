@@ -195,12 +195,22 @@
     return /disabled|unavailable|sold-?out|out-?of-?stock|\boos\b/i.test(cls) || /sold out|out of stock|notify me|set a reminder|ausverkauft|benachrichtig|épuisé|agotad/i.test(text);
   }
 
+  // Pickers that are not this product's sizes: a quantity select ("1" to "9" parse as sizes), and the
+  // size pickers of other products, in "buy the look" (ASOS's looksVariantSelector), "get the look"
+  // (Reformation) and recommended-product sections.
+  const NOT_THIS_PRODUCT = [
+    '[id*="qty" i]', '[class*="qty" i]', '[name*="qty" i]', '[id*="quantity" i]', '[class*="quantity" i]', '[name*="quantity" i]',
+    '[id*="look" i]', '[class*="the-look" i]', '[class*="thelook" i]', '[data-testid*="look" i]',
+    '[class*="recommend" i]', '[data-testid*="recommend" i]', '[id*="recommend" i]',
+  ].join(',');
+
   // Size option elements currently in the page, with the size each one stands for.
   function optionElements(doc, parse) {
     const out = [];
     for (const el of doc.querySelectorAll(OPTION_SEL)) {
       // Review widgets carry their own "options" (star filters, "5 4 3 2 1") that parse as sizes.
       if (el.closest(OURS) || el.childElementCount > 6 || el.closest(`${REVIEW_AREA}, [class*="yotpo" i], [class*="rating" i], ${CHROME}`)) continue;
+      if (el.closest(NOT_THIS_PRODUCT)) continue;
       const text = spacedText(el) || clean(el.getAttribute('aria-label'));
       if (!text || text.length > 48) continue;
       const p = parse(text.replace(/^(size|größe|taille|talla|taglia)\s*:?\s*/i, ''));

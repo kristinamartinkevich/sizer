@@ -1,0 +1,68 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping across 25 shops, 2026-10-11): a product page whose own size
+  picker sits beside pickers that belong to something else. ASOS puts a second product's sizes in a
+  "buy the look" select (id looksVariantSelector), Reformation has a quantity select of 1 to 9 and a
+  "get the look" grid of letter sizes, and many shops show recommended products with their own size
+  buttons. Only the six UK sizes of the product itself may be read. The brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Linen midi dress | Ostra</title>
+  <meta property="og:title" content="Linen midi dress">
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #1d1d1b; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .size-picker { display: flex; gap: 8px; margin: 16px 0; }
+    .size-picker button { width: 64px; height: 40px; border: 1px solid #1d1d1b; background: #fff; }
+    .size-picker button[disabled] { color: #aaa; border-color: #ccc; }
+    select { width: 200px; height: 36px; }
+  </style>
+</head>
+<body>
+  <header><a href="/">Ostra</a></header>
+  <main>
+    <h1>Linen midi dress</h1>
+    <p class="product-brand">Ostra</p>
+    <p>A midi dress in washed linen, cut straight through the body. 100% linen.</p>
+    <div class="size-picker" aria-label="Size">
+      <button type="button">UK 6</button>
+      <button type="button">UK 8</button>
+      <button type="button" disabled aria-disabled="true">UK 10</button>
+      <button type="button">UK 12</button>
+      <button type="button">UK 14</button>
+      <button type="button">UK 16</button>
+    </div>
+    <div class="product-attribute product-attribute--qty">
+      <label for="productAttribute-OS1-qty">Quantity</label>
+      <select id="productAttribute-OS1-qty" class="form-control--select">
+        <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        <option>6</option><option>7</option><option>8</option><option>9</option>
+      </select>
+    </div>
+    <section class="buy-the-look">
+      <h2>Buy the look</h2>
+      <p>Leather sandals</p>
+      <div data-testid="variant-selector">
+        <select id="looksVariantSelector">
+          <option>UK 3</option><option>UK 4</option><option>UK 5</option><option>UK 6</option>
+          <option>UK 7</option><option>UK 8</option><option>UK 9</option>
+        </select>
+      </div>
+    </section>
+    <section class="pdp__get-the-look-thumbnails__grid">
+      <h2>Get the look</h2>
+      <p>Cotton cardigan</p>
+      <select class="pdp__gtl-thumbnail__size-select">
+        <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+      </select>
+    </section>
+    <section class="product-recommendations">
+      <h2>You may also like</h2>
+      <p>Wool trousers</p>
+      <div class="size-picker"><button type="button">W26</button><button type="button">W28</button><button type="button">W30</button></div>
+    </section>
+  </main>
+</body>
+</html>

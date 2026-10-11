@@ -270,7 +270,7 @@
     try { return new URL(doc.baseURI); } catch { return null; }
   }
 
-  const SCREEN_READER = '.visually-hidden, .sr-only, .screen-reader-text, .screenreader-only, .u-visually-hidden';
+  const SCREEN_READER = '.visually-hidden, .sr-only, .screen-reader-text, .screenreader-only, .u-visually-hidden, [class*="screen-reader-only"]';
   // A garment's measurement, not a size: 27.5" inseam, and Anthropologie's 25"L with no space.
   const MEASUREMENT = /^\s*\d+(?:[.,]\d+)?\s*(?:(?:"|”|″)\s*[a-z]|(?:cm|mm|inch(?:es)?)\s+[a-z])/i;
 

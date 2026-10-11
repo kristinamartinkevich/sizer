@@ -1,0 +1,48 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping as a US persona, 2026-10-11): Urban Outfitters labels New Balance
+  "W 6/M 4.5" to "W 10/M 8.5", and a sold-out size carries a hidden "Out of Stock" inside its label
+  (class u-pwa-screen-reader-only). That class was not one Sizer strips, so "W 8/M 6.5 Out of Stock"
+  did not read as a size and the sold-out sizes vanished instead of showing as sold out. Markup
+  trimmed from Urban Outfitters' product page; the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kestrel 9060 Sneakers | Urban Outfitters</title>
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "Product", "name": "Kestrel 9060 Sneakers", "brand": { "@type": "Brand", "name": "Kestrel" },
+    "offers": { "@type": "Offer", "price": "165.00", "priceCurrency": "USD" } }
+  </script>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #121212; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .c-pwa-radio-boxes__list { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+    .c-pwa-radio-boxes__input { position: absolute; opacity: 0; }
+    .c-pwa-radio-boxes__label { display: block; padding: 8px 12px; border: 1px solid #121212; }
+    .u-pwa-screen-reader-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Kestrel 9060 Sneakers</h1>
+    <p>$165.00</p>
+    <form class="c-pwa-sku-selection__form">
+      <fieldset class="c-pwa-sku-selection__size">
+        <legend>Size</legend>
+        <ul class="c-pwa-radio-boxes__list">
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z1" name="selectedSize" type="radio" data-qa-is-available="false"><label class="c-pwa-radio-boxes__label" for="z1">W 6/M 4.5 <span class="u-pwa-screen-reader-only"> Out of Stock</span></label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z2" name="selectedSize" type="radio" data-qa-is-available="true"><label class="c-pwa-radio-boxes__label" for="z2">W 6.5/M 5</label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z3" name="selectedSize" type="radio" data-qa-is-available="true"><label class="c-pwa-radio-boxes__label" for="z3">W 7/M 5.5</label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z4" name="selectedSize" type="radio" data-qa-is-available="false"><label class="c-pwa-radio-boxes__label" for="z4">W 7.5/M 6 <span class="u-pwa-screen-reader-only"> Out of Stock</span></label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z5" name="selectedSize" type="radio" data-qa-is-available="false"><label class="c-pwa-radio-boxes__label" for="z5">W 8/M 6.5 <span class="u-pwa-screen-reader-only"> Out of Stock</span></label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z6" name="selectedSize" type="radio" data-qa-is-available="false"><label class="c-pwa-radio-boxes__label" for="z6">W 8.5/M 7 <span class="u-pwa-screen-reader-only"> Out of Stock</span></label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z7" name="selectedSize" type="radio" data-qa-is-available="true"><label class="c-pwa-radio-boxes__label" for="z7">W 9/M 7.5</label></li>
+          <li class="c-pwa-radio-boxes__item"><input class="c-pwa-radio-boxes__input" id="z8" name="selectedSize" type="radio" data-qa-is-available="true"><label class="c-pwa-radio-boxes__label" for="z8">W 9.5/M 8</label></li>
+        </ul>
+      </fieldset>
+    </form>
+    <p>A chunky trainer with a layered suede and mesh upper.</p>
+  </main>
+</body>
+</html>

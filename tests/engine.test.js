@@ -117,6 +117,14 @@ test('a product card or a details list is not a fit note', () => {
   assert.match(analyzeText('Customers say these fit tight around the ankle.').fitDetail, /tight around the ankle/);
 });
 
+// Nike, 2026-10-11: "Nike Sportswear Women's Tight Off-Shoulder Long-Sleeve Top" was shown as the
+// page's fit note, because the product's own name has a fit word and a body area in it.
+test("the product's own name is not a fit note", () => {
+  const title = "Nike Sportswear Women's Tight Off-Shoulder Long-Sleeve Top";
+  assert.strictEqual(recommend(profile, { title, brand: 'Nike', url: 'https://www.nike.com/t/x', sizes: ['XS', 'S', 'M', 'L', 'XL'].map((label) => ({ label })), text: 'Made with soft ribbed fabric. 90% cotton, 10% elastane.' }).signals.fitDetail, null);
+  assert.match(analyzeText(`${title}\nIt sits tight across the shoulders.`, title).fitDetail, /tight across the shoulders/);
+});
+
 // Found shopping as a petite persona: Selfridges called a wool-blend jumper "Lightweight, stretchy."
 // over 2% elastane, and the sheet said "Lots of stretch (2% elastane)".
 test('a plain "stretchy" over a little elastane is a little stretch', () => {
@@ -534,6 +542,19 @@ test('a brand scale of 0 to 5 reads as letters, and shoes in UK 3 to 5 stay shoe
   assert.deepEqual(resolveSizes(offered(['1', '2', '3'])).map((l) => l.parsed.value), ['S', 'M', 'L']);
   const shoes = recommend({ anchors: [{ brand: 'Converse', type: 'shoes', size: 'UK 4', fit: 'perfect' }] }, { brand: 'Nobody', title: 'Leather loafers', text: '', sizes: offered(['3', '4', '5']), host: 'www.example.co.uk' });
   assert.equal(shoes.size, '4');
+});
+
+// Found shopping as a US persona: Urban Outfitters labels New Balance "W 6/M 4.5" to "W 10/M 8.5".
+// Only "W 10/M 8.5" was read, as a W10 jeans waist, and the answer named EU 39, no button.
+test('a women\'s and men\'s shoe size together is the US women\'s size: "W 7.5/M 6"', () => {
+  for (const [label, v] of [['W 7.5/M 6', 7.5], ['W 10/M 8.5', 10], ['M 6 / W 7.5', 7.5], ['W6/M4.5', 6]]) {
+    const p = parseSizeLabel(label);
+    assert.strictEqual(p && p.system, 'us', label);
+    assert.strictEqual(p.value, v, label);
+  }
+  const labels = ['W 6/M 4.5', 'W 6.5/M 5', 'W 7/M 5.5', 'W 7.5/M 6', 'W 8/M 6.5', 'W 8.5/M 7', 'W 9/M 7.5', 'W 9.5/M 8', 'W 10/M 8.5'];
+  const r = recommend({ anchors: [{ brand: 'Nike', type: 'shoes', size: 'US 8.5', fit: 'perfect' }] }, { brand: 'New Balance', title: 'New Balance 9060 Sneakers', text: '', sizes: offered(labels), host: 'www.urbanoutfitters.com' });
+  assert.ok(labels.includes(r.size), r.size);
 });
 
 // Found shopping as a US persona: Zara's US jeans read "25 (US 0)" to "32 (US 14)", which did not

@@ -104,6 +104,8 @@
     // Selfridges' "EUR 36 / 3 UK WOMEN". The page's label is kept, so the answer names its button.
     if ((m = s.match(/^\d{1,2}(?:[.,]5)? ?\((\d{2}(?:[.,]5)?)\)$/)) && +m[1].replace(',', '.') >= 30) return { system: 'eu', value: +m[1].replace(',', '.'), label: own };
     if ((m = s.match(/^EUR? ?(\d{2}(?:[.,]5)?) ?\/ ?\d{1,2}(?:[.,]5)? ?(?:UK|US)\b/))) return { system: 'eu', value: +m[1].replace(',', '.'), label: own };
+    // A US women's and men's shoe size together goes by the women's: Urban Outfitters' "W 7.5/M 6".
+    if ((m = s.match(/^W ?(\d{1,2}(?:\.5)?) ?\/ ?M ?\d{1,2}(?:\.5)?$/)) || (m = s.match(/^M ?\d{1,2}(?:\.5)? ?\/ ?W ?(\d{1,2}(?:\.5)?)$/))) return { system: 'us', value: +m[1], label: own };
     // A denim waist with its US size beside it goes by the waist: Zara US "28 (US 6)".
     if ((m = s.match(/^(\d{2}) ?\(US ?\d{1,2}\)$/)) && +m[1] >= 22 && +m[1] <= 40) return { system: 'denim', value: +m[1], length: null, label: own };
     // The region after the number: 8 UK, 38 EU.
@@ -494,7 +496,7 @@
     return 'bottoms';
   }
 
-  function analyzeText(text) {
+  function analyzeText(text, title) {
     // Shopbop's stretch scale ("Non-Stretch to Super-Stretch") names both ends whatever the fabric.
     const t = String(text || '').replace(RE.stretchScale, ' ');
     const elastane = (t.match(RE.elastane) || [])[1];
@@ -515,11 +517,12 @@
     // size Designed to be fitted…"): a fragment that starts in lower case and runs into a capital
     // starts at the capital.
     // A product card or a details list is no note: Express's "2 out of 5 stars … Wide Leg Jumpsuit",
-    // Old Navy's "Product #908485 Size & fit …", a price.
+    // Old Navy's "Product #908485 Size & fit …", a price. Nor is the product's own name: Nike's "…
+  // Tight Off-Shoulder Long-Sleeve Top".
     const NOT_A_NOTE = /\bout of 5 stars?\b|\bproduct #|[$£€]\s?\d/i;
     const sentenceOf = (x) => x.replace(/^[a-z][^A-Z]*?\s(?=[A-Z][a-z])/, '');
     const fitDetail = small || large || RE.tts.test(t) ? null
-      : (t.split(/[.!?\n]+/).map((x) => sentenceOf(x.trim())).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x) && !NOT_A_NOTE.test(x)) || null);
+      : (t.split(/[.!?\n]+/).map((x) => sentenceOf(x.trim())).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x) && !NOT_A_NOTE.test(x) && x !== String(title || '').trim()) || null);
     const modelSize = (t.match(RE.model) || [])[1];
     const ft = t.match(RE.modelHeightFt);
     const modelHeight = (t.match(RE.modelHeight) || [])[1] || (ft ? Math.round((+ft[1] * 12 + +ft[2]) * 2.54) : null);
@@ -854,7 +857,7 @@
 
   function recommend(profile, product, charts) {
     const kind = kindOf(product.title);
-    const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`);
+    const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`, product.title);
     let reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
     const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
     if (RE.giftCard.test(product.title || '')) return { ok: false, reason: 'This is a gift card, so there is no size to pick.' };

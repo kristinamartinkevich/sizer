@@ -245,6 +245,9 @@ test('bare 4 to 18 on a UK shop are UK sizes, even for a brand whose chart is EU
   // Zalando UK's double sizes: 8/10 is UK 8 to 10, not US.
   const tee = recommend(maya, { brand: 'Tommy Hilfiger', title: 'Print T-shirt', text: '100% cotton', sizes: offered(['6/8', '8/10', '12', '14/16', '18']), host: 'www.zalando.co.uk' });
   assert.equal(tee.size, '12');
+  // prettylittlething.com and boohoo.com are UK shops on .com hosts; their prices are in pounds.
+  const plt = recommend(maya, { brand: 'PrettyLittleThing', title: 'Wide leg jeans', text: '98% cotton, 2% elastane', sizes: offered(['4', '6', '8', '10', '12', '14', '16']), host: 'www.prettylittlething.com', currency: 'GBP' });
+  assert.equal(plt.size, '12');
 });
 
 test('a T-shirt says nothing about how it fits at the hips or waist', () => {

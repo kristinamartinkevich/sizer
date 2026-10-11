@@ -49,6 +49,9 @@
       // Synthetic: a quantity select, a "buy the look" and a "get the look" picker and recommended
       // products' size buttons beside the product's own six sizes, none of which may be read.
       { name: 'other-pickers', base: 'https://ostra.example/', brand: 'Ostra', title: /Linen midi dress/, sizes: 6, soldOut: ['UK 10'], size: 'UK 10', guide: null },
+      // Synthetic: PLT and boohoo's data-test-id buttons, and SSENSE's "WAIST US 24 - Sold Out" options.
+      { name: 'test-id-buttons', base: 'https://www.mardi.com/', brand: 'Mardi', title: /Slouchy wide leg jeans/, sizes: 7, soldOut: ['14'], size: '10', guide: null },
+      { name: 'waist-select', base: 'https://halden.example/', brand: 'Halden', title: /Melanie straight jeans/, sizes: 9, soldOut: ['W24', 'W31', 'W32'], size: 'W28', guide: null },
       { name: 'inline-guide', base: 'https://lune-atelier.example/', brand: 'Lune Atelier', title: /Bias silk midi skirt/, sizes: 5, soldOut: ['S'], noStretch: true, size: 'M',
         guide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L', 'XL'], first: { bust: [80, 84], waist: [62, 66], hip: [88, 92], foot_length: null } }], caption: 'Lune Atelier size guide' },
       { name: 'aria-guide', base: 'https://guide-paths.example/', guideOnly: true, caption: 'Shoe size chart',

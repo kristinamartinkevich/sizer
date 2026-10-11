@@ -98,11 +98,15 @@
     return null;
   }
 
-  // A UK shop: a .uk host, or a UK section of an international one (zara.com/uk/, /en_gb/, /en-gb/).
+  // A UK shop: prices in pounds (prettylittlething.com, boohoo.com), a .uk host, or a UK section of
+  // an international one (zara.com/uk/, /en_gb/, /en-gb/).
   const UK_SHOP = /(?:\.co\.uk|\.uk)$/i;
   const UK_PATH = /\/(?:uk|gb)(?:\/|$)|[\/_-]en[-_](?:gb|uk)\b/i;
   function ukShop(product) {
-    return !!product && ((product.host && UK_SHOP.test(product.host)) || (product.url && UK_PATH.test(String(product.url).replace(/^https?:\/\/[^/]+/i, ''))));
+    if (!product) return false;
+    // Only a yes: a UK shop can show prices in another currency on request.
+    if (String(product.currency || '').toUpperCase() === 'GBP') return true;
+    return !!((product.host && UK_SHOP.test(product.host)) || (product.url && UK_PATH.test(String(product.url).replace(/^https?:\/\/[^/]+/i, ''))));
   }
 
   // Bare numbers are ambiguous (32 can be a denim waist or EU 32); settle them with context. Numbers

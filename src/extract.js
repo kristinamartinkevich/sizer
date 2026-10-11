@@ -57,6 +57,15 @@
     return el ? clean(el.getAttribute('content')) : '';
   }
 
+  // The price's currency (GBP tells a UK shop on a .com host), from the product data or the page's
+  // price meta tags. Only the three-letter code.
+  function currencyOf(doc, ld) {
+    const offers = ld && [].concat(ld.offers || [], ...[].concat(ld.hasVariant || []).map((v) => v && v.offers).filter(Boolean));
+    const fromLd = (offers || []).map((o) => o && (o.priceCurrency || (o.priceSpecification && o.priceSpecification.priceCurrency))).find(Boolean);
+    const code = String(fromLd || meta(doc, 'meta[property="product:price:currency"]') || meta(doc, 'meta[property="og:price:currency"]') || meta(doc, 'meta[itemprop="priceCurrency"]')).toUpperCase();
+    return /^[A-Z]{3}$/.test(code) ? code : null;
+  }
+
   const DETAIL_SEL = [
     '[data-testid^="pdp-accordion" i]',
     '[class*="description" i]', '[id*="description" i]', '[data-testid*="description" i]',
@@ -175,6 +184,8 @@
     'select option',
     'label[for*="size" i]',
     '[data-testid*="size" i] button', '[data-testid*="size" i] li', '[data-testid*="size" i] label', '[data-testid*="size" i] [role="option"]',
+    // PrettyLittleThing and boohoo: data-test-id, hyphenated, on the button itself.
+    'button[data-test-id*="size" i]',
     '[class*="size" i] button', '[class*="size" i] li', '[class*="size" i] label', '[class*="size" i] [role="option"]', '[class*="size" i] [role="radio"]',
     '[id*="size" i] button', '[id*="size" i] li', '[id*="size" i] option',
     '[role="listbox"] [role="option"]', '[role="radiogroup"] [role="radio"]',
@@ -204,6 +215,15 @@
     '[class*="recommend" i]', '[data-testid*="recommend" i]', '[id*="recommend" i]',
   ].join(',');
 
+  // An option's text as a size label: "Size: M" is M, SSENSE's "WAIST US 24 - Sold Out" is W24, and
+  // a stock note after a dash ("Only 1 remaining", "Low stock") is dropped; sold out is read elsewhere.
+  function optionLabel(text) {
+    return text
+      .replace(/\s+[-–—]\s+(?:sold out|out of stock|only \d+ (?:left|remaining)|low stock|last one|few left|notify me|in stock)\b.*$/i, '')
+      .replace(/^waist\s*(?:us|uk|eu)?\s*(\d{2})\b/i, 'W$1')
+      .replace(/^(size|größe|taille|talla|taglia)\s*:?\s*/i, '');
+  }
+
   // Size option elements currently in the page, with the size each one stands for.
   function optionElements(doc, parse) {
     const out = [];
@@ -213,7 +233,7 @@
       if (el.closest(NOT_THIS_PRODUCT)) continue;
       const text = spacedText(el) || clean(el.getAttribute('aria-label'));
       if (!text || text.length > 48) continue;
-      const p = parse(text.replace(/^(size|größe|taille|talla|taglia)\s*:?\s*/i, ''));
+      const p = parse(optionLabel(text));
       if (!p) continue;
       out.push({ el, label: p.label.trim(), available: !isUnavailable(el, text) });
     }
@@ -246,7 +266,9 @@
       if (el.tagName === 'INPUT' || el.closest(OURS) || !visible(el)) continue;
       return el;
     }
-    const opts = optionElements(doc, parse).filter((o) => visible(o.el));
+    // A single size button can be 40 px wide (PrettyLittleThing), narrower than a picker.
+    const shown = (el) => { const r = el.getBoundingClientRect(); return r.width > 16 && r.height > 16 && getComputedStyle(el).visibility !== 'hidden'; };
+    const opts = optionElements(doc, parse).filter((o) => shown(o.el));
     if (opts.length >= 2) {
       let a = opts[0].el.parentElement;
       while (a && !a.contains(opts[1].el)) a = a.parentElement;
@@ -438,6 +460,7 @@
       guideLink: guideLink(doc),
       guideImages: guideImages(doc),
       url: location.href,
+      currency: currencyOf(doc, ld),
       isProduct: !!ld || (sizes.length >= 2 && !!(brandGuess || title)),
     };
   }

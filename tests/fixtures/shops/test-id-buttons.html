@@ -1,0 +1,43 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping across 25 shops, 2026-10-11): PrettyLittleThing and boohoo mark
+  their size buttons with data-test-id (hyphenated), not data-testid, and print no product data, so
+  Sizer found no sizes at all. Markup trimmed from PLT's product page; the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Slouchy wide leg jeans | Mardi</title>
+  <meta property="og:title" content="Slouchy wide leg jeans">
+  <!-- Like PLT's: a product with an offer in pounds and no variants, so the sizes come from the
+       buttons and the pounds say the bare numbers are UK sizes, on a .com host. -->
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "Product", "name": "Slouchy wide leg jeans", "brand": { "@type": "Brand", "name": "Mardi" },
+    "offers": { "@type": "Offer", "price": "32.00", "priceCurrency": "GBP" } }
+  </script>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #1d1d1b; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .row { display: flex; gap: 8px; margin: 16px 0; }
+    .row div { width: 48px; height: 40px; }
+    .row button { width: 100%; height: 100%; border: 1px solid #1d1d1b; background: #fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Slouchy wide leg jeans</h1>
+    <p class="product-brand">Mardi</p>
+    <p>Rigid denim, 100% cotton. A low-slung waist and a wide leg.</p>
+    <div data-test-id="size-guide"><button type="button"><span>Size Guide</span></button></div>
+    <div class="row">
+      <div><button data-test-id="size-button-false" class="opacity-100">4</button></div>
+      <div><button data-test-id="size-button-false" class="opacity-100">6</button></div>
+      <div><button data-test-id="size-button-false" class="opacity-100">8</button></div>
+      <div><button data-test-id="size-button-true" class="opacity-100">10</button></div>
+      <div><button data-test-id="size-button-false" class="opacity-100">12</button></div>
+      <div><button data-test-id="size-button-false" disabled class="opacity-50">14</button></div>
+      <div><button data-test-id="size-button-false" class="opacity-100">16</button></div>
+    </div>
+  </main>
+</body>
+</html>

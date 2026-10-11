@@ -383,6 +383,21 @@ test('options that are not clothing sizes get no size: a kettle, a phone case, a
   assert.equal(recommend(maya, { brand: "Levi's", title: "Levi's 501 Original", text: '', sizes: offered(['26W / 30L', '28W / 30L', '30W / 30L']), host: 'www.amazon.co.uk' }).ok, true);
 });
 
+test('a dress in UK 6 to 26 is in UK sizes, not jeans waists', () => {
+  // John Lewis, 2026-10-12: a maxi dress in 6 to 26 was read as jeans waists, and a UK 24 shopper
+  // was told "W40, larger than this chart goes".
+  const plus = { anchors: [], bust: '130', waist: '112', hip: '138', unit: 'cm', fitPreference: 'regular' };
+  const sizes = offered(['6', '8', '10', '12', '14', '16', '18', '20', '22', '24', '26']);
+  const r = recommend(plus, { brand: 'Nobody', title: 'Asymmetric Shoulder Maxi Dress', text: '', sizes, host: 'www.johnlewis.com', currency: 'GBP' });
+  assert.equal(r.size, '26');
+  assert.equal(r.matchedOnPage, true);
+  const us = recommend(plus, { brand: 'Nobody', title: 'Wrap Dress', text: '', sizes: offered(['16', '18', '20', '22', '24', '26', '28', '30']), host: 'www.example.com' });
+  assert.match(us.size, /^2[0-4]$/, us.size);
+  // Jeans waists stay waists.
+  const jeans = recommend({ anchors: [], waist: '70', hip: '96', unit: 'cm' }, { brand: 'Nobody', title: 'Straight jeans', text: '', sizes: offered(['24', '25', '26', '27', '28', '29', '30']), host: 'www.example.com' });
+  assert.equal(jeans.chartSystem, 'denim');
+});
+
 test('children’s clothes and shoes get no size, and boyfriend jeans and baby tees still do', () => {
   // Old Navy, 2026-10-12: "Uniform Straight Leg Pants for Boys" in 5 to 18 (ages) was sized on a
   // women's chart as "0".

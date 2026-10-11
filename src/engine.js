@@ -162,7 +162,9 @@
     const small = nums.length && nums.every((n) => n <= 24);
     // A denim waist starts at 22, so 8 to 16 under a denim chart are dress sizes, not waists. So is a
     // run that starts at 00 to 4 and mostly sits under 22, though its plus sizes go on to 30 (Old Navy).
-    const dressRun = nums.length && Math.min(...nums) <= 4 && nums.filter((n) => n < 22).length * 2 > nums.length;
+    const dressRun = nums.length && ((Math.min(...nums) <= 4 && nums.filter((n) => n < 22).length * 2 > nums.length)
+      // All even and dipping under 22, where waists start: UK 6 to 28 or US 16 to 30, plus sizes included.
+      || (Math.min(...nums) < 22 && nums.every((n) => n % 2 === 0)));
     if ((hint === 'denim' && nums.length && nums.every((n) => n < 22)) || ((hint === 'denim' || !hint) && dressRun)) return uk ? 'uk' : 'us';
     if (hint === 'denim' || hint === 'us' || hint === 'uk') return hint;
     if (small) return uk ? 'uk' : 'us';

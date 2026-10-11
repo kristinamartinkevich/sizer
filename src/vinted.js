@@ -357,6 +357,8 @@
       description,
       photos: httpsOnly(ldImages(ld.image).concat(r.photos || [])),
       lang: langOf(r.host),
+      // A bare shoe size on vinted.co.uk is a UK size: the engine reads the host as it reads a shop's.
+      host: r.host || '',
       have: parseMeasurements(description),
     };
   }
@@ -390,7 +392,7 @@
     }
     if (!hasProfile(profile)) return { mode: 'needsProfile', message };
     if (l.size && engine) {
-      const placed = engine.placeLabel(profile, { brand: l.brand, title: engineTitle(l.kind), text: l.description || '', label: l.size, poolFit }, charts);
+      const placed = engine.placeLabel(profile, { brand: l.brand, title: engineTitle(l.kind), text: l.description || '', label: l.size, host: l.host, poolFit }, charts);
       const r = placed.result;
       if (r && r.needsProfile) return { mode: 'needsProfile', message };
       if (r && r.ok) {

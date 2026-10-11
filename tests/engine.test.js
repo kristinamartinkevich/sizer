@@ -521,6 +521,16 @@ test('a brand scale of 0 to 5 reads as letters, and shoes in UK 3 to 5 stay shoe
   assert.equal(shoes.size, '4');
 });
 
+// Found shopping as a tall persona: Zalando's UK 8 was sold out with 7.5 in stock, and the note said
+// "nothing close is in stock": half sizes have no line on the standard chart, so they were not counted.
+test('a half size beside a sold-out shoe is the nearest in stock', () => {
+  const labels = ['2.5', '3.5', '4', '5', '5.5', '6.5', '7.5', '8', '9', '9.5', '10.5'];
+  const sold = new Set(['8', '9', '9.5', '10.5']);
+  const r = recommend({ footLength: '26.4', anchors: [] }, { brand: 'Anna Field', title: 'Classic heels', text: '', sizes: labels.map((label) => ({ label, available: !sold.has(label) })), host: 'www.zalando.co.uk', currency: 'GBP' });
+  assert.equal(r.size, '8');
+  assert.equal(r.stockText, 'Sold out in 8. Nearest in stock: 7.5, one size down.');
+});
+
 // Found shopping as a petite persona: Moon Boot sells "UK 3-5" and "UK 6-8", and the answer named
 // EU 37, a size that is no button on the page.
 test('a shoe size range on the page holds the sizes inside it', () => {

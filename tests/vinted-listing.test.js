@@ -161,6 +161,18 @@ test('placeLabel: the label Sizer would pick is your size, one below is too smal
   assert.strictEqual(Engine.placeLabel(ME, product(String(+same + 2)), null).steps, 1);
 });
 
+// Found shopping as a tall persona: Dr Martens on vinted.co.uk labelled "9" (UK 9) said only "Sizer
+// would pick EU 41 for you": the bare 9 was read as EU 9, which no shoe chart has.
+test('placeLabel: a bare shoe size on vinted.co.uk is a UK size, placed against your foot', () => {
+  const FOOT = { anchors: [], footLength: '26.4', unit: 'cm', fitPreference: 'regular' };
+  const at = (label) => Engine.placeLabel(FOOT, { brand: 'Dr. Martens', title: Vinted.engineTitle('shoes'), text: '', label, host: 'www.vinted.co.uk' }, null).steps;
+  assert.strictEqual(at('8'), 0);
+  assert.strictEqual(at('9'), 1);
+  assert.strictEqual(at('5'), -3);
+  const listing = { kind: 'shoes', lang: 'en', host: 'www.vinted.co.uk', size: '9', brand: 'Dr. Martens', have: {} };
+  assert.strictEqual(Vinted.answerFor(listing, FOOT, null, Engine).verdict, 'roomy');
+});
+
 // Found crawling: Levi's 501 listed as "W54 | FR 64" said only "Sizer would pick W29 for you".
 test('placeLabel: a label beyond the end of the brand’s chart is still placed, far bigger or smaller', () => {
   const at = (label) => Engine.placeLabel(ME, { brand: "Levi's", title: "Levi's 501 jeans", text: '', label }, null).steps;

@@ -1,0 +1,46 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping as a tall persona, 2026-10-11): Lucy & Yak's sizes are a <select>
+  inside a flex div.select that holds only the select and its arrow. Sizer's line went in after the
+  select, inside that box, and was squeezed into a narrow column beside "Please choose a size". Markup
+  trimmed from Lucy & Yak's product page (a Shopify Dawn theme); the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Original Straight Leg Dungarees in Dark Green – Wren &amp; Hare</title>
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "Product", "name": "Original Straight Leg Dungarees in Dark Green", "brand": { "@type": "Brand", "name": "Wren & Hare" },
+    "offers": { "@type": "Offer", "price": "70.00", "priceCurrency": "GBP" } }
+  </script>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #121212; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .select { display: flex; position: relative; max-width: 380px; border: 1px solid #121212; }
+    .select__select { flex-grow: 1; height: 44px; border: 0; padding: 0 40px 0 12px; appearance: none; background: none; }
+    .select svg { position: absolute; right: 12px; top: 16px; width: 10px; height: 10px; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Original Straight Leg Dungarees in Dark Green</h1>
+    <p>£70.00</p>
+    <div class="product-form__input product-form__input--dropdown">
+      <label class="form__label" for="Option-size">Size</label>
+      <div class="select">
+        <select id="Option-size" class="select__select" name="options[Size]">
+          <option value="" selected>Please choose a size</option>
+          <option value="UK 8">UK 8</option>
+          <option value="UK 10">UK 10</option>
+          <option value="UK 12">UK 12</option>
+          <option value="UK 14">UK 14</option>
+          <option value="UK 16" disabled>UK 16 - Sold out</option>
+        </select>
+        <svg aria-hidden="true" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z"></path></svg>
+      </div>
+    </div>
+    <button>Add to basket</button>
+    <p>Our classic dungarees in soft organic cotton corduroy, with a relaxed straight leg.</p>
+  </main>
+</body>
+</html>

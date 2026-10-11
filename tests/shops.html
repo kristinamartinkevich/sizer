@@ -53,6 +53,7 @@
       { name: 'test-id-buttons', base: 'https://www.mardi.com/', brand: 'Mardi', title: /Slouchy wide leg jeans/, sizes: 7, soldOut: ['14'], size: '10', guide: null },
       { name: 'waist-select', base: 'https://halden.example/', brand: 'Halden', title: /Melanie straight jeans/, sizes: 9, soldOut: ['W24', 'W31', 'W32'], size: 'W28', guide: null },
       { name: 'fieldset-radios', base: 'https://eu.pelle.example/', brand: 'Pelle', title: /Ainslee square neck midi dress/, sizes: 6, soldOut: ['L'], size: 'S', guide: null },
+      { name: 'select-box', base: 'https://wrenandhare.example/products/original-dungarees-dark-green', brand: 'Wren & Hare', title: /Original Straight Leg Dungarees/, sizes: 5, soldOut: ['UK 16'], lineAfter: '.select', size: 'UK 10', guide: null },
       { name: 'size-guide-link', base: 'https://www.vela.example/gb/t/ventus-run-womens-road-running-shoes-AB12/VR2543-002', brand: 'Vela', title: /Ventus Run/, sizes: 6, soldOut: [], order: ['UK 3', 'UK 3.5', 'UK 4', 'UK 4.5', 'UK 5', 'UK 5.5'], size: undefined, guide: null },
       { name: 'cross-sell-text', base: 'https://www.brisa.example/gb/low-rise-straight-jeans-c0p9.html', brand: 'Brisa', title: /Low-rise straight jeans/, sizes: 5, soldOut: [], fitNote: null, notText: /Colours/, size: '10', guide: null },
       { name: 'broken-ld', base: 'https://www.merle.com/', brand: 'Merle', title: /Navy Double Breasted Pea Coat/, sizes: 9, soldOut: ['04'], size: '10', guide: null },
@@ -207,6 +208,10 @@
       // Some shops draw no picker until "Add to basket"; their sizes come from the product data.
       const picker = !!SizerExtract.findPicker(fdoc, SizerEngine.parseSizeLabel);
       check(checks, shop.picker === false ? 'no picker' : 'picker found', picker === (shop.picker !== false), 'picker');
+      if (shop.lineAfter) {
+        const at = picker && SizerExtract.lineAnchor(SizerExtract.findPicker(fdoc, SizerEngine.parseSizeLabel), SizerEngine.parseSizeLabel);
+        check(checks, 'line placed below', !!at && at.matches(shop.lineAfter), at ? `${at.tagName.toLowerCase()}.${at.className}` : 'none');
+      }
       check(checks, 'size', r.size === shop.size, `${r.size}: ${r.headline}`);
       if (shop.headline) check(checks, 'headline', shop.headline.test(r.headline), r.headline);
       check(checks, 'no cookie text', !/necessary cookies|accepter|cookie policy/i.test(product.text.slice(0, 2000)), product.text.slice(0, 80));

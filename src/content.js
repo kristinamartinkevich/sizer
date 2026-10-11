@@ -3,7 +3,7 @@
   window.__sizerLoaded = true;
 
   const Engine = globalThis.SizerEngine;
-  const { extractProduct, findPicker, optionElements, guideFromHtml, productText } = globalThis.SizerExtract;
+  const { extractProduct, findPicker, optionElements, guideFromHtml, productText, lineAnchor } = globalThis.SizerExtract;
   const Guide = globalThis.SizerGuideTable;
   const Sheet = globalThis.SizerSheet;
   const Feedback = globalThis.SizerFeedback;
@@ -88,6 +88,9 @@
     if (!h || !h.el.isConnected) {
       const el = document.createElement('div');
       el.id = id;
+      // A host has no children of its own, only a shadow root, so a shop's "div:empty { display: none }"
+      // (Shopify's Dawn theme, Lucy & Yak) hid the sheet: shown here over any rule of the page's.
+      el.style.setProperty('display', 'block', 'important');
       const shadow = el.attachShadow({ mode: 'open' });
       const style = document.createElement('style');
       style.textContent = globalThis.SIZER_STYLE + Question.STYLE;
@@ -141,18 +144,10 @@
     </div>`;
   }
 
-  // Below the picker, and below its option list when the list opens inline rather than as an overlay.
-  function anchorAfter(picker) {
-    let a = picker;
-    const sib = () => a.nextElementSibling && a.nextElementSibling.id !== 'sizer-inline' ? a.nextElementSibling : null;
-    while (sib() && optionElements(sib(), Engine.parseSizeLabel).length >= 2) a = sib();
-    return a;
-  }
-
   function renderLine(picker) {
     const html = lineHTML();
     if (!html) { drop('sizer-inline'); return; }
-    const anchor = anchorAfter(picker);
+    const anchor = lineAnchor(picker, Engine.parseSizeLabel);
     const h = host('sizer-inline', (el) => { if (el.previousElementSibling !== anchor) anchor.insertAdjacentElement('afterend', el); });
     h.el.style.display = 'block';
     if (h.mount.dataset.html !== html) {

@@ -1293,8 +1293,11 @@
     const label = (r) => (system === 'eu' ? `EU ${r.label}` : r.label);
     const pageMatch = matchOf(pick);
     const altMatch = alt ? matchOf(alt.row) : null;
+    // Steps count the page's own buttons: Zalando's 7.5 beside a sold-out 8 is one size down, though
+    // the standard chart has whole sizes only.
+    const pageAt = pageMatch ? pageSizes.findIndex((s) => s.label === pageMatch.label) : -1;
     const inStock = pageMatch && pageMatch.available === false
-      ? nearestInStock(idx, pageSizes, (s) => { const r = shoeRow(s.parsed, rows, system); return r ? rows.indexOf(r) : null; }, true)
+      ? nearestInStock(pageAt, pageSizes, (s) => pageSizes.indexOf(s), true)
       : null;
     const size = pageMatch ? pageMatch.label : label(pick);
 

@@ -540,5 +540,19 @@
     };
   }
 
-  root.SizerExtract = { extractProduct, findPicker, optionElements, sizeGuideTables, guideLink, guideImages, guideFromHtml, productText };
+  // Where Sizer's line goes: below the picker, and below its option list when the list opens inline
+  // rather than as an overlay. A select's own box (Lucy & Yak's flex div.select, holding only the
+  // select and its arrow) would squeeze the line in beside it, so the line goes below that box.
+  function lineAnchor(picker, parse) {
+    let a = picker;
+    const sib = () => a.nextElementSibling && a.nextElementSibling.id !== 'sizer-inline' ? a.nextElementSibling : null;
+    while (sib() && optionElements(sib(), parse).length >= 2) a = sib();
+    if (a.tagName === 'SELECT') {
+      const only = (p) => [...p.children].every((c) => c === a || c.id === 'sizer-inline' || /^(?:svg|script|template|style)$/i.test(c.tagName) || (!clean(c.textContent) && !c.querySelector('select, input, button')));
+      while (a.parentElement && a.parentElement !== a.ownerDocument.body && only(a.parentElement)) a = a.parentElement;
+    }
+    return a;
+  }
+
+  root.SizerExtract = { lineAnchor, extractProduct, findPicker, optionElements, sizeGuideTables, guideLink, guideImages, guideFromHtml, productText };
 })(globalThis);

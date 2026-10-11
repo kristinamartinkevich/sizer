@@ -70,7 +70,7 @@
     const offers = ld && [].concat(ld.offers || [], ...[].concat(ld.hasVariant || []).map((v) => v && v.offers).filter(Boolean));
     // Hollister lists price specifications on the offer, so the currency can sit inside a list.
     const fromLd = (offers || []).map((o) => o && (o.priceCurrency || [].concat(o.priceSpecification || []).map((p) => p && p.priceCurrency).find(Boolean))).find(Boolean);
-    const code = String(fromLd || meta(doc, 'meta[property="product:price:currency"]') || meta(doc, 'meta[property="og:price:currency"]') || meta(doc, 'meta[itemprop="priceCurrency"]')).toUpperCase();
+    const code = String(fromLd || meta(doc, 'meta[property="product:price:currency"]') || meta(doc, 'meta[property="og:price:currency"]') || meta(doc, 'meta[property="og:product:price:currency"]') || meta(doc, 'meta[itemprop="priceCurrency"]')).toUpperCase();
     return /^[A-Z]{3}$/.test(code) ? code : null;
   }
 
@@ -248,6 +248,15 @@
       out.push({ el, label: p.label.trim(), available: !isUnavailable(el, text) });
     }
     return out;
+  }
+
+  // Smallest first when every size is a number (GANNI's product data lists 32, 44, 42, 36...);
+  // otherwise as the page has them.
+  function inOrder(sizes, parse) {
+    const parsed = sizes.map((s) => parse(s.label));
+    if (!parsed.every((p) => p && typeof p.value === 'number')) return sizes;
+    const keyed = sizes.map((s, i) => ({ s, i, k: parsed[i].value }));
+    return keyed.sort((a, b) => a.k - b.k || a.i - b.i).map((x) => x.s);
   }
 
   function domSizes(doc, parse) {
@@ -445,7 +454,8 @@
     const h1 = h1El ? spacedText(h1El) : '';
     const title = clean((ld && ld.name) || meta(doc, 'meta[property="og:title"]') || h1 || doc.title);
     const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i]');
-    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? spacedText(brandEl) : '').slice(0, 60));
+    // A site's tagline after a bar is not the brand: "Gymshark | We Do Gym".
+    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? spacedText(brandEl) : '').slice(0, 60)).replace(/\s\|\s.*$/, '');
 
     const description = clean(ld && ld.description);
     let text = [description, detailText(doc), fitNoteText(doc)].filter(Boolean).join('\n');
@@ -456,7 +466,11 @@
     const reviews = extractReviews(doc, ld);
 
     const fromLd = variantSizes(ld);
-    const sizes = fromLd.length ? fromLd : domSizes(doc, engine.parseSizeLabel);
+    const fromPage = domSizes(doc, engine.parseSizeLabel);
+    // Nike's buttons read "UK 2.5" to "UK 9.5" where its product data has the same sizes as US 5 to
+    // 12: the shopper clicks the buttons, so the answer has to name one of them.
+    const renamed = fromPage.length >= 2 && fromPage.length === fromLd.length && !fromPage.some((d) => fromLd.some((l) => l.label === d.label));
+    const sizes = inOrder(fromLd.length && !renamed ? fromLd : fromPage.length ? fromPage : fromLd, engine.parseSizeLabel);
     const brandGuess = brand || ([title, h1, doc.title].map((s) => engine.findBrand(s)).find(Boolean) || {}).name || '';
     return {
       brand: brandGuess,
@@ -471,7 +485,8 @@
       guideImages: guideImages(doc),
       url: location.href,
       currency: currencyOf(doc, ld),
-      isProduct: !!ld || (sizes.length >= 2 && !!(brandGuess || title)),
+      // AllSaints fetches its sizes only when the menu opens; og:type still says it is a product.
+      isProduct: !!ld || /^product\b/i.test(meta(doc, 'meta[property="og:type"]')) || (sizes.length >= 2 && !!(brandGuess || title)),
     };
   }
 

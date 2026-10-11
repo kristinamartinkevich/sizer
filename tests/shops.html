@@ -55,6 +55,9 @@
       { name: 'fieldset-radios', base: 'https://eu.pelle.example/', brand: 'Pelle', title: /Ainslee square neck midi dress/, sizes: 6, soldOut: ['L'], size: 'S', guide: null },
       { name: 'broken-ld', base: 'https://www.merle.com/', brand: 'Merle', title: /Navy Double Breasted Pea Coat/, sizes: 9, soldOut: ['04'], size: '10', guide: null },
       { name: 'price-spec-list', base: 'https://www.tamsin.com/', brand: 'Tamsin', title: /Wrap midi skirt/, sizes: 6, soldOut: ['12'], size: '10', guide: null },
+      { name: 'dom-over-ld', base: 'https://www.kestrel.com/gb/', brand: 'Kestrel', title: /Strider Plus/, sizes: 6, soldOut: ['UK 4'], order: ['UK 2.5', 'UK 3', 'UK 3.5', 'UK 4', 'UK 4.5', 'UK 5'], size: undefined, guide: null },
+      { name: 'og-product', base: 'https://www.strand.com/', brand: 'Strand', title: /Berletta Velvet Maxi Dress/, sizes: 0, soldOut: [], isProduct: true, currency: 'GBP', size: 'EU 38', guide: null },
+      { name: 'ld-unsorted', base: 'https://www.vesna.com/en-gb/', brand: 'Vesna', title: /Dress in Leopard Denim/, sizes: 7, soldOut: ['44'], picker: false, order: ['32', '34', '36', '38', '40', '42', '44'], size: '38', guide: null },
       { name: 'ld-size-lists', base: 'https://www.corvo.example/', brand: 'Corvo', title: /Wide-leg mid-waist jeans/, sizes: 6, soldOut: [], picker: false, size: '10', guide: null },
       { name: 'inline-guide', base: 'https://lune-atelier.example/', brand: 'Lune Atelier', title: /Bias silk midi skirt/, sizes: 5, soldOut: ['S'], noStretch: true, size: 'M',
         guide: [{ category: 'general', unit: 'cm', mentions_brand: true, labels: ['XS', 'S', 'M', 'L', 'XL'], first: { bust: [80, 84], waist: [62, 66], hip: [88, 92], foot_length: null } }], caption: 'Lune Atelier size guide' },
@@ -179,6 +182,9 @@
       check(checks, 'size count', product.sizes.length === shop.sizes, product.sizes.length);
       const soldOut = product.sizes.filter((s) => s.available === false).map((s) => s.label);
       check(checks, 'sold out', JSON.stringify(soldOut) === JSON.stringify(shop.soldOut), soldOut.join(', ') || 'none');
+      if (shop.order) check(checks, 'size order', JSON.stringify(product.sizes.map((s) => s.label)) === JSON.stringify(shop.order), product.sizes.map((s) => s.label).join(' '));
+      if ('isProduct' in shop) check(checks, 'is a product page', product.isProduct === shop.isProduct, product.isProduct);
+      if (shop.currency) check(checks, 'currency', product.currency === shop.currency, product.currency);
       const signals = SizerEngine.analyzeText(product.text);
       const r = SizerEngine.recommend(PROFILE, product, null);
       if ('fitNote' in shop) check(checks, 'page fit note', (signals.fitNote || null) === shop.fitNote, signals.fitNote || 'none');

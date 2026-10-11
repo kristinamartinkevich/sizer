@@ -668,12 +668,17 @@
   }
 
   // Where a fractional chart position lands, in words: "27", "27½", or "between 36 and 38".
-  function approxLabel(chart, system, pos) {
+  // A chart size in words, named by system where a bare number could be read several ways:
+  // "EU 40", "between EU 40 and 42". A brand's own denim chart needs no tag ("rag & bone 26½"); the
+  // standard one says W ("a standard W29").
+  const SYSTEM_TAG = { eu: 'EU ', uk: 'UK ', us: 'US ', it: 'IT ' };
+  function approxLabel(chart, system, pos, standard) {
+    const tag = SYSTEM_TAG[system] || (system === 'denim' && standard ? 'W' : '');
     const i = Math.max(0, Math.min(chart.length - 1, Math.floor(pos)));
     const f = pos - Math.floor(pos);
-    if (pos <= 0 || f < 0.25) return chart[i].label;
-    if (f > 0.75 || i === chart.length - 1) return chart[Math.min(i + 1, chart.length - 1)].label;
-    return system === 'denim' ? `${chart[i].label}½` : `between ${chart[i].label} and ${chart[i + 1].label}`;
+    if (pos <= 0 || f < 0.25) return `${tag}${chart[i].label}`;
+    if (f > 0.75 || i === chart.length - 1) return `${tag}${chart[Math.min(i + 1, chart.length - 1)].label}`;
+    return system === 'denim' ? `${tag}${chart[i].label}½` : `between ${tag}${chart[i].label} and ${chart[i + 1].label}`;
   }
 
   // Which measurements size this kind of item on this chart. Bottoms run on waist and hip; tops on
@@ -719,7 +724,7 @@
 
     const chartSystem = brand ? brand.system : pageSystem && GENERIC[pageSystem] ? pageSystem : TO_EU[pageSystem] ? 'eu' : signals.bottoms ? 'denim' : 'eu';
     const chart = brand ? brand.sizes : GENERIC[chartSystem];
-    const chartName = brand ? brand.name : 'standard';
+    const chartName = brand ? brand.name : 'a standard';
 
     // A garment chart and a piece you measured flat: compare garment to garment, no body in between.
     const garmentRows = brand && brand.garment && chart.every((r) => r.garment) ? chart.map((r) => r.garment) : null;
@@ -737,10 +742,10 @@
     const rigid = signals.stretch === 'none';
     const base = g2g ? basePosition(garmentRows, g2g.values, keys, rigid) : basePosition(chart, body, keys, rigid);
     if (g2g) {
-      reasons.push({ text: `Compared garment to garment with your ${joinNames(g2g.names)}: like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
+      reasons.push({ text: `Compared garment to garment with your ${joinNames(g2g.names)}: like ${chartName} ${approxLabel(chart, chartSystem, base, !brand)}.`, delta: null });
     } else {
       const sources = sourcesFor(profile, body.points, keys);
-      reasons.push({ text: `Your ${joinNames(sources)} fit${sources.length === 1 && !/measurements/.test(sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base)}.`, delta: null });
+      reasons.push({ text: `Your ${joinNames(sources)} fit${sources.length === 1 && !/measurements/.test(sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base, !brand)}.`, delta: null });
       if (brand && brand.garment) reasons.push({ text: `${brand.name} lists garment measurements, so Sizer allowed a little ease.`, delta: null });
     }
 

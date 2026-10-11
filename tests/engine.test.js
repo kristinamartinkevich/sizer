@@ -97,6 +97,18 @@ test('measurements win over wardrobe, and the wardrobe still reports disagreemen
   assert.ok(b.spread > 5);
 });
 
+// QA 2026-10-11: on ASOS the answer was "UK 14" and the reason said "fit like standard between 40 and
+// 42", with nothing to say those were EU sizes.
+test('a reason names the size system it compares in', () => {
+  const pear = { waist: '74', hip: '102', anchors: [] };
+  const r = recommend(pear, { brand: 'Unknown Label', title: 'Soft utility cargo trousers', text: '', sizes: ['UK 8', 'UK 10', 'UK 12', 'UK 14', 'UK 16'].map((label) => ({ label })) });
+  assert.match(r.reasons[0].text, /like a standard (?:EU \d+|between EU \d+ and \d+)\.$/);
+  const dress = recommend(pear, { brand: 'Unknown Label', title: 'Midi dress', text: '', sizes: ['XS', 'S', 'M', 'L', 'XL'].map((label) => ({ label })) });
+  assert.match(dress.reasons[0].text, /like a standard (?:[A-Z]+|between [A-Z]+ and [A-Z]+)\.$/, 'letters need no system');
+  const jeans = recommend(pear, { brand: 'Unknown Label', title: 'Straight jeans', text: '', sizes: ['26', '27', '28', '29', '30', '31'].map((label) => ({ label })) });
+  assert.match(jeans.reasons[0].text, /like a standard W\d+½?\.$/);
+});
+
 // QA 2026-10-11: a COS top in S read as a waist and hip, pulled the hip down from 101.6 to 98.8 cm
 // and took Mango jeans from EU 40 to EU 38.
 test('a top you own says nothing about your waist or hip, so it never moves a jeans size', () => {

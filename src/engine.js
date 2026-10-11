@@ -899,7 +899,13 @@
     const inStock = (pageMatch && pageMatch.available === false) || notOffered
       ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
       : null;
-    const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
+    // A size the page doesn't list is still named the way the page names its sizes: a US 8 among US
+    // numbers, not the chart's EU 40.
+    const inPageSystem = (entry) => {
+      const v = pageSystem && pageSystem !== chartSystem ? convertSize(entry.value, chartSystem, pageSystem) : null;
+      return v != null ? String(v) : displayLabel(entry, chartSystem, brand);
+    };
+    const size = pageMatch ? pageMatch.label : inPageSystem(pick);
     const stockText = notOffered ? notOfferedText(size, inStock, pageSizes)
       : pageMatch && pageMatch.available === false ? inStockText(size, inStock) : null;
     const areas = withWebAreas(fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind), web, kind);
@@ -929,7 +935,7 @@
       available: pageMatch ? pageMatch.available !== false : null,
       inStock,
       stockText,
-      alternative: alt ? { size: altMatch ? altMatch.label : displayLabel(alt, chartSystem, brand), why: altIdx > idx ? 'if you like more room' : 'if you like a closer fit' } : null,
+      alternative: alt ? { size: altMatch ? altMatch.label : inPageSystem(alt), why: altIdx > idx ? 'if you like more room' : 'if you like a closer fit' } : null,
       headline,
       confidence,
       score,

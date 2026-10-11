@@ -291,3 +291,14 @@ test('when your size is not among the page’s sizes, the answer says so and nam
   assert.match(r.stockText, /not offered on this page/);
   assert.match(r.stockText, /\b2\b/);
 });
+
+test('a size the page does not list is named the way the page names its sizes', () => {
+  // Reformation lists only what is in stock: 0, 2, 6, 12. Maya is a US 8, not "EU 40".
+  const r = recommend(maya, { brand: 'Reformation', title: 'Legacy Gown', text: '', sizes: offered(['0', '2', '6', '12']), host: 'www.thereformation.com' });
+  assert.equal(r.matchedOnPage, false);
+  assert.equal(r.size, '8');
+  assert.match(r.stockText, /^8 is not offered on this page\. Nearest in stock: 6/);
+  // A brand chart in EU on a UK page: the UK number.
+  const z = recommend(maya, { brand: 'Zara', title: 'Midi dress', text: '', sizes: offered(['4', '6', '8', '10']), host: 'www.zara.com', url: 'https://www.zara.com/uk/en/midi-p01.html' });
+  assert.equal(z.size, '12');
+});

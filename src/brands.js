@@ -20,7 +20,8 @@
   // The generic charts carry a bust too, so a top from an unknown brand can be sized on it.
   const GENERIC = {
     denim: denim(22, 40, 0.5, 10.5),
-    eu: table([[30, 56, 84, 72], [32, 60, 88, 76], [34, 64, 91, 80], [36, 68, 94, 84], [38, 72, 97, 88], [40, 76, 100, 92], [42, 81, 104, 97], [44, 86, 108, 102], [46, 92, 113, 108], [48, 98, 118, 114], [50, 104, 123, 120]]),
+    // Plus sizes run on to EU 60 (UK 32, US 28), so a plus-size body is not left at the top of the chart.
+    eu: table([[30, 56, 84, 72], [32, 60, 88, 76], [34, 64, 91, 80], [36, 68, 94, 84], [38, 72, 97, 88], [40, 76, 100, 92], [42, 81, 104, 97], [44, 86, 108, 102], [46, 92, 113, 108], [48, 98, 118, 114], [50, 104, 123, 120], [52, 110, 128, 126], [54, 116, 133, 132], [56, 122, 138, 138], [58, 128, 143, 144], [60, 134, 148, 150]]),
     letter: [
       { label: 'XXS', value: 'XXS', waist: 60, hip: 86, bust: 76 },
       { label: 'XS', value: 'XS', waist: 64, hip: 90, bust: 80 },
@@ -30,16 +31,21 @@
       { label: 'XL', value: 'XL', waist: 85, hip: 110, bust: 101 },
       { label: 'XXL', value: 'XXL', waist: 92, hip: 116, bust: 108 },
       { label: '3XL', value: '3XL', waist: 99, hip: 122, bust: 115 },
+      { label: '4XL', value: '4XL', waist: 106, hip: 128, bust: 122 },
+      { label: '5XL', value: '5XL', waist: 113, hip: 134, bust: 129 },
+      { label: '6XL', value: '6XL', waist: 120, hip: 140, bust: 136 },
     ],
   };
 
   // Women's clothing sizes across regions, one row per size: FR and EU and DE share a number,
-  // IT is FR + 4, UK is FR − 28, US is UK − 4, and the letter most charts print beside it.
-  const REGION_LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL'];
-  const REGION = REGION_LETTERS.map((letter, i) => {
-    const fr = 32 + 2 * i;
-    return { fr, eu: fr, de: fr, it: fr + 4, uk: fr - 28, us: fr - 32, letter };
-  });
+  // IT is FR + 4, UK is FR − 28, US is UK − 4, and the letter most charts print beside it. From
+  // FR 30 (US 00) to FR 60 (UK 32); past 6XL a size has no letter.
+  const REGION_LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
+  const REGION = [];
+  for (let fr = 30; fr <= 60; fr += 2) {
+    const letter = REGION_LETTERS[(fr - 32) / 2];
+    REGION.push({ fr, eu: fr, de: fr, it: fr + 4, uk: fr - 28, us: fr === 30 ? '00' : fr - 32, ...(letter ? { letter } : {}) });
+  }
 
   // Other numeric systems convert to EU before lookup.
   // US women's numeric: 0 = EU 32, 2 = EU 34, 4 = EU 36 ... (EU = US + 32).

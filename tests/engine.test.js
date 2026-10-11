@@ -302,3 +302,50 @@ test('a size the page does not list is named the way the page names its sizes', 
   const z = recommend(maya, { brand: 'Zara', title: 'Midi dress', text: '', sizes: offered(['4', '6', '8', '10']), host: 'www.zara.com', url: 'https://www.zara.com/uk/en/midi-p01.html' });
   assert.equal(z.size, '12');
 });
+
+// ---- plus sizes and petite sizes (found shopping as a plus-size and a petite persona) ----
+
+const plus = { anchors: [], height: '165', bust: '130', waist: '118', hip: '140', unit: 'cm', fitPreference: 'regular', betweenSizes: 'up' };
+const petite = { anchors: [], height: '152', bust: '76', waist: '58', hip: '82', unit: 'cm', fitPreference: 'regular', betweenSizes: 'up' };
+
+test('plus letter sizes are read as letters: 5XL, 6XL, XXXXXL, and US 1X to 5X and 18W', () => {
+  assert.equal(parseSizeLabel('5XL').value, '5XL');
+  assert.equal(parseSizeLabel('6XL').system, 'letter');
+  assert.equal(parseSizeLabel('XXXXXL').value, '5XL');
+  assert.deepEqual([parseSizeLabel('1X').system, parseSizeLabel('1X').value, parseSizeLabel('1X').label], ['letter', 'XL', '1X']);
+  assert.equal(parseSizeLabel('3X').value, '3XL');
+  assert.deepEqual([parseSizeLabel('18W').system, parseSizeLabel('18W').value], ['us', 18]);
+  // A denim waist with a length stays denim.
+  assert.equal(parseSizeLabel('28X32').system, 'denim');
+});
+
+test('a plus-size body gets a plus size, not the top of a chart that stops at UK 22', () => {
+  const r = recommend(plus, { brand: 'ASOS Curve', title: 'ASOS DESIGN Curve midi dress', text: '', sizes: offered(['UK 18', 'UK 20', 'UK 22', 'UK 24', 'UK 26', 'UK 28', 'UK 30']), host: 'www.asos.com' });
+  assert.match(r.size, /^UK (26|28|30)$/, r.size);
+  assert.doesNotMatch(r.headline, /Sized down/);
+  const t = recommend(plus, { brand: 'Nobody', title: 'Oversized t-shirt', text: '', sizes: offered(['S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL']), host: 'www.example.com' });
+  assert.equal(t.matchedOnPage, true, t.size);
+  assert.match(t.size, /^[45]XL$/);
+  const u = recommend({ ...plus, bust: '122', waist: '108', hip: '130' }, { brand: 'Nobody', title: 'Wrap dress', text: '', sizes: offered(['0X', '1X', '2X', '3X', '4X', '5X']), host: 'www.example.com' });
+  assert.equal(u.matchedOnPage, true, u.size);
+  assert.match(u.size, /^[45]X$/);
+});
+
+test('past the largest size a page or chart has, the answer says so instead of a size down', () => {
+  const r = recommend(plus, { brand: 'Nobody', title: 'Satin midi skirt', text: '', sizes: offered(['XS', 'S', 'M', 'L', 'XL']), host: 'www.example.com' });
+  assert.doesNotMatch(r.headline, /Sized down/);
+  const huge = { ...plus, bust: '160', waist: '150', hip: '170' };
+  const h = recommend(huge, { brand: 'Nobody', title: 'Midi dress', text: '', sizes: offered(['UK 18', 'UK 20', 'UK 22', 'UK 24', 'UK 26', 'UK 28', 'UK 30', 'UK 32']), host: 'www.asos.com' });
+  assert.equal(h.headline, 'Larger than this chart goes');
+  assert.ok(h.reasons.some((x) => /past the largest size/.test(x.text)), JSON.stringify(h.reasons));
+  const tiny = { ...petite, bust: '66', waist: '48', hip: '70' };
+  const s = recommend(tiny, { brand: 'Nobody', title: 'Midi dress', text: '', sizes: offered(['XXS', 'XS', 'S', 'M']), host: 'www.example.com' });
+  assert.equal(s.headline, 'Smaller than this chart goes');
+});
+
+test('a petite size the page does not list is named like the page: 00 among US numbers, UK 4 among UK labels', () => {
+  const r = recommend(petite, { brand: 'Nobody', title: 'Straight jeans', text: '', sizes: offered(['0', '2', '4', '6', '8']), host: 'www.example.com' });
+  assert.equal(r.size, '00');
+  const c = recommend(petite, { brand: 'Nobody', title: 'Midi dress', text: '', sizes: offered(['UK 18', 'UK 20', 'UK 22']), host: 'www.asos.com' });
+  assert.equal(c.size, 'UK 4');
+});

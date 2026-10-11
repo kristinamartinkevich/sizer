@@ -12,15 +12,17 @@ require('../src/defaults.js');
 const SYSTEMS = ['fr', 'eu', 'de', 'it', 'uk', 'us', 'letter'];
 
 test('the table follows the rules: IT is FR + 4, UK is FR − 28, US is UK − 4, DE is FR', () => {
-  assert.deepEqual(REGION.map((r) => r.fr), [32, 34, 36, 38, 40, 42, 44, 46, 48]);
+  // FR 30 (US 00) to FR 60 (UK 32), so petite and plus sizes convert too.
+  assert.deepEqual(REGION.map((r) => r.fr), [30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60]);
   for (const r of REGION) {
     assert.equal(r.eu, r.fr);
     assert.equal(r.de, r.fr);
     assert.equal(r.it, r.fr + 4);
     assert.equal(r.uk, r.fr - 28);
-    assert.equal(r.us, r.uk - 4);
+    assert.equal(r.us, r.fr === 30 ? '00' : r.uk - 4);
   }
-  assert.deepEqual(REGION.map((r) => r.letter), ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL']);
+  // Letters run XXS to 6XL; the sizes either side of them have none.
+  assert.deepEqual(REGION.map((r) => r.letter), [undefined, 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL', undefined, undefined, undefined, undefined]);
 });
 
 test('every size converts between every pair of systems, both directions', () => {
@@ -29,8 +31,10 @@ test('every size converts between every pair of systems, both directions', () =>
     for (const from of SYSTEMS) {
       for (const to of SYSTEMS) {
         if (from === to) continue;
-        assert.equal(convertSize(row[from], from, to), row[to], `${from} ${row[from]} → ${to}`);
-        assert.equal(convertSize(row[to], to, from), row[from], `${to} ${row[to]} → ${from}`);
+        // A size with no letter converts to no letter, and back.
+        const want = (s) => (row[s] == null ? null : row[s]);
+        if (row[from] != null) assert.equal(convertSize(row[from], from, to), want(to), `${from} ${row[from]} → ${to}`);
+        if (row[to] != null) assert.equal(convertSize(row[to], to, from), want(from), `${to} ${row[to]} → ${from}`);
         pairs += 1;
       }
     }
@@ -39,7 +43,8 @@ test('every size converts between every pair of systems, both directions', () =>
 });
 
 test('a size outside the table, or a system it does not cover, converts to nothing', () => {
-  assert.equal(convertSize(60, 'fr', 'uk'), null);
+  assert.equal(convertSize(62, 'fr', 'uk'), null);
+  assert.equal(convertSize(28, 'fr', 'uk'), null);
   assert.equal(convertSize(27, 'denim', 'fr'), null);
   assert.equal(convertSize('38', 'fr', 'uk'), 10);
 });

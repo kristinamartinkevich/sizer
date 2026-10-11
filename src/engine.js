@@ -46,8 +46,10 @@
 
   // ---- size labels -------------------------------------------------------
 
-  const LETTER_RE = /^(4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)(?![A-Z])/;
-  const LETTER_CANON = { XXXXL: '4XL', XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS' };
+  const LETTER_RE = /^(6XL|5XL|XXXXXL|4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)(?![A-Z])/;
+  const LETTER_CANON = { XXXXXL: '5XL', XXXXL: '4XL', XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS' };
+  // US plus sizes: 0X is about an L, 1X an XL, on to 5X.
+  const US_PLUS = { 0: 'L', 1: 'XL', 2: 'XXL', 3: '3XL', 4: '4XL', 5: '5XL' };
 
   // ---- women's sizes across regions ----------------------------------------
 
@@ -57,8 +59,8 @@
   // One size in another region's system, through the table: convertSize(38, 'fr', 'uk') is 10.
   function convertSize(value, from, to) {
     if (!REGION_SYSTEMS.includes(from) || !REGION_SYSTEMS.includes(to) || value == null) return null;
-    const row = REGION.find((r) => regionKey(r[from]) === regionKey(value));
-    return row ? row[to] : null;
+    const row = REGION.find((r) => r[from] != null && regionKey(r[from]) === regionKey(value));
+    return row && row[to] != null ? row[to] : null;
   }
 
   // A labelled size carries its FR/EU number, so sizes from different regions can be lined up.
@@ -76,8 +78,10 @@
     const s = String(raw || '').toUpperCase().replace(/\s+/g, ' ').trim();
     if (!s || s.length > 24) return null;
     let m;
-    // 2XL, 3XL and 4XL start with a digit, so they are read before the bare numbers.
-    if (/^[2-4]X/.test(s) && (m = s.match(LETTER_RE))) return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], label: m[0] };
+    // 2XL to 6XL start with a digit, so they are read before the bare numbers; so are US 1X and 18W.
+    if (/^[2-6]X/.test(s) && (m = s.match(LETTER_RE))) return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], label: m[0] };
+    if ((m = s.match(/^([0-5]) ?X$/))) return { system: 'letter', value: US_PLUS[m[1]], label: String(raw).trim() };
+    if ((m = s.match(/^(1[4-9]|2\d|3[0-2]) ?W$/))) return { system: 'us', value: +m[1], label: String(raw).trim() };
     // A letter with a leg length, as ONLY and Vero Moda print it on Zalando: Mx32, XS x 30.
     if ((m = s.match(/^(4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)\s?[X\/]\s?(2[6-9]|3[0-8])$/))) {
       return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], length: +m[2], label: String(raw).trim() };
@@ -870,9 +874,15 @@
     if (signals.roomy) reasons.push({ text: 'Relaxed cut, roomy by design. Go one down only if you want it closer.', delta: null });
 
     idx = Math.max(0, Math.min(chart.length - 1, idx));
-    const altIdx = !settled && frac > 0.25 && frac < 0.75 ? idx + (roundedUp ? -1 : 1) : null;
+    // More than half a size past either end of the chart: the end size is the closest it has, not a fit.
+    const past = base > chart.length - 0.5 ? 'up' : base < -0.5 ? 'down' : null;
+    if (past === 'up') reasons.push({ text: `Your measurements are past the largest size on ${brand ? `${brand.name}’s` : 'this'} chart, so this is the closest it has.`, delta: null });
+    if (past === 'down') reasons.push({ text: `Your measurements are under the smallest size on ${brand ? `${brand.name}’s` : 'this'} chart, so this is the closest it has.`, delta: null });
+    const altIdx = !settled && !past && frac > 0.25 && frac < 0.75 ? idx + (roundedUp ? -1 : 1) : null;
 
-    const headline = signals.fitNote === 'small' ? 'Runs small, sized up'
+    const headline = past === 'up' ? 'Larger than this chart goes'
+      : past === 'down' ? 'Smaller than this chart goes'
+      : signals.fitNote === 'small' ? 'Runs small, sized up'
       : signals.fitNote === 'large' ? 'Runs large, sized down'
         : buyersNote && reviews.verdict === 'small' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs small, sized up`
           : buyersNote && reviews.verdict === 'large' ? `${weighted ? 'Reviewers like you' : 'Buyers'} say it runs large, sized down`
@@ -901,9 +911,15 @@
       : null;
     // A size the page doesn't list is still named the way the page names its sizes: a US 8 among US
     // numbers, not the chart's EU 40.
+    // A page that writes "UK 18" gets "UK 4", not a bare 4.
+    const pagePrefix = (() => {
+      const l = pageSizes.find((s) => s.parsed.system === pageSystem);
+      const m = l && String(l.label).match(/^([A-Za-z]+ ?)\d/);
+      return m ? m[1] : '';
+    })();
     const inPageSystem = (entry) => {
       const v = pageSystem && pageSystem !== chartSystem ? convertSize(entry.value, chartSystem, pageSystem) : null;
-      return v != null ? String(v) : displayLabel(entry, chartSystem, brand);
+      return v != null ? `${pagePrefix}${v}` : displayLabel(entry, chartSystem, brand);
     };
     const size = pageMatch ? pageMatch.label : inPageSystem(pick);
     const stockText = notOffered ? notOfferedText(size, inStock, pageSizes)

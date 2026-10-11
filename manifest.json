@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sizer – Clothing Size Finder",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Find your clothing size on any shop. Reads the brand’s size chart, stretch, fit notes, stock and buyers’ reviews. Jeans to shoes.",
   "permissions": [
     "storage",
@@ -101,7 +101,20 @@
         "https://*.princesspolly.com/*",
         "https://*.shein.com/*",
         "https://*.kohls.com/*",
-        "https://*.dsw.com/*"
+        "https://*.dsw.com/*",
+        "https://*.marksandspencer.com/*",
+        "https://*.johnlewis.com/*",
+        "https://*.riverisland.com/*",
+        "https://*.boohoo.com/*",
+        "https://*.prettylittlething.com/*",
+        "https://*.newlook.com/*",
+        "https://*.next.co.uk/*",
+        "https://*.jdsports.co.uk/*",
+        "https://*.bershka.com/*",
+        "https://*.pullandbear.com/*",
+        "https://*.stradivarius.com/*",
+        "https://*.massimodutti.com/*",
+        "https://*.uniqlo.com/*"
       ],
       "js": [
         "src/brands.js",

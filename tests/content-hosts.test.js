@@ -14,3 +14,13 @@ test('every Sizer host is shown over a shop rule that hides empty divs', () => {
   assert.match(host[0], /el\.style\.setProperty\('display', 'block', 'important'\)/);
   assert.strictEqual((src.match(/document\.createElement\('div'\);\s*el\.id = id;/g) || []).length, 1, 'no host is made outside host()');
 });
+
+// The UK high street, the Inditex sister brands and Uniqlo run on their own, like Zara and ASOS:
+// about a quarter of UK online clothing spend that needed a click on the toolbar icon (2026-10-12).
+test('the UK high street, Inditex and Uniqlo are on the automatic list', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8'));
+  const matches = manifest.content_scripts[0].matches;
+  for (const shop of ['marksandspencer.com', 'johnlewis.com', 'riverisland.com', 'boohoo.com', 'prettylittlething.com', 'newlook.com', 'next.co.uk', 'jdsports.co.uk', 'bershka.com', 'pullandbear.com', 'stradivarius.com', 'massimodutti.com', 'uniqlo.com']) {
+    assert.ok(matches.includes(`https://*.${shop}/*`), shop);
+  }
+});

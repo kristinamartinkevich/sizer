@@ -24,3 +24,16 @@ test('the UK high street, Inditex and Uniqlo are on the automatic list', () => {
     assert.ok(matches.includes(`https://*.${shop}/*`), shop);
   }
 });
+
+// Amazon sells about a third of US clothing online. Sizer runs on its product pages only, which hold
+// every kind of product; the engine says nothing where the options are not clothing sizes.
+test('Amazon product pages are on the automatic list, and only its product pages', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8'));
+  const matches = manifest.content_scripts[0].matches;
+  const amazon = matches.filter((m) => /amazon\./.test(m));
+  for (const site of ['com', 'co.uk', 'de', 'fr', 'it', 'es', 'ca', 'com.au', 'nl', 'ie']) {
+    assert.ok(matches.includes(`https://www.amazon.${site}/*dp/*`), site);
+    assert.ok(matches.includes(`https://www.amazon.${site}/gp/product/*`), site);
+  }
+  assert.ok(amazon.every((m) => /\/(\*dp|gp\/product)\/\*$/.test(m)), 'no Amazon search, basket or home page');
+});

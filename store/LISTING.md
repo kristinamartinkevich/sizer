@@ -82,7 +82,7 @@ AFTER YOU BUY
 • A side panel with the full reasoning for the page you are on and your recent sizings
 
 WORKS ON
-The large fashion shops in the UK, Europe and the US, Vinted item pages in every country Vinted serves, and Depop, Poshmark and eBay listings. On any other shop, click the Sizer icon and choose “Check this page anyway”.
+The large fashion shops in the UK, Europe and the US, clothing on Amazon, Vinted item pages in every country Vinted serves, and Depop, Poshmark and eBay listings. On any other shop, click the Sizer icon and choose “Check this page anyway”.
 
 SECOND-HAND ON VINTED, DEPOP, POSHMARK AND EBAY
 A listing has one size and no reviews, so Sizer reads the measurements the seller wrote (“pit to pit 48 cm”, “aisselle à aisselle”, “Bundweite”, in seven languages) and compares them with the pieces you own, or with your measurements. With no measurements it places the size on the label on the brand’s chart and says it is the label only. “Ask the seller to measure” copies a short, polite message in the listing’s language asking for exactly what is missing; Sizer never sends anything for you.
@@ -122,7 +122,7 @@ Shows the shopper which clothing size to buy on a product page, from their own m
 - `alarms`: Refreshes the downloaded size charts once a day, and retries a “did it fit?” answer that could not be sent.
 - `sidePanel`: Shows Sizer’s full reasoning for the current page and the shopper’s recent sizings, with their “did it fit?” questions, in Chrome’s side panel when the shopper opens it.
 - Host permission `https://cqvrdsgutpczbucbpiqa.supabase.co/*`: Downloads the size charts, exchanges anonymous review tallies with Sizer’s own database, and sends the shopper’s anonymous “did it fit?” answers.
-- Content script matches (the listed fashion shops): Reads product pages to find the brand, sizes, stock, fit notes and reviews, and shows the size under the size picker.
+- Content script matches (the listed fashion shops, and Amazon product pages `https://www.amazon.*/*dp/*` and `/gp/product/*` on 10 country sites, each listed: com, co.uk, de, fr, it, es, ca, com.au, nl, ie): Reads product pages to find the brand, sizes, stock, fit notes and reviews, and shows the size under the size picker. On Amazon, which sells every kind of product on these pages, it shows nothing where the options are not clothing sizes.
 - Content script matches `https://www.vinted.*/items/*` (Vinted item pages on its 23 country sites, each listed: fr, de, co.uk, es, it, nl, be, pl, lt, cz, at, lu, pt, se, fi, dk, sk, hu, ro, hr, ie, gr, com), `https://www.depop.com/products/*`, `https://poshmark.com/listing/*` and `https://www.ebay.*/itm/*` (single listings on Depop and Poshmark, and eBay item pages on 13 country sites, each listed: co.uk, com, de, fr, it, es, ie, com.au, ca, at, nl, ch, pl; read the same way): Reads the listing’s brand, size label, category, condition, description and photo addresses to compare the seller’s measurements with the shopper’s, shows the answer under the listing’s details, and copies a message to the seller to the clipboard on click. It never sends anything on these sites.
 
 **Remote code:** No. All code ships in the package; the size charts are downloaded as data (JSON).

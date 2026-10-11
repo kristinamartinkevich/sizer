@@ -428,6 +428,7 @@
     rigid: /no\s+stretch|non[-\s]?stretch|zero\s+stretch|without\s+stretch|rigid(?:\s+denim)?|ohne\s+stretch|kein(?:en)?\s+stretch|nicht\s+elastisch|sans\s+stretch|sin\s+elasticidad|stretch\s*:\s*(?:none|no)/i,
     slight: /slight\s+stretch|light\s+stretch|comfort\s+stretch|low\s+stretch|leichte[rn]?\s+stretch|wenig\s+stretch|stretch\s*:\s*(?:slight|light|low)/i,
     high: /super\s*[-\s]?stretch|high\s+stretch|power\s+stretch|ultra\s+stretch|very\s+stretchy|stretchy|sculpt|stretch\s*:\s*(?:high|very)/i,
+    stretchScale: /(?:\b(?:ranging\s+)?from\s+)?\b(?:non|no|rigid)[-\s]?(?:stretch)?\s*(?:to|[-–—])?\s*(?:super|high|ultra|max(?:imum)?)[-\s]?stretch(?:y)?\b/gi,
     elastane: /(\d{1,2}(?:[.,]\d)?)\s*%\s*(?:elastane|elasthan|elastan|spandex|lycra|élasthanne|elastomultiester|elastomultiestere|elastolefin)/i,
     cotton100: /100\s*%\s*(?:organic\s+)?(?:cotton|baumwolle|coton|algodón|cotone|katoen)/i,
     skinny: /\b(?:skinny|slim|cigarette|super\s+tight)\b/i,
@@ -439,6 +440,7 @@
     modelHeightFt: /model[^.\d]{0,30}?(\d)\s*['’]\s*(\d{1,2})/i,
     bottoms: /\b(?:jeans?|denim|trousers?|pants?|chinos?|skirts?|shorts|culottes?|leggings|hose|rock)\b/i,
     bra: /\b(?:bras?|bralettes?|soutien-gorge|bh)\b/i,
+    notBra: /\bbra[- ]?free\b|\bbraless\b|\b(?:built[- ]in|shelf)[- ]bra\b/gi,
     // Only when nothing in the title is clothing: a dress with a belt is a dress.
     giftCard: /\b(?:e-?)?gift ?(?:cards?|vouchers?|certificates?)\b/i,
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
@@ -465,11 +467,13 @@
   }
 
   function analyzeText(text) {
-    const t = String(text || '');
+    // Shopbop's stretch scale ("Non-Stretch to Super-Stretch") names both ends whatever the fabric.
+    const t = String(text || '').replace(RE.stretchScale, ' ');
     const elastane = (t.match(RE.elastane) || [])[1];
     const elastanePct = elastane ? parseFloat(elastane.replace(',', '.')) : null;
     let stretch = 'unknown';
-    if (RE.rigid.test(t)) stretch = 'none';
+    // Elastane on the label is the fact; "rigid" can be a comparison ("the structure of rigid jeans").
+    if (RE.rigid.test(t) && !(elastanePct > 0)) stretch = 'none';
     else if (RE.high.test(t) || (elastanePct != null && elastanePct >= 3)) stretch = 'high';
     else if (RE.slight.test(t) || (elastanePct != null && elastanePct > 0)) stretch = 'slight';
     else if (RE.cotton100.test(t)) stretch = 'none';
@@ -823,13 +827,17 @@
     const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
     if (RE.giftCard.test(product.title || '')) return { ok: false, reason: 'This is a gift card, so there is no size to pick.' };
     if (kind === 'shoes') return recommendShoes(profile, product, found, signals, charts, reviews);
-    if (RE.bra.test(product.title || '')) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };
+    // "Bra-free" and "with built-in bra" describe a dress or a jumpsuit, not a bra.
+    if (RE.bra.test(String(product.title || '').replace(RE.notBra, ''))) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };
     const title = String(product.title || '');
     const labels = (product.sizes || []).map((s) => parseLabel(s.label));
     if (labels.length && labels.every((p) => p && p.system === 'one')) return { ok: false, reason: 'This comes in one size, so there is no size to pick.' };
-    if (RE.accessory.test(title) && ![RE.outerwear, RE.bottoms, RE.dress, RE.tops, RE.onePiece].some((re) => re.test(title))) {
+    const clothing = [RE.outerwear, RE.bottoms, RE.dress, RE.tops, RE.onePiece].some((re) => re.test(title));
+    if (RE.accessory.test(title) && !clothing) {
       return { ok: false, reason: 'Sizer sizes clothes and shoes, not accessories like this one.' };
     }
+    // M&S sells cupcakes on the same pages: no sizes and no garment named means nothing to size.
+    if (!labels.length && !clothing) return { ok: false, reason: 'This page shows no sizes and does not look like clothing, so there is no size to pick.' };
     // A brand known only for its jeans chart says nothing about its dresses or tops.
     const brand0 = found && found.system === 'denim' && kind !== 'bottoms' ? null : found;
 

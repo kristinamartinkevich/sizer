@@ -97,6 +97,17 @@ test('measurements win over wardrobe, and the wardrobe still reports disagreemen
   assert.ok(b.spread > 5);
 });
 
+// Found shopping as a tall persona: Shopbop prints a stretch scale ("Non-Stretch to Super-Stretch")
+// beside the fabric, and Madewell compares a jean to "rigid jeans"; both list elastane.
+test('a stretch scale or a comparison is not the stretch, and elastane on the label beats "rigid"', () => {
+  const shopbop = analyzeText('Fabric Stretch : Stretch ranging from Non-Stretch to Super-Stretch Non-Stretch Super-Stretch Fabric: Mid-weight stretch corduroy. Shell: 98% cotton/2% elastane');
+  assert.strictEqual(shopbop.stretch, 'slight');
+  const madewell = analyzeText('The fabric: combines the holds-you-in structure of rigid jeans with a touch of stretch. 96% cotton/3% elastomultiester/1% elastane.');
+  assert.notStrictEqual(madewell.stretch, 'none');
+  assert.strictEqual(analyzeText('Rigid denim, 100% cotton.').stretch, 'none');
+  assert.strictEqual(analyzeText('Stretch ranging from Non-Stretch to Super-Stretch. 100% cotton.').stretch, 'none');
+});
+
 // QA 2026-10-11: Zalando said "Customers say these fit tight around the ankle." above the picker, and
 // the sheet listed the fit note as None.
 test('a fit note about one part of the body is kept, though it does not move the size', () => {
@@ -285,6 +296,14 @@ test('a bra is not sized on a clothing chart', () => {
   assert.match(r.reason, /bras/);
 });
 
+test('a bra-free dress, or one with a built-in bra, is sized as a dress', () => {
+  for (const title of ['Women\'s Bra-Free High-Neck Forme Ruched Mini Dress', 'Bra Free Knit Midi Dress', 'Satin slip dress with built-in bra', 'Jersey jumpsuit with shelf bra']) {
+    const r = recommend(maya, { brand: 'Nobody', title, text: '', sizes: offered(['XS', 'S', 'M', 'L', 'XL']) });
+    assert.equal(r.ok, true, title);
+  }
+  assert.equal(recommend(maya, { brand: 'Nobody', title: 'Lace balconette bra', text: '', sizes: offered(['32B', '34B']) }).ok, false);
+});
+
 test('when your size is not among the page’s sizes, the answer says so and names what is offered', () => {
   const r = recommend(maya, { brand: 'Issey Miyake', title: 'Pleated maxi dress', text: '', sizes: offered(['2']), host: 'www.ssense.com' });
   assert.equal(r.matchedOnPage, false);
@@ -417,6 +436,15 @@ test('a gift card is not sized, even when its page talks about dresses or shoes'
     assert.equal(r.ok, false, title);
     assert.match(r.reason, /gift card/, title);
   }
+});
+
+// Found shopping as a tall persona: M&S's cupcake selection got "Rough guess EU 38".
+test('with no sizes on the page and nothing in the title that is clothing, nothing is sized', () => {
+  const cake = recommend(jo, { brand: 'M&S', title: 'Fantastically Fruity Cupcake Selection (Serves 12) by M&S', text: 'Twelve cupcakes.', sizes: [] });
+  assert.equal(cake.ok, false);
+  assert.match(cake.reason, /no sizes/);
+  assert.equal(recommend(jo, { brand: 'Nobody', title: 'Satin midi dress', text: '', sizes: [] }).ok, true);
+  assert.equal(recommend(jo, { brand: 'Nobody', title: 'Satin midi', text: '', sizes: offered(['8', '10', '12']) }).ok, true);
 });
 
 test('past every size on the page, the answer names the largest one there', () => {

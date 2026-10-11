@@ -211,6 +211,9 @@
   function isUnavailable(el, text) {
     const input = inputOf(el);
     if (el.disabled || el.getAttribute('aria-disabled') === 'true') return true;
+    // Everlane's page gives every size the same hidden "Variant sold out or unavailable" text; the
+    // option's own data-available says which really are.
+    if (el.dataset && el.dataset.available === 'true') return false;
     if (input && (input.disabled || input.getAttribute('aria-disabled') === 'true' || input.dataset.qty === '0' || input.dataset.available === 'false')) return true;
     const cls = `${typeof el.className === 'string' ? el.className : ''} ${el.parentElement && typeof el.parentElement.className === 'string' ? el.parentElement.className : ''}`;
     // Coast draws a sold-out size as a "crossed" overlay just before the button.
@@ -262,6 +265,9 @@
     try { return new URL(doc.baseURI); } catch { return null; }
   }
 
+  const SCREEN_READER = '.visually-hidden, .sr-only, .screen-reader-text, .screenreader-only, .u-visually-hidden';
+  const MEASUREMENT = /^\s*\d+(?:[.,]\d+)?\s*(?:"|”|″|cm|mm|inch(?:es)?)\s+[a-z]/i;
+
   // Size option elements currently in the page, with the size each one stands for.
   function optionElements(doc, parse) {
     const out = [];
@@ -273,7 +279,11 @@
       if (el.closest(NOT_THIS_PRODUCT) || inOtherCard(el, h1s, here)) continue;
       const text = spacedText(el) || clean(el.getAttribute('aria-label'));
       if (!text || text.length > 48) continue;
-      const p = parse(optionLabel(text));
+      // A garment's measurement, not a size: Anthropologie's '12.5" rise' in its size-and-fit panel.
+      if (MEASUREMENT.test(text)) continue;
+      // Everlane follows each size with screen-reader text ("23 Variant sold out or unavailable"): the
+      // size is read without it, while sold out is still read from all of it.
+      const p = parse(optionLabel(spacedText(el, SCREEN_READER) || text));
       if (!p) continue;
       out.push({ el, label: p.label.trim(), available: !isUnavailable(el, text) });
     }
@@ -498,8 +508,9 @@
     const fromLd = variantSizes(ld);
     const fromPage = domSizes(doc, engine.parseSizeLabel);
     // Nike's buttons read "UK 2.5" to "UK 9.5" where its product data has the same sizes as US 5 to
-    // 12: the shopper clicks the buttons, so the answer has to name one of them.
-    const renamed = fromPage.length >= 2 && fromPage.length === fromLd.length && !fromPage.some((d) => fromLd.some((l) => l.label === d.label));
+    // 12: the shopper clicks the buttons, so the answer has to name one of them. Some Nike pages list
+    // only the sizes in stock in the product data, so the buttons can be the longer list.
+    const renamed = fromPage.length >= 2 && fromPage.length >= fromLd.length && !fromPage.some((d) => fromLd.some((l) => l.label === d.label));
     const sizes = inOrder(fromLd.length && !renamed ? fromLd : fromPage.length ? fromPage : fromLd, engine.parseSizeLabel);
     const brandGuess = brand || ([title, h1, doc.title].map((s) => engine.findBrand(s)).find(Boolean) || {}).name || '';
     return {

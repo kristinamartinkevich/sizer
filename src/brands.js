@@ -38,6 +38,18 @@
     ],
   };
 
+  // Men's charts, for a men's item whoever wears it: letters by chest and waist, jeans and trousers
+  // by waist in inches (a 32 fits a 33 in waist), tailoring by chest in inches on UK and US shops or
+  // by EU size (half the chest in cm). Men's charts print no hip; it is set to the waist plus 16 cm.
+  const menRow = (label, value, bust, waist) => ({ label, value, bust, waist, hip: waist + 16 });
+  const MEN = {
+    letter: [['XXS', 84, 69], ['XS', 89, 74], ['S', 94, 79], ['M', 99, 84], ['L', 104, 89], ['XL', 109, 94], ['XXL', 114, 99], ['3XL', 119, 104], ['4XL', 124, 109], ['5XL', 129, 114]]
+      .map(([v, bust, waist]) => menRow(v, v, bust, waist)),
+    denim: denim(26, 46, 1, 8),
+    chest: [34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54].map((n) => menRow(String(n), n, +(n * IN).toFixed(1), +((n - 6) * IN).toFixed(1))),
+    eu: [42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64].map((n) => menRow(String(n), n, n * 2, n * 2 - 16)),
+  };
+
   // Women's clothing sizes across regions, one row per size: FR and EU and DE share a number,
   // IT is FR + 4, UK is FR − 28, US is UK − 4, and the letter most charts print beside it. From
   // FR 30 (US 00, XXXS) to FR 60 (UK 32); past 6XL a size has no letter.
@@ -93,7 +105,7 @@
     { id: 'other-stories', name: '& Other Stories', aliases: ['& other stories', 'and other stories', 'other stories'], system: 'eu', sizes: table([[32, 62, 88], [34, 66, 92], [36, 70, 96], [38, 74, 100], [40, 78, 104], [42, 83, 108]]), tendency: 0, note: '', guide: 'stories.com size guide' },
   ];
 
-  const api = { BRANDS, GENERIC, TO_EU, REGION, IN };
+  const api = { BRANDS, GENERIC, MEN, TO_EU, REGION, IN };
   root.SizerBrands = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

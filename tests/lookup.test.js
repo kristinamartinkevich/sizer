@@ -240,6 +240,8 @@ test('a lookup is wanted only for a sized answer on a brand with no chart', () =
   assert.equal(lookupFor({ ok: false, needsProfile: true }, product), null);
   assert.equal(lookupFor({ ok: true, brandKnown: false }, { brand: '', title: 'Midi dress' }), null);
   assert.equal(lookupFor(null, product), null);
+  // The charts it would find are women's, so a men's item does not wait for one.
+  assert.equal(lookupFor({ ok: true, brandKnown: false }, { brand: 'Helsa', title: "Helsa men's overshirt" }), null);
 });
 
 test('the looking-up line and its time limit', () => {

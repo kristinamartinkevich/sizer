@@ -1,0 +1,44 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping as a UK persona, 2026-10-12): M&S files a men's shirt under
+  "Men > Shirts" only in its breadcrumb; the title ("Pure Cotton Oxford Shirt") and the address
+  (/p/clp60512345) say nothing. Every chart Sizer had was a women's one, so a men's M read as a
+  women's M. The breadcrumb comes from the product data's BreadcrumbList. Markup trimmed from the
+  M&S product page; the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pure Cotton Oxford Shirt | Kestrel</title>
+  <script type="application/ld+json">
+  [{ "@context": "https://schema.org", "@type": "Product", "name": "Pure Cotton Oxford Shirt", "brand": { "@type": "Brand", "name": "Kestrel" },
+     "offers": { "@type": "Offer", "price": "29.50", "priceCurrency": "GBP" } },
+   { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+     { "@type": "ListItem", "position": 2, "name": "Men", "item": "https://www.kestrel.example/l/men" },
+     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.kestrel.example/" },
+     { "@type": "ListItem", "position": 3, "name": "Shirts", "item": "https://www.kestrel.example/l/men/shirts" } ] }]
+  </script>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #121212; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .size-list { display: flex; gap: 8px; list-style: none; padding: 0; }
+    .size-list button { min-width: 48px; height: 40px; border: 1px solid #121212; background: #fff; font: inherit; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Pure Cotton Oxford Shirt</h1>
+    <p>£29.50</p>
+    <div class="size-selector">
+      <ul class="size-list">
+        <li><button type="button">S</button></li>
+        <li><button type="button">M</button></li>
+        <li><button type="button">L</button></li>
+        <li><button type="button">XL</button></li>
+        <li><button type="button">XXL</button></li>
+      </ul>
+    </div>
+    <p>A regular fit Oxford shirt in pure cotton, with a button-down collar.</p>
+  </main>
+</body>
+</html>

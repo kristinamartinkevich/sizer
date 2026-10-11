@@ -1,6 +1,6 @@
 // Turns a shopper profile + a product page into one size recommendation with reasons.
 (function (root) {
-  const { BRANDS, GENERIC, TO_EU, REGION, IN } = root.SizerBrands || require('./brands.js');
+  const { BRANDS, GENERIC, MEN, TO_EU, REGION, IN } = root.SizerBrands || require('./brands.js');
   const Charts = root.SizerCharts || require('./charts.js');
   const RD = root.SizerReviewDetails || require('./review-details.js');
 
@@ -518,6 +518,42 @@
     return nums.every((n) => n >= 1 && n <= 15) || nums.every((n) => n >= 33 && n <= 50) ? 'shoes' : kind;
   }
 
+  // A men's item: its title says so, or the shop files it under men in its address or breadcrumb.
+  // "Women" holds "men", so whole words only, and a women's word anywhere wins.
+  // "Man" counts only where the shop files things (Zara's "MAN"): in a title it is Spider-Man.
+  const MEN_WORD = /(?:^|[^a-z])(?:men'?s?|mens|menswear|homme|hommes|herren|hombre|uomo|heren)(?:[^a-z]|$)/i;
+  const MAN_WORD = /(?:^|[^a-z])man(?:[^a-z]|$)/i;
+  const WOMEN_WORD = /(?:^|[^a-z])(?:women'?s?|womens|woman|ladies|lady|femme|femmes|damen|mujer|donna|dames|girls?)(?:[^a-z]|$)/i;
+  function forMen(product) {
+    if (!product) return false;
+    let path = '';
+    try { path = product.url ? decodeURIComponent(new URL(product.url).pathname) : ''; } catch { path = ''; }
+    const said = [product.title, product.section, path.replace(/[-_]/g, ' ')].map((t) => String(t || ''));
+    if (said.some((t) => WOMEN_WORD.test(t))) return false;
+    return said.some((t) => MEN_WORD.test(t)) || said.slice(1).some((t) => MAN_WORD.test(t));
+  }
+
+  // Which men's chart a page's sizes are read on: letters; jeans and trousers by waist; tailoring
+  // by chest in inches (UK and US numbers start under 42) or by EU size. Collar sizes (14.5 to 18)
+  // need a neck measurement Sizer does not have.
+  function menChartFor(product, kind) {
+    const parsed = (product.sizes || []).map((s) => parseSizeLabel(s.label)).filter(Boolean);
+    const nums = parsed.filter((p) => typeof p.value === 'number').map((p) => p.value);
+    if (nums.length && nums.length >= parsed.length / 2) {
+      if (nums.every((n) => n >= 13 && n <= 20)) return { collar: true };
+      if (kind === 'bottoms') return 'denim';
+      return Math.min(...nums) < 42 ? 'chest' : 'eu';
+    }
+    return kind === 'bottoms' && !parsed.length ? 'denim' : 'letter';
+  }
+
+  // The page's sizes in the men's chart's system: numbers become waists, chests or EU sizes; a
+  // jeans length ("32/32") stays.
+  function menSizes(sizes, system) {
+    return (sizes || []).map((l) => ({ ...l, parsed: parseSizeLabel(l.label) })).filter((l) => l.parsed && l.parsed.system !== 'one')
+      .map((l) => (system !== 'letter' && typeof l.parsed.value === 'number' ? { ...l, parsed: { ...l.parsed, system } } : l));
+  }
+
   function analyzeText(text, title) {
     // Shopbop's stretch scale ("Non-Stretch to Super-Stretch") names both ends whatever the fabric.
     // A fit scale names small, true to size and large at once, so it says none of them.
@@ -924,20 +960,28 @@
     }
     // M&S sells cupcakes on the same pages: no sizes and no garment named means nothing to size.
     if (!labels.length && !clothing) return { ok: false, reason: 'This page shows no sizes and does not look like clothing, so there is no size to pick.' };
+    // A men's item goes on a standard men's chart: the brand charts Sizer has are women's. It stands
+    // in for the brand so the page's sizes are read on it.
+    const men = forMen(product);
+    const menSystem = men ? menChartFor(product, kind) : null;
+    if (menSystem && menSystem.collar) return { ok: false, reason: 'This shirt is sized by collar, and Sizer doesn’t size by neck yet.' };
     // A brand known only for its jeans chart says nothing about its dresses or tops.
-    const brand0 = found && found.system === 'denim' && kind !== 'bottoms' ? null : found;
+    const brand0 = men ? { id: 'men', name: 'a standard men’s', system: menSystem, sizes: MEN[menSystem], men: true }
+      : found && found.system === 'denim' && kind !== 'bottoms' ? null : found;
 
     const body = bodyFromProfile(profile, charts);
     const needs = { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
     if (!body) return needs;
 
-    const pageSizes = resolveSizes(product.sizes || [], brand0 && brand0.system, ukShop(product));
+    const pageSizes = men ? menSizes(product.sizes, menSystem) : resolveSizes(product.sizes || [], brand0 && brand0.system, ukShop(product));
     const pageSystem = dominantSystem(pageSizes);
 
     // A jeans waist chart only for bottoms: "jeans" elsewhere on a dress's page is a menu or a link.
     const chartSystem = brand0 ? brand0.system : pageSystem && GENERIC[pageSystem] ? pageSystem : TO_EU[pageSystem] ? 'eu' : kind === 'bottoms' && signals.bottoms ? 'denim' : 'eu';
     const chart = runOnToPage(brand0 ? brand0.sizes : GENERIC[chartSystem], pageSizes, chartSystem);
     const brand = brand0 && chart !== brand0.sizes ? { ...brand0, sizes: chart } : brand0;
+    // The brand as the shopper knows it, with a chart of its own: not the men's stand-in.
+    const named = brand && !brand.men ? brand : null;
     const chartName = brand ? brand.name : 'a standard';
 
     // A garment chart and a piece you measured flat: compare garment to garment, no body in between.
@@ -948,13 +992,13 @@
     const keys = g2g ? garmentKeys : sizingKeys(kind, body, chart);
     if (!keys.length) {
       return body.bust != null && body.waist == null
-        ? { ...needs, reason: `${brand ? `${brand.name}’s` : 'This'} chart has no bust, so Sizer needs your waist and hip, or one piece you own.` }
+        ? { ...needs, reason: `${named ? `${named.name}’s` : 'This'} chart has no bust, so Sizer needs your waist and hip, or one piece you own.` }
         : needs;
     }
 
     const reasons = [];
     const rigid = signals.stretch === 'none';
-    const owned = g2g ? null : ownedPiece(profile, product, brand, kind, charts);
+    const owned = g2g || men ? null : ownedPiece(profile, product, brand, kind, charts);
     const ownedM = owned ? measure(owned.parsed, brand) : null;
     const ownedKeys = ownedM ? keys.filter((k) => typeof ownedM[k] === 'number') : [];
     const ownedPos = ownedKeys.length ? Math.round(ownedKeys.reduce((s, k) => s + position(chart, k, ownedM[k]), 0) / ownedKeys.length) + OWNED_STEP[owned.fit] : null;
@@ -963,10 +1007,10 @@
     if (mine) {
       reasons.push({ text: ownedSentence(owned), delta: null });
     } else if (g2g) {
-      reasons.push({ text: `Compared garment to garment with your ${joinNames(g2g.names)}: like ${chartName} ${approxLabel(chart, chartSystem, base, !brand)}.`, delta: null });
+      reasons.push({ text: `Compared garment to garment with your ${joinNames(g2g.names)}: like ${chartName} ${approxLabel(chart, chartSystem, base, !named)}.`, delta: null });
     } else {
       const sources = sourcesFor(profile, body.points, keys);
-      reasons.push({ text: `Your ${joinNames(sources)} fit${sources.length === 1 && !/measurements/.test(sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base, !brand)}.`, delta: null });
+      reasons.push({ text: `Your ${joinNames(sources)} fit${sources.length === 1 && !/measurements/.test(sources[0]) ? 's' : ''} like ${chartName} ${approxLabel(chart, chartSystem, base, !named)}.`, delta: null });
       if (brand && brand.garment) reasons.push({ text: `${brand.name} lists garment measurements, so Sizer allowed a little ease.`, delta: null });
     }
 
@@ -987,7 +1031,7 @@
     const webMove = webMoveFor(web, held);
     // What Sizer users who bought the brand said counts only when the page, its reviews and what others
     // say online about this item have not moved it.
-    const learned = !mine && !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, brand), kind) : null;
+    const learned = !mine && !men && !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, brand), kind) : null;
     const learnedNote = !!learned && (learned.verdict === 'small' || learned.verdict === 'large');
     const explicit = pageNote || buyersNote || !!webMove;
     const learnedStep = learnedNote ? (learned.verdict === 'small' ? 1 : -1) : 0;
@@ -1048,8 +1092,8 @@
     idx = Math.max(0, Math.min(chart.length - 1, idx));
     // More than half a size past either end of the chart: the end size is the closest it has, not a fit.
     const past = base > chart.length - 0.5 ? 'up' : base < -0.5 ? 'down' : null;
-    if (past === 'up') reasons.push({ text: `Your measurements are past the largest size on ${brand ? `${brand.name}’s` : 'this'} chart, so this is the closest it has.`, delta: null });
-    if (past === 'down') reasons.push({ text: `Your measurements are under the smallest size on ${brand ? `${brand.name}’s` : 'this'} chart, so this is the closest it has.`, delta: null });
+    if (past === 'up') reasons.push({ text: `Your measurements are past the largest size on ${named ? `${named.name}’s` : 'this'} chart, so this is the closest it has.`, delta: null });
+    if (past === 'down') reasons.push({ text: `Your measurements are under the smallest size on ${named ? `${named.name}’s` : 'this'} chart, so this is the closest it has.`, delta: null });
     const altIdx = !settled && !past && frac > 0.25 && frac < 0.75 ? idx + (roundedUp ? -1 : 1) : null;
 
     const headline = past === 'up' ? 'Larger than this chart goes'
@@ -1105,7 +1149,7 @@
     })();
     // A page that shows no sizes yet (Nordstrom loads them when the menu opens) gets the answer in
     // the shopper's own sizes: UK on a UK shop, else the region of the sizes in their profile.
-    const ownSystem = pageSizes.length ? null : ukShop(product) ? 'uk' : profileRegion(profile);
+    const ownSystem = pageSizes.length || men ? null : ukShop(product) ? 'uk' : profileRegion(profile);
     const nameIn = pageSystem || ownSystem;
     const prefix = pageSystem ? pagePrefix : ownSystem ? `${ownSystem.toUpperCase()} ` : '';
     const inPageSystem = (entry) => {
@@ -1124,7 +1168,7 @@
     const areas = withWebAreas(fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind), web, kind);
 
     let score = 0.4;
-    if (brand) score += 0.2 - tierPenalty(brand);
+    if (named) score += 0.2 - tierPenalty(named);
     else if (mine) score += 0.2;
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
@@ -1135,7 +1179,7 @@
     // Clothing sized on waist and hip alone is surest for bottoms; a top sized on the bust is not penalised.
     if (!signals.bottoms && !keys.includes('bust')) score -= 0.1;
     const confidence = score >= 0.75 ? 'High' : score >= 0.55 ? 'Medium' : 'Low';
-    const firmUp = mine ? null : !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
+    const firmUp = mine ? null : men ? 'There’s no men’s size chart for this brand yet, so this uses a standard one.' : !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
       : tierCaveat(brand) ? tierCaveat(brand)
       : body.spread > 5 ? 'Some of your sizes disagree. Check them in your fit profile.'
         : !corroborated ? 'Add another piece you own to firm this up.'
@@ -1154,10 +1198,10 @@
       confidence,
       score,
       firmUp,
-      brand: brand ? brand.name : product.brand || null,
-      brandKnown: !!brand,
-      guide: brand ? brand.guide || null : null,
-      source: brand && brand.source ? brand.source : null,
+      brand: named ? named.name : product.brand || null,
+      brandKnown: !!named,
+      guide: named ? named.guide || null : null,
+      source: named && named.source ? named.source : null,
       reasons,
       signals,
       reviews,
@@ -1286,7 +1330,8 @@
   // The lookup a sized answer asks for: only when the brand has no chart at all, never to replace one.
   function lookupFor(r, product) {
     const brand = String((product && product.brand) || '').trim();
-    if (!r || !r.ok || r.brandKnown !== false || !brand) return null;
+    // The charts a lookup finds are women's: a men's item does not wait for one.
+    if (!r || !r.ok || r.brandKnown !== false || !brand || forMen(product)) return null;
     const kind = productKind(product);
     // The chart database files coats under tops.
     return { brand, kind: kind === 'outerwear' ? 'tops' : kind };
@@ -1316,8 +1361,10 @@
   function recommendShoes(profile, product, found, signals, charts, reviews = analyzeReviews()) {
     const f = footFromProfile(profile, charts);
     if (!f) return { ok: false, needsProfile: true, reason: 'Add your foot length to your fit profile, and Sizer will size shoes for you.' };
-    const brand = found && found.shoes ? found : null;
-    const rows = brand ? brand.sizes : Charts.GENERIC_SHOES;
+    // Brand shoe charts are women's; a men's pair goes on the standard men's chart.
+    const men = forMen(product);
+    const brand = found && found.shoes && !men ? found : null;
+    const rows = brand ? brand.sizes : men ? Charts.GENERIC_SHOES_MEN : Charts.GENERIC_SHOES;
     const system = brand ? brand.system : 'eu';
     const pageSizes = resolveSizes(product.sizes || [], shoeNumberSystem(product));
 
@@ -1391,7 +1438,7 @@
     const LEVELS = ['Low', 'Medium', 'High'];
     const notches = !brand ? 0 : tierOfBrand(brand) === 5 ? 2 : tierPenalty(brand) ? 1 : 0;
     const confidence = !brand ? 'Low' : LEVELS[Math.max(0, (f.measured ? 2 : 1) - notches)];
-    const firmUp = !brand ? 'There’s no shoe chart for this brand yet, so this uses a standard EU chart.'
+    const firmUp = !brand ? `There’s no ${men ? 'men’s ' : ''}shoe chart for this brand yet, so this uses a standard EU chart.`
       : tierCaveat(brand) ? tierCaveat(brand)
       : !f.measured ? 'Add your foot length to firm this up.' : null;
 

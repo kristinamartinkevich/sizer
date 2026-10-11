@@ -63,6 +63,8 @@
       { name: 'fit-dimensions', base: 'https://www.anthropologie.example/en-gb/', brand: 'Pilar', title: /Kaya Cord/, sizes: 5, soldOut: ['24'], order: ['24', '25', '26', '27', '28'], size: '27', guide: null },
       { name: 'screen-reader-stock', base: 'https://www.urbanoutfitters.example/shop/kestrel-9060-sneaker', brand: 'Kestrel', title: /Kestrel 9060 Sneakers/, sizes: 8, soldOut: ['W 6/M 4.5', 'W 7.5/M 6', 'W 8/M 6.5', 'W 8.5/M 7'], size: undefined, guide: null },
       { name: 'fit-analytics-sizes', base: 'https://www.jdsports.example/product/white-kestrel-530-womens/16237972/', brand: 'Kestrel', title: /Kestrel 530/, sizes: 8, soldOut: ['5'], order: ['3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7'], size: undefined, guide: null },
+      { name: 'mens-breadcrumb', base: 'https://www.kestrel.example/p/clp60512345', brand: 'Kestrel', title: /Oxford Shirt/, sizes: 5, soldOut: [], section: 'Home > Men > Shirts', size: 'XS', guide: null },
+      { name: 'mens-nav-breadcrumb', base: 'https://www.kestrel.example/p/blue-slim-fit-jeans-940245', brand: 'Kestrel', title: /Slim Fit Jeans/, sizes: 5, soldOut: [], section: 'Home > Men > Jeans', size: '30', guide: null },
       { name: 'listing-filters', base: 'https://www.schuh.example/womens/', brand: '', title: /Women's shoes/i, sizes: 0, soldOut: [], size: undefined, guide: null, picker: false },
       { name: 'embedded-variations', base: 'https://www.aritzia.example/us/en/product/suite-satin-dress/132095.html', brand: 'Kestrel', title: /Suite Satin Dress/, sizes: 6, soldOut: ['XS', 'L', 'XL'], order: ['2XS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null, picker: false },
       { name: 'dimension-letters', base: 'https://www.anthropologie.example/shop/mabel-boxy-oxford-shirt', brand: 'Pilar', title: /Mabel Boxy Oxford Shirt/, sizes: 6, soldOut: [], order: ['XXS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null },
@@ -208,6 +210,7 @@
       if (shop.order) check(checks, 'size order', JSON.stringify(product.sizes.map((s) => s.label)) === JSON.stringify(shop.order), product.sizes.map((s) => s.label).join(' '));
       if ('isProduct' in shop) check(checks, 'is a product page', product.isProduct === shop.isProduct, product.isProduct);
       if (shop.currency) check(checks, 'currency', product.currency === shop.currency, product.currency);
+      if ('section' in shop) check(checks, 'section', product.section === shop.section, product.section);
       const signals = SizerEngine.analyzeText(product.text);
       const r = SizerEngine.recommend(PROFILE, product, null);
       if ('fitNote' in shop) check(checks, 'page fit note', (signals.fitNote || null) === shop.fitNote, signals.fitNote || 'none');

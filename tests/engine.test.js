@@ -698,6 +698,58 @@ test('a petite size the page does not list is named like the page: 00 among US n
   assert.equal(c.size, 'UK 4');
 });
 
+// ---- men's items, whoever wears them (2026-10-12) ----------------------------
+// Every chart was a women's one, so a man's M read as a women's M and a woman buying a men's hoodie
+// was sized as if it were cut like a women's one.
+const him = { anchors: [], height: '180', bust: '100', waist: '84', hip: '100' };
+
+test("a men's item is sized on a men's chart: letters by chest, jeans by waist, suits by chest", () => {
+  const tee = recommend(him, { brand: 'Nobody', title: "Men's Crew Neck T-Shirt", text: '', sizes: offered(['XS', 'S', 'M', 'L', 'XL', 'XXL']), url: 'https://www.example.com/men/t-shirts/crew-123' });
+  assert.equal(tee.size, 'M');
+  assert.match(tee.reasons[0].text, /men’s M/);
+  const jeans = recommend(him, { brand: 'Nobody', title: 'Slim Jeans', text: '', sizes: offered(['28', '30', '32', '34', '36']), url: 'https://www.example.com/mens/jeans/slim-123' });
+  assert.equal(jeans.size, '32');
+  const suit = recommend(him, { brand: 'Nobody', title: "Men's Wool Blazer", text: '', sizes: offered(['46', '48', '50', '52', '54']), url: 'https://www.example.de/herren/sakkos-123' });
+  assert.equal(suit.size, '50');
+  const chest = recommend(him, { brand: 'Nobody', title: "Men's Wool Blazer", text: '', sizes: offered(['36', '38', '40', '42', '44']), host: 'www.example.co.uk' });
+  assert.equal(chest.size, '40');
+  // The shop's breadcrumb says men's when the title and address do not.
+  const crumb = recommend(him, { brand: 'Nobody', title: 'Oxford Shirt', text: '', section: 'Home / Men / Shirts', sizes: offered(['S', 'M', 'L', 'XL']) });
+  assert.equal(crumb.size, 'M');
+  const wear = recommend(him, { brand: 'Nobody', title: 'Oxford Shirt', text: '', url: 'https://www.example.com/menswear/shirts/oxford-1', sizes: offered(['S', 'M', 'L', 'XL']) });
+  assert.equal(wear.size, 'M');
+  // Women's stay women's: the same body reads as a women's XL.
+  const hers = recommend(him, { brand: 'Nobody', title: "Women's Crew Neck T-Shirt", text: '', sizes: offered(['S', 'M', 'L', 'XL', 'XXL']), url: 'https://www.example.com/women/t-shirts/crew-123' });
+  assert.equal(hers.size, 'XL');
+  // A women's shirt "in a men's cut", filed under women, is still women's.
+  const cut = recommend(him, { brand: 'Nobody', title: "Oversized shirt in a men's cut", text: '', section: 'Women > Shirts', sizes: offered(['S', 'M', 'L', 'XL', 'XXL']) });
+  assert.equal(cut.size, 'XL');
+});
+
+test("a woman buying a men's hoodie gets the men's size, and a brand's women's chart stays out of it", () => {
+  const her = { anchors: [{ brand: 'Zara', type: 'jeans', size: '38', fit: 'perfect' }], bust: '112', waist: '96', hip: '122' };
+  const r = recommend(her, { brand: 'Zara', title: 'Oversized hoodie', text: '', section: 'Man > Sweatshirts', sizes: offered(['XS', 'S', 'M', 'L', 'XL', 'XXL']), url: 'https://www.zara.com/uk/en/oversized-hoodie-p123.html' });
+  assert.match(r.size, /^(XL|XXL)$/);
+  assert.equal(r.brandKnown, false);
+  assert.match(String(r.firmUp), /men’s/);
+  assert.ok(r.reasons.every((x) => !/Your Zara 38/.test(x.text)), JSON.stringify(r.reasons));
+});
+
+test("a men's shirt in collar sizes says so instead of guessing", () => {
+  const r = recommend(him, { brand: 'Nobody', title: "Men's Slim Fit Shirt", text: '', sizes: offered(['14.5', '15', '15.5', '16', '16.5', '17']), host: 'www.example.co.uk' });
+  assert.equal(r.ok, false);
+  assert.match(r.reason, /collar/);
+});
+
+test("men's US shoe numbers are a size and a half under women's", () => {
+  const her = { anchors: [{ brand: 'Clarks', type: 'shoes', size: 'UK 7', fit: 'perfect' }] };
+  const sizes = offered(['7', '7.5', '8', '8.5', '9', '9.5', '10', '11', '12']);
+  const r = recommend(her, { brand: 'Kestrel', title: "Men's Kestrel 90 Trainers", text: '', sizes, url: 'https://www.example.com/men/shoes/kestrel-90' });
+  assert.equal(r.size, '8');
+  const w = recommend(her, { brand: 'Kestrel', title: "Women's Kestrel 90 Trainers", text: '', sizes, url: 'https://www.example.com/women/shoes/kestrel-90' });
+  assert.equal(w.size, '9.5');
+});
+
 // JD Sports, 2026-10-11: "New Balance 530 Women's" names only the model, so it read as no clothing.
 test('a trainer named only by its model is shoes by its half sizes', () => {
   const her = { anchors: [{ brand: 'Clarks', type: 'shoes', size: 'UK 7', fit: 'perfect' }] };

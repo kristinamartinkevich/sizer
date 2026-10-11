@@ -528,6 +528,29 @@
     return { title, headings, picker };
   }
 
+  // Where the shop files the product ("Home > Men > Jeans"): its breadcrumb, from the product data
+  // or the page. It says a men's item is one when the title does not.
+  function sectionOf(doc) {
+    for (const el of doc.querySelectorAll('script[type="application/ld+json"]')) {
+      let data;
+      try { data = JSON.parse(el.textContent); } catch { continue; }
+      const stack = [data];
+      while (stack.length) {
+        const n = stack.pop();
+        if (!n || typeof n !== 'object') continue;
+        if (Array.isArray(n)) { stack.push(...n); continue; }
+        if ([].concat(n['@type'] || []).includes('BreadcrumbList')) {
+          const names = [].concat(n.itemListElement || []).sort((a, b) => (+a.position || 0) - (+b.position || 0))
+            .map((x) => clean(x && (x.name || (x.item && x.item.name)))).filter(Boolean);
+          if (names.length) return names.join(' > ').slice(0, 200);
+        }
+        if (n['@graph']) stack.push(n['@graph']);
+      }
+    }
+    const sel = '[itemtype*="BreadcrumbList"] [itemprop="name"], nav[aria-label*="readcrumb" i] li, [data-testid*="breadcrumb" i] a, [class*="breadcrumb" i] li';
+    return [...doc.querySelectorAll(sel)].map((el) => clean(el.textContent)).filter((t) => t && t.length <= 40).slice(0, 8).join(' > ');
+  }
+
   function extractProduct(doc, engine) {
     const ld = jsonLdProduct(doc);
     const ldBrand = ld && (typeof ld.brand === 'string' ? ld.brand : ld.brand && ld.brand.name);
@@ -567,6 +590,7 @@
       guideLink: guideLink(doc),
       guideImages: guideImages(doc),
       url: location.href,
+      section: sectionOf(doc),
       currency: currencyOf(doc, ld),
       // AllSaints fetches its sizes only when the menu opens; og:type still says it is a product.
       isProduct: !!ld || /^product\b/i.test(meta(doc, 'meta[property="og:type"]')) || (sizes.length >= 2 && !!(brandGuess || title)),

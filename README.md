@@ -161,7 +161,7 @@ description and photo addresses. `src/vinted.js` does the rest on the device:
 
 | Path | What it is |
 |---|---|
-| `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, generic charts, and the women's size conversion table (FR/EU, IT, UK, US, DE, letters) |
+| `src/brands.js` | Built-in approximate charts (body measurements per size) for 40 brands, generic women's and men's charts, and the women's size conversion table (FR/EU, IT, UK, US, DE, letters) |
 | `src/charts.js` | Turns the downloaded chart bundle into engine charts: cm, suspect rows dropped, one chart per kind of item |
 | `src/charts-store.js`, `src/background.js` | Daily download of charts from the Supabase project into `chrome.storage.local`, the one-off lookup of a brand with no chart, and the per-item fit-dossier request |
 | `src/engine.js` | Profile + page → size, reasons, confidence, stock fallback |
@@ -183,7 +183,8 @@ description and photo addresses. `src/vinted.js` does the rest on the device:
 
 - A looked-up chart is read by a model and is not checked by a person until someone flips it to
   verified in the dashboard; the sheet says so. A brand nobody can find a chart for falls back to the
-  built-in approximation, and the sheet says which it used. Women's charts only so far.
+  built-in approximation, and the sheet says which it used. Brand charts are women's; a men's
+  item goes on a standard men's chart, and men's shirts in collar sizes are not sized yet.
 - Clothing is strongest for jeans, trousers and skirts. Tops, dresses and coats use the bust and
   shoulder only when the brand's chart prints them; many built-in charts do not, so those fall back
   to waist and hip. Shoes need a foot length or a pair you own.

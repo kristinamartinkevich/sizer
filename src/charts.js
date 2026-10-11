@@ -143,7 +143,15 @@
     GENERIC_SHOES.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(eu - 33), us: String(eu - 30.5) } });
   }
 
-  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, GENERIC_FOOT, CHARTS_FOR };
+  // Men's shoes: the same foot for the same UK and EU size, but a men's US size is one over the UK
+  // where a women's is two and a half (a UK 7 is a men's US 8 and a women's US 9.5).
+  const GENERIC_SHOES_MEN = [];
+  for (let eu = 38; eu <= 48; eu++) {
+    const m = GENERIC_FOOT(eu);
+    GENERIC_SHOES_MEN.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(eu - 33), us: String(eu - 32) } });
+  }
+
+  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, GENERIC_SHOES_MEN, GENERIC_FOOT, CHARTS_FOR };
   root.SizerCharts = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -410,6 +410,21 @@ test("Depop's placeholder brands are no brand", () => {
   assert.strictEqual(Vinted.listingFrom({ host: 'www.depop.com', title: 'Linen dress', brand: '& Other Stories', size: 'Size M', category: ['Women', 'Dresses'] }).brand, '& Other Stories');
 });
 
+// eBay, 2026-10-12: a dead item address serves "Discover error | eBay", and Sizer showed its mark and
+// "The seller gives no size or measurements" on it.
+test('an error page at an item address is no listing', () => {
+  const error = Vinted.listingFrom({ host: 'www.ebay.com', title: 'Discover error | eBay', brand: '', size: '', condition: '', category: [], photos: [], options: [],
+    description: 'Get the best deals on error when you shop the largest online selection at eBay.com.' });
+  assert.strictEqual(Vinted.looksLikeListing(error), false);
+  for (const raw of [{ size: 'M' }, { brand: 'Kestrel' }, { condition: 'Used' }, { category: ['Women', 'Dresses'] }, { photos: ['https://i.ebayimg.com/a.jpg'] },
+    { options: [{ label: '12' }] }, { description: 'Pit to pit 50 cm' }]) {
+    assert.strictEqual(Vinted.looksLikeListing(Vinted.listingFrom({ host: 'www.ebay.com', title: 'Dress', ...raw })), true, JSON.stringify(raw));
+  }
+  const page = fs.readFileSync(path.join(__dirname, '..', 'src', 'vinted-page.js'), 'utf8');
+  const run = page.match(/async function run\(\) \{[\s\S]*?\n  \}/);
+  assert.ok(run && /const listing = readListing\(document, location\.hostname\);\s*if \(!Vinted\.looksLikeListing\(listing\)\) return;/.test(run[0]), 'run() stops before showing anything on a page that is no listing');
+});
+
 // eBay UK, 2026-10-12: a new dress in 14 to 22 has no Size row, only a "Size: Select" picker. Sizer
 // read "Select" as the label. It is sized on the sizes it offers, as a shop page is.
 test('a listing in several sizes is sized on the sizes it offers, in the line and the popup', () => {

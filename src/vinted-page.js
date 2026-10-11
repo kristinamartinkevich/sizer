@@ -235,6 +235,7 @@
     const at = page;
     const href = location.href;
     const listing = readListing(document, location.hostname);
+    if (!Vinted.looksLikeListing(listing)) return;
     [profile, charts] = await Promise.all([getProfile(), getCharts()]);
     if (!state.listing || state.listing.title !== listing.title || state.listing.brand !== listing.brand) pool = await poolFor(listing);
     if (at !== page || location.href !== href) return;

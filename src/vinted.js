@@ -411,6 +411,13 @@
   // your pieces or body come first; else the label on the brand's chart through the engine (passed in,
   // so this stays pure), with the brand's tendency and pooled reviews in its reasons. The message asks
   // for whatever the listing leaves out, in every mode.
+  // An item address can serve an error page ("Discover error | eBay"): with no size, brand,
+  // condition, category, photo, size option or measurement, it is no listing, and Sizer stays away.
+  function looksLikeListing(l) {
+    return !!(l && (l.size || l.sizeRaw || l.brand || l.condition || l.section || (l.photos && l.photos.length)
+      || (l.options && l.options.length) || Object.keys(l.have || {}).length));
+  }
+
   function answerFor(listing, profile, charts, engine, poolFit) {
     const l = listing || {};
     const message = sellerMessage({ kind: l.kind, lang: l.lang, have: l.have });
@@ -477,7 +484,7 @@
   const api = {
     parseMeasurements, wanted, sellerMessage, langOf, compare, NAMES, RANGE, ROUND_FROM_CM, isListingPath,
     areaLines, labelResult, COPY, kindOfListing, engineTitle, sizeLabel, listingFrom, mergeMeasurements,
-    answerFor, popupResult, hasProfile,
+    answerFor, popupResult, hasProfile, looksLikeListing,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SizerVinted = api;

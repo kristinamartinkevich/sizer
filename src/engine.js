@@ -484,6 +484,8 @@
     notBra: /\bbra[- ]?free\b|\bbraless\b|\b(?:built[- ]in|shelf)[- ]bra\b/gi,
     // Only when nothing in the title is clothing: a dress with a belt is a dress.
     giftCard: /\b(?:e-?)?gift ?(?:cards?|vouchers?|certificates?)\b/i,
+    // An option that is a quantity or a dimension, not a size: 1.5L, 500ml, 2 Pack, 10 x 15 cm, 128GB.
+    notSizeOption: /^\d+(?:\.\d+)?\s?(?:ml|cl|l|litres?|g|kg|gb|tb|oz|mm|cm|m)$|\b(?:pack|pcs|pieces|count|set of)\b|\d\s?x\s?\d+(?:\.\d+)?\s?(?:cm|mm|in|")/i,
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
     // Boot-cut, boot leg and American Eagle's "kick boot jean" are jeans, and an Oxford shirt is a
@@ -963,6 +965,10 @@
     }
     // M&S sells cupcakes on the same pages: no sizes and no garment named means nothing to size.
     if (!labels.length && !clothing) return { ok: false, reason: 'This page shows no sizes and does not look like clothing, so there is no size to pick.' };
+    // Amazon sells kettles in 1.5L, cases by phone and duvets in King on the same pages: with no
+    // garment named, options that are mostly not clothing sizes mean nothing to size.
+    const sizeLike = labels.filter((p, i) => p && !RE.notSizeOption.test(String(product.sizes[i].label).trim())).length;
+    if (labels.length && !clothing && sizeLike * 2 < labels.length) return { ok: false, reason: 'The options on this page are not clothing sizes, so there is no size to pick.' };
     // A men's item goes on a standard men's chart: the brand charts Sizer has are women's. It stands
     // in for the brand so the page's sizes are read on it.
     const men = forMen(product);

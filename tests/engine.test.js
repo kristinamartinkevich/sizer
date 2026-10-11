@@ -364,6 +364,25 @@ test('a letter size with a length, like Mx32, is read and picked with your insea
   assert.match(r.size, /x32$/);
 });
 
+test('options that are not clothing sizes get no size: a kettle, a phone case, a duvet cover', () => {
+  // Amazon sells everything on the same product page. Sizer answered "UK 22" on a kettle in 1.5L and
+  // 1.7L, a phone case by iPhone model and a duvet cover in Single to Super King.
+  const pages = [
+    ['Philips Series 5000 kettle', ['1.5L', '1.7L']],
+    ['Spigen silicone case', ['iPhone 15', 'iPhone 15 Pro', 'iPhone 15 Pro Max']],
+    ['Dreams duvet cover set', ['Single', 'Double', 'King', 'Super King']],
+    ['Bamboo storage box', ['2 Pack', '4 Pack']],
+    ['Picture frame', ['10 x 15 cm', '13 x 18 cm', 'A4']],
+  ];
+  for (const [title, labels] of pages) {
+    const r = recommend(maya, { brand: 'Nobody', title, text: '', sizes: offered(labels), host: 'www.amazon.co.uk' });
+    assert.equal(r.ok, false, `${title}: ${r.size}`);
+    assert.match(r.reason, /not clothing sizes/);
+  }
+  // Sizes that read as clothing are still sized, with no garment named.
+  assert.equal(recommend(maya, { brand: "Levi's", title: "Levi's 501 Original", text: '', sizes: offered(['26W / 30L', '28W / 30L', '30W / 30L']), host: 'www.amazon.co.uk' }).ok, true);
+});
+
 test('a bra is not sized on a clothing chart', () => {
   const r = recommend(maya, { brand: 'Fleur du Mal', title: 'Le Stretch Micro U-Plunge Bra', text: '67% nylon, 33% elastane', sizes: offered(['32', '34', '36', '38']) });
   assert.equal(r.ok, false);

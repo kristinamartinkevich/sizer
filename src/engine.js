@@ -543,7 +543,8 @@
     const parsed = (product.sizes || []).map((s) => parseSizeLabel(s.label)).filter(Boolean);
     const nums = parsed.filter((p) => typeof p.value === 'number').map((p) => p.value);
     if (nums.length && nums.length >= parsed.length / 2) {
-      if (nums.every((n) => n >= 13 && n <= 20)) return { collar: true };
+      // Collars run 13 to 22 inches, big and tall included; men's chests start at 34.
+      if (nums.every((n) => n >= 13 && n <= 22)) return { collar: true };
       if (kind === 'bottoms') return 'denim';
       return Math.min(...nums) < 42 ? 'chest' : 'eu';
     }

@@ -790,6 +790,11 @@ test("a men's shirt in collar sizes says so instead of guessing", () => {
   const r = recommend(him, { brand: 'Nobody', title: "Men's Slim Fit Shirt", text: '', sizes: offered(['14.5', '15', '15.5', '16', '16.5', '17']), host: 'www.example.co.uk' });
   assert.equal(r.ok, false);
   assert.match(r.reason, /collar/);
+  // M&S, 2026-10-12: collars from 14½ to 21. The check stopped at 20, so the shirt was sized by chest
+  // as "42" against a page of collar sizes.
+  const ms = recommend(him, { brand: 'M&S', title: 'Regular Fit Ultimate Non Iron Cotton Shirt', text: '100% cotton', sizes: offered(['14½', '15', '15½', '16', '16½', '17', '17½', '18', '18½', '19', '19½', '20', '20½', '21', '22']), host: 'www.marksandspencer.com', section: 'Home > Men > Shirts' });
+  assert.equal(ms.ok, false, ms.size);
+  assert.match(ms.reason, /collar/);
 });
 
 test("men's US shoe numbers are a size and a half under women's", () => {

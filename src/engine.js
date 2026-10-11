@@ -282,10 +282,8 @@
     if (!parsed) return null;
     if (parsed.system === 'number') parsed = { ...parsed, system: 'eu' };
     const row = shoeRow(parsed, brand ? brand.sizes : Charts.GENERIC_SHOES, brand ? brand.system : 'eu');
-    // The standard chart has whole EU sizes; a half size (UK 5.5 is EU 38.5) is read on the same line.
-    const EU_FROM = { eu: 0, uk: 33, us: 30.5 };
-    const halfway = !row && !brand && typeof parsed.value === 'number' && EU_FROM[parsed.system] != null
-      ? Charts.GENERIC_FOOT(parsed.value + EU_FROM[parsed.system]) : null;
+    // The standard chart has whole EU sizes; a size between its lines (UK 6, EU 38.5) is read as a foot.
+    const halfway = !row && !brand ? Charts.SHOE_FOOT(parsed.system, parsed.value, false) : null;
     if (!row && halfway == null) return null;
     const label = brand ? brand.name : a.brand || 'shoes';
     return { foot: +((row ? row.footMid : halfway) + (FOOT_SHIFT_CM[a.fit] || 0)).toFixed(2), name: `${label} ${a.size}`, brand };
@@ -1259,8 +1257,12 @@
       const b = brand && brand.shoes ? brand : null;
       const rows = b ? b.sizes : men ? Charts.GENERIC_SHOES_MEN : Charts.GENERIC_SHOES;
       const [s] = resolveSizes([{ label }], 'eu', ukShop(product));
-      const row = s && shoeRow(s.parsed, rows, b ? b.system : 'eu');
-      return done(row ? rows.indexOf(row) - result.pickIndex : null);
+      const row = s && b && shoeRow(s.parsed, rows, b.system);
+      if (b) return done(row ? rows.indexOf(row) - result.pickIndex : null);
+      // On the standard chart a label is a foot length, counted in its own sizes: a UK or US size is 8.47 mm, an EU size 6.67 mm.
+      const foot = s && Charts.SHOE_FOOT(s.parsed.system, s.parsed.value, men);
+      const step = s && s.parsed.system === 'eu' ? 0.667 : 0.847;
+      return done(foot == null ? null : Math.round((foot - rows[result.pickIndex].footMid) / step));
     }
     const chart = brand ? brand.sizes : GENERIC[result.chartSystem];
     const [s] = resolveSizes([{ label }], brand && brand.system, ukShop(product));
@@ -1436,10 +1438,25 @@
         const v = p.parsed.system === system ? r.value : r.aliases && +r.aliases[p.parsed.system];
         return typeof v === 'number' && !Number.isNaN(v) && v >= p.parsed.value && v < p.parsed.span + 1;
       };
-      const s = pageSizes.find((p) => shoeRow(p.parsed, [r], system)) || pageSizes.find(within);
+      const s = pageSizes.find((p) => shoeRow(p.parsed, [r], system)) || pageSizes.find(within) || nearestFoot(r);
       return s ? { label: s.label, available: s.available } : null;
     };
+    // On the standard chart, the page's size nearest the foot: up to half a size longer, or a hair
+    // shorter, so a UK 8.5 foot gets the page's 9 and never a whole size too small.
+    const pageFeet = brand ? [] : pageSizes.map((p) => ({ p, foot: Charts.SHOE_FOOT(p.parsed.system, p.parsed.value, men) })).filter((x) => x.foot != null);
+    function nearestFoot(r) {
+      const near = pageFeet.filter((x) => x.foot >= r.footMid - 0.2 && x.foot <= r.footMid + 0.45);
+      if (!near.length) return null;
+      return near.reduce((a, b) => {
+        const da = Math.abs(a.foot - r.footMid);
+        const db = Math.abs(b.foot - r.footMid);
+        return db < da - 0.01 || (Math.abs(db - da) <= 0.01 && (b.foot > a.foot || (b.p.available !== false && a.p.available === false))) ? b : a;
+      }).p;
+    }
     const label = (r) => (system === 'eu' ? `EU ${r.label}` : r.label);
+    // A size the page doesn't have is named the way the page names its sizes: UK 8.5 among UK numbers.
+    const pageSystem = pageSizes.length && pageSizes.every((p) => p.parsed.system === pageSizes[0].parsed.system) ? pageSizes[0].parsed.system : null;
+    const named = (r) => (!brand && (pageSystem === 'uk' || pageSystem === 'us') && r.aliases && r.aliases[pageSystem] ? `${pageSystem.toUpperCase()} ${r.aliases[pageSystem]}` : label(r));
     const pageMatch = matchOf(pick);
     const altMatch = alt ? matchOf(alt.row) : null;
     // Steps count the page's own buttons: Zalando's 7.5 beside a sold-out 8 is one size down, though
@@ -1448,7 +1465,11 @@
     const inStock = pageMatch && pageMatch.available === false
       ? nearestInStock(pageAt, pageSizes, (s) => pageSizes.indexOf(s), true)
       : null;
-    const size = pageMatch ? pageMatch.label : label(pick);
+    const size = pageMatch ? pageMatch.label : named(pick);
+    // Past every size the page has, either way: name the end it stops at.
+    const edge = !pageMatch && pageFeet.length && pageFeet.every((x) => x.foot < pick.footMid) ? { dir: 'largest', label: pageFeet.reduce((a, b) => (b.foot > a.foot ? b : a)).p.label }
+      : !pageMatch && pageFeet.length && pageFeet.every((x) => x.foot > pick.footMid) ? { dir: 'smallest', label: pageFeet.reduce((a, b) => (b.foot < a.foot ? b : a)).p.label }
+        : null;
 
     const headline = signals.fitNote === 'small' ? 'Runs small, sized up' : signals.fitNote === 'large' ? 'Runs large, sized down'
       : buyersNote && reviews.verdict === 'small' ? 'Buyers say it runs small, sized up'
@@ -1468,8 +1489,9 @@
       matchedOnPage: !!pageMatch,
       available: pageMatch ? pageMatch.available !== false : null,
       inStock,
-      stockText: pageMatch && pageMatch.available === false ? inStockText(size, inStock) : null,
-      alternative: alt ? { size: altMatch ? altMatch.label : label(alt.row), why: alt.why } : null,
+      stockText: pageMatch && pageMatch.available === false ? inStockText(size, inStock)
+        : !pageMatch && pageFeet.length ? notOfferedText(size, null, pageSizes, edge) : null,
+      alternative: alt ? { size: altMatch ? altMatch.label : named(alt.row), why: alt.why } : null,
       headline,
       confidence,
       firmUp,

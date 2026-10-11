@@ -175,7 +175,7 @@ test("placeLabel: a men's listing's label is placed on the men's chart", () => {
   const hers = Vinted.listingFrom(raw(['Women', 'Tops'], 'M', 'T-shirt'));
   assert.notStrictEqual(Vinted.answerFor(hers, HIM, null, Engine).verdict, 'fits');
   // Men's shoes: a men's US 9 is a UK 8.
-  const FOOT = { anchors: [], footLength: '26.4', unit: 'cm', fitPreference: 'regular' };
+  const FOOT = { anchors: [], footLength: '26.8', unit: 'cm', fitPreference: 'regular' }; // a UK 8 foot
   const shoes = Vinted.listingFrom({ host: 'www.ebay.com', title: 'Kestrel trainers', size: 'US 9', category: ['Men', "Men's Shoes", 'Trainers'], description: '' });
   assert.strictEqual(Vinted.answerFor(shoes, FOOT, null, Engine).verdict, 'fits');
 });
@@ -183,7 +183,7 @@ test("placeLabel: a men's listing's label is placed on the men's chart", () => {
 // Found shopping as a tall persona: Dr Martens on vinted.co.uk labelled "9" (UK 9) said only "Sizer
 // would pick EU 41 for you": the bare 9 was read as EU 9, which no shoe chart has.
 test('placeLabel: a bare shoe size on vinted.co.uk is a UK size, placed against your foot', () => {
-  const FOOT = { anchors: [], footLength: '26.4', unit: 'cm', fitPreference: 'regular' };
+  const FOOT = { anchors: [], footLength: '26.8', unit: 'cm', fitPreference: 'regular' }; // a UK 8 foot
   const at = (label) => Engine.placeLabel(FOOT, { brand: 'Dr. Martens', title: Vinted.engineTitle('shoes'), text: '', label, host: 'www.vinted.co.uk' }, null).steps;
   assert.strictEqual(at('8'), 0);
   assert.strictEqual(at('9'), 1);

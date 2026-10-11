@@ -110,7 +110,8 @@ test('bare shoe numbers that start under 5 are UK even without the shop', () => 
 test('bare shoe numbers from 5 up on a US shop are read as US', () => {
   const sizes = ['5', '6', '7', '8', '8.5', '9', '10'].map((label) => ({ label }));
   const r = recommend({ ...measured, footLength: '24.5' }, { brand: 'Some Label', title: 'Canvas trainers', text: '', sizes, host: 'www.nordstrom.com' }, bundle);
-  assert.equal(r.size, '8.5');
+  // A 24.5 cm foot is a women's US 8 on Nike's chart; UK and EU drift apart, so it is no longer EU 39 less 30.5.
+  assert.equal(r.size, '8');
 });
 
 test('a runs-small note moves shoes up a size too', () => {

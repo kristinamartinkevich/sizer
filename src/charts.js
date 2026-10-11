@@ -137,10 +137,22 @@
 
   // Standard women's EU shoe sizes as foot length in cm, for brands without a chart of their own.
   const GENERIC_FOOT = (eu) => +(eu * 2 / 3 - 1.2).toFixed(2);
+  // UK sizes are the same for men and women. A UK size is 8.47 mm and an EU size 6.67 mm, so the two
+  // drift apart up the run: EU 37 is a UK 4, EU 41 a UK 7 and EU 43 a UK 8.5, as Clarks's and Nike's
+  // charts have it, to the nearest half.
+  const UK_OF_EU = (eu) => Math.round((4 + ((eu - 37) * 6.67) / 8.47) * 2) / 2;
+  // A standard foot length in cm for a UK, US or EU shoe size, half sizes included. A men's US is one
+  // over the UK, a women's two and a half.
+  const SHOE_FOOT = (system, value, men) => {
+    if (typeof value !== 'number' || Number.isNaN(value)) return null;
+    const uk = system === 'uk' ? value : system === 'us' ? value - (men ? 1 : 2.5) : null;
+    if (system === 'eu') return GENERIC_FOOT(value);
+    return uk == null ? null : GENERIC_FOOT(37 + ((uk - 4) * 8.47) / 6.67);
+  };
   const GENERIC_SHOES = [];
   for (let eu = 35; eu <= 43; eu++) {
     const m = GENERIC_FOOT(eu);
-    GENERIC_SHOES.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(eu - 33), us: String(eu - 30.5) } });
+    GENERIC_SHOES.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(UK_OF_EU(eu)), us: String(UK_OF_EU(eu) + 2.5) } });
   }
 
   // Men's shoes: the same foot for the same UK and EU size, but a men's US size is one over the UK
@@ -148,10 +160,10 @@
   const GENERIC_SHOES_MEN = [];
   for (let eu = 38; eu <= 48; eu++) {
     const m = GENERIC_FOOT(eu);
-    GENERIC_SHOES_MEN.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(eu - 33), us: String(eu - 32) } });
+    GENERIC_SHOES_MEN.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(UK_OF_EU(eu)), us: String(UK_OF_EU(eu) + 1) } });
   }
 
-  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, GENERIC_SHOES_MEN, GENERIC_FOOT, CHARTS_FOR };
+  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, GENERIC_SHOES_MEN, GENERIC_FOOT, UK_OF_EU, SHOE_FOOT, CHARTS_FOR };
   root.SizerCharts = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

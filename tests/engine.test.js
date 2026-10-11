@@ -639,7 +639,7 @@ test('a waist with its US size beside it is the waist: Zara US "28 (US 6)"', () 
 test('a half size beside a sold-out shoe is the nearest in stock', () => {
   const labels = ['2.5', '3.5', '4', '5', '5.5', '6.5', '7.5', '8', '9', '9.5', '10.5'];
   const sold = new Set(['8', '9', '9.5', '10.5']);
-  const r = recommend({ footLength: '26.4', anchors: [] }, { brand: 'Anna Field', title: 'Classic heels', text: '', sizes: labels.map((label) => ({ label, available: !sold.has(label) })), host: 'www.zalando.co.uk', currency: 'GBP' });
+  const r = recommend({ footLength: '26.8', anchors: [] }, { brand: 'Anna Field', title: 'Classic heels', text: '', sizes: labels.map((label) => ({ label, available: !sold.has(label) })), host: 'www.zalando.co.uk', currency: 'GBP' });
   assert.equal(r.size, '8');
   assert.equal(r.stockText, 'Sold out in 8. Nearest in stock: 7.5, one size down.');
 });
@@ -799,6 +799,21 @@ test("men's US shoe numbers are a size and a half under women's", () => {
   assert.equal(r.size, '8');
   const w = recommend(her, { brand: 'Kestrel', title: "Women's Kestrel 90 Trainers", text: '', sizes, url: 'https://www.example.com/women/shoes/kestrel-90' });
   assert.equal(w.size, '9.5');
+});
+
+// Found shopping as a man with a 27.5 cm foot, 2026-10-12. Nike's chart puts 27.5 cm at men's US 9.5
+// and UK 8.5; Sizer said US 11 on Nike and UK 10 on JD Sports, reading UK as EU less 33 all the way up.
+// On John Lewis's women's boots in UK 3 to 8 it said "EU 43", a size no button on the page has.
+test('shoe sizes follow the foot: men’s US 9.5 for 27.5 cm, the nearest half size up, and a page that stops short says so', () => {
+  const foot = { anchors: [], footLength: '27.5', unit: 'cm' };
+  const nike = recommend(foot, { brand: 'Nike', title: "Nike Air Max Metro Men's Shoes", text: '', sizes: offered(['7', '8', '9', '9.5', '10', '10.5', '11', '12']), host: 'www.nike.com', url: 'https://www.nike.com/t/air-max-metro' });
+  assert.equal(nike.size, '9.5');
+  const jd = recommend(foot, { brand: 'ASICS', title: 'Black ASICS GEL-1130', text: '', sizes: offered(['7.5', '8', '9', '9.5', '10', '11']), host: 'www.jdsports.co.uk', section: 'Home > Men > Footwear', currency: 'GBP' });
+  assert.equal(jd.size, '9', 'UK 8.5 is not on the page; 9 is half a size up');
+  const boots = recommend(foot, { brand: 'Dune London', title: 'Dune London Paicing Leather Side Zip Ankle Boots, Black', text: '', sizes: offered(['3', '4', '5', '6', '7', '8']), host: 'www.johnlewis.com', currency: 'GBP' });
+  assert.equal(boots.size, 'UK 8.5');
+  assert.equal(boots.matchedOnPage, false);
+  assert.equal(boots.stockText, 'UK 8.5 is not offered on this page: the largest here is 8.');
 });
 
 // JD Sports, 2026-10-11: "New Balance 530 Women's" names only the model, so it read as no clothing.

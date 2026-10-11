@@ -1,0 +1,43 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping as a US persona, 2026-10-11): Aritzia shows its sizes in a "Select a
+  Size" menu that draws them only when opened, and its product data has no size list. Sizer found no
+  sizes and answered from a standard chart. The page's own state (Salesforce Commerce's variation
+  attributes) does name every size, and each variant says whether it can be ordered. Markup trimmed
+  from Aritzia's product page; the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Suite Satin Dress | Kestrel</title>
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "Product", "name": "Suite Satin Dress", "brand": { "@type": "Brand", "name": "Kestrel" },
+    "offers": { "@type": "Offer", "price": "138.00", "priceCurrency": "USD" } }
+  </script>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #111; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .select-size { display: flex; justify-content: space-between; width: 340px; height: 44px; padding: 0 12px; border: 1px solid #111; background: #fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Suite Satin Dress</h1>
+    <p>$138</p>
+    <p>Model is 5'9.5"/176cm wearing a size S</p>
+    <button type="button" class="select-size" aria-haspopup="listbox" aria-expanded="false">Select a Size <span aria-hidden="true">v</span></button>
+    <p>Double satin mini slip dress with lace trim. 56% recycled polyester.</p>
+  </main>
+  <script type="application/json" id="preloaded-state">
+    {"productStore":{"productsById":{"132095":{"id":"132095","name":"SUITE SATIN DRESS","brand":"Kestrel","variants":[
+      {"productId":"132095010","orderable":true,"price":138,"variationValues":{"color":"1626","size":"138"}},
+      {"productId":"132095011","orderable":false,"price":138,"variationValues":{"color":"1626","size":"14"}},
+      {"productId":"132095012","orderable":true,"price":138,"variationValues":{"color":"1626","size":"3"}},
+      {"productId":"132095013","orderable":true,"price":138,"variationValues":{"color":"1626","size":"4"}},
+      {"productId":"132095014","orderable":false,"price":138,"variationValues":{"color":"1626","size":"5"}},
+      {"productId":"132095015","orderable":false,"price":138,"variationValues":{"color":"1626","size":"55"}}],
+      "variationAttributes":{"color":{"id":"color","name":"Colour","values":[{"id":"1626","name":"Lt Br/Spklg Chmpgn"}]},
+      "size":{"id":"size","name":"Size","values":[{"id":"138","name":"2XS"},{"id":"14","name":"XS"},{"id":"3","name":"S"},{"id":"4","name":"M"},{"id":"5","name":"L"},{"id":"55","name":"XL"}]}}}}}}
+  </script>
+</body>
+</html>

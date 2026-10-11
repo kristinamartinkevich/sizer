@@ -158,8 +158,10 @@
   function inferNumberSystem(values, hint, uk) {
     const nums = values.filter((v) => typeof v === 'number');
     const small = nums.length && nums.every((n) => n <= 24);
-    // A denim waist starts at 22, so 8 to 16 under a denim chart are dress sizes, not waists.
-    if (hint === 'denim' && nums.length && nums.every((n) => n < 22)) return uk ? 'uk' : 'us';
+    // A denim waist starts at 22, so 8 to 16 under a denim chart are dress sizes, not waists. So is a
+    // run that starts at 00 to 4 and mostly sits under 22, though its plus sizes go on to 30 (Old Navy).
+    const dressRun = nums.length && Math.min(...nums) <= 4 && nums.filter((n) => n < 22).length * 2 > nums.length;
+    if ((hint === 'denim' && nums.length && nums.every((n) => n < 22)) || ((hint === 'denim' || !hint) && dressRun)) return uk ? 'uk' : 'us';
     if (hint === 'denim' || hint === 'us' || hint === 'uk') return hint;
     if (small) return uk ? 'uk' : 'us';
     if (hint === 'eu') return hint;
@@ -186,6 +188,10 @@
     }
     const numSystem = inferNumberSystem(parsed.filter((l) => l.parsed.system === 'number').map((l) => l.parsed.value), hint, uk);
     for (const l of parsed) if (l.parsed.system === 'number') l.parsed = { ...l.parsed, system: numSystem };
+    // US juniors' sizes run odd, 1 to 15 (Fashion Nova), and sit about one under the even sizes: a
+    // junior 11 fits like a 10. Matched as that even size, shown as the page's own label.
+    const odd = parsed.filter((l) => l.parsed.system === 'us' && Number.isInteger(l.parsed.value) && l.parsed.value % 2 === 1 && l.parsed.value <= 15);
+    if (odd.length >= 4) for (const l of odd) l.parsed = { ...l.parsed, value: l.parsed.value - 1 };
     return parsed;
   }
 
@@ -1045,9 +1051,14 @@
       const m = l && String(l.label).match(/^([A-Za-z]+ ?)\d/);
       return m ? m[1] : '';
     })();
+    // A page that shows no sizes yet (Nordstrom loads them when the menu opens) gets the answer in
+    // the shopper's own sizes: UK on a UK shop, else the region of the sizes in their profile.
+    const ownSystem = pageSizes.length ? null : ukShop(product) ? 'uk' : profileRegion(profile);
+    const nameIn = pageSystem || ownSystem;
+    const prefix = pageSystem ? pagePrefix : ownSystem ? `${ownSystem.toUpperCase()} ` : '';
     const inPageSystem = (entry) => {
-      const v = pageSystem && pageSystem !== chartSystem ? convertSize(entry.value, chartSystem, pageSystem) : null;
-      return v != null ? `${pagePrefix}${v}` : displayLabel(entry, chartSystem, brand);
+      const v = nameIn && nameIn !== chartSystem ? convertSize(entry.value, chartSystem, nameIn) : null;
+      return v != null ? `${prefix}${v}` : displayLabel(entry, chartSystem, brand);
     };
     const size = pageMatch ? pageMatch.label : inPageSystem(pick);
     // Past every size the page has, either way: name the end it stops at.
@@ -1233,6 +1244,12 @@
   // ---- shoes: one dimension, read straight off the chart ---------------------
 
   const cm = (n) => String(+(+n).toFixed(1));
+
+  // The region a shopper's own sizes are in, when they are all UK or all US: "US 10" in the profile.
+  function profileRegion(profile) {
+    const systems = new Set(((profile && profile.anchors) || []).map((a) => parseSizeLabel(a.size || '')).filter((p) => p && (p.system === 'us' || p.system === 'uk')).map((p) => p.system));
+    return systems.size === 1 ? [...systems][0] : null;
+  }
 
   // Bare shoe numbers on a page: EU from 30 up. Under 16 they are UK on a UK shop, else UK when the
   // list goes under 5 (women's US sizes rarely do), else US.

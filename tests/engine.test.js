@@ -117,6 +117,37 @@ test('a product card or a details list is not a fit note', () => {
   assert.match(analyzeText('Customers say these fit tight around the ankle.').fitDetail, /tight around the ankle/);
 });
 
+// Old Navy, 2026-10-11: trousers in US sizes 00 to 30 were read as jeans waists, because the plus
+// sizes run past 22, so a W31 shopper got size 30, a US plus size.
+test('US sizes from 00 into the plus range are US sizes, not waists', () => {
+  const sizes = offered(['00', '0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30']);
+  assert.deepEqual([...new Set(resolveSizes(sizes, 'denim').map((l) => l.parsed.system))], ['us']);
+  assert.deepEqual([...new Set(resolveSizes(sizes).map((l) => l.parsed.system))], ['us']);
+  const r = recommend(maya, { brand: 'Old Navy', title: 'Extra High-Waisted Taylor Wide-Leg Trouser Pants', text: '94% polyester, 6% elastane', sizes, url: 'https://oldnavy.gap.com/browse/product.do?pid=791404012', host: 'oldnavy.gap.com' });
+  assert.ok(+r.size >= 6 && +r.size <= 14, r.size);
+  // Real waists still read as waists.
+  assert.deepEqual([...new Set(resolveSizes(offered(['24', '25', '26', '27', '28', '29', '30', '31', '32'])).map((l) => l.parsed.system))], ['denim']);
+});
+
+// Fashion Nova, 2026-10-11: jeans in juniors' sizes 1, 3 ... 15 told a US 10 shopper "10 is not
+// offered. Nearest in stock: 14 Plus, two sizes up", with 9 and 11 on the page.
+test("US juniors' odd sizes are matched as the even size they fit like", () => {
+  const sizes = offered(['0', '1', '3', '5', '7', '9', '11', '13', '15', '14 Plus', '16 Plus']);
+  const r = recommend(maya, { brand: 'Fashion Nova', title: 'In Sync Stretch Crossover Straight Leg Jeans', text: '99% cotton, 1% elastane', sizes, url: 'https://www.fashionnova.com/products/in-sync', host: 'www.fashionnova.com' });
+  assert.ok(['9', '11'].includes(r.size), r.size);
+  assert.equal(r.matchedOnPage, true);
+});
+
+// Nordstrom, 2026-10-11: the sizes load only when the size menu opens, so the page shows none, and a
+// shopper whose own sizes are all US was told "EU 44".
+test("with no sizes on the page, the answer is in the shopper's own sizes", () => {
+  const us = { ...maya, anchors: [{ brand: 'J.Crew', type: 'dresses', size: 'US 10', fit: 'perfect' }] };
+  const dress = { brand: 'Vince Camuto', title: 'Cowl Neck Velvet Midi Dress', text: '', sizes: [], url: 'https://www.nordstrom.com/s/x/9210004', host: 'www.nordstrom.com' };
+  assert.match(recommend(us, dress).size, /^US \d+$/);
+  assert.match(recommend(maya, { ...dress, currency: 'GBP' }).size, /^UK \d+$/);
+  assert.match(recommend(maya, dress).size, /^EU \d+$/);
+});
+
 // RIXO, 2026-10-11: the reviews' fit scale labels its ends "How it fits Small Just Right Big", whatever
 // the reviews say, and Sizer read "fits Small" as the page saying it runs small. The same kind of scale
 // reads "Runs Small True to Size Runs Large" elsewhere, which named all three at once.

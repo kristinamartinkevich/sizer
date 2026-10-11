@@ -44,6 +44,26 @@
 
   const OUT_OF_STOCK = /OutOfStock|SoldOut|Discontinued/i;
 
+  // Sizes from the page's own state, for a size menu that draws its options only when opened
+  // (Aritzia): Salesforce Commerce's variation attribute {"id":"size","name":"Size","values":[...]},
+  // with each variant's "orderable" for the stock.
+  function embeddedSizes(doc) {
+    for (const s of doc.querySelectorAll('script:not([src]):not([type="application/ld+json"])')) {
+      const text = s.textContent || '';
+      const m = text.match(/"id"\s*:\s*"size"\s*,\s*"name"\s*:\s*"[^"]*"\s*,\s*"values"\s*:\s*(\[[^\]]*\])/);
+      if (!m) continue;
+      let values;
+      try { values = JSON.parse(m[1]); } catch { continue; }
+      const orderable = {};
+      for (const v of text.matchAll(/"orderable"\s*:\s*(true|false)[^{}]*?"variationValues"\s*:\s*\{[^}]*?"size"\s*:\s*"([^"]+)"/g)) {
+        orderable[v[2]] = orderable[v[2]] || v[1] === 'true';
+      }
+      const out = values.filter((v) => v && v.name).map((v) => ({ label: clean(String(v.name)), available: v.id in orderable ? orderable[v.id] : undefined }));
+      if (out.length) return out;
+    }
+    return [];
+  }
+
   function variantSizes(ld) {
     const variants = ld && [].concat(ld.hasVariant || []);
     if (!variants || !variants.length) return [];
@@ -527,7 +547,8 @@
     // 12: the shopper clicks the buttons, so the answer has to name one of them. Some Nike pages list
     // only the sizes in stock in the product data, so the buttons can be the longer list.
     const renamed = fromPage.length >= 2 && fromPage.length >= fromLd.length && !fromPage.some((d) => fromLd.some((l) => l.label === d.label));
-    const sizes = inOrder(fromLd.length && !renamed ? fromLd : fromPage.length ? fromPage : fromLd, engine.parseSizeLabel);
+    const read = fromLd.length && !renamed ? fromLd : fromPage.length ? fromPage : fromLd;
+    const sizes = inOrder(read.length ? read : embeddedSizes(doc), engine.parseSizeLabel);
     const brandGuess = brand || ([title, h1, doc.title].map((s) => engine.findBrand(s)).find(Boolean) || {}).name || '';
     return {
       brand: brandGuess,

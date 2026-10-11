@@ -63,10 +63,11 @@
       { name: 'fit-dimensions', base: 'https://www.anthropologie.example/en-gb/', brand: 'Pilar', title: /Kaya Cord/, sizes: 5, soldOut: ['24'], order: ['24', '25', '26', '27', '28'], size: '27', guide: null },
       { name: 'screen-reader-stock', base: 'https://www.urbanoutfitters.example/shop/kestrel-9060-sneaker', brand: 'Kestrel', title: /Kestrel 9060 Sneakers/, sizes: 8, soldOut: ['W 6/M 4.5', 'W 7.5/M 6', 'W 8/M 6.5', 'W 8.5/M 7'], size: undefined, guide: null },
       { name: 'listing-filters', base: 'https://www.schuh.example/womens/', brand: '', title: /Women's shoes/i, sizes: 0, soldOut: [], size: undefined, guide: null, picker: false },
+      { name: 'embedded-variations', base: 'https://www.aritzia.example/us/en/product/suite-satin-dress/132095.html', brand: 'Kestrel', title: /Suite Satin Dress/, sizes: 6, soldOut: ['XS', 'L', 'XL'], order: ['2XS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null, picker: false },
       { name: 'dimension-letters', base: 'https://www.anthropologie.example/shop/mabel-boxy-oxford-shirt', brand: 'Pilar', title: /Mabel Boxy Oxford Shirt/, sizes: 6, soldOut: [], order: ['XXS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null },
       { name: 'hidden-label-text', base: 'https://www.wren.example/', brand: 'Wren', title: /The Way-High Jean/, sizes: 5, soldOut: ['24', '28'], order: ['24', '25', '26', '27', '28'], size: '27', guide: null },
       { name: 'mixed-shoe-labels', base: 'https://www.zalando.co.uk/', brand: 'Kestrel Sportswear', title: /COURT LOW/, sizes: 6, soldOut: ['6 (39)'], order: ['5', '5.5', '6 (39)', '6 (40)', '6.5', '7'], size: undefined, guide: null },
-      { name: 'og-product', base: 'https://www.strand.com/', brand: 'Strand', title: /Berletta Velvet Maxi Dress/, sizes: 0, soldOut: [], isProduct: true, currency: 'GBP', size: 'EU 38', guide: null },
+      { name: 'og-product', base: 'https://www.strand.com/', brand: 'Strand', title: /Berletta Velvet Maxi Dress/, sizes: 0, soldOut: [], isProduct: true, currency: 'GBP', size: 'UK 10', guide: null },
       { name: 'ld-unsorted-letters', base: 'https://www.maren.example/en-gb/turtleneck-in-check-merino-A1150077.html', brand: 'Maren', title: /Turtleneck in Check Merino/, sizes: 6, soldOut: ['M'], picker: false, order: ['XXS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null },
       { name: 'ld-unsorted', base: 'https://www.vesna.com/en-gb/', brand: 'Vesna', title: /Dress in Leopard Denim/, sizes: 7, soldOut: ['44'], picker: false, order: ['32', '34', '36', '38', '40', '42', '44'], size: '38', guide: null },
       { name: 'bundle-cards', base: 'https://www.lark.example/product/lark-honoured-plunge-maxi-dress_blk10031', brand: 'Lark', title: /Honoured Plunge Maxi Dress/, sizes: 8, soldOut: ['16', '18', '20', '22'], order: ['8', '10', '12', '14', '16', '18', '20', '22'], size: '10', guide: null },
@@ -154,7 +155,7 @@
 
     async function load(shop) {
       const html = await fetch(`fixtures/shops/${shop.name}.html`).then((r) => r.text());
-      const doc = new DOMParser().parseFromString(html.replace(/<script\b(?![^>]*ld\+json)[^>]*>[\s\S]*?<\/script>/gi, ''), 'text/html');
+      const doc = new DOMParser().parseFromString(html.replace(/<script\b(?![^>]*(?:ld\+json|application\/json))[^>]*>[\s\S]*?<\/script>/gi, ''), 'text/html');
       const base = doc.createElement('base'); base.href = shop.base; doc.head.prepend(base);
       // Layout matters for findPicker (visibility), so the document goes into a real frame.
       const frame = document.createElement('iframe');

@@ -402,6 +402,9 @@
     modelHeightFt: /model[^.\d]{0,30}?(\d)\s*['’]\s*(\d{1,2})/i,
     bottoms: /\b(?:jeans?|denim|trousers?|pants?|chinos?|skirts?|shorts|culottes?|leggings|hose|rock)\b/i,
     bra: /\b(?:bras?|bralettes?|soutien-gorge|bh)\b/i,
+    // Only when nothing in the title is clothing: a dress with a belt is a dress.
+    accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
+    onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
     shoes: /\b(?:sneakers?|trainers?|shoes?|boots?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
@@ -730,6 +733,23 @@
     return system === 'denim' ? `${tag}${chart[i].label}½` : `between ${tag}${chart[i].label} and ${chart[i + 1].label}`;
   }
 
+  // A chart that stops short of sizes the page sells, in the chart's own system, runs on to them at
+  // the step of its last two rows (Abercrombie's ends at 37; the page sells 38). Not garment charts.
+  function runOnToPage(chart, pageSizes, system) {
+    if (!chart || chart.length < 2 || chart.some((r) => r.garment || typeof r.value !== 'number')) return chart;
+    const values = pageSizes.filter((s) => s.parsed.system === system && typeof s.parsed.value === 'number').map((s) => s.parsed.value);
+    const keys = ['waist', 'hip', 'bust', 'shoulder'].filter((k) => chart.every((r) => typeof r[k] === 'number'));
+    const step = (a, b, v) => {
+      const row = { label: String(v), value: v };
+      for (const k of keys) row[k] = +(b[k] + ((b[k] - a[k]) / (b.value - a.value)) * (v - b.value)).toFixed(1);
+      return row;
+    };
+    // Upward only: a chart can start late because a wrong row was dropped, and that row stays out.
+    const last = chart[chart.length - 1];
+    const above = values.filter((v) => v > last.value).sort((x, y) => x - y).map((v) => step(chart[chart.length - 2], last, v));
+    return above.length ? [...chart, ...above] : chart;
+  }
+
   // Which measurements size this kind of item on this chart. Bottoms run on waist and hip; tops on
   // the bust; dresses on bust, waist and hip; outerwear on bust and shoulder. Each needs the body
   // value and a number in every row of the chart, else it falls back to waist and hip.
@@ -764,18 +784,24 @@
     const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
     if (kind === 'shoes') return recommendShoes(profile, product, found, signals, charts, reviews);
     if (RE.bra.test(product.title || '')) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };
+    const title = String(product.title || '');
+    if (RE.accessory.test(title) && ![RE.outerwear, RE.bottoms, RE.dress, RE.tops, RE.onePiece].some((re) => re.test(title))) {
+      return { ok: false, reason: 'Sizer sizes clothes and shoes, not accessories like this one.' };
+    }
     // A brand known only for its jeans chart says nothing about its dresses or tops.
-    const brand = found && found.system === 'denim' && kind !== 'bottoms' ? null : found;
+    const brand0 = found && found.system === 'denim' && kind !== 'bottoms' ? null : found;
 
     const body = bodyFromProfile(profile, charts);
     const needs = { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
     if (!body) return needs;
 
-    const pageSizes = resolveSizes(product.sizes || [], brand && brand.system, ukShop(product));
+    const pageSizes = resolveSizes(product.sizes || [], brand0 && brand0.system, ukShop(product));
     const pageSystem = dominantSystem(pageSizes);
 
-    const chartSystem = brand ? brand.system : pageSystem && GENERIC[pageSystem] ? pageSystem : TO_EU[pageSystem] ? 'eu' : signals.bottoms ? 'denim' : 'eu';
-    const chart = brand ? brand.sizes : GENERIC[chartSystem];
+    // A jeans waist chart only for bottoms: "jeans" elsewhere on a dress's page is a menu or a link.
+    const chartSystem = brand0 ? brand0.system : pageSystem && GENERIC[pageSystem] ? pageSystem : TO_EU[pageSystem] ? 'eu' : kind === 'bottoms' && signals.bottoms ? 'denim' : 'eu';
+    const chart = runOnToPage(brand0 ? brand0.sizes : GENERIC[chartSystem], pageSizes, chartSystem);
+    const brand = brand0 && chart !== brand0.sizes ? { ...brand0, sizes: chart } : brand0;
     const chartName = brand ? brand.name : 'a standard';
 
     // A garment chart and a piece you measured flat: compare garment to garment, no body in between.
@@ -895,8 +921,10 @@
     const inseam = body.inseam;
     const pick = chart[idx];
     const pageMatch = matchPageSize(pick, pageSizes, brand, inseam, keys);
-    const alt = altIdx != null && altIdx >= 0 && altIdx < chart.length ? chart[altIdx] : null;
-    const altMatch = alt ? matchPageSize(alt, pageSizes, brand, inseam, keys) : null;
+    const altRow = altIdx != null && altIdx >= 0 && altIdx < chart.length ? chart[altIdx] : null;
+    const altMatch = altRow ? matchPageSize(altRow, pageSizes, brand, inseam, keys) : null;
+    // No "38, or 38": an alternative the page can only offer as the same size is no alternative.
+    const alt = altRow && !(altMatch && pageMatch && altMatch.label === pageMatch.label) ? altRow : null;
     if (body.inseamGuess && pageSizes.some((s) => s.parsed.length)) {
       reasons.push({ text: `Leg length is a guess from your height, about ${Math.round(inseam)} in. Add your inseam to be sure.`, delta: null });
     }
@@ -922,7 +950,13 @@
       return v != null ? `${pagePrefix}${v}` : displayLabel(entry, chartSystem, brand);
     };
     const size = pageMatch ? pageMatch.label : inPageSystem(pick);
-    const stockText = notOffered ? notOfferedText(size, inStock, pageSizes)
+    // Past every size the page has, either way: name the end it stops at.
+    const placed = notOffered ? pageSizes.map((s) => { const m = measure(s.parsed, brand); return { s, p: m ? at(m) : null }; }).filter((x) => x.p != null) : [];
+    const here = at(pick);
+    const edge = placed.length && here != null && placed.every((x) => x.p < here - 0.5) ? { dir: 'largest', label: placed.reduce((a, b) => (b.p > a.p ? b : a)).s.label }
+      : placed.length && here != null && placed.every((x) => x.p > here + 0.5) ? { dir: 'smallest', label: placed.reduce((a, b) => (b.p < a.p ? b : a)).s.label }
+        : null;
+    const stockText = notOffered ? notOfferedText(size, inStock, pageSizes, edge)
       : pageMatch && pageMatch.available === false ? inStockText(size, inStock) : null;
     const areas = withWebAreas(fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind), web, kind);
 
@@ -1237,10 +1271,11 @@
   }
 
   // Your size is not one the page lists: the nearest it has in stock, or what it lists.
-  function notOfferedText(size, near, pageSizes) {
+  function notOfferedText(size, near, pageSizes, edge) {
     const first = near && `${near.size}, ${STEP_WORDS[near.steps]}`;
     if (near && near.other) return `${size} is not offered on this page. In stock: ${first}, or ${near.other.size}, ${STEP_WORDS[near.other.steps]}.`;
     if (near) return `${size} is not offered on this page. Nearest in stock: ${first}.`;
+    if (edge) return `${size} is not offered on this page: the ${edge.dir} here is ${edge.label}.`;
     const labels = pageSizes.slice(0, 8).map((s) => s.label);
     return `${size} is not offered on this page, which lists ${labels.join(', ')}${pageSizes.length > 8 ? ' and more' : ''}.`;
   }

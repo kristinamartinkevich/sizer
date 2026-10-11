@@ -303,6 +303,42 @@ test('a size the page does not list is named the way the page names its sizes', 
   assert.equal(z.size, '12');
 });
 
+// ---- found shopping as a plus-size persona, round 4 ----
+
+const jo = { anchors: [], height: '178', bust: '112', waist: '98', hip: '122', unit: 'cm', fitPreference: 'relaxed', betweenSizes: 'down' };
+
+test('the alternative is never the same size as the answer', () => {
+  // Whistles: a standard W38 with W39 for more room, but the page stops at 38: "38, or 38".
+  const r = recommend(jo, { brand: '', title: 'Stretch barrel-leg jeans', text: '99% cotton, 1% elastane', sizes: offered(['24', '26', '27', '28', '29', '30', '32', '34', '36', '38']), host: 'www.whistles.com' });
+  assert.ok(!r.alternative || r.alternative.size !== r.size, JSON.stringify(r.alternative));
+});
+
+test('a brand chart that stops short of the page’s sizes runs on to them', () => {
+  // Abercrombie's chart ends at 37; the page sells 38, which is what a 98 cm waist needs.
+  const r = recommend({ ...jo, fitPreference: 'regular', betweenSizes: 'up' }, { brand: 'Abercrombie & Fitch', title: 'Curve Love high rise wide leg jean', text: '99% cotton, 1% elastane', sizes: offered(['33', '34', '35', '36', '37', '38']), host: 'www.abercrombie.com' });
+  assert.equal(r.size, '38');
+  assert.notEqual(r.headline, 'Larger than this chart goes');
+});
+
+test('a dress is never sized on a jeans waist chart, even with no sizes on the page', () => {
+  const r = recommend(jo, { brand: 'Oh Polly', title: 'Ainslee square neck midi dress in wine', text: 'Shop our jeans and trousers too.', sizes: [], host: 'eu.ohpolly.com' });
+  assert.doesNotMatch(r.size, /^W/);
+});
+
+test('an accessory is not sized as clothing, but a dress with a belt is', () => {
+  const belt = recommend(jo, { brand: 'Massimo Dutti', title: 'Equestrian nappa leather belt', text: '', sizes: [] });
+  assert.equal(belt.ok, false);
+  assert.match(belt.reason, /clothes and shoes/);
+  assert.equal(recommend(jo, { brand: 'Nobody', title: 'Midi dress with belt', text: '', sizes: [] }).ok, true);
+  assert.equal(recommend(jo, { brand: 'Nobody', title: 'Belted trench coat', text: '', sizes: [] }).ok, true);
+  assert.equal(recommend(jo, { brand: 'Nobody', title: 'Utility jumpsuit with belt', text: '', sizes: [] }).ok, true);
+});
+
+test('past every size on the page, the answer names the largest one there', () => {
+  const r = recommend(jo, { brand: '', title: 'Baggy jeans', text: '98% cotton, 2% elastane', sizes: offered(['23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35']), host: 'www.hollisterco.com' });
+  assert.match(r.stockText, /the largest here is 35\.$/, r.stockText);
+});
+
 // ---- plus sizes and petite sizes (found shopping as a plus-size and a petite persona) ----
 
 const plus = { anchors: [], height: '165', bust: '130', waist: '118', hip: '140', unit: 'cm', fitPreference: 'regular', betweenSizes: 'up' };

@@ -22,7 +22,10 @@
   function jsonLdProduct(doc) {
     for (const el of doc.querySelectorAll('script[type="application/ld+json"]')) {
       let data;
-      try { data = JSON.parse(el.textContent); } catch { continue; }
+      // Whistles leaves raw line breaks inside strings, which JSON forbids: read it with them as spaces.
+      try { data = JSON.parse(el.textContent); } catch {
+        try { data = JSON.parse(el.textContent.replace(/[\u0000-\u001f]+/g, ' ')); } catch { continue; }
+      }
       const stack = [data];
       while (stack.length) {
         const n = stack.pop();
@@ -43,11 +46,15 @@
     if (!variants || !variants.length) return [];
     const out = new Map();
     for (const v of variants) {
-      const size = clean(typeof v.size === 'object' ? v.size && v.size.name : v.size);
-      if (!size) continue;
+      if (!v) continue;
+      // Massimo Dutti gives each colour a list of sizes; its stock then says nothing about any one size.
+      const list = Array.isArray(v.size);
+      const sizes = list ? v.size.map(clean) : [clean(typeof v.size === 'object' ? v.size && v.size.name : v.size)];
       const availability = [].concat(v.offers || []).map((o) => o && o.availability).filter(Boolean).join(' ');
-      const available = availability ? !OUT_OF_STOCK.test(availability) : null;
-      if (!out.has(size) || available) out.set(size, { label: size, available, sku: v.sku || null });
+      const available = availability && !list ? !OUT_OF_STOCK.test(availability) : null;
+      for (const size of sizes) {
+        if (size && (!out.has(size) || available)) out.set(size, { label: size, available, sku: list ? null : v.sku || null });
+      }
     }
     return [...out.values()];
   }
@@ -61,7 +68,8 @@
   // price meta tags. Only the three-letter code.
   function currencyOf(doc, ld) {
     const offers = ld && [].concat(ld.offers || [], ...[].concat(ld.hasVariant || []).map((v) => v && v.offers).filter(Boolean));
-    const fromLd = (offers || []).map((o) => o && (o.priceCurrency || (o.priceSpecification && o.priceSpecification.priceCurrency))).find(Boolean);
+    // Hollister lists price specifications on the offer, so the currency can sit inside a list.
+    const fromLd = (offers || []).map((o) => o && (o.priceCurrency || [].concat(o.priceSpecification || []).map((p) => p && p.priceCurrency).find(Boolean))).find(Boolean);
     const code = String(fromLd || meta(doc, 'meta[property="product:price:currency"]') || meta(doc, 'meta[property="og:price:currency"]') || meta(doc, 'meta[itemprop="priceCurrency"]')).toUpperCase();
     return /^[A-Z]{3}$/.test(code) ? code : null;
   }
@@ -189,6 +197,8 @@
     '[class*="size" i] button', '[class*="size" i] li', '[class*="size" i] label', '[class*="size" i] [role="option"]', '[class*="size" i] [role="radio"]',
     '[id*="size" i] button', '[id*="size" i] li', '[id*="size" i] option',
     '[role="listbox"] [role="option"]', '[role="radiogroup"] [role="radio"]',
+    // Oh Polly (Shopify): hidden radios named "Size-1", each followed by the label the shopper sees.
+    'input[type="radio"][name*="size" i] + label',
   ].join(',');
 
   // The option the shopper sees is often a label or list item; the disabled flag sits on the input it wraps.
@@ -201,7 +211,7 @@
   function isUnavailable(el, text) {
     const input = inputOf(el);
     if (el.disabled || el.getAttribute('aria-disabled') === 'true') return true;
-    if (input && (input.disabled || input.getAttribute('aria-disabled') === 'true' || input.dataset.qty === '0')) return true;
+    if (input && (input.disabled || input.getAttribute('aria-disabled') === 'true' || input.dataset.qty === '0' || input.dataset.available === 'false')) return true;
     const cls = `${typeof el.className === 'string' ? el.className : ''} ${el.parentElement && typeof el.parentElement.className === 'string' ? el.parentElement.className : ''}`;
     return /disabled|unavailable|sold-?out|out-?of-?stock|\boos\b/i.test(cls) || /sold out|out of stock|notify me|set a reminder|ausverkauft|benachrichtig|épuisé|agotad/i.test(text);
   }

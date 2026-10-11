@@ -307,6 +307,10 @@ test('a size the page does not list is named the way the page names its sizes', 
 
 const jo = { anchors: [], height: '178', bust: '112', waist: '98', hip: '122', unit: 'cm', fitPreference: 'relaxed', betweenSizes: 'down' };
 
+test('Pull&Bear is found by the name its product data gives it, pullandbear', () => {
+  assert.equal(findBrand('pullandbear').name, 'Pull&Bear');
+});
+
 test('the alternative is never the same size as the answer', () => {
   // Whistles: a standard W38 with W39 for more room, but the page stops at 38: "38, or 38".
   const r = recommend(jo, { brand: '', title: 'Stretch barrel-leg jeans', text: '99% cotton, 1% elastane', sizes: offered(['24', '26', '27', '28', '29', '30', '32', '34', '36', '38']), host: 'www.whistles.com' });

@@ -70,6 +70,30 @@ test('a listing is read from its structured data first, the page second', () => 
   assert.deepStrictEqual(l.photos, ['https://images1.vinted.net/t/01_a/f800/1.jpeg', 'https://images1.vinted.net/t/01_a/f800/2.jpeg', 'https://images1.vinted.net/t/01_a/f800/3.jpeg']);
 });
 
+// QA 2026-10-11: "Levis Blue Bootcut Jeans 29" was listed as "L / UK 16-18", and Sizer said "Roomy on
+// you by the label" for a pair in the shopper's own waist size.
+test('jeans with a letter size take the waist the title gives', () => {
+  const jeans = (title, size) => Vinted.listingFrom({ host: 'www.vinted.co.uk', title, size, category: ['Women', 'Clothing', 'Jeans'], description: '', photos: [] });
+  const l = jeans('Levis Blue Bootcut Jeans 29', 'L / UK 16-18');
+  assert.strictEqual(l.size, 'W29');
+  assert.strictEqual(l.sizeFrom, 'title');
+  assert.strictEqual(l.sizeRaw, 'L / UK 16-18', 'what Vinted says stays on record');
+  assert.strictEqual(jeans('Levi’s 501 W27 L30', 'M').size, 'W27');
+  assert.strictEqual(jeans('Jeans mom 28/32', 'S').size, 'W28');
+  assert.strictEqual(jeans('Levis 501 jeans', 'L').size, 'L', 'no waist in the title, the label stands');
+  assert.strictEqual(jeans('Levis jeans 29', 'W30').size, 'W30', 'a number on the label beats the title');
+  assert.strictEqual(jeans('Jean taille 36', 'L').size, 'L', 'a bare 36 is a French size, not a waist');
+  assert.strictEqual(jeans('Levis jeans 29', 'L').sizeFrom, 'title');
+  const top = Vinted.listingFrom({ host: 'www.vinted.co.uk', title: 'Vintage tee 29', size: 'L', category: ['Women', 'Clothing', 'Tops'], description: '', photos: [] });
+  assert.strictEqual(top.size, 'L', 'only jeans and trousers');
+  const levis = Vinted.listingFrom({ host: 'www.vinted.co.uk', brand: "Levi's", title: 'Levis Blue Bootcut Jeans 29', size: 'L / UK 16-18', category: ['Women', 'Clothing', 'Jeans'], description: '', photos: [] });
+  const a = Vinted.answerFor(levis, { anchors: [{ brand: "Levi's", type: 'jeans', size: 'W29 L32', fit: 'perfect' }] }, null, Engine);
+  assert.strictEqual(a.mode, 'label');
+  assert.strictEqual(a.verdict, 'fits', 'her own waist size fits her');
+  assert.match(a.line, /by the title$/);
+  assert.strictEqual(a.flag, 'Size from the title, the seller has not measured it');
+});
+
 test('without structured data the page fields are used, and the condition falls back to the schema word', () => {
   const l = Vinted.listingFrom({ host: 'www.vinted.de', ld: null, brand: ' Levi’s ', title: 'Levi’s 501', size: 'W27', category: ['Damen', 'Kleidung', 'Jeans'], description: 'Bundweite 36 cm, Innenbeinlänge 76 cm', photos: [] });
   assert.strictEqual(l.brand, 'Levi’s');

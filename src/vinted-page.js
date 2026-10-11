@@ -258,7 +258,7 @@
       const tight = a.areas.find((t) => /^(Tight|Short)/.test(t));
       note = tight || (state.fromPhoto.length ? `Some measurements ${Vinted.COPY.fromPhoto}` : '');
     } else if (a.mode === 'label') {
-      k = 'Label only';
+      k = l.sizeFrom === 'title' ? 'Size from the title' : 'Label only';
       text = a.line;
       note = a.flag;
     } else {
@@ -287,6 +287,7 @@
     const rows = [
       ['Brand', l.brand || 'Not found'],
       ['Size', l.sizeRaw || 'Not given'],
+      ...(l.sizeFrom === 'title' ? [['Waist in the title', l.size]] : []),
       ['Condition', l.condition || 'Not given'],
     ];
     return { measured, details: rows.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`).join('') };
@@ -307,7 +308,7 @@
       hero = `<div class="hero"><div class="k">Seller’s measurements</div>${l.size ? `<div class="big">${esc(l.size)}</div>` : ''}<div class="headline">${esc(a.line)}</div></div>`;
       why = `<h3>Where it fits</h3><ul class="areas">${a.areas.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
     } else if (a.mode === 'label') {
-      hero = `<div class="hero"><div class="k">Label only</div><div class="big">${esc(l.size)}</div><div class="headline">${esc(a.line)}</div><p class="firm">${esc(a.flag)}. Sizer picks ${esc(a.pick)} for you on this brand’s chart.</p></div>`;
+      hero = `<div class="hero"><div class="k">${l.sizeFrom === 'title' ? 'Size from the title' : 'Label only'}</div><div class="big">${esc(l.size)}</div><div class="headline">${esc(a.line)}</div><p class="firm">${esc(a.flag)}. Sizer picks ${esc(a.pick)} for you on this brand’s chart.</p></div>`;
       why = `<h3>What Sizer knows about ${esc(l.brand || 'this brand')}</h3><ol>${a.reasons.map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ol>`;
     } else {
       hero = `<p class="empty">${l.size ? 'Sizer has no chart for this label.' : 'The seller gives no size or measurements.'} Ask the seller to measure it.</p>`;

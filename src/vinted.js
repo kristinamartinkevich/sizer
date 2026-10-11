@@ -223,6 +223,7 @@
 
   const COPY = {
     flag: 'Label only, the seller has not measured it',
+    titleFlag: 'Size from the title, the seller has not measured it',
     ask: 'Ask the seller to measure',
     copied: 'Copied',
     photos: 'Read measurements from the photos',
@@ -231,10 +232,12 @@
 
   // The engine's answer for a label alone: how many sizes the label sits from the one Sizer picks for
   // you (Engine.placeLabel), in words. Null when the label could not be placed.
-  function labelResult(steps) {
+  function labelResult(steps, from) {
     if (typeof steps !== 'number') return null;
     const verdict = steps === 0 ? 'fits' : steps < 0 ? 'small' : 'roomy';
-    return { verdict, line: `${HEAD[verdict]} by the label`, flag: COPY.flag };
+    return from === 'title'
+      ? { verdict, line: `${HEAD[verdict]} by the title`, flag: COPY.titleFlag }
+      : { verdict, line: `${HEAD[verdict]} by the label`, flag: COPY.flag };
   }
 
   // ---- reading the listing --------------------------------------------------------------
@@ -318,6 +321,16 @@
   // One listing from what the page gave: its structured data (JSON-LD Product) first, the visible
   // details second. `raw` is { host, ld, brand, title, size, condition, category, description, photos },
   // every field but host optional, read by src/vinted-page.js.
+  // A denim waist the title gives: "W29", "29/32" or "29x32", or a bare 23 to 33 (a bare 34 or more is
+  // more often a French or EU size). Not a measure: "29 cm" is no waist size.
+  function titleWaist(title) {
+    const t = clean(title);
+    const m = t.match(/\bW\s?(2[2-9]|3\d|40)\b/i)
+      || t.match(/\b(2[2-9]|3[0-6])\s?[/x×]\s?L?\s?(?:2[6-9]|3[0-8])\b/i)
+      || t.match(/(?<![\d.,])(2[3-9]|3[0-3])(?![\d.,])(?!\s?(?:cm|in\b|"|”|%|ans|years))/i);
+    return m ? `W${m[1]}` : null;
+  }
+
   function listingFrom(raw) {
     const r = raw || {};
     const ld = r.ld && typeof r.ld === 'object' ? r.ld : {};
@@ -326,12 +339,18 @@
     const description = ldText(ld.description) || clean(r.description);
     const sizeRaw = ldText(ld.size) || clean(r.size);
     const schema = String(ldText(ld.itemCondition) || '').split('/').pop();
+    const kind = kindOfListing(category, title);
+    // Vinted's size box offers jeans in letter sizes, so a seller often picks "L" for a pair whose
+    // title says 29. For jeans and trousers with no number on the label, the title's waist wins.
+    const label = sizeLabel(sizeRaw);
+    const waist = (kind === 'jeans' || kind === 'trousers') && !/\d/.test(label || '') ? titleWaist(title) : null;
     return {
       brand: ldText(ld.brand) || clean(r.brand),
       title,
       sizeRaw,
-      size: sizeLabel(sizeRaw),
-      kind: kindOfListing(category, title),
+      size: waist || label,
+      sizeFrom: waist ? 'title' : 'label',
+      kind,
       condition: clean(r.condition) || CONDITION[schema] || '',
       description,
       photos: httpsOnly(ldImages(ld.image).concat(r.photos || [])),
@@ -373,12 +392,12 @@
       const r = placed.result;
       if (r && r.needsProfile) return { mode: 'needsProfile', message };
       if (r && r.ok) {
-        const label = labelResult(placed.steps);
+        const label = labelResult(placed.steps, l.sizeFrom);
         return {
           mode: 'label',
           verdict: label ? label.verdict : null,
           line: label ? label.line : `Sizer would pick ${r.pickLabel} for you`,
-          flag: COPY.flag,
+          flag: l.sizeFrom === 'title' ? COPY.titleFlag : COPY.flag,
           pick: r.pickLabel,
           // The brand's note is brand-level knowledge even when the engine had no reason to apply it.
           reasons: r.reasons.map((x) => x.text).concat(placed.brandNote && !r.reasons.some((x) => x.text === placed.brandNote) ? [placed.brandNote] : []),

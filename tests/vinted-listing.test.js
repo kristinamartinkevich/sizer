@@ -410,6 +410,22 @@ test("Depop's placeholder brands are no brand", () => {
   assert.strictEqual(Vinted.listingFrom({ host: 'www.depop.com', title: 'Linen dress', brand: '& Other Stories', size: 'Size M', category: ['Women', 'Dresses'] }).brand, '& Other Stories');
 });
 
+// eBay.de, 2026-10-12: "Only Damen Blusenkleid Gr. 40" told an EU 40 shopper "Too big for you". Sizer's
+// chart for Only is its jeans, so the dress was picked on the standard chart (EU 40) but its label was
+// read on the jeans chart as a W40, twelve sizes up.
+test('a label is placed on the chart the pick came from, not a brand chart set aside', () => {
+  const her = { anchors: [], bust: '94', waist: '76', hip: '103', unit: 'cm' };
+  const listing = Vinted.listingFrom({ host: 'www.ebay.de', title: 'NEU! Only Damen Blusenkleid in Karo-Muster rot Gr. 40', brand: 'Only', size: '40', category: ['Damen', 'Damenmode', 'Kleider'], description: '' });
+  const placed = Engine.placeLabel(her, { brand: 'Only', title: Vinted.engineTitle(listing.kind), text: '', label: '40', host: 'www.ebay.de', section: listing.section }, null);
+  assert.strictEqual(placed.result.brandKnown, false);
+  assert.ok(Math.abs(placed.steps) <= 1, `steps ${placed.steps}`);
+  assert.notStrictEqual(Vinted.answerFor(listing, her, null, Engine).verdict, 'roomy');
+  // Jeans from the same brand still go on its jeans chart.
+  const jeans = Engine.placeLabel(her, { brand: 'Only', title: Vinted.engineTitle('jeans'), text: '', label: 'W29', host: 'www.ebay.de' }, null);
+  assert.strictEqual(jeans.result.brandKnown, true);
+  assert.ok(Math.abs(jeans.steps) <= 1, `jeans steps ${jeans.steps}`);
+});
+
 // eBay, 2026-10-12: a dead item address serves "Discover error | eBay", and Sizer showed its mark and
 // "The seller gives no size or measurements" on it.
 test('an error page at an item address is no listing', () => {

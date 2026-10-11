@@ -1249,9 +1249,12 @@
     const kind = kindOf(product && product.title);
     // A men's piece is placed on the men's chart recommend used; the brand's charts are women's.
     const men = forMen(product);
-    const brand = men ? null : findBrand(product && product.brand, charts, kind) || findBrand(product && product.title, charts, kind);
+    // The label goes on the chart the pick came from: Only's chart is its jeans, so a dress labelled 40
+    // is an EU 40 on the standard chart, not a W40.
+    const found = men ? null : findBrand(product && product.brand, charts, kind) || findBrand(product && product.title, charts, kind);
+    const brand = found && result.brandKnown ? found : null;
     // The brand's reputation, for the sheet, whether or not it moved the pick.
-    const brandNote = (brand && brand.note) || null;
+    const brandNote = (found && found.note) || null;
     const done = (steps) => ({ result, steps, brandNote });
     if (!result.ok || !label || typeof result.pickIndex !== 'number') return done(null);
     if (men && !result.shoes) {

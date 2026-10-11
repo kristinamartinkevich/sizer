@@ -97,6 +97,17 @@ test('measurements win over wardrobe, and the wardrobe still reports disagreemen
   assert.ok(b.spread > 5);
 });
 
+// QA 2026-10-11: Zalando said "Customers say these fit tight around the ankle." above the picker, and
+// the sheet listed the fit note as None.
+test('a fit note about one part of the body is kept, though it does not move the size', () => {
+  const s = analyzeText('Customers say these fit tight around the ankle. Upper: textile.');
+  assert.strictEqual(s.fitNote, null);
+  assert.strictEqual(s.fitDetail, 'Customers say these fit tight around the ankle');
+  assert.strictEqual(analyzeText('Narrow at the toes, so wide feet may want more room.').fitDetail, 'Narrow at the toes, so wide feet may want more room');
+  assert.strictEqual(analyzeText('Wide leg jeans in organic cotton.').fitDetail, null, 'a style name is not a fit note');
+  assert.strictEqual(analyzeText('Runs small, we recommend sizing up. Tight at the ankle.').fitDetail, null, 'a size note takes the row');
+});
+
 // QA 2026-10-11: on ASOS the answer was "UK 14" and the reason said "fit like standard between 40 and
 // 42", with nothing to say those were EU sizes.
 test('a reason names the size system it compares in', () => {

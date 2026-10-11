@@ -369,6 +369,8 @@
     elastane: /(\d{1,2}(?:[.,]\d)?)\s*%\s*(?:elastane|elasthan|elastan|spandex|lycra|élasthanne|elastomultiester|elastomultiestere|elastolefin)/i,
     cotton100: /100\s*%\s*(?:organic\s+)?(?:cotton|baumwolle|coton|algodón|cotone|katoen)/i,
     skinny: /\b(?:skinny|slim|cigarette|super\s+tight)\b/i,
+    fitWord: /\b(?:tight|snug|narrow|loose|roomy|wide|generous)\b/i,
+    fitArea: /\b(?:ankles?|toes?|instep|heels?|calf|calves|foot|feet|waist(?:band)?|hips?|bust|chest|shoulders?|arms?|thighs?)\b/i,
     roomy: /\b(?:oversize[d]?|relaxed|baggy|boyfriend|loose|barrel|balloon)\b/i,
     model: /model[^.]{0,40}?(?:wears?|wearing|is\s+wearing|trägt)[^.]{0,20}?(?:size|größe|grösse|taille)\s*:?\s*([A-Z]{0,2}\s?\d{0,2}(?:\s?\/\s?L?\d{2})?|[XSML]{1,3})/i,
     modelHeight: /(?:model'?s?\s+height|model\s+is|größe\s+des\s+models|modelgröße)[^.\d]{0,20}(\d{3})\s*cm/i,
@@ -404,12 +406,17 @@
 
     const small = RE.small.test(t);
     const large = RE.large.test(t);
+    // A note about one part of the body ("tight around the ankle", "narrow at the toes"): shown as the
+    // fit note when there is no size note, though it moves nothing.
+    const fitDetail = small || large || RE.tts.test(t) ? null
+      : (t.split(/[.!?\n]+/).map((x) => x.trim()).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x)) || null);
     const modelSize = (t.match(RE.model) || [])[1];
     const ft = t.match(RE.modelHeightFt);
     const modelHeight = (t.match(RE.modelHeight) || [])[1] || (ft ? Math.round((+ft[1] * 12 + +ft[2]) * 2.54) : null);
     return {
       fitNote: small && !large ? 'small' : large && !small ? 'large' : RE.tts.test(t) ? 'tts' : null,
       fitNoteText: ((t.match(small && !large ? RE.small : large && !small ? RE.large : RE.tts) || [])[0] || '').trim(),
+      fitDetail,
       stretch,
       elastanePct,
       cotton100: RE.cotton100.test(t),

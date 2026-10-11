@@ -48,7 +48,7 @@
     const facts = [
       ['Brand', esc(Engine.provenance(r).brandFact)],
       r.shoes ? null : ['Stretch', { none: 'None', slight: 'A little', high: 'Lots', unknown: 'Not stated' }[s.stretch] + (s.elastanePct ? `, ${s.elastanePct}% elastane` : '')],
-      ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : 'None'],
+      ['Fit note', s.fitNote ? `“${esc(s.fitNoteText)}”` : s.fitDetail ? `“${esc(s.fitDetail)}”, which doesn’t change the size` : 'None'],
       s.modelSize && !r.shoes ? ['Model', `Wears ${esc(s.modelSize)}${s.modelHeight ? `, ${s.modelHeight} cm tall` : ''}`] : null,
       reviewsFact(r.reviews),
       !sizes.length ? ['Sizes', 'Not found']

@@ -7,6 +7,9 @@
   // Cookie banners and consent dialogs: never product text.
   const CONSENT = '#onetrust-consent-sdk, [id^="onetrust" i], [id^="ot-" i], [class*="cookie" i], [class*="consent" i], [id*="cookie" i]';
   const CHROME = `${CONSENT}, [role="dialog"]`;
+  // Other products' cards under this one: Bershka's "You may also like" (cross-selling-grid). A card's
+  // "Fits small" is about that product, never this one.
+  const OTHER_PRODUCTS = '[class*="cross-sell" i], [class*="crosssell" i], [class*="cross-selling" i], [class*="upsell" i], [class*="recommend" i], [class*="related-products" i], [class*="similar-products" i]';
 
   // textContent glues sibling labels together ("Fit:RelaxedShape"), which breaks word matching.
   // `skip` keeps buyers' reviews out of the page's own text, so a reviewer's "runs small" is never read as the shop's.
@@ -89,7 +92,7 @@
     for (const el of doc.querySelectorAll(DETAIL_SEL)) {
       // A page-level wrapper that happens to match (Revolve's <body class="…detail…">) would swamp the real details with header text.
       if (el === doc.body || el === doc.documentElement || el.tagName === 'MAIN') continue;
-      if (el.closest(OURS) || el.closest(`${REVIEW_AREA}, ${CHROME}, [class*="recommend" i], [class*="carousel" i], footer, nav`)) continue;
+      if (el.closest(OURS) || el.closest(`${REVIEW_AREA}, ${CHROME}, ${OTHER_PRODUCTS}, [class*="carousel" i], footer, nav`)) continue;
       const t = spacedText(el, REVIEW_AREA);
       if (t.length < 15 || t.length > 12000 || seen.some((s) => s.includes(t))) continue;
       seen.push(t.slice(0, 3000));
@@ -106,7 +109,7 @@
   function fitNoteText(doc) {
     const out = [];
     for (const el of doc.querySelectorAll('p, span, div, li')) {
-      if (el.children.length > 2 || el.closest(OURS) || el.closest(`${REVIEW_AREA}, footer, nav`)) continue;
+      if (el.children.length > 2 || el.closest(OURS) || el.closest(`${REVIEW_AREA}, ${OTHER_PRODUCTS}, footer, nav`)) continue;
       const t = clean(el.textContent);
       if (t.length < 12 || t.length > 240 || !FIT_NOTE.test(t) || out.includes(t)) continue;
       out.push(t);
@@ -248,6 +251,8 @@
   function inOtherCard(el, h1s, here) {
     if (!h1s.length || !here) return false;
     const section = here.pathname.split('/')[1];
+    // A size guide link is the shop's own, however long its text: Nike's icon reads "ruler, dimension, size, length".
+    const guide = (link, u) => /size[-_ ]?(?:guide|chart|fit)|sizing/i.test(`${u.pathname} ${link.textContent}`);
     const named = (link) => [clean(link.textContent), ...[...link.querySelectorAll('img[alt]')].map((i) => clean(i.alt))]
       .some((t) => t.split(' ').length >= 4);
     for (let a = el.parentElement; a && a.tagName !== 'BODY'; a = a.parentElement) {
@@ -255,7 +260,7 @@
       for (const link of a.querySelectorAll('a[href]')) {
         let u;
         try { u = new URL(link.getAttribute('href'), here); } catch { continue; }
-        if (u.origin === here.origin && u.pathname !== here.pathname && u.pathname.split('/')[1] === section && named(link)) return true;
+        if (u.origin === here.origin && u.pathname !== here.pathname && u.pathname.split('/')[1] === section && !guide(link, u) && named(link)) return true;
       }
     }
     return false;
@@ -502,7 +507,7 @@
     let text = [description, detailText(doc), fitNoteText(doc)].filter(Boolean).join('\n');
     if (text.length < 200) {
       const main = doc.querySelector('main') || doc.body;
-      text += `\n${main ? spacedText(main, REVIEW_AREA).slice(0, 20000) : ''}`;
+      text += `\n${main ? spacedText(main, `${REVIEW_AREA}, ${OTHER_PRODUCTS}`).slice(0, 20000) : ''}`;
     }
     const reviews = extractReviews(doc, ld);
 

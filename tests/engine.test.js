@@ -336,6 +336,17 @@ test('a size with its EU size beside it goes by the EU size, keeping the page’
   assert.strictEqual(parseSizeLabel('S (8-10)').value, 8, 'a letter with numbers is unchanged');
 });
 
+// Found shopping with an Adidas pair in "EU 40 2/3": read as EU 40. A Vinted kids' listing sized
+// "9 Jahre" was placed on a women's chart as a 9.
+test('third sizes keep their third, and an age is not a size', () => {
+  assert.strictEqual(parseSizeLabel('EU 40 2/3').value, 40 + 2 / 3);
+  assert.strictEqual(parseSizeLabel('36 1/3').value, 36 + 1 / 3);
+  assert.strictEqual(parseSizeLabel('UK 7 ⅓').value, 7 + 1 / 3);
+  assert.strictEqual(parseSizeLabel('38⅔').value, 38 + 2 / 3);
+  assert.strictEqual(parseSizeLabel('EU 40 2/3').system, 'eu');
+  for (const age of ['9 Jahre', '9-10 Years', '13-14 yrs', '6 ans', '18 months', '10 años']) assert.strictEqual(parseSizeLabel(age), null, age);
+});
+
 test('two-size labels span both sizes: S/M, XS-S, 8/10, 10-12, UK 8-10', () => {
   assert.deepEqual([parseSizeLabel('S/M').value, parseSizeLabel('S/M').span, parseSizeLabel('S/M').label], ['S', 'M', 'S/M']);
   assert.equal(parseSizeLabel('XS-S').span, 'S');
@@ -416,7 +427,7 @@ test('boot-cut and boot leg jeans are jeans, not boots', () => {
 test('a snowboot, moonboot or wellington is a shoe, and bootcut jeans still are not', () => {
   const { kindOf } = require('../src/engine.js');
   for (const t of ['Moonboot Icon High space racing snowboot in silver', 'Rubber rainboots', 'Classic wellington boots', 'Kids wellies']) assert.equal(kindOf(t), 'shoes', t);
-  for (const t of ['ASOS DESIGN Lotus buckle detail mary jane ballets in black croc', 'Leather ballet flats', 'Patent Mary Janes']) assert.equal(kindOf(t), 'shoes', t);
+  for (const t of ['ASOS DESIGN Lotus buckle detail mary jane ballets in black croc', 'Leather ballet flats', 'Patent Mary Janes', 'VLogo Signature 80 Woven Slingback Courts', 'Patent court heels']) assert.equal(kindOf(t), 'shoes', t);
   assert.equal(kindOf('Ballet wrap top'), 'tops');
   assert.equal(kindOf('Bootcut jeans in mid blue'), 'bottoms');
 });

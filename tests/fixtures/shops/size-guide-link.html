@@ -1,0 +1,55 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping with an Adidas EU 40 2/3 anchor, 2026-10-11): Nike's size buttons
+  ("UK 3") sit in a fieldset whose legend links to the shop's size guide, and the link's icon carries a
+  four-word description. Sizer took that link for another product's card and dropped every button, so
+  it fell back to the product data's bare US numbers and named a US 7 for an EU 40 foot. Markup trimmed
+  from Nike's product page; the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vela Ventus Run Women's Road-Running Shoes. Vela UK</title>
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "ProductGroup", "name": "Vela Ventus Run Women's Road-Running Shoes", "brand": { "@type": "Brand", "name": "Vela" },
+    "variesBy": ["https://schema.org/size"],
+    "hasVariant": [
+      { "@type": "Product", "name": "Vela Ventus Run - Size 5.5", "size": "5.5", "offers": { "@type": "Offer", "price": "120.00", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" } },
+      { "@type": "Product", "name": "Vela Ventus Run - Size 6", "size": "6", "offers": { "@type": "Offer", "price": "120.00", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" } },
+      { "@type": "Product", "name": "Vela Ventus Run - Size 6.5", "size": "6.5", "offers": { "@type": "Offer", "price": "120.00", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" } },
+      { "@type": "Product", "name": "Vela Ventus Run - Size 7", "size": "7", "offers": { "@type": "Offer", "price": "120.00", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" } },
+      { "@type": "Product", "name": "Vela Ventus Run - Size 7.5", "size": "7.5", "offers": { "@type": "Offer", "price": "120.00", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" } },
+      { "@type": "Product", "name": "Vela Ventus Run - Size 8", "size": "8", "offers": { "@type": "Offer", "price": "120.00", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" } }
+    ] }
+  </script>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #111; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .grid { display: grid; grid-template-columns: repeat(3, 84px); gap: 8px; }
+    .grid label { display: block; height: 44px; line-height: 44px; text-align: center; border: 1px solid #ccc; }
+    fieldset { border: 0; padding: 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Vela Ventus Run</h1>
+    <p>Women's Road-Running Shoes</p>
+    <p>£120</p>
+    <div id="size-selector" class="size-selector-wrapper" data-testid="size-selector">
+      <fieldset class="pdp-grid-selector" data-testid="pdp-grid-selector">
+        <legend><span>Select Size</span><a href="/gb/size-fit/womens-footwear" target="_blank"><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><desc>ruler, dimension, size, length</desc><path d="M3 17h18"></path></svg><span>Size Guide</span></a></legend>
+        <div class="grid" data-testid="pdp-grid-selector-grid">
+          <div data-testid="pdp-grid-selector-item"><input class="visually-hidden" id="g-5.5" name="grid-selector-input" type="radio" value="5.5"><label for="g-5.5">UK 3</label></div>
+          <div data-testid="pdp-grid-selector-item"><input class="visually-hidden" id="g-6" name="grid-selector-input" type="radio" value="6"><label for="g-6">UK 3.5</label></div>
+          <div data-testid="pdp-grid-selector-item"><input class="visually-hidden" id="g-6.5" name="grid-selector-input" type="radio" value="6.5"><label for="g-6.5">UK 4</label></div>
+          <div data-testid="pdp-grid-selector-item"><input class="visually-hidden" id="g-7" name="grid-selector-input" type="radio" value="7"><label for="g-7">UK 4.5</label></div>
+          <div data-testid="pdp-grid-selector-item"><input class="visually-hidden" id="g-7.5" name="grid-selector-input" type="radio" value="7.5"><label for="g-7.5">UK 5</label></div>
+          <div data-testid="pdp-grid-selector-item"><input class="visually-hidden" id="g-8" name="grid-selector-input" type="radio" value="8"><label for="g-8">UK 5.5</label></div>
+        </div>
+      </fieldset>
+    </div>
+    <p>Responsive foam and a breathable upper for everyday runs.</p>
+  </main>
+</body>
+</html>

@@ -85,6 +85,8 @@
     if (!s || s.length > 24) return null;
     const own = String(raw).replace(/\s+/g, ' ').trim();
     let m;
+    // A child's age is not an adult size: 9 Jahre, 9-10 Years, 6 ans, 18 months.
+    if (/^\d{1,2}(?: ?[-–\/] ?\d{1,2})? ?(?:JAHRE|YEARS?|YRS?|ANS|AÑOS|ANOS|ANNI|ÅR|LAT|MONTHS?|MTHS|MONATE|MOIS|MESES|MESI)$/.test(s)) return null;
     // One size: kept so the page's only size is known, never sized.
     if (ONE_SIZE.test(s)) return { system: 'one', value: 'one', label: own };
     if ((m = s.match(WORD_SIZE))) return { system: 'letter', value: letterOf(`${m[1] === 'EXTRA' ? 'X' : m[1] || ''}${m[2][0]}`), label: own };
@@ -114,6 +116,12 @@
     }
     if ((m = s.match(/^W\s?(\d{2})(?:\s?[\/X]?\s?L\s?(\d{2}))?\b/))) return { system: 'denim', value: +m[1], length: m[2] ? +m[2] : null, label: m[0] };
     if ((m = s.match(/^(\d{2})\s?[\/X]\s?(\d{2})\b/)) && +m[1] >= 22 && +m[1] <= 40 && +m[2] >= 26 && +m[2] <= 38) return { system: 'denim', value: +m[1], length: +m[2], label: m[0] };
+    // Third sizes are shoes too, as Adidas prints them: EU 40 2/3, 36⅓.
+    if ((m = s.match(/^(EU|FR|DE|UK|US)?\s?(\d{1,2})\s?([12])\/3|^(EU|FR|DE|UK|US)?\s?(\d{1,2})\s?([⅓⅔])/))) {
+      const tag = m[1] || m[4];
+      const third = m[3] ? +m[3] : m[6] === '⅓' ? 1 : 2;
+      return { system: { EU: 'eu', FR: 'eu', DE: 'eu', UK: 'uk', US: 'us' }[tag] || 'number', value: +(m[2] || m[5]) + third / 3, label: m[0] };
+    }
     // Half sizes are shoes: 38.5, EU 38½, UK 5.5.
     if ((m = s.match(/^(EU|FR|DE|UK|US)?\s?(\d{1,2})(?:[.,]5|\s?1\/2|½)(?![\d.,])/))) {
       const system = { EU: 'eu', FR: 'eu', DE: 'eu', UK: 'uk', US: 'us' }[m[1]] || 'number';
@@ -454,7 +462,7 @@
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
     // Boot-cut and boot leg are jeans; a snowboot or a moonboot is a boot.
-    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg)\b)|wellies|wellingtons?|ballets|mary[- ]?janes?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
+    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg)\b)|wellies|wellingtons?|ballets|mary[- ]?janes?|courts|court shoes?|slingbacks?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
     tops: /\b(?:t-?shirts?|tees?|shirts?|blouses?|tops?|sweaters?|jumpers?|knits?|cardigans?|hoodies?|sweatshirts?|jackets?|coats?|blazers?|pullover|bluse|hemd|jacke|mantel|chemise|veste|manteau)\b/i,

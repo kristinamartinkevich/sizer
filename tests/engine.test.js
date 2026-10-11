@@ -383,6 +383,25 @@ test('options that are not clothing sizes get no size: a kettle, a phone case, a
   assert.equal(recommend(maya, { brand: "Levi's", title: "Levi's 501 Original", text: '', sizes: offered(['26W / 30L', '28W / 30L', '30W / 30L']), host: 'www.amazon.co.uk' }).ok, true);
 });
 
+test('children’s clothes and shoes get no size, and boyfriend jeans and baby tees still do', () => {
+  // Old Navy, 2026-10-12: "Uniform Straight Leg Pants for Boys" in 5 to 18 (ages) was sized on a
+  // women's chart as "0".
+  const kids = [
+    [{ title: 'Uniform Straight Leg Pants for Boys', sizes: ['5', '6', '7', '8', '10', '12'] }],
+    [{ title: "Girls' Ruffle Sundress", sizes: ['4', '5', '6', '7', '8'] }],
+    [{ title: 'Classic Hoodie', section: 'Home > Kids > Boys > Hoodies', sizes: ['XS', 'S', 'M', 'L'] }],
+    [{ title: 'Toddler Light-Up Sneakers', sizes: ['7', '8', '9', '10'] }],
+  ];
+  for (const [p] of kids) {
+    const r = recommend(maya, { brand: 'Nobody', text: '', host: 'oldnavy.gap.com', ...p, sizes: offered(p.sizes) });
+    assert.equal(r.ok, false, `${p.title}: ${r.size}`);
+    assert.match(r.reason, /children/);
+  }
+  for (const title of ['Boyfriend Jeans', 'Ribbed Baby Tee', 'Babydoll Mini Dress', 'Girlfriend Jeans']) {
+    assert.equal(recommend(maya, { brand: 'Nobody', title, text: '', sizes: offered(['XS', 'S', 'M', 'L']) }).ok, true, title);
+  }
+});
+
 test('a bra is not sized on a clothing chart', () => {
   const r = recommend(maya, { brand: 'Fleur du Mal', title: 'Le Stretch Micro U-Plunge Bra', text: '67% nylon, 33% elastane', sizes: offered(['32', '34', '36', '38']) });
   assert.equal(r.ok, false);

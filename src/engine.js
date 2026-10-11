@@ -482,6 +482,8 @@
     notBra: /\bbra[- ]?free\b|\bbraless\b|\b(?:built[- ]in|shelf)[- ]bra\b/gi,
     // Only when nothing in the title is clothing: a dress with a belt is a dress.
     giftCard: /\b(?:e-?)?gift ?(?:cards?|vouchers?|certificates?)\b/i,
+    kidsTitle: /\bfor (?:boys|girls|kids|children|toddlers?|babies)\b|\b(?:boys|girls|kids|children)['’]s?(?=\s)|\b(?:toddlers?|infants?|newborn)\b/i,
+    kidsSection: /(?:^|>)\s*(?:kids|boys|girls|baby|children|toddlers?)(?:\s*\(|\s*>|\s*$|\s+\d)/i,
     // An option that is a quantity or a dimension, not a size: 1.5L, 500ml, 2 Pack, 10 x 15 cm, 128GB.
     notSizeOption: /^\d+(?:\.\d+)?\s?(?:ml|cl|l|litres?|g|kg|gb|tb|oz|mm|cm|m)$|\b(?:pack|pcs|pieces|count|set of)\b|\d\s?x\s?\d+(?:\.\d+)?\s?(?:cm|mm|in|")/i,
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
@@ -952,6 +954,9 @@
     let reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
     const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
     if (RE.giftCard.test(product.title || '')) return { ok: false, reason: 'This is a gift card, so there is no size to pick.' };
+    // Old Navy and M&S sell children's clothes on the same pages, sized by age. A boyfriend jean or a
+    // baby tee is a women's style: only "for boys", "girls'", "toddler" or a kids section count.
+    if (RE.kidsTitle.test(product.title || '') || RE.kidsSection.test(product.section || '')) return { ok: false, reason: 'Sizer sizes adults’ clothes and shoes, not children’s.' };
     if (kind === 'shoes') return recommendShoes(profile, product, found, signals, charts, reviews);
     // "Bra-free" and "with built-in bra" describe a dress or a jumpsuit, not a bra.
     if (RE.bra.test(String(product.title || '').replace(RE.notBra, ''))) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };

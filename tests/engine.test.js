@@ -108,6 +108,15 @@ test('a stretch scale or a comparison is not the stretch, and elastane on the la
   assert.strictEqual(analyzeText('Stretch ranging from Non-Stretch to Super-Stretch. 100% cotton.').stretch, 'none');
 });
 
+// Found shopping as a US persona: Express's fit note quoted a recommended product's card, "60 2 out
+// of 5 stars 2 ( 2 ) 2073 Online Only Asymmetrical One Shoulder Wide Leg Jumpsuit", and Old Navy's
+// quoted "Product details ... Product #908485 Size & fit oversized fit hits at waist".
+test('a product card or a details list is not a fit note', () => {
+  assert.strictEqual(analyzeText('$61.60 marked down from $88.00 $61.60 2 out of 5 stars 2 ( 2 ) 2073 Online Only Asymmetrical One Shoulder Wide Leg Jumpsuit').fitDetail, null);
+  assert.strictEqual(analyzeText('Product details turtleneck long wide sleeves pullover style Product #908485 Size & fit oversized fit hits at waist models are approx').fitDetail, null);
+  assert.match(analyzeText('Customers say these fit tight around the ankle.').fitDetail, /tight around the ankle/);
+});
+
 // Found shopping as a petite persona: Selfridges called a wool-blend jumper "Lightweight, stretchy."
 // over 2% elastane, and the sheet said "Lots of stretch (2% elastane)".
 test('a plain "stretchy" over a little elastane is a little stretch', () => {
@@ -444,6 +453,12 @@ test('a snowboot, moonboot or wellington is a shoe, and bootcut jeans still are 
   for (const t of ['ASOS DESIGN Lotus buckle detail mary jane ballets in black croc', 'Leather ballet flats', 'Patent Mary Janes', 'VLogo Signature 80 Woven Slingback Courts', 'Patent court heels']) assert.equal(kindOf(t), 'shoes', t);
   assert.equal(kindOf('Ballet wrap top'), 'tops');
   assert.equal(kindOf('Bootcut jeans in mid blue'), 'bottoms');
+  // Found shopping as a US persona: Anthropologie's "Boxy Oxford Shirt" and American Eagle's "Kick
+  // Boot Jean" were sized as shoes.
+  assert.equal(kindOf('Maeve Mabel Boxy Oxford Shirt'), 'tops');
+  assert.equal(kindOf('AE Super Low-Rise Kick Boot Jean'), 'bottoms');
+  assert.equal(kindOf('High-rise boot jeans'), 'bottoms');
+  for (const t of ['Leather Oxford shoes', 'Oxfords in tan', 'Chelsea boots', 'Kick boots']) assert.equal(kindOf(t), 'shoes', t);
 });
 
 test('Pull&Bear is found by the name its product data gives it, pullandbear', () => {
@@ -519,6 +534,21 @@ test('a brand scale of 0 to 5 reads as letters, and shoes in UK 3 to 5 stay shoe
   assert.deepEqual(resolveSizes(offered(['1', '2', '3'])).map((l) => l.parsed.value), ['S', 'M', 'L']);
   const shoes = recommend({ anchors: [{ brand: 'Converse', type: 'shoes', size: 'UK 4', fit: 'perfect' }] }, { brand: 'Nobody', title: 'Leather loafers', text: '', sizes: offered(['3', '4', '5']), host: 'www.example.co.uk' });
   assert.equal(shoes.size, '4');
+});
+
+// Found shopping as a US persona: Zara's US jeans read "25 (US 0)" to "32 (US 14)", which did not
+// parse, and the answer named "EU 42 (XL)", a size with no button.
+test('a waist with its US size beside it is the waist: Zara US "28 (US 6)"', () => {
+  const p = parseSizeLabel('28 (US 6)');
+  assert.strictEqual(p.system, 'denim');
+  assert.strictEqual(p.value, 28);
+  const labels = ['25 (US 0)', '26 (US 2)', '27 (US 4)', '28 (US 6)', '29 (US 8)', '30 (US 10)', '31 (US 12)', '32 (US 14)'];
+  const r = recommend({ anchors: [{ brand: "Levi's", type: 'jeans', size: 'W30 L30', fit: 'perfect' }], unit: 'cm', fitPreference: 'regular', betweenSizes: 'up' },
+    { brand: 'Zara', title: 'TRF MID-RISE STRAIGHT FIT JEANS', text: '', sizes: offered(labels), host: 'www.zara.com', url: 'https://www.zara.com/us/en/jeans-p1.html' });
+  assert.ok(labels.includes(r.size), r.size);
+  const measured = recommend({ anchors: [], height: '165.1', bust: '96.5', waist: '78.7', hip: '104.1', unit: 'in', fitPreference: 'regular', betweenSizes: 'up' },
+    { brand: 'Zara', title: 'Z1975 HIGH-RISE MOM-FIT JEANS', text: '99% cotton, 1% elastane', sizes: offered(labels), host: 'www.zara.com', url: 'https://www.zara.com/us/en/jeans-p1.html' });
+  assert.strictEqual(measured.size, '31 (US 12)');
 });
 
 // Found shopping as a tall persona: Zalando's UK 8 was sold out with 7.5 in stock, and the note said

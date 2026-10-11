@@ -104,6 +104,8 @@
     // Selfridges' "EUR 36 / 3 UK WOMEN". The page's label is kept, so the answer names its button.
     if ((m = s.match(/^\d{1,2}(?:[.,]5)? ?\((\d{2}(?:[.,]5)?)\)$/)) && +m[1].replace(',', '.') >= 30) return { system: 'eu', value: +m[1].replace(',', '.'), label: own };
     if ((m = s.match(/^EUR? ?(\d{2}(?:[.,]5)?) ?\/ ?\d{1,2}(?:[.,]5)? ?(?:UK|US)\b/))) return { system: 'eu', value: +m[1].replace(',', '.'), label: own };
+    // A denim waist with its US size beside it goes by the waist: Zara US "28 (US 6)".
+    if ((m = s.match(/^(\d{2}) ?\(US ?\d{1,2}\)$/)) && +m[1] >= 22 && +m[1] <= 40) return { system: 'denim', value: +m[1], length: null, label: own };
     // The region after the number: 8 UK, 38 EU.
     if ((m = s.match(/^(\d{1,2}) ?(UK|AU|US|EU|FR|DE|IT)$/))) return { system: TAG_SYSTEM[m[2]], value: +m[1], label: own };
     // 2XL to 6XL and 3XS start with a digit, so they are read before the bare numbers; so are US 1X and 18W.
@@ -470,8 +472,9 @@
     giftCard: /\b(?:e-?)?gift ?(?:cards?|vouchers?|certificates?)\b/i,
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
-    // Boot-cut and boot leg are jeans; a snowboot or a moonboot is a boot.
-    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg)\b)|wellies|wellingtons?|ballets|mary[- ]?janes?|courts|court shoes?|slingbacks?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
+    // Boot-cut, boot leg and American Eagle's "kick boot jean" are jeans, and an Oxford shirt is a
+    // shirt; a snowboot or a moonboot is a boot.
+    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg|jeans?|denim|flares?)\b)|wellies|wellingtons?|ballets|mary[- ]?janes?|courts|court shoes?|slingbacks?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?(?![- ](?:shirts?|cloth|blouses?|tops?)\b)|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
     tops: /\b(?:t-?shirts?|tees?|shirts?|blouses?|tops?|sweaters?|jumpers?|knits?|cardigans?|hoodies?|sweatshirts?|jackets?|coats?|blazers?|pullover|bluse|hemd|jacke|mantel|chemise|veste|manteau)\b/i,
@@ -511,9 +514,12 @@
     // Page text is joined from many elements, so a button label can run into a sentence ("select a
     // size Designed to be fitted…"): a fragment that starts in lower case and runs into a capital
     // starts at the capital.
+    // A product card or a details list is no note: Express's "2 out of 5 stars … Wide Leg Jumpsuit",
+    // Old Navy's "Product #908485 Size & fit …", a price.
+    const NOT_A_NOTE = /\bout of 5 stars?\b|\bproduct #|[$£€]\s?\d/i;
     const sentenceOf = (x) => x.replace(/^[a-z][^A-Z]*?\s(?=[A-Z][a-z])/, '');
     const fitDetail = small || large || RE.tts.test(t) ? null
-      : (t.split(/[.!?\n]+/).map((x) => sentenceOf(x.trim())).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x)) || null);
+      : (t.split(/[.!?\n]+/).map((x) => sentenceOf(x.trim())).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x) && !NOT_A_NOTE.test(x)) || null);
     const modelSize = (t.match(RE.model) || [])[1];
     const ft = t.match(RE.modelHeightFt);
     const modelHeight = (t.match(RE.modelHeight) || [])[1] || (ft ? Math.round((+ft[1] * 12 + +ft[2]) * 2.54) : null);

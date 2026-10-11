@@ -440,6 +440,7 @@
     bottoms: /\b(?:jeans?|denim|trousers?|pants?|chinos?|skirts?|shorts|culottes?|leggings|hose|rock)\b/i,
     bra: /\b(?:bras?|bralettes?|soutien-gorge|bh)\b/i,
     // Only when nothing in the title is clothing: a dress with a belt is a dress.
+    giftCard: /\b(?:e-?)?gift ?(?:cards?|vouchers?|certificates?)\b/i,
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
     // Boot-cut and boot leg are jeans.
@@ -820,6 +821,7 @@
     const signals = analyzeText(`${product.title || ''}\n${product.text || ''}`);
     let reviews = analyzeReviews(product.reviews, product.reviewSummary, product.poolFit);
     const found = findBrand(product.brand, charts, kind) || findBrand(product.title, charts, kind);
+    if (RE.giftCard.test(product.title || '')) return { ok: false, reason: 'This is a gift card, so there is no size to pick.' };
     if (kind === 'shoes') return recommendShoes(profile, product, found, signals, charts, reviews);
     if (RE.bra.test(product.title || '')) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };
     const title = String(product.title || '');

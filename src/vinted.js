@@ -282,7 +282,7 @@
   const ENGINE_WORD = { top: 'top', dress: 'dress', jeans: 'jeans', trousers: 'trousers', shorts: 'shorts', skirt: 'skirt', outerwear: 'jacket', shoes: 'shoes' };
   const engineTitle = (kind) => ENGINE_WORD[kind] || 'top';
 
-  const NO_SIZE = /^(?:taille unique|one size|einheitsgröße|talla única|taglia unica|one-size|onesize|universal|autre|other|andere|otro|altro|anders|inna|inny)$/i;
+  const NO_SIZE = /^(?:taille unique|one size|einheitsgröße|talla única|taglia unica|one-size|onesize|universal|autre|other|andere|otro|altro|anders|inna|inny|sonstiges?|outros?|altri|övrigt|muut?|andet|annet|ostatní|egyéb|alte)$/i;
 
   // "M / 38 / 10" → "M": Vinted prints the letter, then the FR/EU and UK numbers; the first one is
   // what the engine reads. Null for one-size and "other".

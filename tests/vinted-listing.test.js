@@ -44,6 +44,7 @@ test('the size label is the first size Vinted prints; one-size and other are no 
   assert.strictEqual(Vinted.sizeLabel('Taille unique'), null);
   assert.strictEqual(Vinted.sizeLabel('One size'), null);
   assert.strictEqual(Vinted.sizeLabel('Autre'), null);
+  for (const other of ['Sonstige', 'Sonstiges', 'Outro', 'Altri', 'Övrigt']) assert.strictEqual(Vinted.sizeLabel(other), null, other);
   assert.strictEqual(Vinted.sizeLabel(''), null);
 });
 

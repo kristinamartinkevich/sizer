@@ -213,6 +213,9 @@
     if (el.disabled || el.getAttribute('aria-disabled') === 'true') return true;
     if (input && (input.disabled || input.getAttribute('aria-disabled') === 'true' || input.dataset.qty === '0' || input.dataset.available === 'false')) return true;
     const cls = `${typeof el.className === 'string' ? el.className : ''} ${el.parentElement && typeof el.parentElement.className === 'string' ? el.parentElement.className : ''}`;
+    // Coast draws a sold-out size as a "crossed" overlay just before the button.
+    const prev = el.previousElementSibling;
+    if (prev && typeof prev.className === 'string' && /\bcrossed\b|strike-?through/i.test(prev.className)) return true;
     return /disabled|unavailable|sold-?out|out-?of-?stock|\boos\b/i.test(cls) || /sold out|out of stock|notify me|set a reminder|ausverkauft|benachrichtig|épuisé|agotad/i.test(text);
   }
 
@@ -234,13 +237,40 @@
       .replace(/^(size|größe|taille|talla|taglia)\s*:?\s*/i, '');
   }
 
+  // Another product's card, where the class names say nothing (Coast is all utility classes): on the
+  // way up from the option, before the block holding a page heading, a link named like a product
+  // (four words or more, in its text or its image) to another page of the same kind as this one
+  // (/product/a against /product/b). This page, another colour of it by query, a size guide, and
+  // Coast's own "Petite" and "Tall" switches beside the sizes do not count.
+  function inOtherCard(el, h1s, here) {
+    if (!h1s.length || !here) return false;
+    const section = here.pathname.split('/')[1];
+    const named = (link) => [clean(link.textContent), ...[...link.querySelectorAll('img[alt]')].map((i) => clean(i.alt))]
+      .some((t) => t.split(' ').length >= 4);
+    for (let a = el.parentElement; a && a.tagName !== 'BODY'; a = a.parentElement) {
+      if (h1s.some((h) => a.contains(h))) return false;
+      for (const link of a.querySelectorAll('a[href]')) {
+        let u;
+        try { u = new URL(link.getAttribute('href'), here); } catch { continue; }
+        if (u.origin === here.origin && u.pathname !== here.pathname && u.pathname.split('/')[1] === section && named(link)) return true;
+      }
+    }
+    return false;
+  }
+
+  function pageUrl(doc) {
+    try { return new URL(doc.baseURI); } catch { return null; }
+  }
+
   // Size option elements currently in the page, with the size each one stands for.
   function optionElements(doc, parse) {
     const out = [];
+    const h1s = [...doc.querySelectorAll('h1')];
+    const here = pageUrl(doc);
     for (const el of doc.querySelectorAll(OPTION_SEL)) {
       // Review widgets carry their own "options" (star filters, "5 4 3 2 1") that parse as sizes.
       if (el.closest(OURS) || el.childElementCount > 6 || el.closest(`${REVIEW_AREA}, [class*="yotpo" i], [class*="rating" i], ${CHROME}`)) continue;
-      if (el.closest(NOT_THIS_PRODUCT)) continue;
+      if (el.closest(NOT_THIS_PRODUCT) || inOtherCard(el, h1s, here)) continue;
       const text = spacedText(el) || clean(el.getAttribute('aria-label'));
       if (!text || text.length > 48) continue;
       const p = parse(optionLabel(text));

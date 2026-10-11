@@ -411,6 +411,14 @@ test('an accessory is not sized as clothing, but a dress with a belt is', () => 
   assert.equal(recommend(jo, { brand: 'Nobody', title: 'Utility jumpsuit with belt', text: '', sizes: [] }).ok, true);
 });
 
+test('a gift card is not sized, even when its page talks about dresses or shoes', () => {
+  for (const title of ['Whistles Gift Card', 'E-GIFT CARD', 'Digital gift voucher', 'Shoe gift card']) {
+    const r = recommend(jo, { brand: 'Nobody', title, text: 'Treat them to a new dress.', sizes: [] });
+    assert.equal(r.ok, false, title);
+    assert.match(r.reason, /gift card/, title);
+  }
+});
+
 test('past every size on the page, the answer names the largest one there', () => {
   const r = recommend(jo, { brand: '', title: 'Baggy jeans', text: '98% cotton, 2% elastane', sizes: offered(['23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35']), host: 'www.hollisterco.com' });
   assert.match(r.stockText, /the largest here is 35\.$/, r.stockText);

@@ -684,6 +684,21 @@ test('an inseam typed in cm picks the leg length on the page, which is in inches
   assert.equal(r.size, '34W / 32L');
 });
 
+test('sold out in your waist and leg, the same waist in another leg comes before another waist', () => {
+  // The same Levi's page with a 77 cm inseam: 34W / 30L is sold out. Sizer offered 33W / 32L, a waist
+  // down, with 34W / 32L in stock.
+  const labels = ['30W / 30L', '32W / 30L', '33W / 32L', '34W / 30L', '34W / 32L'];
+  const sizes = labels.map((label) => ({ label, available: label !== '34W / 30L' }));
+  const r = recommend({ anchors: [], waist: '92', hip: '114', inseam: '77', unit: 'cm', fitPreference: 'regular' },
+    { brand: "Levi's", title: "Levi's Women's 724 High Rise Straight Jeans", text: '6% elastane', sizes, host: 'www.amazon.co.uk', currency: 'GBP' });
+  assert.equal(r.size, '34W / 30L');
+  assert.equal(r.inStock.size, '34W / 32L');
+  assert.equal(r.stockText, 'Sold out in 34W / 30L. In stock: 34W / 32L, the same waist with a longer leg.');
+  const mx = recommend({ ...maya, inseam: '80' }, { brand: 'ONLY', title: 'Flared jeans', text: '94% cotton, 6% elastane', sizes: ['Sx30', 'Sx32', 'Mx30', 'Mx32', 'Mx34', 'Lx32'].map((label) => ({ label, available: label !== 'Mx32' })), host: 'www.zalando.co.uk' });
+  assert.equal(mx.size, 'Mx32');
+  assert.match(mx.stockText, /In stock: Mx(30|34), the same size with a (shorter|longer) leg\.$/);
+});
+
 test('a plus-size body gets a plus size, not the top of a chart that stops at UK 22', () => {
   const r = recommend(plus, { brand: 'ASOS Curve', title: 'ASOS DESIGN Curve midi dress', text: '', sizes: offered(['UK 18', 'UK 20', 'UK 22', 'UK 24', 'UK 26', 'UK 28', 'UK 30']), host: 'www.asos.com' });
   assert.match(r.size, /^UK (26|28|30)$/, r.size);

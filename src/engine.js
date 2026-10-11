@@ -1139,9 +1139,11 @@
     // Steps count from the size the answer names: the page's 32 standing in for a W33 it lacks.
     const shown = pageMatch && pageSizes.find((s) => s.label === pageMatch.label);
     const from = (shown && posOf(shown)) ?? at(pick);
-    const inStock = (pageMatch && pageMatch.available === false) || notOffered
+    // Sold out in 34W / 30L with 34W / 32L in stock: the same waist in another leg comes first.
+    const otherLeg = pageMatch && pageMatch.available === false && shown ? otherLegInStock(shown, pageSizes) : null;
+    const inStock = otherLeg || ((pageMatch && pageMatch.available === false) || notOffered
       ? nearestInStock(from, pageSizes, posOf, rigid)
-      : null;
+      : null);
     // A size the page doesn't list is still named the way the page names its sizes: a US 8 among US
     // numbers, not the chart's EU 40.
     // A page that writes "UK 18" gets "UK 4", not a bare 4.
@@ -1500,8 +1502,20 @@
 
   const STEP_WORDS = { 1: 'one size up', 2: 'two sizes up', '-1': 'one size down', '-2': 'two sizes down' };
 
+  // The same size in a leg up to two inches either way, nearest first.
+  function otherLegInStock(shown, pageSizes) {
+    const { system, value, length } = shown.parsed;
+    if (!length) return null;
+    const same = pageSizes.filter((s) => s.available !== false && s.parsed.system === system && s.parsed.value === value
+      && s.parsed.length && s.parsed.length !== length && Math.abs(s.parsed.length - length) <= 2);
+    if (!same.length) return null;
+    const best = same.reduce((a, b) => (Math.abs(b.parsed.length - length) < Math.abs(a.parsed.length - length) ? b : a));
+    return { size: best.label, steps: 0, leg: best.parsed.length > length ? 'longer' : 'shorter', same: system === 'denim' ? 'waist' : 'size', other: null };
+  }
+
   function inStockText(size, inStock) {
     if (!inStock) return `Sold out in ${size}, and nothing close is in stock.`;
+    if (inStock.leg) return `Sold out in ${size}. In stock: ${inStock.size}, the same ${inStock.same} with a ${inStock.leg} leg.`;
     const first = `${inStock.size}, ${STEP_WORDS[inStock.steps]}`;
     return inStock.other
       ? `Sold out in ${size}. In stock: ${first}, or ${inStock.other.size}, ${STEP_WORDS[inStock.other.steps]}.`

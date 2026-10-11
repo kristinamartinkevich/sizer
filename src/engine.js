@@ -1230,14 +1230,23 @@
     const label = String((product && product.label) || '').trim();
     const result = recommend(profile, { ...product, sizes: label ? [{ label, available: true }] : [] }, charts);
     const kind = kindOf(product && product.title);
-    const brand = findBrand(product && product.brand, charts, kind) || findBrand(product && product.title, charts, kind);
+    // A men's piece is placed on the men's chart recommend used; the brand's charts are women's.
+    const men = forMen(product);
+    const brand = men ? null : findBrand(product && product.brand, charts, kind) || findBrand(product && product.title, charts, kind);
     // The brand's reputation, for the sheet, whether or not it moved the pick.
     const brandNote = (brand && brand.note) || null;
     const done = (steps) => ({ result, steps, brandNote });
     if (!result.ok || !label || typeof result.pickIndex !== 'number') return done(null);
+    if (men && !result.shoes) {
+      const system = menChartFor({ sizes: [{ label }] }, productKind(product));
+      const [s] = menSizes([{ label }], system);
+      const stand = { system, sizes: runOnToPage(MEN[system], s ? [s] : [], system) };
+      const at = s ? stand.sizes.indexOf(measure(s.parsed, stand)) : -1;
+      return done(at < 0 ? null : at - result.pickIndex);
+    }
     if (result.shoes) {
       const b = brand && brand.shoes ? brand : null;
-      const rows = b ? b.sizes : Charts.GENERIC_SHOES;
+      const rows = b ? b.sizes : men ? Charts.GENERIC_SHOES_MEN : Charts.GENERIC_SHOES;
       const [s] = resolveSizes([{ label }], 'eu', ukShop(product));
       const row = s && shoeRow(s.parsed, rows, b ? b.system : 'eu');
       return done(row ? rows.indexOf(row) - result.pickIndex : null);

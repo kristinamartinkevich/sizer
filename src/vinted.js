@@ -377,6 +377,8 @@
       size: waist || label,
       sizeFrom: fromTitle ? 'title' : fromText ? 'description' : 'label',
       kind,
+      // Where the site files it ("Men > Jeans"): a men's piece is placed on the men's chart.
+      section: category.join(' > '),
       condition: clean(r.condition) || CONDITION[schema] || '',
       description,
       photos: httpsOnly(ldImages(ld.image).concat(r.photos || [])),
@@ -416,7 +418,7 @@
     }
     if (!hasProfile(profile)) return { mode: 'needsProfile', message };
     if (l.size && engine) {
-      const placed = engine.placeLabel(profile, { brand: l.brand, title: engineTitle(l.kind), text: l.description || '', label: l.size, host: l.host, poolFit }, charts);
+      const placed = engine.placeLabel(profile, { brand: l.brand, title: engineTitle(l.kind), text: l.description || '', label: l.size, host: l.host, section: l.section || '', poolFit }, charts);
       const r = placed.result;
       if (r && r.needsProfile) return { mode: 'needsProfile', message };
       if (r && r.ok) {

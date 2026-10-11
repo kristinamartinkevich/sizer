@@ -161,6 +161,25 @@ test('placeLabel: the label Sizer would pick is your size, one below is too smal
   assert.strictEqual(Engine.placeLabel(ME, product(String(+same + 2)), null).steps, 1);
 });
 
+// A men's listing (2026-10-12): its category says men's, and the label is placed on the men's chart,
+// not on the brand's women's one. A man's M is his size; on a women's chart it would read as small.
+test("placeLabel: a men's listing's label is placed on the men's chart", () => {
+  const HIM = { anchors: [], bust: '100', waist: '84', hip: '100', unit: 'cm', fitPreference: 'regular' };
+  const raw = (category, size, kind) => ({ host: 'www.ebay.co.uk', title: `Kestrel ${kind}`, brand: 'Zara', size, category, description: '' });
+  const tee = Vinted.listingFrom(raw(['eBay', 'Clothes, Shoes & Accessories', 'Men', "Men's Clothing", 'T-Shirts'], 'M', 'T-shirt'));
+  assert.strictEqual(tee.section, "eBay > Clothes, Shoes & Accessories > Men > Men's Clothing > T-Shirts");
+  assert.strictEqual(Vinted.answerFor(tee, HIM, null, Engine).verdict, 'fits');
+  const jeans = Vinted.listingFrom(raw(['Men', 'Jeans'], '32', 'jeans'));
+  assert.strictEqual(Vinted.answerFor(jeans, HIM, null, Engine).verdict, 'fits');
+  // The same M filed under women is placed on the women's chart.
+  const hers = Vinted.listingFrom(raw(['Women', 'Tops'], 'M', 'T-shirt'));
+  assert.notStrictEqual(Vinted.answerFor(hers, HIM, null, Engine).verdict, 'fits');
+  // Men's shoes: a men's US 9 is a UK 8.
+  const FOOT = { anchors: [], footLength: '26.4', unit: 'cm', fitPreference: 'regular' };
+  const shoes = Vinted.listingFrom({ host: 'www.ebay.com', title: 'Kestrel trainers', size: 'US 9', category: ['Men', "Men's Shoes", 'Trainers'], description: '' });
+  assert.strictEqual(Vinted.answerFor(shoes, FOOT, null, Engine).verdict, 'fits');
+});
+
 // Found shopping as a tall persona: Dr Martens on vinted.co.uk labelled "9" (UK 9) said only "Sizer
 // would pick EU 41 for you": the bare 9 was read as EU 9, which no shoe chart has.
 test('placeLabel: a bare shoe size on vinted.co.uk is a UK size, placed against your foot', () => {

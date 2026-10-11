@@ -16,7 +16,8 @@
     if (!rv || !rv.total) return null;
     if (!rv.mentions) return ['Reviews', `${rv.total} read, none mention fit`];
     const parts = [rv.small && `${rv.small} small`, rv.large && `${rv.large} large`, rv.tts && `${rv.tts} true to size`].filter(Boolean);
-    const where = rv.vendors ? ` on ${rv.vendors + (rv.local && rv.local.total ? 1 : 0)} shops` : '';
+    const shopCount = rv.vendors + (rv.local && rv.local.total ? 1 : 0);
+    const where = rv.vendors ? ` on ${shopCount === 1 ? 'one shop' : `${shopCount} shops`}` : '';
     return ['Reviews', `${rv.mentions} of ${rv.total}${where} mention fit: ${parts.join(', ')}`];
   }
 

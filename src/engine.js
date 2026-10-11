@@ -618,7 +618,8 @@
       return rv.weighted.similar ? `${rv.weighted.similar} reviewer${rv.weighted.similar === 1 ? '' : 's'} about your height and shape say${rv.weighted.similar === 1 ? 's' : ''} it ${what}.`
         : `Reviewers, weighted by how like you they are, say it ${what}.`;
     }
-    const shops = rv.vendors ? `, across ${rv.vendors + (rv.local.total ? 1 : 0)} shops` : '';
+    const shopCount = rv.vendors + (rv.local.total ? 1 : 0);
+    const shops = rv.vendors ? `, ${shopCount === 1 ? 'on one shop' : `across ${shopCount} shops`}` : '';
     if (rv.fromSummary && !rv.vendors) {
       // The shop's own figure, as the shop gave it; a slider with no numbers gets no numbers.
       const counted = rv.total ? `${rv.total} reviews` : '';
@@ -862,6 +863,33 @@
     return Math.max(...parts);
   }
 
+  // A piece you own from this brand, of this kind of clothing: the brand's own cut already shows in
+  // it, so it names the size here before any measurement or standard chart does.
+  const OWNED_STEP = { tight: 1, perfect: 0, loose: -1 };
+  const OWNED_NOUN = { jeans: 'jeans', trousers: 'trousers', shorts: 'shorts', skirt: 'skirt', top: 'top', dress: 'dress', jacket: 'jacket' };
+  const PAIR_NOUN = ['jeans', 'trousers', 'shorts'];
+  function ownedSentence(owned) {
+    const noun = OWNED_NOUN[owned.a.type];
+    const pair = PAIR_NOUN.includes(owned.a.type);
+    const verb = { tight: pair ? 'are a bit tight' : 'is a bit tight', perfect: pair ? 'fit' : 'fits', loose: pair ? 'are a bit loose' : 'is a bit loose' }[owned.fit];
+    const step = { tight: 'one size up', perfect: 'the same size', loose: 'one size down' }[owned.fit];
+    return `Your ${owned.name} ${noun} ${verb}, so ${step}.`;
+  }
+  function ownedPiece(profile, product, brand, kind, charts) {
+    const names = new Set(brandNames(product, brand).map(norm).filter(Boolean));
+    if (!names.size) return null;
+    for (const a of profile.anchors || []) {
+      if (!a.brand || a.brand.startsWith('generic') || KIND_OF_TYPE[a.type] !== kind || OWNED_STEP[a.fit || 'perfect'] == null) continue;
+      const own = anchorBrand(a, charts);
+      if (!names.has(norm(a.brand)) && !(own && brand && own.id && own.id === brand.id)) continue;
+      let parsed = parseSizeLabel(a.size);
+      if (!parsed) continue;
+      if (parsed.system === 'number') parsed = { ...parsed, system: anchorNumberSystem(a, brand, parsed.value) };
+      return { a, parsed, fit: a.fit || 'perfect', name: anchorName(a, own || brand, parsed) };
+    }
+    return null;
+  }
+
   const PREF_WORDS = { relaxed: 'You like a little room.', snug: 'You like a close fit.' };
   const KIND_WORDS = { bottoms: 'bottoms', tops: 'tops', dresses: 'dresses', outerwear: 'coats and jackets' };
 
@@ -913,8 +941,15 @@
 
     const reasons = [];
     const rigid = signals.stretch === 'none';
-    const base = g2g ? basePosition(garmentRows, g2g.values, keys, rigid) : basePosition(chart, body, keys, rigid);
-    if (g2g) {
+    const owned = g2g ? null : ownedPiece(profile, product, brand, kind, charts);
+    const ownedM = owned ? measure(owned.parsed, brand) : null;
+    const ownedKeys = ownedM ? keys.filter((k) => typeof ownedM[k] === 'number') : [];
+    const ownedPos = ownedKeys.length ? Math.round(ownedKeys.reduce((s, k) => s + position(chart, k, ownedM[k]), 0) / ownedKeys.length) + OWNED_STEP[owned.fit] : null;
+    const mine = ownedPos != null;
+    const base = mine ? ownedPos : g2g ? basePosition(garmentRows, g2g.values, keys, rigid) : basePosition(chart, body, keys, rigid);
+    if (mine) {
+      reasons.push({ text: ownedSentence(owned), delta: null });
+    } else if (g2g) {
       reasons.push({ text: `Compared garment to garment with your ${joinNames(g2g.names)}: like ${chartName} ${approxLabel(chart, chartSystem, base, !brand)}.`, delta: null });
     } else {
       const sources = sourcesFor(profile, body.points, keys);
@@ -939,14 +974,17 @@
     const webMove = webMoveFor(web, held);
     // What Sizer users who bought the brand said counts only when the page, its reviews and what others
     // say online about this item have not moved it.
-    const learned = !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, brand), kind) : null;
+    const learned = !mine && !signals.fitNote && !reviews.verdict && !webMove ? learnedFit(charts, brandNames(product, brand), kind) : null;
     const learnedNote = !!learned && (learned.verdict === 'small' || learned.verdict === 'large');
     const explicit = pageNote || buyersNote || !!webMove;
     const learnedStep = learnedNote ? (learned.verdict === 'small' ? 1 : -1) : 0;
     // No alternative size once something has moved it, the learned step included.
     const settled = explicit || learnedNote;
     const elastane = signals.elastanePct ? ` (${signals.elastanePct}% elastane)` : '';
-    if (rigid) {
+    // The piece you own already carries the brand's cut and the fit you like, so neither moves it.
+    if (mine) {
+      // Only what this item says about itself moves it from there.
+    } else if (rigid) {
       if (!explicit) adj += 0.35 + (signals.skinny ? 0.15 : 0);
       reasons.push({ text: `No stretch${signals.cotton100 ? ', 100% cotton' : ''}, so going up when in doubt.`, delta: null });
     } else if (signals.stretch === 'high') {
@@ -957,14 +995,14 @@
     }
     // The researched tendency stays when Sizer users' answers apply: those answers were given to
     // suggestions that already carried it, so the learned step corrects what is left.
-    if (brand && brand.tendency && !explicit) {
+    if (!mine && brand && brand.tendency && !explicit) {
       adj += brand.tendency;
       if (brand.note) reasons.push({ text: brand.note, delta: null });
     }
     // A preference set for this kind of clothing wins over the overall one.
     const ownPref = profile.fitByCategory && FIT_PREF[profile.fitByCategory[kind]] != null ? profile.fitByCategory[kind] : null;
     const prefName = ownPref || profile.fitPreference;
-    const pref = FIT_PREF[prefName] || 0;
+    const pref = mine ? 0 : FIT_PREF[prefName] || 0;
     if (pref) {
       adj += pref;
       reasons.push({ text: ownPref ? `${PREF_WORDS[prefName].replace(/\.$/, '')} in ${KIND_WORDS[kind]}.` : PREF_WORDS[prefName], delta: null });
@@ -1074,6 +1112,7 @@
 
     let score = 0.4;
     if (brand) score += 0.2 - tierPenalty(brand);
+    else if (mine) score += 0.2;
     if (signals.stretch !== 'unknown') score += 0.15;
     if (signals.fitNote) score += 0.1;
     if (reviews.verdict || learned) score += 0.1;
@@ -1083,7 +1122,7 @@
     // Clothing sized on waist and hip alone is surest for bottoms; a top sized on the bust is not penalised.
     if (!signals.bottoms && !keys.includes('bust')) score -= 0.1;
     const confidence = score >= 0.75 ? 'High' : score >= 0.55 ? 'Medium' : 'Low';
-    const firmUp = !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
+    const firmUp = mine ? null : !brand ? 'There’s no size chart for this brand yet, so this uses a standard one.'
       : tierCaveat(brand) ? tierCaveat(brand)
       : body.spread > 5 ? 'Some of your sizes disagree. Check them in your fit profile.'
         : !corroborated ? 'Add another piece you own to firm this up.'

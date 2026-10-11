@@ -697,3 +697,27 @@ test('a petite size the page does not list is named like the page: 00 among US n
   const c = recommend(petite, { brand: 'Nobody', title: 'Midi dress', text: '', sizes: offered(['UK 18', 'UK 20', 'UK 22']), host: 'www.asos.com' });
   assert.equal(c.size, 'UK 4');
 });
+
+// M&S, 2026-10-11: a shopper whose M&S UK 18 trousers fit perfectly, with typed measurements that
+// read as a UK 20 to 22, was told 24 for M&S jeans. The piece from this brand is the surest evidence.
+test('a piece you own from this brand, of this kind, names the size there', () => {
+  const her = {
+    anchors: [{ brand: 'M&S', type: 'trousers', size: 'UK 18', fit: 'perfect' }, { brand: 'Next', type: 'dress', size: 'UK 18', fit: 'tight' }],
+    height: '170', bust: '112', waist: '96', hip: '122', inseam: '77', unit: 'cm', fitPreference: 'relaxed', betweenSizes: 'up',
+  };
+  const sizes = offered(['6', '8', '10', '12', '14', '16', '18', '20', '22', '24']);
+  const host = 'www.marksandspencer.com';
+  const currency = 'GBP';
+  const r = recommend(her, { brand: 'M&S', title: 'Mid Rise Barrel Jeans', text: 'Relaxed fit. 100% cotton', sizes, host, currency });
+  assert.equal(r.size, '18');
+  assert.equal(r.reasons[0].text, 'Your M&S UK 18 trousers fit, so the same size.');
+  assert.doesNotMatch(String(r.firmUp), /standard one/);
+  // The page's own note still moves it.
+  const s = recommend(her, { brand: 'M&S', title: 'Straight Leg Trousers', text: 'This style runs small, we recommend ordering one size up.', sizes, host, currency });
+  assert.equal(s.size, '20');
+  // A piece marked tight asks for one size up; a dress says nothing about trousers.
+  const t = recommend({ ...her, anchors: [{ brand: 'M&S', type: 'trousers', size: 'UK 16', fit: 'tight' }] }, { brand: 'M&S', title: 'Tapered Trousers', text: '', sizes, host, currency });
+  assert.equal(t.size, '18');
+  const d = recommend(her, { brand: 'M&S', title: 'Jersey Midi Dress', text: '', sizes, host, currency });
+  assert.notEqual(d.size, '18');
+});

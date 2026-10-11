@@ -43,6 +43,17 @@ test('what buyers said elsewhere moves the size and says how many shops', () => 
   assert.ok(r.reasons.some((x) => /34 of 50 reviews that mention fit, across 3 shops/.test(x.text)), JSON.stringify(r.reasons));
 });
 
+// Bershka, 2026-10-11: reviews pooled from one shop read "across 1 shops".
+test('reviews from one shop say one shop, not "1 shops"', () => {
+  const poolFit = { small: 0, large: 0, tts: 5, total: 7, vendors: 1 };
+  const r = recommend(profile, { ...stretchy, reviews: [], poolFit });
+  const line = r.reasons.map((x) => x.text).join(' ');
+  assert.match(line, /5 of 5 reviews that mention fit, on one shop/);
+  assert.doesNotMatch(line, /1 shops/);
+  const { reviewsFact } = require('../src/sheet.js');
+  assert.deepEqual(reviewsFact(analyzeReviews([], null, poolFit)), ['Reviews', '5 of 7 on one shop mention fit: 5 true to size']);
+});
+
 test('the page’s own note still wins over the pool', () => {
   const r = recommend(profile, { ...stretchy, text: '2% elastane. Fits large, we recommend going one size down.', poolFit: poolExcept(rows, 'x') });
   assert.equal(r.size, '26');

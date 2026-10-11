@@ -132,6 +132,11 @@
       { name: 'ebay-listing', base: 'https://www.ebay.co.uk/itm/117288705558', profile: BODY,
         brand: 'Kestrel', size: '12', sizeRaw: '12', kind: 'dress', condition: 'Pre-owned - Excellent', lang: 'en', have: {}, photos: 2,
         mode: 'label', verdict: 'fits', line: /by the label$/, ask: /^Hello.*armpit/, notAsked: /inseam/, body: null, anchor: /^elevated-info$/ },
+      // A new eBay listing in several sizes: no Size row, a "Size: Select" picker; it is sized on the
+      // sizes it offers, 20 and 22 sold out.
+      { name: 'ebay-multi-size', base: 'https://www.ebay.co.uk/itm/154719152496', profile: BODY,
+        brand: 'Kestrel', size: null, sizeRaw: '', kind: 'dress', condition: 'New with tags', lang: 'en', have: {}, photos: 1,
+        options: '14 16 18 20(x) 22(x)', mode: 'options', verdict: null, line: /^12 is not offered on this page\. Nearest in stock: 14, one size up\.$/, ask: /^Hello.*armpit/, notAsked: /inseam/, body: null, anchor: /^elevated-info$/ },
     ];
 
     async function runVinted(shop) {
@@ -150,6 +155,7 @@
       const a = SizerVinted.answerFor(l, shop.profile, null, SizerEngine);
       check(checks, 'answer', a.mode === shop.mode && a.verdict === shop.verdict, `${a.mode} ${a.verdict}`);
       check(checks, 'line', shop.line.test(a.line), a.line);
+      if (shop.options) { const o = (l.options || []).map((x) => x.label + (x.available ? '' : '(x)')).join(' '); check(checks, 'options', o === shop.options, o); }
       if (shop.mode === 'label') check(checks, 'label flag', a.flag === (shop.flag || 'Label only, the seller has not measured it'), a.flag);
       check(checks, 'seller message', shop.ask.test(a.message || '') && !shop.notAsked.test(a.message || ''), a.message);
       const body = SizerChartsStore.measurementsBody({ image_urls: l.photos, kind: l.kind }, '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64');

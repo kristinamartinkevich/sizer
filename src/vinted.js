@@ -386,6 +386,8 @@
       // A bare shoe size on vinted.co.uk is a UK size: the engine reads the host as it reads a shop's.
       host: r.host || '',
       have: parseMeasurements(description),
+      // A new listing in several sizes (eBay's size picker): the sizes on offer, when no one size is.
+      options: (r.options || []).filter((o) => o && clean(o.label)).map((o) => ({ label: clean(o.label), available: o.available !== false })),
     };
   }
 
@@ -436,6 +438,21 @@
         };
       }
     }
+    // Several sizes on offer and no single label: sized as a shop page is, on the sizes it lists.
+    if (!l.size && l.options && l.options.length > 1 && engine) {
+      const r = engine.recommend(profile, { brand: l.brand, title: engineTitle(l.kind), text: l.description || '', sizes: l.options, host: l.host, section: l.section || '', poolFit }, charts);
+      if (r && r.ok) {
+        return {
+          mode: 'options',
+          verdict: null,
+          line: r.stockText || (r.matchedOnPage ? `Pick ${r.size} of the sizes on offer` : `Sizer would pick ${r.size} for you`),
+          pick: r.size,
+          reasons: r.reasons.map((x) => x.text),
+          brandFact: engine.provenance(r).brandFact,
+          message,
+        };
+      }
+    }
     return { mode: 'unknown', message };
   }
 
@@ -449,6 +466,7 @@
   // The same answer in the popup's result shape. A measured answer against a piece you own is the
   // surest Sizer gives; against your measurements a notch less; the label alone is a rough guess.
   function popupResult(answer, listing) {
+    if (answer && answer.mode === 'options') return { ok: true, size: answer.pick, verdict: null, heading: popupHeading(null, 'Low'), headline: answer.line, confidence: 'Low', brand: (listing && listing.brand) || null, available: null };
     if (!answer || (answer.mode !== 'measured' && answer.mode !== 'label')) return null;
     const confidence = answer.mode === 'label' ? 'Low' : answer.byPiece ? 'High' : 'Medium';
     const verdict = answer.verdict || null;

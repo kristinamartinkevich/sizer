@@ -58,6 +58,8 @@
     return last && !label.test(last) ? last : '';
   }
 
+  // A size picker's prompt is no value: eBay's multi-size listings print "Size: Select".
+  const PLACEHOLDER = /^(?:-+|select|choose|please (?:select|choose)|(?:select|choose) (?:a |your )?size|sélectionner|choisir|auswählen|bitte wählen|seleccionar|selecciona|seleziona|scegli|kies|wybierz)$/i;
   function detail(doc, key) {
     const d = DETAIL[key];
     const label = new RegExp(`^(?:${d.label})\\s*:?$`, 'i');
@@ -72,7 +74,7 @@
     for (const el of doc.querySelectorAll('dt, th, span, div')) {
       if (el.children.length || !label.test(clean(el.textContent))) continue;
       const next = el.nextElementSibling;
-      if (next && spaced(next)) return spaced(next);
+      if (next && spaced(next) && !PLACEHOLDER.test(spaced(next))) return spaced(next);
     }
     // Depop prints one line, "Size M • Excellent condition • Levi's", with no labelled rows.
     const own = PRIMARY[key];
@@ -117,6 +119,20 @@
     return meta ? clean(meta.getAttribute('content')) : '';
   }
 
+  // eBay's size picker on a new listing in several sizes: each option carries data-sku-value-name.
+  function options(doc) {
+    const seen = new Set();
+    const out = [];
+    for (const el of doc.querySelectorAll('[data-sku-value-name]')) {
+      const label = clean(el.getAttribute('data-sku-value-name'));
+      if (!label || PLACEHOLDER.test(label) || seen.has(label)) continue;
+      seen.add(label);
+      const off = el.getAttribute('aria-disabled') === 'true' || /disabled|unavailable/i.test(el.className || '') || /out of stock/i.test(el.textContent);
+      out.push({ label, available: !off });
+    }
+    return out;
+  }
+
   // What src/vinted.js's listingFrom needs, straight off the page.
   function readRaw(doc, host) {
     const ld = jsonLd(doc);
@@ -132,6 +148,7 @@
       description: description(doc),
       category: breadcrumbs(doc, ld),
       photos: photos(doc),
+      options: options(doc),
     };
   }
 
@@ -279,7 +296,8 @@
     if (a.mode === 'needsProfile') {
       return `<div class="line vinted">${MARK}<span class="answer"><span>Sizer can tell you if this fits.</span></span><button class="cta" data-act="profile">Add your sizes</button>${actionsHTML()}</div>`;
     }
-    const size = l.size ? `<span class="size">${esc(l.size)}</span>` : '';
+    const shown = a.mode === 'options' ? a.pick : l.size;
+    const size = shown ? `<span class="size">${esc(shown)}</span>` : '';
     let k;
     let text;
     let note = '';
@@ -292,6 +310,9 @@
       k = l.sizeFrom === 'label' ? 'Label only' : `Size from the ${l.sizeFrom}`;
       text = a.line;
       note = a.flag;
+    } else if (a.mode === 'options') {
+      k = 'Sizes on offer';
+      text = a.line;
     } else {
       k = 'No measurements';
       text = l.size ? 'Sizer has no chart for this label' : 'The seller gives no size or measurements';
@@ -317,7 +338,7 @@
       : '<div class="fact"><span class="v">None in the description</span></div>';
     const rows = [
       ['Brand', l.brand || 'Not found'],
-      ['Size', l.sizeRaw || 'Not given'],
+      ['Size', l.sizeRaw || (l.options && l.options.length ? l.options.map((o) => o.label).join(', ') : 'Not given')],
       ...(l.sizeFrom === 'label' ? [] : [[`Waist in the ${l.sizeFrom}`, l.size]]),
       ['Condition', l.condition || 'Not given'],
     ];
@@ -341,6 +362,9 @@
     } else if (a.mode === 'label') {
       hero = `<div class="hero"><div class="k">${l.sizeFrom === 'label' ? 'Label only' : `Size from the ${l.sizeFrom}`}</div><div class="big">${esc(l.size)}</div><div class="headline">${esc(a.line)}</div><p class="firm">${esc(a.flag)}. Sizer picks ${esc(a.pick)} for you on this brand’s chart.</p></div>`;
       why = `<h3>What Sizer knows about ${esc(l.brand || 'this brand')}</h3><ol>${a.reasons.map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ol>`;
+    } else if (a.mode === 'options') {
+      hero = `<div class="hero"><div class="k">Sizes on offer</div><div class="big">${esc(a.pick)}</div><div class="headline">${esc(a.line)}</div><p class="firm">Offered in ${esc(l.options.map((o) => o.label).join(', '))}.</p></div>`;
+      why = `<h3>Why this size</h3><ol>${a.reasons.map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ol>`;
     } else {
       hero = `<p class="empty">${l.size ? 'Sizer has no chart for this label.' : 'The seller gives no size or measurements.'} Ask the seller to measure it.</p>`;
     }

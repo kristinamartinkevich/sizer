@@ -409,3 +409,22 @@ test("Depop's placeholder brands are no brand", () => {
   }
   assert.strictEqual(Vinted.listingFrom({ host: 'www.depop.com', title: 'Linen dress', brand: '& Other Stories', size: 'Size M', category: ['Women', 'Dresses'] }).brand, '& Other Stories');
 });
+
+// eBay UK, 2026-10-12: a new dress in 14 to 22 has no Size row, only a "Size: Select" picker. Sizer
+// read "Select" as the label. It is sized on the sizes it offers, as a shop page is.
+test('a listing in several sizes is sized on the sizes it offers, in the line and the popup', () => {
+  const listing = Vinted.listingFrom({ host: 'www.ebay.co.uk', title: 'Kestrel Lace Skater Dress Size 14 - 22', brand: 'Kestrel', size: '', category: ['Women', "Women's Clothing", 'Dresses'], description: '',
+    options: [{ label: '14' }, { label: '16' }, { label: '18' }, { label: '20', available: false }, { label: '22', available: false }] });
+  assert.deepStrictEqual(listing.options.map((o) => o.available), [true, true, true, false, false]);
+  const her = { anchors: [], waist: '82', hip: '110', unit: 'cm' };
+  const a = Vinted.answerFor(listing, her, null, Engine);
+  assert.strictEqual(a.mode, 'options');
+  assert.match(a.pick, /^1[468]$/);
+  assert.strictEqual(a.line, `Pick ${a.pick} of the sizes on offer`);
+  const p = Vinted.popupResult(a, listing);
+  assert.strictEqual(p.size, a.pick);
+  assert.strictEqual(p.heading, 'Rough guess');
+  // One option is no choice to make, and a single label still wins.
+  assert.notStrictEqual(Vinted.answerFor({ ...listing, options: [{ label: '14', available: true }] }, her, null, Engine).mode, 'options');
+  assert.strictEqual(Vinted.answerFor(Vinted.listingFrom({ host: 'www.ebay.co.uk', title: 'Dress', size: '16', category: ['Women', 'Dresses'], description: '', options: [{ label: '14' }, { label: '16' }] }), her, null, Engine).mode, 'label');
+});

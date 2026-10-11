@@ -297,11 +297,14 @@
 
   // Smallest first when every size is a number (GANNI's product data lists 32, 44, 42, 36...);
   // otherwise as the page has them.
+  const LETTER_RANK = ['XXXS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
   function inOrder(sizes, parse) {
     const parsed = sizes.map((s) => parse(s.label));
     // Zalando's "6 (39)" among bare UK sizes reads as EU 39: values in two systems do not sort.
-    if (!parsed.every((p) => p && typeof p.value === 'number' && p.system === parsed[0].system)) return sizes;
-    const keyed = sizes.map((s, i) => ({ s, i, k: parsed[i].value }));
+    // Letters sort too: Ganni's product data lists XL before XXS.
+    const rank = (p) => (typeof p.value === 'number' ? p.value : p.system === 'letter' ? LETTER_RANK.indexOf(p.value) : -1);
+    if (!parsed.every((p) => p && rank(p) >= 0 && p.system === parsed[0].system)) return sizes;
+    const keyed = sizes.map((s, i) => ({ s, i, k: rank(parsed[i]) }));
     return keyed.sort((a, b) => a.k - b.k || a.i - b.i).map((x) => x.s);
   }
 

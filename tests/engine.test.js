@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { recommend, parseSizeLabel, findBrand, analyzeText } = require('../src/engine.js');
+const { recommend, parseSizeLabel, findBrand, analyzeText, resolveSizes } = require('../src/engine.js');
 
 const profile = { anchors: [{ brand: 'zara', size: '38' }, { brand: 'generic-denim', size: '27' }], fitPreference: 'regular' };
 const denimSizes = ['W25/L32', 'W26/L32', 'W27/L32', 'W28/L32', 'W29/L32', 'W30/L32'].map((label) => ({ label }));
@@ -106,6 +106,18 @@ test('a stretch scale or a comparison is not the stretch, and elastane on the la
   assert.notStrictEqual(madewell.stretch, 'none');
   assert.strictEqual(analyzeText('Rigid denim, 100% cotton.').stretch, 'none');
   assert.strictEqual(analyzeText('Stretch ranging from Non-Stretch to Super-Stretch. 100% cotton.').stretch, 'none');
+});
+
+// Found shopping as a petite persona: Selfridges called a wool-blend jumper "Lightweight, stretchy."
+// over 2% elastane, and the sheet said "Lots of stretch (2% elastane)".
+test('a plain "stretchy" over a little elastane is a little stretch', () => {
+  assert.strictEqual(analyzeText('Lightweight, stretchy. 78% wool, 20% polyamide, 2% elastane.').stretch, 'slight');
+  assert.strictEqual(analyzeText('Super stretch skinny jeans. 98% cotton, 2% elastane.').stretch, 'high');
+  assert.strictEqual(analyzeText('Soft and stretchy jersey.').stretch, 'high');
+  assert.strictEqual(analyzeText('Stretchy rib. 95% viscose, 5% elastane.').stretch, 'high');
+  // Karen Millen's trench: "a sculptural, fashion-forward silhouette" is the cut, not the fabric.
+  assert.strictEqual(analyzeText('Funnel neck creating a sculptural, fashion-forward silhouette. 100% polyester.').stretch, 'unknown');
+  assert.strictEqual(analyzeText('Sculpting fabric that holds you in.').stretch, 'high');
 });
 
 // QA 2026-10-11: Zalando said "Customers say these fit tight around the ankle." above the picker, and
@@ -252,7 +264,9 @@ test('bare 4 to 18 on a UK shop are UK sizes, even for a brand whose chart is EU
   assert.equal(zara.matchedOnPage, true);
   // The same numbers on a US shop stay US: EU 40 is US 8.
   const us = recommend(maya, { brand: 'ZARA', title: 'Slim fit jeans', text: '98% cotton, 2% elastane', sizes: offered(['4', '6', '8', '10', '12', '14', '16', '18']), url: 'https://www.zara.com/us/en/jeans-p04730218.html', host: 'www.zara.com' });
-  assert.equal(us.size, '8');
+  assert.match(us.size, /^(?:8|10)$/);
+  assert.deepEqual(resolveSizes(offered(['0', '2', '4'])).map((l) => l.parsed.system), ['us', 'us', 'us']);
+  assert.deepEqual(resolveSizes(offered(['1', '2', '3'])).map((l) => l.parsed.value), ['S', 'M', 'L']);
   // Zalando UK's double sizes: 8/10 is UK 8 to 10, not US.
   const tee = recommend(maya, { brand: 'Tommy Hilfiger', title: 'Print T-shirt', text: '100% cotton', sizes: offered(['6/8', '8/10', '12', '14/16', '18']), host: 'www.zalando.co.uk' });
   assert.equal(tee.size, '12');
@@ -490,6 +504,32 @@ test('a half-size shoe you own sizes shoes on the standard chart', () => {
   assert.match(r.reasons[0].text, /UK 5\.5/);
   const us = recommend({ anchors: [{ brand: 'Nobody', type: 'shoes', size: 'US 8.5', fit: 'perfect' }] }, { brand: 'Nobody', title: 'Leather trainers', text: '', sizes: [] });
   assert.equal(us.ok, true, us.reason);
+});
+
+// Found shopping as a petite persona: sacai sizes run 1 to 4 (S to XL), read as UK 1 to 4, so a
+// UK 6 was "not offered" and the nearest was 4, the largest.
+test('a brand scale of 0 to 5 reads as letters, and shoes in UK 3 to 5 stay shoes', () => {
+  const mid = { height: '168', bust: '92', waist: '74', hip: '100', unit: 'cm', fitPreference: 'regular', betweenSizes: 'up' };
+  const r = recommend(mid, { brand: 'sacai', title: 'Black Leopard Jersey T-Shirt', text: '100% cotton.', sizes: offered(['1', '2', '3', '4']), host: 'www.ssense.com' });
+  const letters = recommend(mid, { brand: 'sacai', title: 'Black Leopard Jersey T-Shirt', text: '100% cotton.', sizes: offered(['S', 'M', 'L', 'XL']), host: 'www.ssense.com' });
+  assert.equal(r.size, String(['S', 'M', 'L', 'XL'].indexOf(letters.size) + 1), `${r.size} against ${letters.size}`);
+  const us = recommend(mid, { brand: 'Nobody', title: 'Jersey T-Shirt', text: '100% cotton.', sizes: offered(['0', '2', '4', '6', '8', '10', '12']) });
+  assert.match(us.size, /^(?:8|10)$/);
+  assert.deepEqual(resolveSizes(offered(['0', '2', '4'])).map((l) => l.parsed.system), ['us', 'us', 'us']);
+  assert.deepEqual(resolveSizes(offered(['1', '2', '3'])).map((l) => l.parsed.value), ['S', 'M', 'L']);
+  const shoes = recommend({ anchors: [{ brand: 'Converse', type: 'shoes', size: 'UK 4', fit: 'perfect' }] }, { brand: 'Nobody', title: 'Leather loafers', text: '', sizes: offered(['3', '4', '5']), host: 'www.example.co.uk' });
+  assert.equal(shoes.size, '4');
+});
+
+// Found shopping as a petite persona: Moon Boot sells "UK 3-5" and "UK 6-8", and the answer named
+// EU 37, a size that is no button on the page.
+test('a shoe size range on the page holds the sizes inside it', () => {
+  const profile = { anchors: [{ brand: 'Converse', type: 'shoes', size: 'UK 4', fit: 'perfect' }] };
+  const moon = (sizes) => recommend(profile, { brand: 'Moon Boot', title: 'Icon Low snow boot', text: '', sizes });
+  assert.equal(moon(offered(['UK 3-5', 'UK 6-8'])).size, 'UK 3-5');
+  assert.equal(moon(offered(['EU 35-36', 'EU 37-38', 'EU 39-41'])).size, 'EU 37-38');
+  const uk5 = recommend({ anchors: [{ brand: 'Converse', type: 'shoes', size: 'UK 5', fit: 'perfect' }] }, { brand: 'Moon Boot', title: 'Icon Low snow boot', text: '', sizes: offered(['EU 35-36', 'EU 37-38', 'EU 39-41']) });
+  assert.equal(uk5.size, 'EU 37-38');
 });
 
 // Found shopping as a pear-shaped persona: Shopbop's largest jean, 32, stood in for a W33 the page

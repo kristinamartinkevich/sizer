@@ -93,7 +93,7 @@
     // Two sizes in one label span both: S/M, XS-S, 8/10, 10-12, UK 8-10. A jeans waist and leg
     // (28/30) is read below; EU pairs such as 36/38 are settled across the page in resolveSizes.
     if ((m = s.match(new RegExp(`^(${LETTERS}) ?[/-] ?(${LETTERS})$`)))) return { system: 'letter', value: letterOf(m[1]), span: letterOf(m[2]), label: own };
-    if ((m = s.match(/^(?:(UK|AU|US|EU|FR|DE|IT) ?)?(\d{1,2}) ?[/-] ?(\d{1,2})$/)) && (+m[3] - +m[2] === 2 || +m[3] - +m[2] === 4) && (m[1] || +m[2] < 22)) {
+    if ((m = s.match(/^(?:(UK|AU|US|EU|FR|DE|IT) ?)?(\d{1,2}) ?[/-] ?(\d{1,2})$/)) && (+m[3] - +m[2] === 2 || +m[3] - +m[2] === 4 || (+m[2] >= 30 && +m[3] - +m[2] >= 1 && +m[3] - +m[2] <= 3)) && (m[1] || +m[2] < 22)) {
       return { system: TAG_SYSTEM[m[1]] || 'number', value: +m[2], span: +m[3], label: own };
     }
     // A letter with the shop's own numbers goes by the numbers, which are the more exact: S (8-10).
@@ -165,12 +165,20 @@
     return 'denim';
   }
 
+  const BRAND_SCALE = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   function resolveSizes(labels, hint, uk) {
     const parsed = labels.map((l) => ({ ...l, parsed: parseSizeLabel(l.label) })).filter((l) => l.parsed && l.parsed.system !== 'one');
     // Every label an even EU pair, 32/34, 36/38: spans of two EU sizes, not jeans waists and legs.
     const pair = (l) => { const m = String(l.label).trim().match(/^(\d{2}) ?\/ ?(\d{2})$/); return m && +m[1] >= 30 && +m[1] % 2 === 0 && +m[2] === +m[1] + 2 ? +m[1] : null; };
     if (parsed.length >= 2 && hint !== 'denim' && parsed.every((l) => pair(l) != null)) {
       for (const l of parsed) l.parsed = withEu({ system: 'eu', value: pair(l), span: pair(l) + 2, label: String(l.label).trim() });
+    }
+    // A designer's own scale, 0 to 5 with an odd size among them (sacai and Issey Miyake 1 to 4, Ted
+    // Baker 0 to 6 is longer): 1 is S. UK and US dress sizes are even. Only clothing with no brand
+    // chart; shoes always pass their system.
+    const nums = parsed.filter((l) => l.parsed.system === 'number');
+    if (!hint && nums.length >= 2 && nums.length === parsed.length && nums.every((l) => Number.isInteger(l.parsed.value) && l.parsed.value <= 5 && l.parsed.span == null) && nums.some((l) => l.parsed.value % 2 === 1)) {
+      for (const l of nums) l.parsed = { ...l.parsed, system: 'letter', value: BRAND_SCALE[l.parsed.value] };
     }
     const numSystem = inferNumberSystem(parsed.filter((l) => l.parsed.system === 'number').map((l) => l.parsed.value), hint, uk);
     for (const l of parsed) if (l.parsed.system === 'number') l.parsed = { ...l.parsed, system: numSystem };
@@ -443,7 +451,8 @@
     tts: /true\s+to\s+size|fits\s+true|normal\s+fit|fällt\s+normal\s+aus|größengerecht|taille\s+normalement/i,
     rigid: /no\s+stretch|non[-\s]?stretch|zero\s+stretch|without\s+stretch|rigid(?:\s+denim)?|ohne\s+stretch|kein(?:en)?\s+stretch|nicht\s+elastisch|sans\s+stretch|sin\s+elasticidad|stretch\s*:\s*(?:none|no)/i,
     slight: /slight\s+stretch|light\s+stretch|comfort\s+stretch|low\s+stretch|leichte[rn]?\s+stretch|wenig\s+stretch|stretch\s*:\s*(?:slight|light|low)/i,
-    high: /super\s*[-\s]?stretch|high\s+stretch|power\s+stretch|ultra\s+stretch|very\s+stretchy|stretchy|sculpt|stretch\s*:\s*(?:high|very)/i,
+    high: /super\s*[-\s]?stretch|high\s+stretch|power\s+stretch|ultra\s+stretch|very\s+stretchy|stretchy|sculpt(?:s|ing)?\b|stretch\s*:\s*(?:high|very)/i,
+    highNamed: /super\s*[-\s]?stretch|high\s+stretch|power\s+stretch|ultra\s+stretch|very\s+stretchy|sculpt(?:s|ing)?\b|stretch\s*:\s*(?:high|very)/i,
     stretchScale: /(?:\b(?:ranging\s+)?from\s+)?\b(?:non|no|rigid)[-\s]?(?:stretch)?\s*(?:to|[-–—])?\s*(?:super|high|ultra|max(?:imum)?)[-\s]?stretch(?:y)?\b/gi,
     elastane: /(\d{1,2}(?:[.,]\d)?)\s*%\s*(?:elastane|elasthan|elastan|spandex|lycra|élasthanne|elastomultiester|elastomultiestere|elastolefin)/i,
     cotton100: /100\s*%\s*(?:organic\s+)?(?:cotton|baumwolle|coton|algodón|cotone|katoen)/i,
@@ -490,7 +499,8 @@
     let stretch = 'unknown';
     // Elastane on the label is the fact; "rigid" can be a comparison ("the structure of rigid jeans").
     if (RE.rigid.test(t) && !(elastanePct > 0)) stretch = 'none';
-    else if (RE.high.test(t) || (elastanePct != null && elastanePct >= 3)) stretch = 'high';
+    // A plain "stretchy" over under 3% elastane is a knit's give, not a stretch fabric: a little stretch.
+    else if ((elastanePct != null && elastanePct < 3 ? RE.highNamed : RE.high).test(t) || (elastanePct != null && elastanePct >= 3)) stretch = 'high';
     else if (RE.slight.test(t) || (elastanePct != null && elastanePct > 0)) stretch = 'slight';
     else if (RE.cotton100.test(t)) stretch = 'none';
 
@@ -1271,7 +1281,13 @@
     const pick = rows[idx];
 
     const matchOf = (r) => {
-      const s = pageSizes.find((p) => shoeRow(p.parsed, [r], system));
+      // A range on the page (Moon Boot's "UK 3-5", "EU 37-38") holds every size inside it.
+      const within = (p) => {
+        if (!p.parsed || p.parsed.span == null) return false;
+        const v = p.parsed.system === system ? r.value : r.aliases && +r.aliases[p.parsed.system];
+        return typeof v === 'number' && !Number.isNaN(v) && v >= p.parsed.value && v < p.parsed.span + 1;
+      };
+      const s = pageSizes.find((p) => shoeRow(p.parsed, [r], system)) || pageSizes.find(within);
       return s ? { label: s.label, available: s.available } : null;
     };
     const label = (r) => (system === 'eu' ? `EU ${r.label}` : r.label);

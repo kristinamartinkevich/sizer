@@ -150,6 +150,9 @@
     // Depop's one-line summary is the place: the line goes right under it.
     const primary = doc.querySelector(PRIMARY_LINE);
     if (primary && !doc.querySelector(rowSelector(DETAIL.size))) return primary;
+    // eBay's condition, size and brand under the price; its "Item specifics" are far down the page.
+    const elevated = doc.querySelector('[data-testid="elevated-info"]');
+    if (elevated) return elevated;
     const sizeRow = doc.querySelector(`${rowSelector(DETAIL.size)}, ${DETAIL.size.prop.map((p) => `[itemprop="${p}"]`).join(', ')}`) || labelRow(doc, DETAIL.size);
     let block = null;
     let el = sizeRow;

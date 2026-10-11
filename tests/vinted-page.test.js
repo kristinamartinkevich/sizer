@@ -249,7 +249,7 @@ test('on Vinted the popup never offers the AI page read, so no daily read is spe
   await q.$('idle-try').onclick();
   assert.strictEqual(q.closed, false);
   assert.strictEqual(q.$('s-ai').hidden, true);
-  assert.match(q.$('idle-text').textContent, /Vinted listing/);
+  assert.match(q.$('idle-text').textContent, /Open one listing/);
   assert.ok(!q.sent.some((m) => m.type === 'sizer:read-product' || m.type === 'sizer:product-text'));
   // A shop page that found no sizes still gets the offer.
   const s = popupSandbox({ url: 'https://shop.example/p/1', replies: { 'sizer:analyze': { result: null, isProduct: false }, 'sizer:open': { ok: true, brand: false, sizes: 0 } } });

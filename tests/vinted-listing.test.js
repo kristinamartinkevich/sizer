@@ -305,7 +305,9 @@ test('the photo read and the function agree on the kinds of item and the measure
 
 const VINTED = ['fr', 'de', 'co.uk', 'es', 'it', 'nl', 'be', 'pl', 'lt', 'cz', 'at', 'lu', 'pt', 'se', 'fi', 'dk', 'sk', 'hu', 'ro', 'hr', 'ie', 'gr', 'com'];
 // Depop and Poshmark listings are second-hand pieces with one size each, read by the same script.
-const RESALE = ['https://www.depop.com/products/*', 'https://poshmark.com/listing/*'];
+const EBAY = ['co.uk', 'com', 'de', 'fr', 'it', 'es', 'ie', 'com.au', 'ca', 'at', 'nl', 'ch', 'pl'];
+// eBay item pages too (2026-10-12): most clothing on eBay is one used piece in one size.
+const RESALE = ['https://www.depop.com/products/*', 'https://poshmark.com/listing/*'].concat(EBAY.map((tld) => `https://www.ebay.${tld}/itm/*`));
 
 test('the resale content script runs on item pages of every Vinted domain, and on Depop and Poshmark listings', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf8'));
@@ -313,7 +315,9 @@ test('the resale content script runs on item pages of every Vinted domain, and o
   assert.ok(entry);
   assert.deepStrictEqual(entry.matches, VINTED.map((tld) => `https://www.vinted.${tld}/items/*`).concat(RESALE));
   assert.ok(Vinted.isListingPath('/products/kestrel-jeans-7699/') && Vinted.isListingPath('/listing/High-Rise-Jeans-6ab72b') && !Vinted.isListingPath('/category/womens/'));
+  assert.ok(Vinted.isListingPath('/itm/117288705558') && !Vinted.isListingPath('/sch/i.html'));
   const listing = fs.readFileSync(path.join(ROOT, 'store/LISTING.md'), 'utf8');
+  assert.match(listing, /ebay\.\*\/itm/, 'the listing justifies the eBay match');
   assert.match(listing, /depop\.com\/products/, 'the listing justifies the Depop match');
   assert.match(listing, /poshmark\.com\/listing/, 'the listing justifies the Poshmark match');
   assert.ok(!entry.js.includes('src/content.js'), 'the shop reader does not run on Vinted');
@@ -336,7 +340,13 @@ test('the popup injects the same Vinted files as the manifest on a listing reach
   assert.ok(isVintedItem('https://www.depop.com/products/wren-kestrel-jeans-7699/'));
   assert.ok(isVintedItem('https://poshmark.com/listing/High-Rise-Jeans-6ab72b'));
   assert.ok(isVintedItem('https://www.vinted.com/items/123-jeans'));
+  assert.ok(isVintedItem('https://www.ebay.co.uk/itm/117288705558'));
+  assert.ok(isVintedItem('https://www.ebay.com.au/itm/117288705558'));
   assert.ok(!isVintedItem('https://www.depop.com/category/womens/'));
+  assert.ok(!isVintedItem('https://www.ebay.co.uk/sch/i.html?_nkw=dress'));
+  // The popup's "this is a resale site" check knows eBay too.
+  const isVinted = new Function(`${popup.match(/const isVinted = [^\n]*/)[0]}; return isVinted;`)();
+  assert.ok(isVinted('https://www.ebay.de/b/Damenmode/260010'));
 });
 
 test('the copy names the Vinted sites and every field the photo read sends', () => {

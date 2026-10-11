@@ -125,6 +125,11 @@
       { name: 'poshmark-listing', base: 'https://poshmark.com/listing/High-Rise-OG-Loose-Jeans-Kestrel-Size-18-6ab72b17ad242a00a1771ec4', profile: BODY,
         brand: 'Kestrel', size: '18', sizeRaw: '18', kind: 'jeans', condition: 'Good', lang: 'en', have: { inseam: 71.1, rise: 31.8, waistFlat: 48.3 }, photos: 0,
         mode: 'measured', verdict: 'roomy', line: /compared with your measurements/, ask: /leg opening/, notAsked: /waist/, body: null, anchor: /(^| )item-details( |$)/ },
+      // eBay item pages (2026-10-12): brand, size and condition in "Item specifics" far down the page;
+      // the answer goes under the title at the top.
+      { name: 'ebay-listing', base: 'https://www.ebay.co.uk/itm/117288705558', profile: BODY,
+        brand: 'Kestrel', size: '12', sizeRaw: '12', kind: 'dress', condition: 'Pre-owned - Excellent', lang: 'en', have: {}, photos: 2,
+        mode: 'label', verdict: 'fits', line: /by the label$/, ask: /^Hello.*armpit/, notAsked: /inseam/, body: null, anchor: /^elevated-info$/ },
     ];
 
     async function runVinted(shop) {

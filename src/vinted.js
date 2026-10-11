@@ -110,7 +110,7 @@
 
   // A Vinted listing's address path; the catalogue, members and the rest are not listings.
   // Vinted's /items/, Depop's /products/ and Poshmark's /listing/.
-  const isListingPath = (pathname) => /\/(?:items|products|listing)\//.test(String(pathname || ''));
+  const isListingPath = (pathname) => /\/(?:items|products|listing|itm)\//.test(String(pathname || ''));
 
   const LANG_OF_TLD = { fr: 'fr', be: 'fr', lu: 'fr', de: 'de', at: 'de', es: 'es', it: 'it', nl: 'nl', pl: 'pl' };
   function langOf(hostname) {

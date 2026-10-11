@@ -294,7 +294,8 @@
   // otherwise as the page has them.
   function inOrder(sizes, parse) {
     const parsed = sizes.map((s) => parse(s.label));
-    if (!parsed.every((p) => p && typeof p.value === 'number')) return sizes;
+    // Zalando's "6 (39)" among bare UK sizes reads as EU 39: values in two systems do not sort.
+    if (!parsed.every((p) => p && typeof p.value === 'number' && p.system === parsed[0].system)) return sizes;
     const keyed = sizes.map((s, i) => ({ s, i, k: parsed[i].value }));
     return keyed.sort((a, b) => a.k - b.k || a.i - b.i).map((x) => x.s);
   }

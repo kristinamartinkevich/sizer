@@ -257,6 +257,7 @@
 
   async function run() {
     const [profile, charts] = await Promise.all([getProfile(), getCharts()]);
+    state.options = optionsNow();
     const { product, result } = await recommendHere(profile, charts);
     state.product = product;
     state.result = result;
@@ -366,12 +367,18 @@
     document.querySelectorAll('[data-sizer-pick]').forEach((el) => el.removeAttribute('data-sizer-pick'));
   }
 
-  // Shops re-render the picker (opening it, picking a colour), so keep the line attached.
+  // Shops re-render the picker (opening it, picking a colour), so keep the line attached. When the
+  // size options themselves change, the page is read again: Nike draws its "UK 5" buttons after the
+  // timed reads, which had only the product data's bare US numbers to go on.
+  const optionsNow = () => optionElements(document, Engine.parseSizeLabel).map((o) => `${o.label}${o.available ? '' : '×'}`).join('|');
   let pending = 0;
   new MutationObserver((muts) => {
     if (muts.every((m) => m.target.closest && m.target.closest('#sizer-inline, #sizer-panel, #sizer-pill'))) return;
     clearTimeout(pending);
-    pending = setTimeout(() => { if (state.phase === 'ready') place(); }, 200);
+    pending = setTimeout(() => {
+      if (state.phase !== 'ready') return;
+      if (optionsNow() !== state.options) run(); else place();
+    }, 200);
   }).observe(document.documentElement, { childList: true, subtree: true });
 
   chrome.runtime.onMessage.addListener((msg, _sender, reply) => {

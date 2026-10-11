@@ -12,6 +12,7 @@
       ?stock=out      the recommended size is sold out
       ?open=why       open the reasoning sheet on load
       ?picker=none    no picker to attach to (fallback pill)
+      ?late=1         the size buttons arrive after 6 s, named W24 to W30: the line moves to W27
       ?brand=unknown  a brand with no chart (Ostra Studio, made up): the line says it is looking up
                       the chart, the stubbed worker answers after 500 ms with a machine-read chart.
                       Add &lookup=miss for a miss, &lookup=slow for no answer (6 s limit).
@@ -164,10 +165,16 @@
     document.querySelector('.brand').textContent = BRAND;
     document.querySelector('h1').textContent = TITLE;
     const list = document.getElementById('sizes');
-    for (const v of variants) {
-      const sold = v.offers.availability.endsWith('OutOfStock');
-      list.insertAdjacentHTML('beforeend', `<input type="checkbox" id="size-picker-${v.sku}"><label for="size-picker-${v.sku}">${v.size}<span style="color:#888;margin-left:8px">${sold ? 'Set a reminder' : ''}</span></label>`);
-    }
+    // ?late=1: the buttons arrive after six seconds, after Sizer's timed reads, and name the sizes
+    // differently from the product data (W27, not 27), as Nike's do. The line must switch to W27.
+    const late = q.get('late') === '1';
+    const draw = () => {
+      for (const v of variants) {
+        const sold = v.offers.availability.endsWith('OutOfStock');
+        list.insertAdjacentHTML('beforeend', `<input type="checkbox" id="size-picker-${v.sku}"><label for="size-picker-${v.sku}">${late ? 'W' : ''}${v.size}<span style="color:#888;margin-left:8px">${sold ? 'Set a reminder' : ''}</span></label>`);
+      }
+    };
+    if (late) setTimeout(draw, 6000); else draw();
     document.getElementById('picker-trigger').onclick = () => list.classList.toggle('open');
     if (q.get('picker') === 'none') document.getElementById('picker-wrap').remove();
     // ?reviews=small adds buyer reviews that mostly report it running small; the page itself says nothing about fit.

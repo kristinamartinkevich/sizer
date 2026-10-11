@@ -98,6 +98,10 @@
     if ((m = s.match(new RegExp(`^(?:${LETTERS}) ?\\((?:(UK|AU|US|EU) ?)?(\\d{1,2})(?: ?[-/] ?(\\d{1,2}))?\\)$`)))) {
       return { system: TAG_SYSTEM[m[1]] || 'number', value: +m[2], ...(m[3] ? { span: +m[3] } : {}), label: own };
     }
+    // A size with its EU size beside it goes by the EU size: Zalando's Nike "6 (39)" and "6 (40)",
+    // Selfridges' "EUR 36 / 3 UK WOMEN". The page's label is kept, so the answer names its button.
+    if ((m = s.match(/^\d{1,2}(?:[.,]5)? ?\((\d{2}(?:[.,]5)?)\)$/)) && +m[1].replace(',', '.') >= 30) return { system: 'eu', value: +m[1].replace(',', '.'), label: own };
+    if ((m = s.match(/^EUR? ?(\d{2}(?:[.,]5)?) ?\/ ?\d{1,2}(?:[.,]5)? ?(?:UK|US)\b/))) return { system: 'eu', value: +m[1].replace(',', '.'), label: own };
     // The region after the number: 8 UK, 38 EU.
     if ((m = s.match(/^(\d{1,2}) ?(UK|AU|US|EU|FR|DE|IT)$/))) return { system: TAG_SYSTEM[m[2]], value: +m[1], label: own };
     // 2XL to 6XL and 3XS start with a digit, so they are read before the bare numbers; so are US 1X and 18W.
@@ -450,7 +454,7 @@
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
     // Boot-cut and boot leg are jeans; a snowboot or a moonboot is a boot.
-    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg)\b)|wellies|wellingtons?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
+    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg)\b)|wellies|wellingtons?|ballets|mary[- ]?janes?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
     tops: /\b(?:t-?shirts?|tees?|shirts?|blouses?|tops?|sweaters?|jumpers?|knits?|cardigans?|hoodies?|sweatshirts?|jackets?|coats?|blazers?|pullover|bluse|hemd|jacke|mantel|chemise|veste|manteau)\b/i,

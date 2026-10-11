@@ -324,6 +324,18 @@ test('a size the page does not list is named the way the page names its sizes', 
 
 // ---- size labels as shops print them ----
 
+// Found shopping in inches: Zalando prints Nike's UK 6 twice, "6 (39)" and "6 (40)", and they merged
+// into one 6; Selfridges prints "EUR 36 / 3 UK WOMEN", which did not parse at all.
+test('a size with its EU size beside it goes by the EU size, keeping the page’s label', () => {
+  const pick = (p) => p && { system: p.system, value: p.value, label: p.label };
+  assert.deepStrictEqual(pick(parseSizeLabel('6 (39)')), { system: 'eu', value: 39, label: '6 (39)' });
+  assert.deepStrictEqual(pick(parseSizeLabel('6 (40)')), { system: 'eu', value: 40, label: '6 (40)' });
+  assert.deepStrictEqual(pick(parseSizeLabel('5.5 (38.5)')), { system: 'eu', value: 38.5, label: '5.5 (38.5)' });
+  assert.deepStrictEqual(pick(parseSizeLabel('EUR 36 / 3 UK WOMEN')), { system: 'eu', value: 36, label: 'EUR 36 / 3 UK WOMEN' });
+  assert.deepStrictEqual(pick(parseSizeLabel('EUR 38/5 UK WOMEN')), { system: 'eu', value: 38, label: 'EUR 38/5 UK WOMEN' });
+  assert.strictEqual(parseSizeLabel('S (8-10)').value, 8, 'a letter with numbers is unchanged');
+});
+
 test('two-size labels span both sizes: S/M, XS-S, 8/10, 10-12, UK 8-10', () => {
   assert.deepEqual([parseSizeLabel('S/M').value, parseSizeLabel('S/M').span, parseSizeLabel('S/M').label], ['S', 'M', 'S/M']);
   assert.equal(parseSizeLabel('XS-S').span, 'S');
@@ -404,6 +416,8 @@ test('boot-cut and boot leg jeans are jeans, not boots', () => {
 test('a snowboot, moonboot or wellington is a shoe, and bootcut jeans still are not', () => {
   const { kindOf } = require('../src/engine.js');
   for (const t of ['Moonboot Icon High space racing snowboot in silver', 'Rubber rainboots', 'Classic wellington boots', 'Kids wellies']) assert.equal(kindOf(t), 'shoes', t);
+  for (const t of ['ASOS DESIGN Lotus buckle detail mary jane ballets in black croc', 'Leather ballet flats', 'Patent Mary Janes']) assert.equal(kindOf(t), 'shoes', t);
+  assert.equal(kindOf('Ballet wrap top'), 'tops');
   assert.equal(kindOf('Bootcut jeans in mid blue'), 'bottoms');
 });
 

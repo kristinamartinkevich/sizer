@@ -68,6 +68,7 @@ function pageSandbox(start) {
     SIZER_MARK_SVG: '<svg></svg>',
     SIZER_STYLE: '',
     SIZER_DEFAULT_PROFILE: { anchors: [] },
+    SIZER_AI: start.ai !== false,
     SizerVinted: { ...Vinted, listingFrom: () => { reads++; return JSON.parse(JSON.stringify(listing)); } },
     SizerEngine: { placeLabel: () => ({ result: null }), provenance: () => ({}) },
     SizerChartsStore: Store,
@@ -182,7 +183,7 @@ test('after Vinted moves to the catalogue in place, nothing reads it as a listin
 
 // ---- the popup ----------------------------------------------------------------------------------
 
-function popupSandbox({ url, replies }) {
+function popupSandbox({ url, replies, ai = true }) {
   const els = {};
   const $ = (id) => (els[id] = els[id] || { id, textContent: '', hidden: id.startsWith('s-') && id !== 's-idle', disabled: false, onclick: null, classList: { toggle() {} }, appendChild() {} });
   const states = ['s-setup', 's-result', 's-idle', 's-ai'].map($);
@@ -198,6 +199,7 @@ function popupSandbox({ url, replies }) {
     },
     window: { close: () => { closed = true; } },
     SIZER_DEFAULT_PROFILE: { anchors: [] },
+    SIZER_AI: ai,
     SizerFitQuestion: { STYLE: '', mount() {} },
     SizerFeedback: { due: () => [] },
     chrome: {
@@ -254,4 +256,22 @@ test('on Vinted the popup never offers the AI page read, so no daily read is spe
   await flush();
   await s.$('idle-try').onclick();
   assert.strictEqual(s.$('s-ai').hidden, false);
+});
+
+test('with the AI switch off, a shop page with no sizes says so and offers no AI read', async () => {
+  const s = popupSandbox({ ai: false, url: 'https://shop.example/p/1', replies: { 'sizer:analyze': { result: null, isProduct: false }, 'sizer:open': { ok: true, brand: false, sizes: 0 } } });
+  await flush();
+  await s.$('idle-try').onclick();
+  assert.strictEqual(s.$('s-ai').hidden, true);
+  assert.strictEqual(s.$('s-idle').hidden, false);
+  assert.match(s.$('idle-text').textContent, /couldn’t find a brand or sizes/);
+  assert.strictEqual(s.$('idle-try').hidden, true);
+  assert.ok(!s.sent.some((m) => m.type === 'sizer:read-product' || m.type === 'sizer:product-text'));
+});
+
+test('with the AI switch off, a Vinted listing offers no photo read', async () => {
+  const p = pageSandbox({ ai: false, path: '/items/1-top-a', listing: listingA });
+  await p.ask({ type: 'sizer:open' });
+  assert.ok(!p.panelHTML().includes('data-act="photos"'));
+  assert.ok(!p.sent.some((m) => m.type === 'sizer:read-measurements'));
 });

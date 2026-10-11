@@ -277,7 +277,7 @@
   // is sized again with it.
   function askDossier(product, result) {
     const key = product && Store.itemKey(product.brand, product.title);
-    if (!key || !result || !result.ok || key in state.dossiers) return;
+    if (globalThis.SIZER_AI !== true || !key || !result || !result.ok || key in state.dossiers) return;
     state.dossiers[key] = 'asking';
     const reviews = result.reviews && result.reviews.local;
     const msg = {
@@ -306,7 +306,7 @@
   // on this page. The line says so for at most LOOKUP_TIMEOUT_MS, then the answer on the standard
   // chart shows. A chart that arrives lands in storage, and storage.onChanged sizes the page again.
   function lookUp(product, result) {
-    const want = Engine.lookupFor(result, product);
+    const want = globalThis.SIZER_AI === true && Engine.lookupFor(result, product);
     const key = want && Store.missKey(want.brand, want.kind);
     if (!key) { state.looking = null; return; }
     if (key in state.lookups) { state.looking = state.lookups[key] === 'looking' ? want.brand : null; return; }

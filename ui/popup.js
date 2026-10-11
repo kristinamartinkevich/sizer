@@ -66,6 +66,11 @@ $('idle-try').onclick = async () => {
     return;
   }
   if (r && r.brand && r.sizes) { window.close(); return; }
+  if (globalThis.SIZER_AI !== true) {
+    $('idle-text').textContent = 'Sizer couldn’t find a brand or sizes on this page.';
+    $('idle-try').hidden = true;
+    return;
+  }
   show('s-ai');
 };
 

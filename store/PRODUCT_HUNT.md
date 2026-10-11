@@ -65,7 +65,7 @@ It is strongest for women’s jeans, trousers and skirts today, with tops, dress
 - **"How accurate is it?"** As accurate as the brand’s chart plus the page. It links to the chart it used and labels a thin answer a rough guess. I am not publishing a returns percentage because nobody in this market audits theirs.
 - **"Men’s?"** Charts are women’s today. Men’s denim is next.
 - **"Does it work on [shop]?"** Click the Sizer icon and “Check this page anyway”. Tell me the shop and I will add it to the built-in list.
-- **"What data does it send?"** Nothing personal: your measurements and the clothes you own never leave your browser. It sends only anonymous things: a count of what reviews said; once per item, to learn what others say about the fit online, the brand name, the style name, the kind of item, the shop’s hostname, a random install id and the page’s anonymous review counts; and, for a brand it has no chart for, the brand name, the kind of item, the shop’s name, a random install id and the shop’s own size table if the page prints one. If the table is on the shop’s own size-guide page, it opens that page without your cookies; if it is a picture, it sends the image’s web address, the brand name, the kind of item and the install id so the chart can be read from it. And if you click “Read this page with AI” on a page it cannot read, it sends the page title, headings and the text around the size picker, up to 6000 characters with web addresses removed, and the install id. On Vinted, only if you click “Read measurements from the photos”, it sends the web addresses of up to four of the listing’s photos, the kind of item and the install id, and nothing of it is kept. A week after it sizes something it asks “Did it fit?”; your answer becomes a piece you own in your profile, and is sent anonymously (did it fit: the brand and style name, the kind of item, the shop’s name, the size you bought, the size Sizer suggested, too small, right or too big, the areas you picked, the chart tier, whether the suggestion already used other buyers’ answers and the install id, never your measurements) so that once ten people have answered, everyone sees how the brand runs.
+- **"What data does it send?"** Nothing personal: your measurements and the clothes you own never leave your browser. It uses no AI and sends only anonymous things: a count of what reviews said, with the brand and style name, the shop’s name and a random install id. A week after it sizes something it asks “Did it fit?”; your answer becomes a piece you own in your profile, and is sent anonymously (did it fit: the brand and style name, the kind of item, the shop’s name, the size you bought, the size Sizer suggested, too small, right or too big, the areas you picked, the chart tier, whether the suggestion already used other buyers’ answers and the install id, never your measurements) so that once ten people have answered, everyone sees how the brand runs.
 - **"Safari or Firefox?"** Chrome only for now, which covers Edge, Brave and Arc too.
 
 ## LinkedIn post
@@ -95,12 +95,11 @@ with a link in it, so put the Product Hunt link in the first comment and say so 
 - [x] Chrome Web Store listing approved and public
 - [x] Supabase migrations 0001 to 0008 applied
 - [ ] Install from the store on a clean profile and check a live product page
-- [ ] `ANTHROPIC_API_KEY` set in Supabase (Edge Functions → Secrets). Until it is, the brand chart
-      lookup, the size chart picture reader, “Read this page with AI”, “Read measurements from the
-      photos” and the online fit summary all fail, and the listing promises them
-- [ ] lookup-chart deployed with
-      `supabase functions deploy lookup-chart --project-ref cqvrdsgutpczbucbpiqa --no-verify-jwt --use-api`
-- [ ] Open a product from a brand with no chart and confirm the sheet says “chart read by machine” with the brand’s link
-- [ ] Both PRs merged, so the hosted privacy policy matches what 1.1.1 sends (the store and the
-      Product Hunt replies both point at it)
+- [x] AI features switched off in 1.1.4 (`SIZER_AI` in `src/defaults.js`), so no Anthropic key is
+      needed and nothing is billed. Switching them back on means setting it to `true`, setting
+      `ANTHROPIC_API_KEY` in Supabase, deploying the three functions, and restoring the AI lines in
+      `store/LISTING.md` and this file (the guard tests in `tests/lookup.test.js` and
+      `tests/vinted-listing.test.js` fail until they are back)
+- [ ] 1.1.4 uploaded to the store and both PRs merged, so the hosted privacy policy matches what it
+      sends (the store and the Product Hunt replies both point at it)
 - [ ] Line up a few people to try it on launch morning, and reply to every comment within the hour

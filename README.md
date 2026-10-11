@@ -48,6 +48,16 @@ the answer appears under the listing's details; see "On Vinted" below.
   profile, no page address. An answer that cannot be sent waits in local storage for the next day.
   The recent sizings themselves (the last 50 from 60 days) never leave the browser.
 
+## The AI switch
+
+`SIZER_AI` in `src/defaults.js` turns every feature that calls an AI model on or off: the brand
+chart lookup (`lookup-chart`), the size chart picture reader, "Read this page with AI", the online
+fit summary (`fit-dossier`) and the Vinted photo reader. Since 1.1.4 it is `false`: the background
+worker answers each of those asks as off without a request, and no button or "Looking up" or
+"Checking" line shows. The steps below describe them as they work when it is on. Switching it on
+also needs `ANTHROPIC_API_KEY` in Supabase and the AI lines put back in `store/LISTING.md` and
+`store/PRODUCT_HUNT.md`; the copy guards in `tests/lookup.test.js` fail until they are.
+
 ## How it decides
 
 1. Measurements are used as given: bust, waist, hip, shoulder width, inseam, foot length. Otherwise

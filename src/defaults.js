@@ -24,4 +24,9 @@
     betweenSizes: 'stretch',
     theme: 'system',
   };
+
+  // The AI features: looking up a missing brand chart, reading a size chart image, the fit research
+  // online, reading a page with AI and reading measurements from Vinted photos. Off: no AI request is
+  // sent and no AI button or line shows. Set true to bring them all back.
+  root.SIZER_AI = false;
 })(globalThis);

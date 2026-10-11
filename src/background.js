@@ -13,7 +13,11 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 chrome.runtime.onStartup.addListener(() => { refreshCharts(); flushOutcomes(); });
 chrome.alarms.onAlarm.addListener((alarm) => { if (alarm.name === REFRESH_ALARM) { refreshCharts(); flushOutcomes(); } });
 
+// Every ask that reaches an AI function, answered as off without a request while SIZER_AI is false.
+const AI_ASKS = ['sizer:lookup-chart', 'sizer:lookup-wanted', 'sizer:read-chart-image', 'sizer:fit-dossier', 'sizer:read-product', 'sizer:read-measurements'];
+
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
+  if (AI_ASKS.includes(msg.type) && globalThis.SIZER_AI !== true) { reply({ off: true }); return; }
   if (msg.type === 'sizer:options') chrome.runtime.openOptionsPage();
   if (msg.type === 'sizer:refresh-charts') { refreshCharts(true).then(reply); return true; }
   if (msg.type === 'sizer:item-fit') { itemFit(msg.key).then(reply, () => reply({ rows: [] })); return true; }

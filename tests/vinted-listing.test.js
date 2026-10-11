@@ -306,7 +306,9 @@ test('the copy names the Vinted sites and every field the photo read sends', () 
   const body = Store.measurementsBody({ image_urls: ['https://images1.vinted.net/a.jpeg'], kind: 'top' }, INSTALL);
   assert.deepStrictEqual(Object.keys(body).sort(), ['image_urls', 'install', 'kind'], 'a new field in measurementsBody needs a line in the copy below');
   const words = { vinted: /Vinted/, photos: /photo/, four: /four|4/, kind: /kind of item/, install: /install id/, click: /only (when|if) you click|on that click|on request/i, notStored: /not (stored|kept|cached)|nothing (of it|from them) is (stored|kept)/i };
-  for (const file of ['store/privacy.html', 'store/LISTING.md', 'store/PRODUCT_HUNT.md', 'README.md']) {
+  // The store listing and launch copy describe the photo read only while SIZER_AI is on (see tests/lookup.test.js).
+  const files = ['store/privacy.html', 'README.md'].concat(globalThis.SIZER_AI === true ? ['store/LISTING.md', 'store/PRODUCT_HUNT.md'] : []);
+  for (const file of files) {
     const text = fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/\s+/g, ' ');
     for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
   }

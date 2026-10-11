@@ -8,6 +8,13 @@ const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse('2026-10-05T12:00:00Z');
 const INSTALL = '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64';
 
+// The privacy policy and the README name every field an AI request sends, switched on or not, since
+// the code is still there. The store listing and the launch copy name them only while SIZER_AI is
+// on, and while it is off they must not offer the features at all (the last test in this file).
+require('../src/defaults.js');
+const AI_ON = globalThis.SIZER_AI === true;
+const aiCopy = (always) => (AI_ON ? [...always, 'store/LISTING.md', 'store/PRODUCT_HUNT.md'] : always);
+
 // The chart the lookup-chart function returns, in the per-chart shape chart_bundle serves.
 const servedChart = (over = {}) => ({
   id: 'c-helsa', gender: 'women', category: 'dresses', fit_line: null, measurement_basis: 'body', unit: 'cm', size_system: 'letter',
@@ -260,7 +267,7 @@ test('the privacy policy and launch copy name every field a lookup sends', () =>
   const body = Store.lookupBody({ brand: 'Ostra Studio', kind: 'jeans', shop: 'shop.example', shopGuide: { caption: 'Size guide', charts: [{ category: 'jeans', unit: 'cm', rows: [] }] } }, 'id-1');
   assert.deepStrictEqual(Object.keys(body).sort(), ['brand', 'install', 'kind', 'shop', 'shopGuide'], 'a new field in lookupBody needs a line in the copy below');
   const words = { brand: /brand name/, kind: /kind of item/, shop: /hostname|shop’s name/, install: /install id/, shopGuide: /size table/ };
-  for (const file of ['store/privacy.html', 'store/PRODUCT_HUNT.md']) {
+  for (const file of aiCopy(['store/privacy.html'])) {
     const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/\s+/g, ' ');
     for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
   }
@@ -277,7 +284,7 @@ test('the privacy policy, listing, launch copy and README name every field the f
     what: /what others say about (the|an item’s|an item's) fit/, brand: /brand name/, item_key: /style name/, style: /style name/,
     kind: /kind of item/, shop: /hostname|shop’s name/, install: /install id/, tallies: /anonymous review counts/,
   };
-  for (const file of ['store/privacy.html', 'store/LISTING.md', 'store/PRODUCT_HUNT.md', 'README.md']) {
+  for (const file of aiCopy(['store/privacy.html', 'README.md'])) {
     const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/\s+/g, ' ');
     for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
   }
@@ -296,7 +303,7 @@ test('the privacy policy, listing, launch copy and README name every field the A
     title: /page title/, headings: /headings/, picker: /size picker/, limit: /6000 characters/,
     guidePage: /size-guide page/, noCookies: /without (your )?cookies/,
   };
-  for (const file of ['store/privacy.html', 'store/LISTING.md', 'store/PRODUCT_HUNT.md', 'README.md']) {
+  for (const file of aiCopy(['store/privacy.html', 'README.md'])) {
     const text = fs.readFileSync(path.join(root, file), 'utf8').replace(/\s+/g, ' ');
     for (const [field, re] of Object.entries(words)) assert.match(text, re, `${file} does not mention ${field}`);
   }
@@ -323,4 +330,21 @@ test('the privacy policy, listing, launch copy and README name every field a "di
     for (const [field, re] of Object.entries(words)) assert.ok(passages.some((p) => re.test(p)), `${file} does not name ${field} where it describes the answer`);
     assert.doesNotMatch(passages.join(' '), /—|!/, `${file}: copy has an em dash or an exclamation mark`);
   }
+});
+
+test('while the AI switch is off, the store description and launch copy offer no AI feature, and the policy says they are off', { skip: AI_ON }, () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const root = path.join(__dirname, '..');
+  const read = (f) => fs.readFileSync(path.join(root, f), 'utf8').replace(/\s+/g, ' ');
+  const listing = read('store/LISTING.md');
+  const description = listing.slice(listing.indexOf('**Description:**'), listing.indexOf('## Privacy practices tab'));
+  const launch = read('store/PRODUCT_HUNT.md');
+  const pitch = launch.slice(0, launch.indexOf('## Before you schedule'));
+  const offers = { aiRead: /Read this page with AI/, photos: /from the photos/, online: /what others say about the fit online/i, lookup: /looked up|look one up/, picture: /picture read by AI|read from the picture/ };
+  for (const [name, text] of [['store description', description], ['launch copy', pitch]]) {
+    for (const [what, re] of Object.entries(offers)) assert.doesNotMatch(text, re, `${name} still offers ${what}`);
+    assert.match(text, /uses no AI/, `${name} says Sizer uses no AI`);
+  }
+  assert.match(read('store/privacy.html'), /AI features, switched off<\/h2>.*Since version 1\.1\.4 they are all switched off/);
 });

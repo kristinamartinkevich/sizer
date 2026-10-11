@@ -226,7 +226,7 @@
 
   const canReadPhotos = () => {
     const l = state.listing;
-    return !!l && l.photos.length > 0 && state.photos !== 'done' && Vinted.wanted(l.kind, l.have).length > 0;
+    return globalThis.SIZER_AI === true && !!l && l.photos.length > 0 && state.photos !== 'done' && Vinted.wanted(l.kind, l.have).length > 0;
   };
 
   function actionsHTML() {

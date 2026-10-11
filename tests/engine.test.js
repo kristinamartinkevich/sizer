@@ -303,6 +303,70 @@ test('a size the page does not list is named the way the page names its sizes', 
   assert.equal(z.size, '12');
 });
 
+// ---- size labels as shops print them ----
+
+test('two-size labels span both sizes: S/M, XS-S, 8/10, 10-12, UK 8-10', () => {
+  assert.deepEqual([parseSizeLabel('S/M').value, parseSizeLabel('S/M').span, parseSizeLabel('S/M').label], ['S', 'M', 'S/M']);
+  assert.equal(parseSizeLabel('XS-S').span, 'S');
+  assert.deepEqual([parseSizeLabel('8/10').value, parseSizeLabel('8/10').span, parseSizeLabel('8/10').label], [8, 10, '8/10']);
+  assert.equal(parseSizeLabel('10-12').span, 12);
+  assert.deepEqual([parseSizeLabel('UK 8-10').system, parseSizeLabel('UK 8-10').span], ['uk', 10]);
+  // A jeans waist and leg stay a waist and leg.
+  assert.equal(parseSizeLabel('28/30').system, 'denim');
+});
+
+test('a body between two sizes gets the label that spans both', () => {
+  const r = recommend(maya, { brand: 'Nobody', title: 'Knit midi dress', text: '', sizes: offered(['XS/S', 'S/M', 'M/L', 'L/XL']), host: 'www.example.com' });
+  assert.equal(r.size, 'M/L');
+  const u = recommend(maya, { brand: 'Nobody', title: 'Jersey dress', text: '', sizes: offered(['6/8', '10/12', '14/16', '18/20']), host: 'www.example.co.uk' });
+  assert.equal(u.size, '10/12');
+  assert.equal(u.matchedOnPage, true);
+});
+
+test('EU pairs like 36/38 on every label are spans, not a jeans waist and leg', () => {
+  const labels = ['32/34', '36/38', '40/42', '44/46'];
+  const read = require('../src/engine.js').resolveSizes(offered(labels));
+  assert.deepEqual(read.map((s) => [s.parsed.system, s.parsed.value, s.parsed.span]), [['eu', 32, 34], ['eu', 36, 38], ['eu', 40, 42], ['eu', 44, 46]]);
+  const r = recommend(maya, { brand: 'Nobody', title: 'Wide trousers', text: '', sizes: offered(labels), host: 'www.example.de' });
+  assert.equal(r.size, '40/42');
+  assert.match(r.reasons[0].text, /EU 40/);
+});
+
+test('a letter with the shop’s own numbers goes by the numbers: S (8-10)', () => {
+  const r = recommend(maya, { brand: 'Nobody', title: 'Shirt dress', text: '', sizes: offered(['XS (6)', 'S (8-10)', 'M (12-14)', 'L (16-18)']), host: 'www.example.co.uk' });
+  assert.equal(r.size, 'M (12-14)');
+  // A shop whose S is a UK 12: Maya, a UK 12, gets its S, not the letter M.
+  const s = recommend(maya, { brand: 'Nobody', title: 'Shirt dress', text: '', sizes: offered(['XS (UK 10)', 'S (UK 12)', 'M (UK 14)', 'L (UK 16)']), host: 'www.example.co.uk' });
+  assert.equal(s.size, 'S (UK 12)');
+});
+
+test('one size is not sized', () => {
+  for (const label of ['One Size', 'ONE SIZE', 'OS', 'O/S', 'Onesize']) {
+    const r = recommend(maya, { brand: 'Nobody', title: 'Wrap skirt', text: '', sizes: offered([label]), host: 'www.example.com' });
+    assert.equal(r.ok, false, label);
+    assert.match(r.reason, /one size/);
+  }
+});
+
+test('words and region tags read as sizes: Small, X-Large, AU 10, 8 UK, 38 EU, XXXS', () => {
+  assert.equal(parseSizeLabel('Small').value, 'S');
+  assert.equal(parseSizeLabel('Medium').value, 'M');
+  assert.equal(parseSizeLabel('X-Large').value, 'XL');
+  assert.equal(parseSizeLabel('Extra Small').value, 'XS');
+  assert.equal(parseSizeLabel('XX-Large').value, 'XXL');
+  assert.deepEqual([parseSizeLabel('AU 10').system, parseSizeLabel('AU 10').value], ['uk', 10]);
+  assert.deepEqual([parseSizeLabel('8 UK').system, parseSizeLabel('8 UK').value], ['uk', 8]);
+  assert.deepEqual([parseSizeLabel('38 EU').system, parseSizeLabel('38 EU').value], ['eu', 38]);
+  assert.equal(parseSizeLabel('3XS').value, 'XXXS');
+  assert.equal(parseSizeLabel('XXXS').eu, 30);
+  const r = recommend(maya, { brand: 'Nobody', title: 'Tee', text: '', sizes: offered(['X-Small', 'Small', 'Medium', 'Large', 'X-Large']), host: 'www.example.com' });
+  assert.equal(r.matchedOnPage, true, r.size);
+  assert.match(r.size, /^(Medium|Large)$/);
+  // An Australian shop prints UK numbers.
+  const a = recommend(maya, { brand: 'Nobody', title: 'Midi dress', text: '', sizes: offered(['6', '8', '10', '12', '14']), host: 'www.example.com.au' });
+  assert.equal(a.size, '12');
+});
+
 // ---- found shopping as a plus-size persona, round 4 ----
 
 const jo = { anchors: [], height: '178', bust: '112', waist: '98', hip: '122', unit: 'cm', fitPreference: 'relaxed', betweenSizes: 'down' };

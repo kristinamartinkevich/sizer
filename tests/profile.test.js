@@ -21,8 +21,8 @@ test('the table follows the rules: IT is FR + 4, UK is FR − 28, US is UK − 4
     assert.equal(r.uk, r.fr - 28);
     assert.equal(r.us, r.fr === 30 ? '00' : r.uk - 4);
   }
-  // Letters run XXS to 6XL; the sizes either side of them have none.
-  assert.deepEqual(REGION.map((r) => r.letter), [undefined, 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL', undefined, undefined, undefined, undefined]);
+  // Letters run XXXS to 6XL; the sizes past 6XL have none.
+  assert.deepEqual(REGION.map((r) => r.letter), ['XXXS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL', undefined, undefined, undefined, undefined]);
 });
 
 test('every size converts between every pair of systems, both directions', () => {

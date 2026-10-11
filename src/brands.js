@@ -23,6 +23,7 @@
     // Plus sizes run on to EU 60 (UK 32, US 28), so a plus-size body is not left at the top of the chart.
     eu: table([[30, 56, 84, 72], [32, 60, 88, 76], [34, 64, 91, 80], [36, 68, 94, 84], [38, 72, 97, 88], [40, 76, 100, 92], [42, 81, 104, 97], [44, 86, 108, 102], [46, 92, 113, 108], [48, 98, 118, 114], [50, 104, 123, 120], [52, 110, 128, 126], [54, 116, 133, 132], [56, 122, 138, 138], [58, 128, 143, 144], [60, 134, 148, 150]]),
     letter: [
+      { label: 'XXXS', value: 'XXXS', waist: 56, hip: 82, bust: 72 },
       { label: 'XXS', value: 'XXS', waist: 60, hip: 86, bust: 76 },
       { label: 'XS', value: 'XS', waist: 64, hip: 90, bust: 80 },
       { label: 'S', value: 'S', waist: 68, hip: 94, bust: 84 },
@@ -39,11 +40,11 @@
 
   // Women's clothing sizes across regions, one row per size: FR and EU and DE share a number,
   // IT is FR + 4, UK is FR − 28, US is UK − 4, and the letter most charts print beside it. From
-  // FR 30 (US 00) to FR 60 (UK 32); past 6XL a size has no letter.
-  const REGION_LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
+  // FR 30 (US 00, XXXS) to FR 60 (UK 32); past 6XL a size has no letter.
+  const REGION_LETTERS = ['XXXS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
   const REGION = [];
   for (let fr = 30; fr <= 60; fr += 2) {
-    const letter = REGION_LETTERS[(fr - 32) / 2];
+    const letter = REGION_LETTERS[(fr - 30) / 2];
     REGION.push({ fr, eu: fr, de: fr, it: fr + 4, uk: fr - 28, us: fr === 30 ? '00' : fr - 32, ...(letter ? { letter } : {}) });
   }
 

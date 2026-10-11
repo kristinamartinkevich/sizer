@@ -46,8 +46,14 @@
 
   // ---- size labels -------------------------------------------------------
 
-  const LETTER_RE = /^(6XL|5XL|XXXXXL|4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXS|2XS|XS|S|M|L)(?![A-Z])/;
-  const LETTER_CANON = { XXXXXL: '5XL', XXXXL: '4XL', XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS' };
+  const LETTERS = '6XL|5XL|XXXXXL|4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXXS|3XS|XXS|2XS|XS|S|M|L';
+  const LETTER_RE = new RegExp(`^(${LETTERS})(?![A-Z])`);
+  const LETTER_CANON = { XXXXXL: '5XL', XXXXL: '4XL', XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS', '3XS': 'XXXS' };
+  const letterOf = (x) => LETTER_CANON[x] || x;
+  // Sizes as words: Small, X-Large, Extra Small, XX-Large.
+  const WORD_SIZE = /^(XXX|XX|X|EXTRA)?[- ]?(SMALL|MEDIUM|LARGE)$/;
+  const ONE_SIZE = /^(?:ONE ?SIZE|O\/?S|TU|TAILLE UNIQUE|EINHEITSGR(?:Ö|OE)SSE|TALLA ÚNICA|TAGLIA UNICA)$/;
+  const TAG_SYSTEM = { EU: 'eu', FR: 'eu', DE: 'eu', IT: 'it', UK: 'uk', AU: 'uk', US: 'us' };
   // US plus sizes: 0X is about an L, 1X an XL, on to 5X.
   const US_PLUS = { 0: 'L', 1: 'XL', 2: 'XXL', 3: '3XL', 4: '4XL', 5: '5XL' };
 
@@ -77,9 +83,25 @@
   function parseLabel(raw) {
     const s = String(raw || '').toUpperCase().replace(/\s+/g, ' ').trim();
     if (!s || s.length > 24) return null;
+    const own = String(raw).replace(/\s+/g, ' ').trim();
     let m;
-    // 2XL to 6XL start with a digit, so they are read before the bare numbers; so are US 1X and 18W.
-    if (/^[2-6]X/.test(s) && (m = s.match(LETTER_RE))) return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], label: m[0] };
+    // One size: kept so the page's only size is known, never sized.
+    if (ONE_SIZE.test(s)) return { system: 'one', value: 'one', label: own };
+    if ((m = s.match(WORD_SIZE))) return { system: 'letter', value: letterOf(`${m[1] === 'EXTRA' ? 'X' : m[1] || ''}${m[2][0]}`), label: own };
+    // Two sizes in one label span both: S/M, XS-S, 8/10, 10-12, UK 8-10. A jeans waist and leg
+    // (28/30) is read below; EU pairs such as 36/38 are settled across the page in resolveSizes.
+    if ((m = s.match(new RegExp(`^(${LETTERS}) ?[/-] ?(${LETTERS})$`)))) return { system: 'letter', value: letterOf(m[1]), span: letterOf(m[2]), label: own };
+    if ((m = s.match(/^(?:(UK|AU|US|EU|FR|DE|IT) ?)?(\d{1,2}) ?[/-] ?(\d{1,2})$/)) && (+m[3] - +m[2] === 2 || +m[3] - +m[2] === 4) && (m[1] || +m[2] < 22)) {
+      return { system: TAG_SYSTEM[m[1]] || 'number', value: +m[2], span: +m[3], label: own };
+    }
+    // A letter with the shop's own numbers goes by the numbers, which are the more exact: S (8-10).
+    if ((m = s.match(new RegExp(`^(?:${LETTERS}) ?\\((?:(UK|AU|US|EU) ?)?(\\d{1,2})(?: ?[-/] ?(\\d{1,2}))?\\)$`)))) {
+      return { system: TAG_SYSTEM[m[1]] || 'number', value: +m[2], ...(m[3] ? { span: +m[3] } : {}), label: own };
+    }
+    // The region after the number: 8 UK, 38 EU.
+    if ((m = s.match(/^(\d{1,2}) ?(UK|AU|US|EU|FR|DE|IT)$/))) return { system: TAG_SYSTEM[m[2]], value: +m[1], label: own };
+    // 2XL to 6XL and 3XS start with a digit, so they are read before the bare numbers; so are US 1X and 18W.
+    if (/^[2-6]X/.test(s) && (m = s.match(LETTER_RE))) return { system: 'letter', value: letterOf(m[1]), label: m[0] };
     if ((m = s.match(/^([0-5]) ?X$/))) return { system: 'letter', value: US_PLUS[m[1]], label: String(raw).trim() };
     if ((m = s.match(/^(1[4-9]|2\d|3[0-2]) ?W$/))) return { system: 'us', value: +m[1], label: String(raw).trim() };
     // A letter with a leg length, as ONLY and Vero Moda print it on Zalando: Mx32, XS x 30.
@@ -95,16 +117,17 @@
     }
     if ((m = s.match(/^(EU|FR|DE)\s?(\d{2})\b/))) return { system: 'eu', value: +m[2], label: m[0] };
     if ((m = s.match(/^IT\s?(\d{2})\b/))) return { system: 'it', value: +m[1], label: m[0] };
-    if ((m = s.match(/^UK\s?(\d{1,2})\b/))) return { system: 'uk', value: +m[1], label: m[0] };
+    // Australia prints UK numbers.
+    if ((m = s.match(/^(?:UK|AU)\s?(\d{1,2})\b/))) return { system: 'uk', value: +m[1], label: m[0] };
     if ((m = s.match(/^US\s?(00|\d{1,2})\b/))) return { system: 'us', value: m[1] === '00' ? '00' : +m[1], label: m[0] };
     if ((m = s.match(/^(00|\d{1,2})(?![\d.,])/))) return { system: 'number', value: m[1] === '00' ? '00' : +m[1], label: m[0] };
-    if ((m = s.match(LETTER_RE))) return { system: 'letter', value: LETTER_CANON[m[1]] || m[1], label: m[0] };
+    if ((m = s.match(LETTER_RE))) return { system: 'letter', value: letterOf(m[1]), label: m[0] };
     return null;
   }
 
   // A UK shop: prices in pounds (prettylittlething.com, boohoo.com), a .uk host, or a UK section of
-  // an international one (zara.com/uk/, /en_gb/, /en-gb/).
-  const UK_SHOP = /(?:\.co\.uk|\.uk)$/i;
+  // an international one (zara.com/uk/, /en_gb/, /en-gb/). Australia and New Zealand print UK numbers too.
+  const UK_SHOP = /(?:\.uk|\.au|\.nz)$/i;
   const UK_PATH = /\/(?:uk|gb)(?:\/|$)|[\/_-]en[-_](?:gb|uk)\b/i;
   function ukShop(product) {
     if (!product) return false;
@@ -131,7 +154,12 @@
   }
 
   function resolveSizes(labels, hint, uk) {
-    const parsed = labels.map((l) => ({ ...l, parsed: parseSizeLabel(l.label) })).filter((l) => l.parsed);
+    const parsed = labels.map((l) => ({ ...l, parsed: parseSizeLabel(l.label) })).filter((l) => l.parsed && l.parsed.system !== 'one');
+    // Every label an even EU pair, 32/34, 36/38: spans of two EU sizes, not jeans waists and legs.
+    const pair = (l) => { const m = String(l.label).trim().match(/^(\d{2}) ?\/ ?(\d{2})$/); return m && +m[1] >= 30 && +m[1] % 2 === 0 && +m[2] === +m[1] + 2 ? +m[1] : null; };
+    if (parsed.length >= 2 && hint !== 'denim' && parsed.every((l) => pair(l) != null)) {
+      for (const l of parsed) l.parsed = withEu({ system: 'eu', value: pair(l), span: pair(l) + 2, label: String(l.label).trim() });
+    }
     const numSystem = inferNumberSystem(parsed.filter((l) => l.parsed.system === 'number').map((l) => l.parsed.value), hint, uk);
     for (const l of parsed) if (l.parsed.system === 'number') l.parsed = { ...l.parsed, system: numSystem };
     return parsed;
@@ -143,8 +171,17 @@
     return Object.keys(count).sort((a, b) => count[b] - count[a])[0] || null;
   }
 
-  // Body measurements a size is cut for, using the brand's own chart when the systems match.
+  // Body measurements a size is cut for, using the brand's own chart when the systems match. A label
+  // that spans two sizes (S/M, 8/10) is cut for the body between them.
   function measure(parsed, brand) {
+    if (parsed.span != null) {
+      const a = measure({ ...parsed, span: null }, brand);
+      const b = measure({ ...parsed, value: parsed.span, span: null }, brand);
+      if (!a || !b) return a || b;
+      const mid = { label: parsed.label, value: parsed.value };
+      for (const k of ['waist', 'hip', 'bust', 'shoulder']) if (typeof a[k] === 'number' && typeof b[k] === 'number') mid[k] = (a[k] + b[k]) / 2;
+      return mid;
+    }
     const sys = parsed.system;
     if (brand && brand.system === sys) {
       const e = brand.sizes.find((x) => String(x.value) === String(parsed.value));
@@ -785,6 +822,8 @@
     if (kind === 'shoes') return recommendShoes(profile, product, found, signals, charts, reviews);
     if (RE.bra.test(product.title || '')) return { ok: false, reason: 'Sizer doesn’t size bras yet: they need a band and a cup, which clothing charts don’t have.' };
     const title = String(product.title || '');
+    const labels = (product.sizes || []).map((s) => parseLabel(s.label));
+    if (labels.length && labels.every((p) => p && p.system === 'one')) return { ok: false, reason: 'This comes in one size, so there is no size to pick.' };
     if (RE.accessory.test(title) && ![RE.outerwear, RE.bottoms, RE.dress, RE.tops, RE.onePiece].some((re) => re.test(title))) {
       return { ok: false, reason: 'Sizer sizes clothes and shoes, not accessories like this one.' };
     }
@@ -920,7 +959,19 @@
 
     const inseam = body.inseam;
     const pick = chart[idx];
-    const pageMatch = matchPageSize(pick, pageSizes, brand, inseam, keys);
+    const at = (m) => {
+      const ks = keys.filter((k) => typeof m[k] === 'number');
+      return ks.length ? ks.reduce((s, k) => s + position(chart, k, m[k]), 0) / ks.length : null;
+    };
+    // Labels that span two sizes (S/M, M/L) both hold an M: take the one nearest where you sit
+    // between sizes, so a body between M and L gets M/L.
+    const matched = matchPageSize(pick, pageSizes, brand, inseam, keys);
+    const spans = pageSizes.filter((s) => s.parsed.span != null).map((s) => { const m = measure(s.parsed, brand); return { s, p: m ? at(m) : null }; }).filter((x) => x.p != null);
+    const target = raw + (idx - (Math.floor(raw) + (roundedUp ? 1 : 0)));
+    const nearSpan = matched && spans.some((x) => x.s.label === matched.label)
+      ? spans.reduce((a, b) => (Math.abs(b.p - target) < Math.abs(a.p - target) - 0.01 || (Math.abs(b.p - target) <= Math.abs(a.p - target) + 0.01 && b.s.available !== false && a.s.available === false) ? b : a)).s
+      : null;
+    const pageMatch = nearSpan ? { label: nearSpan.label, available: nearSpan.available } : matched;
     const altRow = altIdx != null && altIdx >= 0 && altIdx < chart.length ? chart[altIdx] : null;
     const altMatch = altRow ? matchPageSize(altRow, pageSizes, brand, inseam, keys) : null;
     // No "38, or 38": an alternative the page can only offer as the same size is no alternative.
@@ -928,10 +979,6 @@
     if (body.inseamGuess && pageSizes.some((s) => s.parsed.length)) {
       reasons.push({ text: `Leg length is a guess from your height, about ${Math.round(inseam)} in. Add your inseam to be sure.`, delta: null });
     }
-    const at = (m) => {
-      const ks = keys.filter((k) => typeof m[k] === 'number');
-      return ks.length ? ks.reduce((s, k) => s + position(chart, k, m[k]), 0) / ks.length : null;
-    };
     // Sold out, or not a size this page offers at all: the nearest it does have in stock.
     const notOffered = !pageMatch && pageSizes.length > 0;
     const inStock = (pageMatch && pageMatch.available === false) || notOffered

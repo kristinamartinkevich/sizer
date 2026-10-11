@@ -550,7 +550,16 @@
       }
     }
     const sel = '[itemtype*="BreadcrumbList"] [itemprop="name"], nav[aria-label*="readcrumb" i] li, [data-testid*="breadcrumb" i] a, [class*="breadcrumb" i] li';
-    return [...doc.querySelectorAll(sel)].map((el) => clean(el.textContent)).filter((t) => t && t.length <= 40).slice(0, 8).join(' > ');
+    // Two of the selectors can hit the same item (a microdata name inside a breadcrumb li): once each.
+    const crumbs = [...doc.querySelectorAll(sel)].map((el) => clean(el.textContent)).filter((t, i, all) => t && t.length <= 40 && t !== all[i - 1]).slice(0, 8).join(' > ');
+    if (/\b(?:wo)?m[ae]n\b/i.test(crumbs)) return crumbs;
+    // Zara's breadcrumb is "ZARA / LOOSE FIT JEANS"; only its page data says "section":"MAN". The
+    // menu's MAN link is on every page and says nothing about this one.
+    for (const el of doc.querySelectorAll('script:not([src]):not([type="application/ld+json"])')) {
+      const m = el.textContent.match(/"section(?:Name)?"\s*:\s*"(MAN|MEN|WOMAN|WOMEN)"/i);
+      if (m) return [crumbs, m[1].toUpperCase()].filter(Boolean).join(' > ');
+    }
+    return crumbs;
   }
 
   function extractProduct(doc, engine) {

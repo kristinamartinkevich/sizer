@@ -66,6 +66,7 @@
       { name: 'amazon-twister', base: 'https://www.amazon.co.uk/dp/B0CNJYK24R', brand: 'Kestrel', title: /^Kestrel Women's 501 Original Jeans$/, sizes: 5, soldOut: ['27W / 30L'], order: ['26W / 30L', '27W / 30L', '28W / 30L', '29W / 30L', '30W / 30L'], size: '27W / 30L', guide: null },
       { name: 'mens-breadcrumb', base: 'https://www.kestrel.example/p/clp60512345', brand: 'Kestrel', title: /Oxford Shirt/, sizes: 5, soldOut: [], section: 'Home > Men > Shirts', size: 'XS', guide: null },
       { name: 'mens-nav-breadcrumb', base: 'https://www.kestrel.example/p/blue-slim-fit-jeans-940245', brand: 'Kestrel', title: /Slim Fit Jeans/, sizes: 5, soldOut: [], section: 'Home > Men > Jeans', size: '30', guide: null },
+      { name: 'section-in-page-data', base: 'https://www.kestrel.example/uk/en/loose-fit-jeans-p00840577.html', brand: '', title: /LOOSE FIT JEANS/, sizes: 6, soldOut: [], section: 'KESTREL > LOOSE FIT JEANS > MAN', size: '30', guide: null },
       { name: 'listing-filters', base: 'https://www.schuh.example/womens/', brand: '', title: /Women's shoes/i, sizes: 0, soldOut: [], size: undefined, guide: null, picker: false },
       { name: 'embedded-variations', base: 'https://www.aritzia.example/us/en/product/suite-satin-dress/132095.html', brand: 'Kestrel', title: /Suite Satin Dress/, sizes: 6, soldOut: ['XS', 'L', 'XL'], order: ['2XS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null, picker: false },
       { name: 'dimension-letters', base: 'https://www.anthropologie.example/shop/mabel-boxy-oxford-shirt', brand: 'Pilar', title: /Mabel Boxy Oxford Shirt/, sizes: 6, soldOut: [], order: ['XXS', 'XS', 'S', 'M', 'L', 'XL'], size: 'S', guide: null },
@@ -173,7 +174,7 @@
 
     async function load(shop) {
       const html = await fetch(`fixtures/shops/${shop.name}.html`).then((r) => r.text());
-      const doc = new DOMParser().parseFromString(html.replace(/<script\b(?![^>]*(?:ld\+json|application\/json))[^>]*>[\s\S]*?<\/script>/gi, ''), 'text/html');
+      const doc = new DOMParser().parseFromString(html.replace(/<script\b(?![^>]*(?:ld\+json|application\/json|data-fixture-keep))[^>]*>[\s\S]*?<\/script>/gi, ''), 'text/html');
       const base = doc.createElement('base'); base.href = shop.base; doc.head.prepend(base);
       // Layout matters for findPicker (visibility), so the document goes into a real frame.
       const frame = document.createElement('iframe');

@@ -1,0 +1,46 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping as a man, 2026-10-12): Zara's product page says nothing about
+  men in its title, its address or its breadcrumb ("ZARA / LOOSE FIT JEANS"). Only the page data in
+  an inline script does: "section":"MAN". Sizer sized men's jeans on Zara's women's chart and said
+  EU 44, against 29 to 36 on the page. The menu's "MAN" links are on every Zara page, so they say
+  nothing. Markup trimmed from Zara's product page; the brand is fictional.
+-->
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <title>LOOSE FIT JEANS - Grey | KESTREL United Kingdom</title>
+  <style>
+    body { font: 13px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #000; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .layout-breadcrumbs__items { display: flex; gap: 6px; list-style: none; padding: 0; }
+    .size-selector-sizes { display: flex; gap: 8px; list-style: none; padding: 0; }
+    .size-selector-sizes button { min-width: 48px; padding: 10px; border: 1px solid #000; background: #fff; }
+    .is-disabled button { color: #999; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="layout-categories"><ul><li><a href="/uk/en/woman-l1000.html">WOMAN</a></li><li><a href="/uk/en/man-l534.html">MAN</a></li><li><a href="/uk/en/kids-l1.html">KIDS</a></li></ul></nav>
+  </header>
+  <main>
+    <nav aria-label="Breadcrumbs Trail" class="layout-breadcrumbs"><ol class="layout-breadcrumbs__items" itemscope itemtype="https://schema.org/BreadcrumbList">
+      <li class="layout-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/" itemprop="item"><span itemprop="name">KESTREL</span></a></li>
+      <li class="layout-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="#main" aria-current="page" itemprop="item"><span itemprop="name">LOOSE FIT JEANS</span></a></li>
+    </ol></nav>
+    <h1 class="product-detail-info__header-name">LOOSE FIT JEANS</h1>
+    <p class="money-amount">£29.99</p>
+    <ul class="size-selector-sizes">
+      <li class="size-selector-sizes__size"><button><span>29</span></button></li>
+      <li class="size-selector-sizes__size"><button><span>30</span></button></li>
+      <li class="size-selector-sizes__size"><button><span>31</span></button></li>
+      <li class="size-selector-sizes__size"><button><span>32</span></button></li>
+      <li class="size-selector-sizes__size"><button><span>34</span></button></li>
+      <li class="size-selector-sizes__size"><button><span>36</span></button></li>
+    </ul>
+    <p>Loose fit jeans with a five pocket design. 100% cotton.</p>
+  </main>
+  <!-- data-fixture-keep: tests/shops.html strips inline scripts; a shop page keeps them, and this one carries the section. -->
+  <script data-fixture-keep>window.kestrel = window.kestrel || {}; window.kestrel.viewPayload = {"product":{"id":596888985,"name":"LOOSE FIT JEANS","detail":{"reference":"00840577-I2026"},"section":"MAN","sectionName":"MAN","familyName":"TROUSERS"},"analyticsData":{"productRef":"00840577-I2026","productName":"LOOSE FIT JEANS","section":"MAN","family":"PANTALON"}};</script>
+</body>
+</html>

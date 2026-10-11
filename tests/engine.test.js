@@ -371,6 +371,15 @@ test('words and region tags read as sizes: Small, X-Large, AU 10, 8 UK, 38 EU, X
 
 const jo = { anchors: [], height: '178', bust: '112', waist: '98', hip: '122', unit: 'cm', fitPreference: 'relaxed', betweenSizes: 'down' };
 
+test('boot-cut and boot leg jeans are jeans, not boots', () => {
+  const { kindOf } = require('../src/engine.js');
+  assert.equal(kindOf('High-waist boot-cut jeans'), 'bottoms');
+  assert.equal(kindOf('Boot cut trousers'), 'bottoms');
+  assert.equal(kindOf('Mid rise boot leg jeans'), 'bottoms');
+  assert.equal(kindOf('Leather ankle boots'), 'shoes');
+  assert.equal(kindOf('Western boot'), 'shoes');
+});
+
 test('Pull&Bear is found by the name its product data gives it, pullandbear', () => {
   assert.equal(findBrand('pullandbear').name, 'Pull&Bear');
 });

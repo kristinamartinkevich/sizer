@@ -442,7 +442,8 @@
     // Only when nothing in the title is clothing: a dress with a belt is a dress.
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
-    shoes: /\b(?:sneakers?|trainers?|shoes?|boots?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
+    // Boot-cut and boot leg are jeans.
+    shoes: /\b(?:sneakers?|trainers?|shoes?|boots?(?![- ](?:cut|leg)\b)|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
     tops: /\b(?:t-?shirts?|tees?|shirts?|blouses?|tops?|sweaters?|jumpers?|knits?|cardigans?|hoodies?|sweatshirts?|jackets?|coats?|blazers?|pullover|bluse|hemd|jacke|mantel|chemise|veste|manteau)\b/i,

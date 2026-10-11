@@ -93,6 +93,26 @@ test('shoes from a brand without a chart use a standard EU chart and say so', ()
   assert.match(r.firmUp, /standard/);
 });
 
+// QA 2026-10-11: zalando.co.uk lists trainers as bare UK numbers (3.5, 4, 5, 6 ...), read as EU, so
+// nothing matched and the answer said "EU 39", a size the shopper could not find in the list.
+test('bare UK shoe numbers on a UK shop are read as UK and the answer is one of them', () => {
+  const sizes = ['3.5', '4', '5', '6', '6.5', '7', '7.5'].map((label) => ({ label }));
+  const r = recommend({ ...measured, footLength: '24.5' }, { brand: 'Some Label', title: 'Canvas trainers', text: '', sizes, host: 'www.zalando.co.uk' }, bundle);
+  assert.equal(r.size, '6');
+});
+
+test('bare shoe numbers that start under 5 are UK even without the shop', () => {
+  const sizes = ['3', '4', '5', '6', '7', '8'].map((label) => ({ label }));
+  const r = recommend({ ...measured, footLength: '24.5' }, { brand: 'Some Label', title: 'Canvas trainers', text: '', sizes }, bundle);
+  assert.equal(r.size, '6');
+});
+
+test('bare shoe numbers from 5 up on a US shop are read as US', () => {
+  const sizes = ['5', '6', '7', '8', '8.5', '9', '10'].map((label) => ({ label }));
+  const r = recommend({ ...measured, footLength: '24.5' }, { brand: 'Some Label', title: 'Canvas trainers', text: '', sizes, host: 'www.nordstrom.com' }, bundle);
+  assert.equal(r.size, '8.5');
+});
+
 test('a runs-small note moves shoes up a size too', () => {
   const r = recommend({ ...measured, footLength: '24.5' }, { brand: 'Veja', title: 'Campo sneakers', text: 'These run small, we recommend ordering one size up.', sizes: ['37', '38', '39'].map((label) => ({ label })) }, bundle);
   assert.equal(r.size, '39');

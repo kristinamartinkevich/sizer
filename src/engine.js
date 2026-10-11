@@ -96,7 +96,7 @@
 
   // Bare numbers are ambiguous (32 can be a denim waist or EU 32); settle them with context.
   function inferNumberSystem(values, hint) {
-    if (hint === 'denim' || hint === 'eu' || hint === 'us') return hint;
+    if (hint === 'denim' || hint === 'eu' || hint === 'us' || hint === 'uk') return hint;
     const nums = values.filter((v) => typeof v === 'number');
     if (!nums.length) return 'eu';
     if (nums.every((n) => n <= 24)) return 'us';
@@ -1011,13 +1011,23 @@
 
   const cm = (n) => String(+(+n).toFixed(1));
 
+  // Bare shoe numbers on a page: EU from 30 up. Under 16 they are UK on a UK shop, else UK when the
+  // list goes under 5 (women's US sizes rarely do), else US.
+  const UK_SHOP = /(?:\.co\.uk|\.uk)$/i;
+  function shoeNumberSystem(product) {
+    const nums = (product.sizes || []).map((s) => parseSizeLabel(s.label)).filter((p) => p && p.system === 'number' && typeof p.value === 'number').map((p) => p.value);
+    if (!nums.length || !nums.every((n) => n < 16)) return 'eu';
+    if (product.host && UK_SHOP.test(product.host)) return 'uk';
+    return Math.min(...nums) < 5 ? 'uk' : 'us';
+  }
+
   function recommendShoes(profile, product, found, signals, charts, reviews = analyzeReviews()) {
     const f = footFromProfile(profile, charts);
     if (!f) return { ok: false, needsProfile: true, reason: 'Add your foot length to your fit profile, and Sizer will size shoes for you.' };
     const brand = found && found.shoes ? found : null;
     const rows = brand ? brand.sizes : Charts.GENERIC_SHOES;
     const system = brand ? brand.system : 'eu';
-    const pageSizes = resolveSizes(product.sizes || [], 'eu');
+    const pageSizes = resolveSizes(product.sizes || [], shoeNumberSystem(product));
 
     const inRow = rows.find((r) => f.foot >= r.foot[0] && f.foot <= r.foot[1]);
     const pos = position(rows, 'footMid', f.foot);

@@ -72,6 +72,8 @@
     // What "Read this page with AI" returned fills only what the page reader missed.
     const product = state.ai ? Store.applyReadProduct(extractProduct(document, Engine), state.ai, Engine.kindOf) : extractProduct(document, Engine);
     if (!(product.isProduct || product.sizes.length || state.forced)) return { product, result: null };
+    // The shop, so bare shoe numbers read as UK on a UK shop.
+    product.host = location.hostname;
     product.poolFit = await poolFor(product);
     // What others say online, once it has landed; until then the engine answers without it.
     const landed = state.dossiers[Store.itemKey(product.brand, product.title)];

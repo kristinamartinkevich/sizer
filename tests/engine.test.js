@@ -156,6 +156,8 @@ test('a fit scale naming both ends is not a fit note', () => {
   assert.strictEqual(analyzeText('Fit Runs Small True to Size Runs Large').fitNote, null);
   assert.strictEqual(analyzeText('Fit: runs small – true to size – runs large').fitNote, null);
   assert.strictEqual(analyzeText('This style runs small, so we recommend sizing up.').fitNote, 'small');
+  // SHEIN prints the reviews' shares on the scale: "Overall Fit Small 2% True to Size 7% Large 91%".
+  assert.strictEqual(analyzeText('Overall Fit Small 2% True to Size 7% Large 91%').fitNote, null);
 });
 
 // Nike, 2026-10-11: "Nike Sportswear Women's Tight Off-Shoulder Long-Sleeve Top" was shown as the

@@ -463,8 +463,9 @@
     slight: /slight\s+stretch|light\s+stretch|comfort\s+stretch|low\s+stretch|leichte[rn]?\s+stretch|wenig\s+stretch|stretch\s*:\s*(?:slight|light|low)/i,
     high: /super\s*[-\s]?stretch|high\s+stretch|power\s+stretch|ultra\s+stretch|very\s+stretchy|stretchy|sculpt(?:s|ing)?\b|stretch\s*:\s*(?:high|very)/i,
     highNamed: /super\s*[-\s]?stretch|high\s+stretch|power\s+stretch|ultra\s+stretch|very\s+stretchy|sculpt(?:s|ing)?\b|stretch\s*:\s*(?:high|very)/i,
-    // A fit scale's end labels ("How it fits Small Just Right Big", "Runs Small True to Size Runs Large").
-    fitScale: /\b(?:(?:runs?|fits?)\s+)?small\s*[-–—|·:,]?\s*(?:just\s+right|true\s+to\s+size|perfect(?:\s+fit)?)\s*[-–—|·:,]?\s*(?:(?:runs?|fits?)\s+)?(?:large|big)\b/gi,
+    // A fit scale's end labels ("How it fits Small Just Right Big", "Runs Small True to Size Runs Large"),
+    // with SHEIN's review shares between them ("Small 2% True to Size 7% Large 91%").
+    fitScale: /\b(?:(?:runs?|fits?)\s+)?small(?:\s*\d{1,3}\s*%)?\s*[-–—|·:,]?\s*(?:just\s+right|true\s+to\s+size|perfect(?:\s+fit)?)(?:\s*\d{1,3}\s*%)?\s*[-–—|·:,]?\s*(?:(?:runs?|fits?)\s+)?(?:large|big)\b/gi,
     stretchScale: /(?:\b(?:ranging\s+)?from\s+)?\b(?:non|no|rigid)[-\s]?(?:stretch)?\s*(?:to|[-–—])?\s*(?:super|high|ultra|max(?:imum)?)[-\s]?stretch(?:y)?\b/gi,
     elastane: /(\d{1,2}(?:[.,]\d)?)\s*%\s*(?:elastane|elasthan|elastan|spandex|lycra|élasthanne|elastomultiester|elastomultiestere|elastolefin)/i,
     cotton100: /100\s*%\s*(?:organic\s+)?(?:cotton|baumwolle|coton|algodón|cotone|katoen)/i,

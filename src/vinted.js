@@ -109,7 +109,8 @@
   }
 
   // A Vinted listing's address path; the catalogue, members and the rest are not listings.
-  const isListingPath = (pathname) => /\/items\//.test(String(pathname || ''));
+  // Vinted's /items/, Depop's /products/ and Poshmark's /listing/.
+  const isListingPath = (pathname) => /\/(?:items|products|listing)\//.test(String(pathname || ''));
 
   const LANG_OF_TLD = { fr: 'fr', be: 'fr', lu: 'fr', de: 'de', at: 'de', es: 'es', it: 'it', nl: 'nl', pl: 'pl' };
   function langOf(hostname) {
@@ -224,6 +225,7 @@
   const COPY = {
     flag: 'Label only, the seller has not measured it',
     titleFlag: 'Size from the title, the seller has not measured it',
+    descriptionFlag: 'Size from the description, the seller has not measured it',
     ask: 'Ask the seller to measure',
     copied: 'Copied',
     photos: 'Read measurements from the photos',
@@ -237,10 +239,13 @@
     const verdict = steps === 0 ? 'fits' : steps < 0 ? 'small' : 'roomy';
     // Three sizes or more up is more than roomy.
     const head = steps >= 3 ? 'Too big for you' : HEAD[verdict];
-    return from === 'title'
-      ? { verdict, line: `${head} by the title`, flag: COPY.titleFlag }
+    return from === 'title' || from === 'description'
+      ? { verdict, line: `${head} by the ${from}`, flag: flagFor(from) }
       : { verdict, line: `${head} by the label`, flag: COPY.flag };
   }
+
+  // The size came from the listing's words, not its label: the title, or Depop's description.
+  const flagFor = (from) => (from === 'title' ? COPY.titleFlag : from === 'description' ? COPY.descriptionFlag : COPY.flag);
 
   // ---- reading the listing --------------------------------------------------------------
 
@@ -333,25 +338,44 @@
     return m ? `W${m[1]}` : null;
   }
 
+  // Depop's stand-ins when the seller names no brand.
+  const PLACEHOLDER_BRAND = /^(?:other|source unknown|unbranded|no brand|unknown)$/i;
+
+  function pairWaist(text) {
+    const t = clean(text);
+    const m = t.match(/\bW\s?(2[2-9]|3\d|40)\b/i) || t.match(/\b(2[2-9]|3[0-6])\s?[/x×]\s?L?\s?(?:2[6-9]|3[0-8])\b/i);
+    return m ? `W${m[1]}` : null;
+  }
+
   function listingFrom(raw) {
     const r = raw || {};
     const ld = r.ld && typeof r.ld === 'object' ? r.ld : {};
     const category = ldText(ld.category) ? ldText(ld.category).split(/\s*[>/›»]\s*/) : [].concat(r.category || []);
     const title = ldText(ld.name) || clean(r.title);
     const description = ldText(ld.description) || clean(r.description);
-    const sizeRaw = ldText(ld.size) || clean(r.size);
+    // Poshmark's size row ends in its "Size Chart" link.
+    const sizeRaw = (ldText(ld.size) || clean(r.size)).replace(/\s*size\s+(?:chart|guide)$/i, '');
     const schema = String(ldText(ld.itemCondition) || '').split('/').pop();
     const kind = kindOfListing(category, title);
     // Vinted's size box offers jeans in letter sizes, so a seller often picks "L" for a pair whose
     // title says 29. For jeans and trousers with no number on the label, the title's waist wins.
     const label = sizeLabel(sizeRaw);
-    const waist = (kind === 'jeans' || kind === 'trousers') && !/\d/.test(label || '') ? titleWaist(title) : null;
+    // Depop's sellers write it in the description ("size 26x32") under a title that is cut short; there
+    // only a W or a waist-by-leg pair counts, never a bare number.
+    const brand = ldText(ld.brand) || clean(r.brand);
+    const legs = kind === 'jeans' || kind === 'trousers';
+    const bottoms = legs && !/\d/.test(label || '');
+    // A W the title writes out ("W28 L30") beats a bare number in the box, which can be an EU 36.
+    const writtenW = legs && /^\d{2}$/.test(label || '') ? pairWaist(title) : null;
+    const fromTitle = writtenW || (bottoms ? titleWaist(title) : null);
+    const fromText = bottoms && !fromTitle ? pairWaist(description) : null;
+    const waist = fromTitle || fromText;
     return {
-      brand: ldText(ld.brand) || clean(r.brand),
+      brand: PLACEHOLDER_BRAND.test(brand) ? '' : brand,
       title,
       sizeRaw,
       size: waist || label,
-      sizeFrom: waist ? 'title' : 'label',
+      sizeFrom: fromTitle ? 'title' : fromText ? 'description' : 'label',
       kind,
       condition: clean(r.condition) || CONDITION[schema] || '',
       description,
@@ -401,7 +425,7 @@
           mode: 'label',
           verdict: label ? label.verdict : null,
           line: label ? label.line : `Sizer would pick ${r.pickLabel} for you`,
-          flag: l.sizeFrom === 'title' ? COPY.titleFlag : COPY.flag,
+          flag: flagFor(l.sizeFrom),
           pick: r.pickLabel,
           // The brand's note is brand-level knowledge even when the engine had no reason to apply it.
           reasons: r.reasons.map((x) => x.text).concat(placed.brandNote && !r.reasons.some((x) => x.text === placed.brandNote) ? [placed.brandNote] : []),

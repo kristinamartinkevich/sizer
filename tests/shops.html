@@ -113,6 +113,15 @@
         brand: 'Paloma Wool', size: 'EU 36', sizeRaw: 'EU 36', kind: 'skirt', condition: 'Neuf avec étiquette', lang: 'fr', have: {}, photos: 2,
         mode: 'label', verdict: 'small', line: /by the label$/, ask: /^Bonjour.*tour de taille/, notAsked: /hanches|entrejambe/, body: 2,
         anchor: /(^| )details-list--(details|main-info)( |$)/, bare: { sizeRaw: 'EU 36', condition: 'Neuf avec étiquette' } },
+      // Depop and Poshmark are resale listings too (2026-10-11). Depop prints "Size M • Excellent
+      // condition • Kestrel" with no labelled row, and the jeans' waist only in the description;
+      // Poshmark's size row carries a "Size Chart" link. Neither has Vinted photos to read.
+      { name: 'depop-listing', base: 'https://www.depop.com/products/wrenvintage-kestrel-blue-bootcut-jeans-7699/', profile: BODY,
+        brand: 'Kestrel', size: 'W26', sizeRaw: 'Size M', kind: 'jeans', condition: 'Excellent', lang: 'en', have: {}, photos: 2,
+        mode: 'label', verdict: 'small', line: /by the description$/, flag: 'Size from the description, the seller has not measured it', ask: /^Hello.*waist/, notAsked: /armpit/, body: null, anchor: /attributesContainer/ },
+      { name: 'poshmark-listing', base: 'https://poshmark.com/listing/High-Rise-OG-Loose-Jeans-Kestrel-Size-18-6ab72b17ad242a00a1771ec4', profile: BODY,
+        brand: 'Kestrel', size: '18', sizeRaw: '18', kind: 'jeans', condition: 'Good', lang: 'en', have: { inseam: 71.1, rise: 31.8, waistFlat: 48.3 }, photos: 0,
+        mode: 'measured', verdict: 'roomy', line: /compared with your measurements/, ask: /leg opening/, notAsked: /waist/, body: null, anchor: /(^| )item-details( |$)/ },
     ];
 
     async function runVinted(shop) {
@@ -127,14 +136,14 @@
       check(checks, 'condition', l.condition === shop.condition, l.condition);
       check(checks, 'language', l.lang === shop.lang, l.lang);
       check(checks, 'seller measurements', JSON.stringify(l.have) === JSON.stringify(shop.have), JSON.stringify(l.have));
-      check(checks, 'photos', l.photos.length === shop.photos && l.photos.every((u) => /^https:\/\/images1\.vinted\.net\//.test(u)), l.photos.length);
+      check(checks, 'photos', l.photos.length === shop.photos && (!/vinted\./.test(host) || l.photos.every((u) => /^https:\/\/images1\.vinted\.net\//.test(u))), l.photos.length);
       const a = SizerVinted.answerFor(l, shop.profile, null, SizerEngine);
       check(checks, 'answer', a.mode === shop.mode && a.verdict === shop.verdict, `${a.mode} ${a.verdict}`);
       check(checks, 'line', shop.line.test(a.line), a.line);
-      if (shop.mode === 'label') check(checks, 'label flag', a.flag === 'Label only, the seller has not measured it', a.flag);
+      if (shop.mode === 'label') check(checks, 'label flag', a.flag === (shop.flag || 'Label only, the seller has not measured it'), a.flag);
       check(checks, 'seller message', shop.ask.test(a.message || '') && !shop.notAsked.test(a.message || ''), a.message);
       const body = SizerChartsStore.measurementsBody({ image_urls: l.photos, kind: l.kind }, '3f2b8c1e-6d4a-4f7b-9a1c-2e5d8f0b7c64');
-      check(checks, 'photo read body', body && body.image_urls.length === shop.body && Object.keys(body).sort().join() === 'image_urls,install,kind', body && JSON.stringify(body.image_urls));
+      if (shop.body != null) check(checks, 'photo read body', body && body.image_urls.length === shop.body && Object.keys(body).sort().join() === 'image_urls,install,kind', body && JSON.stringify(body.image_urls));
       if (shop.bare) {
         // With every itemprop and the JSON-LD gone, only the detail rows are left, and the label that
         // comes first in each row must not be taken for the value.

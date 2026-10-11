@@ -3,10 +3,11 @@ const FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/def
 // A Vinted listing reached without a reload (Vinted moves between pages in place) has no content
 // script yet; it gets the Vinted reader, the same files as the manifest's Vinted entry.
 const VINTED_FILES = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/panel-style.js', 'src/mark.js', 'src/vinted.js', 'src/vinted-page.js'];
-const isVintedItem = (url) => /^https:\/\/www\.vinted\.[a-z.]+\/items\//.test(url || '');
-// Any Vinted page. Sizer reads a Vinted listing from the listing itself, so the AI page read (a shop
-// reader, with a daily cap) is never offered there.
-const isVinted = (url) => /^https:\/\/www\.vinted\.[a-z.]+\//.test(url || '');
+// Depop and Poshmark listings are second-hand pieces too, read the same way.
+const isVintedItem = (url) => /^https:\/\/(?:www\.vinted\.[a-z.]+\/items\/|www\.depop\.com\/products\/|poshmark\.com\/listing\/)/.test(url || '');
+// Any Vinted, Depop or Poshmark page. Sizer reads a listing from the listing itself, so the AI page
+// read (a shop reader, with a daily cap) is never offered there.
+const isVinted = (url) => /^https:\/\/(?:www\.vinted\.[a-z.]+|www\.depop\.com|poshmark\.com)\//.test(url || '');
 
 function show(id) {
   document.querySelectorAll('.state').forEach((s) => (s.hidden = s.id !== id));

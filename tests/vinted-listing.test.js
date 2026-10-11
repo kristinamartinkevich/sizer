@@ -303,13 +303,19 @@ test('the photo read and the function agree on the kinds of item and the measure
 
 // ---- the manifest ---------------------------------------------------------------------------------
 
-const VINTED = ['fr', 'de', 'co.uk', 'es', 'it', 'nl', 'be', 'pl', 'lt', 'cz', 'at', 'lu', 'pt', 'se', 'fi', 'dk', 'sk', 'hu', 'ro', 'hr', 'ie', 'gr'];
+const VINTED = ['fr', 'de', 'co.uk', 'es', 'it', 'nl', 'be', 'pl', 'lt', 'cz', 'at', 'lu', 'pt', 'se', 'fi', 'dk', 'sk', 'hu', 'ro', 'hr', 'ie', 'gr', 'com'];
+// Depop and Poshmark listings are second-hand pieces with one size each, read by the same script.
+const RESALE = ['https://www.depop.com/products/*', 'https://poshmark.com/listing/*'];
 
-test('the Vinted content script runs on item pages of every Vinted domain, listed one by one', () => {
+test('the resale content script runs on item pages of every Vinted domain, and on Depop and Poshmark listings', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf8'));
   const entry = manifest.content_scripts.find((c) => c.js.includes('src/vinted-page.js'));
   assert.ok(entry);
-  assert.deepStrictEqual(entry.matches, VINTED.map((tld) => `https://www.vinted.${tld}/items/*`));
+  assert.deepStrictEqual(entry.matches, VINTED.map((tld) => `https://www.vinted.${tld}/items/*`).concat(RESALE));
+  assert.ok(Vinted.isListingPath('/products/kestrel-jeans-7699/') && Vinted.isListingPath('/listing/High-Rise-Jeans-6ab72b') && !Vinted.isListingPath('/category/womens/'));
+  const listing = fs.readFileSync(path.join(ROOT, 'store/LISTING.md'), 'utf8');
+  assert.match(listing, /depop\.com\/products/, 'the listing justifies the Depop match');
+  assert.match(listing, /poshmark\.com\/listing/, 'the listing justifies the Poshmark match');
   assert.ok(!entry.js.includes('src/content.js'), 'the shop reader does not run on Vinted');
   const order = ['src/brands.js', 'src/charts-store.js', 'src/charts.js', 'src/defaults.js', 'src/review-details.js', 'src/engine.js', 'src/panel-style.js', 'src/mark.js', 'src/vinted.js', 'src/vinted-page.js'];
   assert.deepStrictEqual(entry.js, order);
@@ -326,6 +332,11 @@ test('the popup injects the same Vinted files as the manifest on a listing reach
   assert.ok(list);
   assert.deepStrictEqual(list[1].split(',').map((s) => s.trim().replace(/'/g, '')), entry.js);
   assert.match(popup, /isVintedItem\(tab\.url\) \? VINTED_FILES : FILES/);
+  const isVintedItem = new Function(`${popup.match(/const isVintedItem = [^\n]*/)[0]}; return isVintedItem;`)();
+  assert.ok(isVintedItem('https://www.depop.com/products/wren-kestrel-jeans-7699/'));
+  assert.ok(isVintedItem('https://poshmark.com/listing/High-Rise-Jeans-6ab72b'));
+  assert.ok(isVintedItem('https://www.vinted.com/items/123-jeans'));
+  assert.ok(!isVintedItem('https://www.depop.com/category/womens/'));
 });
 
 test('the copy names the Vinted sites and every field the photo read sends', () => {
@@ -340,4 +351,32 @@ test('the copy names the Vinted sites and every field the photo read sends', () 
   }
   const listing = fs.readFileSync(path.join(ROOT, 'store/LISTING.md'), 'utf8');
   assert.match(listing, /vinted\.\*\/items|Vinted item pages/i, 'the listing justifies the Vinted matches');
+});
+
+// Depop, 2026-10-11: the waist is read from a description only as a W or a waist-by-leg pair; a count
+// or a price there is not a waist.
+test('a jeans waist in the description counts only as W26 or 26x32', () => {
+  const at = (description) => Vinted.listingFrom({ host: 'www.depop.com', title: 'Blue bootcut jeans', size: 'Size M', category: ['Women', 'Bottoms', 'Jeans'], description });
+  assert.strictEqual(at('Bootcut jeans size 26x32 #denim').size, 'W26');
+  assert.strictEqual(at('Fits like a W28').size, 'W28');
+  assert.strictEqual(at('Worn 25 times, still great').size, 'M');
+  assert.strictEqual(at('Bootcut jeans size 26x32 #denim').sizeFrom, 'description');
+});
+
+// Depop, 2026-10-11: "Levi's 527 Slim Bootcut - W28 L30" with a size box of "36" was read as waist 36,
+// "too big". A W written in the title is the waist; a bare number in the box can be an EU size.
+test("a W in a jeans title beats a bare number in the size box", () => {
+  const l = Vinted.listingFrom({ host: 'www.depop.com', title: "Jean Levi's 527 Slim Bootcut Y2K Vintage - W28 L30", size: 'Size 36', category: ['Women', 'Bottoms', 'Jeans'], description: '' });
+  assert.strictEqual(l.size, 'W28');
+  assert.strictEqual(l.sizeFrom, 'title');
+  // A W in the box itself stays.
+  assert.strictEqual(Vinted.listingFrom({ host: 'www.vinted.fr', title: 'Jean Levi’s W30', size: 'W27 | FR 36', category: ['Jeans'], description: '' }).size, 'W27');
+});
+
+// Depop, 2026-10-11: Depop's placeholder brands "Other" and "Source Unknown" were named as brands.
+test("Depop's placeholder brands are no brand", () => {
+  for (const brand of ['Other', 'Source Unknown', 'Unbranded', 'No brand']) {
+    assert.strictEqual(Vinted.listingFrom({ host: 'www.depop.com', title: 'Linen dress', brand, size: 'Size M', category: ['Women', 'Dresses'] }).brand, '', brand);
+  }
+  assert.strictEqual(Vinted.listingFrom({ host: 'www.depop.com', title: 'Linen dress', brand: '& Other Stories', size: 'Size M', category: ['Women', 'Dresses'] }).brand, '& Other Stories');
 });

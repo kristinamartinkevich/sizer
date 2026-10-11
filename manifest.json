@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sizer – Clothing Size Finder",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Find your clothing size on any shop. Reads the brand’s size chart, stretch, fit notes, stock and buyers’ reviews. Jeans to shoes.",
   "permissions": [
     "storage",
@@ -73,7 +73,35 @@
         "https://*.hm.com/*",
         "https://*.cos.com/*",
         "https://*.arket.com/*",
-        "https://*.selfridges.com/*"
+        "https://*.selfridges.com/*",
+        "https://*.anthropologie.com/*",
+        "https://*.urbanoutfitters.com/*",
+        "https://*.freepeople.com/*",
+        "https://*.abercrombie.com/*",
+        "https://*.hollisterco.com/*",
+        "https://*.ae.com/*",
+        "https://*.gap.com/*",
+        "https://*.jcrew.com/*",
+        "https://*.madewell.com/*",
+        "https://*.everlane.com/*",
+        "https://*.thereformation.com/*",
+        "https://*.aritzia.com/*",
+        "https://*.lulus.com/*",
+        "https://*.macys.com/*",
+        "https://*.bloomingdales.com/*",
+        "https://*.saksfifthavenue.com/*",
+        "https://*.target.com/*",
+        "https://*.nike.com/*",
+        "https://*.lululemon.com/*",
+        "https://*.skims.com/*",
+        "https://*.goodamerican.com/*",
+        "https://*.fashionnova.com/*",
+        "https://*.express.com/*",
+        "https://*.loft.com/*",
+        "https://*.princesspolly.com/*",
+        "https://*.shein.com/*",
+        "https://*.kohls.com/*",
+        "https://*.dsw.com/*"
       ],
       "js": [
         "src/brands.js",
@@ -116,7 +144,10 @@
         "https://www.vinted.ro/items/*",
         "https://www.vinted.hr/items/*",
         "https://www.vinted.ie/items/*",
-        "https://www.vinted.gr/items/*"
+        "https://www.vinted.gr/items/*",
+        "https://www.vinted.com/items/*",
+        "https://www.depop.com/products/*",
+        "https://poshmark.com/listing/*"
       ],
       "js": [
         "src/brands.js",

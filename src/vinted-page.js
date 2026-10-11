@@ -72,10 +72,29 @@
     for (const el of doc.querySelectorAll('dt, th, span, div')) {
       if (el.children.length || !label.test(clean(el.textContent))) continue;
       const next = el.nextElementSibling;
-      if (next && clean(next.textContent)) return clean(next.textContent);
+      if (next && spaced(next)) return spaced(next);
+    }
+    // Depop prints one line, "Size M • Excellent condition • Levi's", with no labelled rows.
+    const own = PRIMARY[key];
+    if (own) {
+      for (const p of doc.querySelectorAll(`${PRIMARY_LINE} p, ${PRIMARY_LINE} span`)) {
+        const m = clean(p.textContent).match(own);
+        if (m) return m[1] || m[0];
+      }
     }
     return '';
   }
+
+  // Text with a space between elements: Poshmark's "18" and its "Size Chart" link do not run together.
+  function spaced(el) {
+    const parts = [];
+    const walk = el.ownerDocument.createTreeWalker(el, 4);
+    while (walk.nextNode()) parts.push(walk.currentNode.nodeValue);
+    return clean(parts.join(' '));
+  }
+
+  const PRIMARY_LINE = '[data-testid="productPrimaryAttributes"]';
+  const PRIMARY = { size: /^size\s+\S.*$/i, condition: /^(.+?)\s+condition$/i };
 
   function breadcrumbs(doc, ld) {
     if (ld.breadcrumb.length) return ld.breadcrumb;
@@ -121,8 +140,17 @@
   // The line goes under the listing's details block (the outermost details container a few levels
   // above the size row); failing that, under the size row's parent, then the title's.
   const BLOCK = /item-details|details-list|item-attributes(?!-)/i;
+  // A row whose label is only its text, as Poshmark's "<dt>Size</dt><dd>18</dd>": the row around it.
+  function labelRow(doc, d) {
+    const label = new RegExp(`^(?:${d.label})\\s*:?$`, 'i');
+    for (const el of doc.querySelectorAll('dt, th')) if (label.test(clean(el.textContent))) return el.parentElement;
+    return null;
+  }
   function anchorFor(doc) {
-    const sizeRow = doc.querySelector(`${rowSelector(DETAIL.size)}, ${DETAIL.size.prop.map((p) => `[itemprop="${p}"]`).join(', ')}`);
+    // Depop's one-line summary is the place: the line goes right under it.
+    const primary = doc.querySelector(PRIMARY_LINE);
+    if (primary && !doc.querySelector(rowSelector(DETAIL.size))) return primary;
+    const sizeRow = doc.querySelector(`${rowSelector(DETAIL.size)}, ${DETAIL.size.prop.map((p) => `[itemprop="${p}"]`).join(', ')}`) || labelRow(doc, DETAIL.size);
     let block = null;
     let el = sizeRow;
     for (let depth = 0; el && el !== doc.body && depth < 6; depth++, el = el.parentElement) {
@@ -258,7 +286,7 @@
       const tight = a.areas.find((t) => /^(Tight|Short)/.test(t));
       note = tight || (state.fromPhoto.length ? `Some measurements ${Vinted.COPY.fromPhoto}` : '');
     } else if (a.mode === 'label') {
-      k = l.sizeFrom === 'title' ? 'Size from the title' : 'Label only';
+      k = l.sizeFrom === 'label' ? 'Label only' : `Size from the ${l.sizeFrom}`;
       text = a.line;
       note = a.flag;
     } else {
@@ -287,7 +315,7 @@
     const rows = [
       ['Brand', l.brand || 'Not found'],
       ['Size', l.sizeRaw || 'Not given'],
-      ...(l.sizeFrom === 'title' ? [['Waist in the title', l.size]] : []),
+      ...(l.sizeFrom === 'label' ? [] : [[`Waist in the ${l.sizeFrom}`, l.size]]),
       ['Condition', l.condition || 'Not given'],
     ];
     return { measured, details: rows.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`).join('') };
@@ -308,7 +336,7 @@
       hero = `<div class="hero"><div class="k">Seller’s measurements</div>${l.size ? `<div class="big">${esc(l.size)}</div>` : ''}<div class="headline">${esc(a.line)}</div></div>`;
       why = `<h3>Where it fits</h3><ul class="areas">${a.areas.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
     } else if (a.mode === 'label') {
-      hero = `<div class="hero"><div class="k">${l.sizeFrom === 'title' ? 'Size from the title' : 'Label only'}</div><div class="big">${esc(l.size)}</div><div class="headline">${esc(a.line)}</div><p class="firm">${esc(a.flag)}. Sizer picks ${esc(a.pick)} for you on this brand’s chart.</p></div>`;
+      hero = `<div class="hero"><div class="k">${l.sizeFrom === 'label' ? 'Label only' : `Size from the ${l.sizeFrom}`}</div><div class="big">${esc(l.size)}</div><div class="headline">${esc(a.line)}</div><p class="firm">${esc(a.flag)}. Sizer picks ${esc(a.pick)} for you on this brand’s chart.</p></div>`;
       why = `<h3>What Sizer knows about ${esc(l.brand || 'this brand')}</h3><ol>${a.reasons.map((t) => `<li><span>${esc(t)}</span></li>`).join('')}</ol>`;
     } else {
       hero = `<p class="empty">${l.size ? 'Sizer has no chart for this label.' : 'The seller gives no size or measurements.'} Ask the seller to measure it.</p>`;

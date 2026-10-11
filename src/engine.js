@@ -250,9 +250,13 @@
     if (!parsed) return null;
     if (parsed.system === 'number') parsed = { ...parsed, system: 'eu' };
     const row = shoeRow(parsed, brand ? brand.sizes : Charts.GENERIC_SHOES, brand ? brand.system : 'eu');
-    if (!row) return null;
+    // The standard chart has whole EU sizes; a half size (UK 5.5 is EU 38.5) is read on the same line.
+    const EU_FROM = { eu: 0, uk: 33, us: 30.5 };
+    const halfway = !row && !brand && typeof parsed.value === 'number' && EU_FROM[parsed.system] != null
+      ? Charts.GENERIC_FOOT(parsed.value + EU_FROM[parsed.system]) : null;
+    if (!row && halfway == null) return null;
     const label = brand ? brand.name : a.brand || 'shoes';
-    return { foot: +(row.footMid + (FOOT_SHIFT_CM[a.fit] || 0)).toFixed(2), name: `${label} ${a.size}`, brand };
+    return { foot: +((row ? row.footMid : halfway) + (FOOT_SHIFT_CM[a.fit] || 0)).toFixed(2), name: `${label} ${a.size}`, brand };
   }
 
   function footFromProfile(profile, charts) {
@@ -445,8 +449,8 @@
     giftCard: /\b(?:e-?)?gift ?(?:cards?|vouchers?|certificates?)\b/i,
     accessory: /\b(?:belts?|bags?|handbags?|totes?|clutch|backpacks?|scarf|scarves|hats?|caps?|beanies?|gloves|mittens|sunglasses|necklaces?|earrings?|bracelets?|wallets?|purses?|umbrellas?|keyrings?)\b/i,
     onePiece: /\b(?:jumpsuits?|playsuits?|bodysuits?|rompers?|dungarees|overalls|waistcoats?|vests?|swimsuits?|bikinis?|co-?ords?)\b/i,
-    // Boot-cut and boot leg are jeans.
-    shoes: /\b(?:sneakers?|trainers?|shoes?|boots?(?![- ](?:cut|leg)\b)|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
+    // Boot-cut and boot leg are jeans; a snowboot or a moonboot is a boot.
+    shoes: /\b(?:sneakers?|trainers?|shoes?|(?:snow|moon|rain|ski|hiking|walking)?boots?(?![- ](?:cut|leg)\b)|wellies|wellingtons?|booties?|sandals?|heels?|loafers?|mules?|pumps?|espadrilles?|slides?|slippers?|ballerinas?|flats|clogs?|oxfords?|derby|derbies|brogues?|footwear|schuhe?|stiefel(?:etten)?|sandalen|chaussures?|bottes?|baskets|zapatos?|botas|scarpe|stivali)\b/i,
     dress: /\b(?:dress(?:es)?|gowns?|kleid(?:er)?|robes?|vestidos?|abito)\b/i,
     outerwear: /\b(?:coats?|overcoats?|jackets?|blazers?|parkas?|trench(?:coat)?s?|anoraks?|puffers?|manteaux?|vestes?|jacken?|mantel)\b/i,
     tops: /\b(?:t-?shirts?|tees?|shirts?|blouses?|tops?|sweaters?|jumpers?|knits?|cardigans?|hoodies?|sweatshirts?|jackets?|coats?|blazers?|pullover|bluse|hemd|jacke|mantel|chemise|veste|manteau)\b/i,
@@ -992,8 +996,12 @@
     }
     // Sold out, or not a size this page offers at all: the nearest it does have in stock.
     const notOffered = !pageMatch && pageSizes.length > 0;
+    const posOf = (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; };
+    // Steps count from the size the answer names: the page's 32 standing in for a W33 it lacks.
+    const shown = pageMatch && pageSizes.find((s) => s.label === pageMatch.label);
+    const from = (shown && posOf(shown)) ?? at(pick);
     const inStock = (pageMatch && pageMatch.available === false) || notOffered
-      ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
+      ? nearestInStock(from, pageSizes, posOf, rigid)
       : null;
     // A size the page doesn't list is still named the way the page names its sizes: a US 8 among US
     // numbers, not the chart's EU 40.

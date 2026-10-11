@@ -399,6 +399,14 @@ test('boot-cut and boot leg jeans are jeans, not boots', () => {
   assert.equal(kindOf('Western boot'), 'shoes');
 });
 
+// Found shopping as a pear-shaped persona: ASOS's "Moonboot Icon High space racing snowboot" was
+// sized as clothing, UK 14.
+test('a snowboot, moonboot or wellington is a shoe, and bootcut jeans still are not', () => {
+  const { kindOf } = require('../src/engine.js');
+  for (const t of ['Moonboot Icon High space racing snowboot in silver', 'Rubber rainboots', 'Classic wellington boots', 'Kids wellies']) assert.equal(kindOf(t), 'shoes', t);
+  assert.equal(kindOf('Bootcut jeans in mid blue'), 'bottoms');
+});
+
 test('Pull&Bear is found by the name its product data gives it, pullandbear', () => {
   assert.equal(findBrand('pullandbear').name, 'Pull&Bear');
 });
@@ -445,6 +453,28 @@ test('with no sizes on the page and nothing in the title that is clothing, nothi
   assert.match(cake.reason, /no sizes/);
   assert.equal(recommend(jo, { brand: 'Nobody', title: 'Satin midi dress', text: '', sizes: [] }).ok, true);
   assert.equal(recommend(jo, { brand: 'Nobody', title: 'Satin midi', text: '', sizes: offered(['8', '10', '12']) }).ok, true);
+});
+
+// Found shopping as a pear-shaped persona: a pair of Nike in UK 5.5 and no foot length, and every
+// shoe page said "Add your sizes". The standard chart has whole EU sizes only.
+test('a half-size shoe you own sizes shoes on the standard chart', () => {
+  const profile = { anchors: [{ brand: 'Nike', type: 'shoes', size: 'UK 5.5', fit: 'perfect' }] };
+  const r = recommend(profile, { brand: 'Nobody', title: 'Leather trainers', text: '', sizes: offered(['EU 37', 'EU 38', 'EU 39', 'EU 40']) });
+  assert.equal(r.ok, true, r.reason);
+  assert.match(r.size, /^EU 3[89]$/);
+  assert.match(r.reasons[0].text, /UK 5\.5/);
+  const us = recommend({ anchors: [{ brand: 'Nobody', type: 'shoes', size: 'US 8.5', fit: 'perfect' }] }, { brand: 'Nobody', title: 'Leather trainers', text: '', sizes: [] });
+  assert.equal(us.ok, true, us.reason);
+});
+
+// Found shopping as a pear-shaped persona: Shopbop's largest jean, 32, stood in for a W33 the page
+// lacks, and its sold-out note called 31 "two sizes down", counting from the W33.
+test('steps to the nearest size in stock count from the size the answer names', () => {
+  const profile = { anchors: [{ brand: "Levi's", type: 'jeans', size: 'W29 L30', fit: 'perfect' }], height: '163', bust: '92', waist: '72', hip: '110', unit: 'cm', fitPreference: 'regular', betweenSizes: 'up' };
+  const sizes = ['23', '24', '25', '26', '27', '28', '29', '30', '31', '32'].map((label) => ({ label, available: label !== '23' && label !== '32' }));
+  const r = recommend(profile, { brand: 'Veronica Beard Jean', title: 'Kasey Wide Leg Jeans', text: '100% cotton. No stretch.', sizes, host: 'www.shopbop.com' });
+  assert.equal(r.size, '32');
+  assert.equal(r.stockText, 'Sold out in 32. Nearest in stock: 31, one size down.');
 });
 
 test('past every size on the page, the answer names the largest one there', () => {

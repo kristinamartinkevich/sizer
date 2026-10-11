@@ -136,13 +136,14 @@
   }
 
   // Standard women's EU shoe sizes as foot length in cm, for brands without a chart of their own.
+  const GENERIC_FOOT = (eu) => +(eu * 2 / 3 - 1.2).toFixed(2);
   const GENERIC_SHOES = [];
   for (let eu = 35; eu <= 43; eu++) {
-    const m = +(eu * 2 / 3 - 1.2).toFixed(2);
+    const m = GENERIC_FOOT(eu);
     GENERIC_SHOES.push({ label: String(eu), value: eu, foot: [+(m - 0.33).toFixed(2), +(m + 0.33).toFixed(2)], footMid: m, aliases: { uk: String(eu - 33), us: String(eu - 30.5) } });
   }
 
-  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, CHARTS_FOR };
+  const api = { toBrand, convertChart, pickChart, tierOf, GENERIC_SHOES, GENERIC_FOOT, CHARTS_FOR };
   root.SizerCharts = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

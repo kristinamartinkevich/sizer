@@ -106,6 +106,9 @@ test('a fit note about one part of the body is kept, though it does not move the
   assert.strictEqual(analyzeText('Narrow at the toes, so wide feet may want more room.').fitDetail, 'Narrow at the toes, so wide feet may want more room');
   assert.strictEqual(analyzeText('Wide leg jeans in organic cotton.').fitDetail, null, 'a style name is not a fit note');
   assert.strictEqual(analyzeText('Runs small, we recommend sizing up. Tight at the ankle.').fitDetail, null, 'a size note takes the row');
+  // Reformation: the picker's label runs into the sentence when the page text is joined.
+  assert.strictEqual(analyzeText('select a size Designed to be fitted at the waist and hips with a wide leg').fitDetail, 'Designed to be fitted at the waist and hips with a wide leg');
+  assert.strictEqual(analyzeText('feels a little tight at the hips').fitDetail, 'feels a little tight at the hips', 'a note all in lower case is kept whole');
 });
 
 // QA 2026-10-11: on ASOS the answer was "UK 14" and the reason said "fit like standard between 40 and
@@ -224,4 +227,35 @@ test('a shop fit bar with real shares reads them as percentages', () => {
   const summary = '72% say it runs small, 20% true to size (50 reviews)';
   assert.equal(analyzeReviews([], summary).verdict, 'small');
   assert.match(reviewLine(recommend(profile, { ...stevie, reviewSummary: summary }), /runs small/), /\d+% of 50 reviews/);
+});
+
+// ---- found shopping across 25 shops (2026-10-11) ----------------------------
+
+const maya = { anchors: [], bust: '90', waist: '74', hip: '102', unit: 'cm', fitPreference: 'regular' };
+const offered = (labels) => labels.map((label) => ({ label, available: true }));
+
+test('bare 4 to 18 on a UK shop are UK sizes, even for a brand whose chart is EU', () => {
+  // zara.com/uk lists 4, 6 ... 18; Zara's chart is EU, and EU 40 is UK 12.
+  const zara = recommend(maya, { brand: 'ZARA', title: 'Slim fit jeans', text: '98% cotton, 2% elastane', sizes: offered(['4', '6', '8', '10', '12', '14', '16', '18']), url: 'https://www.zara.com/uk/en/jeans-p04730218.html', host: 'www.zara.com' });
+  assert.equal(zara.size, '12');
+  assert.equal(zara.matchedOnPage, true);
+  // The same numbers on a US shop stay US: EU 40 is US 8.
+  const us = recommend(maya, { brand: 'ZARA', title: 'Slim fit jeans', text: '98% cotton, 2% elastane', sizes: offered(['4', '6', '8', '10', '12', '14', '16', '18']), url: 'https://www.zara.com/us/en/jeans-p04730218.html', host: 'www.zara.com' });
+  assert.equal(us.size, '8');
+  // Zalando UK's double sizes: 8/10 is UK 8 to 10, not US.
+  const tee = recommend(maya, { brand: 'Tommy Hilfiger', title: 'Print T-shirt', text: '100% cotton', sizes: offered(['6/8', '8/10', '12', '14/16', '18']), host: 'www.zalando.co.uk' });
+  assert.equal(tee.size, '12');
+});
+
+test('a T-shirt says nothing about how it fits at the hips or waist', () => {
+  const tee = recommend(maya, { brand: '', title: 'Crew neck T-shirt', text: '100% cotton', sizes: offered(['XS', 'S', 'M', 'L', 'XL']) });
+  assert.deepEqual(tee.sizedOn, ['bust']);
+  assert.ok(!tee.areas.some((a) => a.area === 'hip' || a.area === 'waist'), JSON.stringify(tee.areas));
+});
+
+test('when your size is not among the page’s sizes, the answer says so and names what is offered', () => {
+  const r = recommend(maya, { brand: 'Issey Miyake', title: 'Pleated maxi dress', text: '', sizes: offered(['2']), host: 'www.ssense.com' });
+  assert.equal(r.matchedOnPage, false);
+  assert.match(r.stockText, /not offered on this page/);
+  assert.match(r.stockText, /\b2\b/);
 });

@@ -94,20 +94,31 @@
     return null;
   }
 
-  // Bare numbers are ambiguous (32 can be a denim waist or EU 32); settle them with context.
-  function inferNumberSystem(values, hint) {
-    if (hint === 'denim' || hint === 'eu' || hint === 'us' || hint === 'uk') return hint;
+  // A UK shop: a .uk host, or a UK section of an international one (zara.com/uk/, /en_gb/, /en-gb/).
+  const UK_SHOP = /(?:\.co\.uk|\.uk)$/i;
+  const UK_PATH = /\/(?:uk|gb)(?:\/|$)|[\/_-]en[-_](?:gb|uk)\b/i;
+  function ukShop(product) {
+    return !!product && ((product.host && UK_SHOP.test(product.host)) || (product.url && UK_PATH.test(String(product.url).replace(/^https?:\/\/[^/]+/i, ''))));
+  }
+
+  // Bare numbers are ambiguous (32 can be a denim waist or EU 32); settle them with context. Numbers
+  // of 24 or under are never EU or IT clothing sizes, whatever the brand's chart is, so they are UK
+  // on a UK shop and US elsewhere.
+  function inferNumberSystem(values, hint, uk) {
     const nums = values.filter((v) => typeof v === 'number');
+    const small = nums.length && nums.every((n) => n <= 24);
+    if (hint === 'denim' || hint === 'us' || hint === 'uk') return hint;
+    if (small) return uk ? 'uk' : 'us';
+    if (hint === 'eu') return hint;
     if (!nums.length) return 'eu';
-    if (nums.every((n) => n <= 24)) return 'us';
     if (nums.some((n) => n % 2 === 1) && nums.every((n) => n >= 22 && n <= 40)) return 'denim';
     if (nums.every((n) => n >= 30)) return 'eu';
     return 'denim';
   }
 
-  function resolveSizes(labels, hint) {
+  function resolveSizes(labels, hint, uk) {
     const parsed = labels.map((l) => ({ ...l, parsed: parseSizeLabel(l.label) })).filter((l) => l.parsed);
-    const numSystem = inferNumberSystem(parsed.filter((l) => l.parsed.system === 'number').map((l) => l.parsed.value), hint);
+    const numSystem = inferNumberSystem(parsed.filter((l) => l.parsed.system === 'number').map((l) => l.parsed.value), hint, uk);
     for (const l of parsed) if (l.parsed.system === 'number') l.parsed = { ...l.parsed, system: numSystem };
     return parsed;
   }
@@ -408,8 +419,12 @@
     const large = RE.large.test(t);
     // A note about one part of the body ("tight around the ankle", "narrow at the toes"): shown as the
     // fit note when there is no size note, though it moves nothing.
+    // Page text is joined from many elements, so a button label can run into a sentence ("select a
+    // size Designed to be fitted…"): a fragment that starts in lower case and runs into a capital
+    // starts at the capital.
+    const sentenceOf = (x) => x.replace(/^[a-z][^A-Z]*?\s(?=[A-Z][a-z])/, '');
     const fitDetail = small || large || RE.tts.test(t) ? null
-      : (t.split(/[.!?\n]+/).map((x) => x.trim()).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x)) || null);
+      : (t.split(/[.!?\n]+/).map((x) => sentenceOf(x.trim())).find((x) => x.length <= 160 && RE.fitWord.test(x) && RE.fitArea.test(x)) || null);
     const modelSize = (t.match(RE.model) || [])[1];
     const ft = t.match(RE.modelHeightFt);
     const modelHeight = (t.match(RE.modelHeight) || [])[1] || (ft ? Math.round((+ft[1] * 12 + +ft[2]) * 2.54) : null);
@@ -549,7 +564,8 @@
   const UPPER_AREAS = ['bust', 'shoulder', 'sleeve'];
   function fitAreas(have, row, stretch, weighted, kind) {
     const tightFrom = stretch === 'none' ? 1.5 : stretch === 'high' ? 3.5 : 2.5;
-    const covers = (area) => kind !== 'bottoms' || !UPPER_AREAS.includes(area);
+    // Bottoms say nothing above the waist, and a top nothing about the waist or hips it does not size on.
+    const covers = (area) => (kind === 'bottoms' ? !UPPER_AREAS.includes(area) : kind === 'tops' ? area !== 'waist' && area !== 'hip' : true);
     const out = [];
     for (const area of ['bust', 'waist', 'hip', 'shoulder']) {
       if (!covers(area) || have[area] == null || typeof row[area] !== 'number') continue;
@@ -735,7 +751,7 @@
     const needs = { ok: false, needsProfile: true, reason: 'Add your measurements or one piece you own, and Sizer will size this for you.' };
     if (!body) return needs;
 
-    const pageSizes = resolveSizes(product.sizes || [], brand && brand.system);
+    const pageSizes = resolveSizes(product.sizes || [], brand && brand.system, ukShop(product));
     const pageSystem = dominantSystem(pageSizes);
 
     const chartSystem = brand ? brand.system : pageSystem && GENERIC[pageSystem] ? pageSystem : TO_EU[pageSystem] ? 'eu' : signals.bottoms ? 'denim' : 'eu';
@@ -862,10 +878,14 @@
       const ks = keys.filter((k) => typeof m[k] === 'number');
       return ks.length ? ks.reduce((s, k) => s + position(chart, k, m[k]), 0) / ks.length : null;
     };
-    const inStock = pageMatch && pageMatch.available === false
+    // Sold out, or not a size this page offers at all: the nearest it does have in stock.
+    const notOffered = !pageMatch && pageSizes.length > 0;
+    const inStock = (pageMatch && pageMatch.available === false) || notOffered
       ? nearestInStock(at(pick), pageSizes, (s) => { const m = measure(s.parsed, brand); return m ? at(m) : null; }, rigid)
       : null;
     const size = pageMatch ? pageMatch.label : displayLabel(pick, chartSystem, brand);
+    const stockText = notOffered ? notOfferedText(size, inStock, pageSizes)
+      : pageMatch && pageMatch.available === false ? inStockText(size, inStock) : null;
     const areas = withWebAreas(fitAreas(g2g ? g2g.values : body, g2g ? garmentRows[idx] : pick, signals.stretch, weighted, kind), web, kind);
 
     let score = 0.4;
@@ -892,7 +912,7 @@
       matchedOnPage: !!pageMatch,
       available: pageMatch ? pageMatch.available !== false : null,
       inStock,
-      stockText: pageMatch && pageMatch.available === false ? inStockText(size, inStock) : null,
+      stockText,
       alternative: alt ? { size: altMatch ? altMatch.label : displayLabel(alt, chartSystem, brand), why: altIdx > idx ? 'if you like more room' : 'if you like a closer fit' } : null,
       headline,
       confidence,
@@ -938,12 +958,12 @@
     if (result.shoes) {
       const b = brand && brand.shoes ? brand : null;
       const rows = b ? b.sizes : Charts.GENERIC_SHOES;
-      const [s] = resolveSizes([{ label }], 'eu');
+      const [s] = resolveSizes([{ label }], 'eu', ukShop(product));
       const row = s && shoeRow(s.parsed, rows, b ? b.system : 'eu');
       return done(row ? rows.indexOf(row) - result.pickIndex : null);
     }
     const chart = brand ? brand.sizes : GENERIC[result.chartSystem];
-    const [s] = resolveSizes([{ label }], brand && brand.system);
+    const [s] = resolveSizes([{ label }], brand && brand.system, ukShop(product));
     const m = s && measure(s.parsed, brand);
     if (!m || !chart) return done(null);
     let at = chart.indexOf(m);
@@ -1034,11 +1054,10 @@
 
   // Bare shoe numbers on a page: EU from 30 up. Under 16 they are UK on a UK shop, else UK when the
   // list goes under 5 (women's US sizes rarely do), else US.
-  const UK_SHOP = /(?:\.co\.uk|\.uk)$/i;
   function shoeNumberSystem(product) {
     const nums = (product.sizes || []).map((s) => parseSizeLabel(s.label)).filter((p) => p && p.system === 'number' && typeof p.value === 'number').map((p) => p.value);
     if (!nums.length || !nums.every((n) => n < 16)) return 'eu';
-    if (product.host && UK_SHOP.test(product.host)) return 'uk';
+    if (ukShop(product)) return 'uk';
     return Math.min(...nums) < 5 ? 'uk' : 'us';
   }
 
@@ -1167,6 +1186,15 @@
     return inStock.other
       ? `Sold out in ${size}. In stock: ${first}, or ${inStock.other.size}, ${STEP_WORDS[inStock.other.steps]}.`
       : `Sold out in ${size}. Nearest in stock: ${first}.`;
+  }
+
+  // Your size is not one the page lists: the nearest it has in stock, or what it lists.
+  function notOfferedText(size, near, pageSizes) {
+    const first = near && `${near.size}, ${STEP_WORDS[near.steps]}`;
+    if (near && near.other) return `${size} is not offered on this page. In stock: ${first}, or ${near.other.size}, ${STEP_WORDS[near.other.steps]}.`;
+    if (near) return `${size} is not offered on this page. Nearest in stock: ${first}.`;
+    const labels = pageSizes.slice(0, 8).map((s) => s.label);
+    return `${size} is not offered on this page, which lists ${labels.join(', ')}${pageSizes.length > 8 ? ' and more' : ''}.`;
   }
 
   function displayLabel(entry, system, brand) {

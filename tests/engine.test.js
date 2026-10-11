@@ -206,3 +206,22 @@ test('one size away in stock needs no second option', () => {
   const r = recommend(profile, { ...stevie, sizes: [['27', false], ['28', false], ['29', true], ['30', true]].map(([label, available]) => ({ label, available })) });
   assert.deepEqual(r.inStock, { size: '29', steps: 1, other: null });
 });
+
+const { analyzeReviews } = require('../src/engine.js');
+const reviewLine = (r, re) => r.reasons.map((x) => x.text).find((t) => re.test(t)) || '';
+
+test('a fit slider with no numbers is not reported as a share of reviews', () => {
+  const line = reviewLine(recommend(profile, { ...stevie, reviewSummary: 'Fit is True to size.' }), /true to size/);
+  assert.match(line, /true to size/);
+  assert.doesNotMatch(line, /\d/);
+  const counted = reviewLine(recommend(profile, { ...stevie, reviewSummary: 'Fit is True to size. (37 reviews)' }), /true to size/);
+  assert.match(counted, /37 reviews/);
+  assert.doesNotMatch(counted, /%/);
+  assert.equal(analyzeReviews([], 'Fit is True to size.').total, 0);
+});
+
+test('a shop fit bar with real shares reads them as percentages', () => {
+  const summary = '72% say it runs small, 20% true to size (50 reviews)';
+  assert.equal(analyzeReviews([], summary).verdict, 'small');
+  assert.match(reviewLine(recommend(profile, { ...stevie, reviewSummary: summary }), /runs small/), /\d+% of 50 reviews/);
+});

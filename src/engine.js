@@ -454,15 +454,19 @@
     }
     // A labelled slider with no numbers ("Fit is Runs Small", ASOS) is read as a lean, not a landslide.
     const lean = String(summary).match(/fit is (between|runs small|runs large|true to size|too small|too large)/i);
-    if (!(pct.small || pct.large || pct.tts) && lean) {
+    const slider = !(pct.small || pct.large || pct.tts) && !!lean;
+    if (slider) {
       const kind = /small/i.test(lean[1]) ? 'small' : /large/i.test(lean[1]) ? 'large' : 'tts';
       pct[kind] = kind === 'tts' ? 70 : 65;
     }
     if (!(pct.small || pct.large || pct.tts)) return out;
+    // Votes are spread over the stated count, or over 100 when the shop gives none. The total stays
+    // the stated count (0 without one), so an invented figure is never shown or sent to the pool.
     const count = (String(summary).match(REVIEW_COUNT) || [])[1];
-    const total = count ? parseInt(count.replace(/[,.]/g, ''), 10) : Math.max(out.total, 100);
-    const share = (p) => Math.round((p / 100) * total);
-    return { small: share(pct.small), large: share(pct.large), tts: share(pct.tts), total, fromSummary: true };
+    const total = count ? parseInt(count.replace(/[,.]/g, ''), 10) : 0;
+    const base = total || 100;
+    const share = (p) => Math.round((p / 100) * base);
+    return { small: share(pct.small), large: share(pct.large), tts: share(pct.tts), total, fromSummary: true, pct: slider ? null : pct };
   }
 
   // This page's reviews plus what Sizer users read on other shops for the same style, pooled as one tally.
@@ -492,9 +496,14 @@
         : `Reviewers, weighted by how like you they are, say it ${what}.`;
     }
     const shops = rv.vendors ? `, across ${rv.vendors + (rv.local.total ? 1 : 0)} shops` : '';
-    const basis = rv.fromSummary && !rv.vendors
-      ? `${Math.round(rv.share * 100)} % of ${rv.total} reviews`
-      : `${rv[rv.verdict]} of ${rv.mentions} reviews that mention fit${shops}`;
+    if (rv.fromSummary && !rv.vendors) {
+      // The shop's own figure, as the shop gave it; a slider with no numbers gets no numbers.
+      const counted = rv.total ? `${rv.total} reviews` : '';
+      if (!rv.pct) return `The shop’s review summary says it ${what}${counted ? ` (${counted})` : ''}.`;
+      const basis = `${rv.pct[rv.verdict]}% of ${counted || 'reviews'}`;
+      return rv.verdict === 'tts' ? `Buyers say it ${what} (${basis}).` : `Buyers say it ${what}: ${basis}.`;
+    }
+    const basis = `${rv[rv.verdict]} of ${rv.mentions} reviews that mention fit${shops}`;
     return rv.verdict === 'tts' ? `Buyers say it ${what} (${basis}).` : `Buyers say it ${what}: ${basis}.`;
   }
 

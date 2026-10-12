@@ -1,5 +1,6 @@
 /* Side panel: the popup's look, full width of the panel. */
 body { width: auto; min-width: 280px; padding: 18px 18px 14px; }
+.top { margin: -18px -18px 18px; padding: 14px 18px; }
 .panel-block { padding: 14px 0; border-top: 1px solid var(--line); }
 .top + .panel-block { border-top: 0; padding-top: 0; }
 .panel-block h2 { margin: 0 0 8px; font-weight: 400; }

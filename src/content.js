@@ -110,9 +110,13 @@
     if (document.getElementById('sizer-page-style')) return;
     const s = document.createElement('style');
     s.id = 'sizer-page-style';
-    // One document-level face for the figure: @font-face is ignored inside a shadow root.
-    const font = chrome.runtime.getURL('fonts/HankenGrotesk-latin.woff2');
-    s.textContent = `@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("${font}") format("woff2"); }\n` + globalThis.SIZER_PAGE_STYLE;
+    // Document-level faces: @font-face is ignored inside a shadow root. Latin only on a shop page.
+    const face = (family, file, weight, extra = '') => `@font-face { font-family: "${family}"; font-style: normal; font-weight: ${weight};${extra} font-display: swap; src: url("${chrome.runtime.getURL(file)}") format("woff2"); }\n`;
+    s.textContent = face('Hanken Grotesk', 'fonts/HankenGrotesk-latin.woff2', '100 900')
+      + face('Archivo', 'fonts/Archivo-latin.woff2', '100 900', ' font-stretch: 62.5% 125%;')
+      + face('DM Mono', 'fonts/DMMono-400-latin.woff2', '400')
+      + face('DM Mono', 'fonts/DMMono-500-latin.woff2', '500')
+      + globalThis.SIZER_PAGE_STYLE;
     document.head.appendChild(s);
   }
 

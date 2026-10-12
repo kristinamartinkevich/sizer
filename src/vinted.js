@@ -295,6 +295,9 @@
     if (NO_SIZE.test(clean(raw))) return null;
     const s = clean(raw).replace(/^(?:taille|size|größe|grösse|talla|taglia|maat|rozmiar|tamanho|storlek|koko|størrelse|velikost|veľkosť|méret|mărime|veličina|μέγεθος)\s*:?\s*/i, '');
     if (!s || NO_SIZE.test(s)) return null;
+    // Poshmark's men's jeans: "Waist 36".
+    const waist = s.match(/^waist\s*:?\s*(\d{2})\b/i);
+    if (waist) return `W${waist[1]}`;
     const first = clean(s.split(/[\/|]/)[0]);
     return first && !NO_SIZE.test(first) ? first.slice(0, 24) : null;
   }

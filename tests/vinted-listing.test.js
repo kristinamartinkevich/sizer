@@ -426,6 +426,16 @@ test('a label is placed on the chart the pick came from, not a brand chart set a
   assert.ok(Math.abs(jeans.steps) <= 1, `jeans steps ${jeans.steps}`);
 });
 
+// Poshmark, 2026-10-12: men's jeans labelled "Waist 36" were not placed ("Sizer would pick W32").
+test('a "Waist 36" label is a W36', () => {
+  assert.strictEqual(Vinted.sizeLabel('Waist 36'), 'W36');
+  assert.strictEqual(Vinted.sizeLabel('Waist: 40'), 'W40');
+  const l = Vinted.listingFrom({ host: 'poshmark.com', title: "Levis 569 Loose Straight Jeans Mens", brand: "Levi's", size: 'Waist 36 Size Chart', category: ['Men', 'Jeans'], description: '' });
+  assert.strictEqual(l.size, 'W36');
+  const him = { anchors: [], bust: '102', waist: '84', hip: '100', unit: 'cm' };
+  assert.strictEqual(Vinted.answerFor(l, him, null, Engine).verdict, 'roomy');
+});
+
 // eBay, 2026-10-12: a dead item address serves "Discover error | eBay", and Sizer showed its mark and
 // "The seller gives no size or measurements" on it.
 test('an error page at an item address is no listing', () => {

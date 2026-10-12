@@ -38,7 +38,7 @@
   // Vinted renamed the size row to size_familiar (itemprop and test id) in 2026; both names are read.
   const DETAIL = {
     brand: { prop: ['brand'], test: ['brand'], label: 'marque|brand|marke|marca|merk|marka|prekės ženklas|značka|márka|brand|tuotemerkki|mærke|varumärke|μάρκα' },
-    size: { prop: ['size', 'size_familiar'], test: ['size', 'size_familiar'], label: 'taille|size|größe|grösse|talla|taglia|maat|rozmiar|dydis|velikost|veľkosť|méret|mărime|veličina|tamanho|storlek|koko|størrelse|μέγεθος' },
+    size: { prop: ['size', 'size_familiar'], test: ['size', 'size_familiar'], label: 'taille|size|größe|grösse|talla|taglia|maat|rozmiar|dydis|velikost|veľkosť|méret|mărime|veličina|tamanho|storlek|koko|størrelse|μέγεθος|(?:uk |us |eu )?shoe size|schuhgröße|pointure' },
     condition: { prop: ['itemCondition', 'status'], test: ['status'], label: 'état|condition|zustand|estado|condizioni|staat|stan|būklė|stav|állapot|stare|stanje|kunto|stand|skick|κατάσταση' },
   };
 
@@ -58,6 +58,12 @@
     return last && !label.test(last) ? last : '';
   }
 
+  // eBay's shoes say "UK shoe size: 9": the system goes with the bare number, a US 9 is not a UK 9.
+  function withSystem(label, value) {
+    const sys = label.match(/^(uk|us|eu)\b/i);
+    return sys && /^\d{1,2}(?:[.,]5)?$/.test(value) ? `${sys[1].toUpperCase()} ${value}` : value;
+  }
+
   // A size picker's prompt is no value: eBay's multi-size listings print "Size: Select".
   const PLACEHOLDER = /^(?:-+|select|choose|please (?:select|choose)|(?:select|choose) (?:a |your )?size|sélectionner|choisir|auswählen|bitte wählen|seleccionar|selecciona|seleziona|scegli|kies|wybierz)$/i;
   function detail(doc, key) {
@@ -74,7 +80,7 @@
     for (const el of doc.querySelectorAll('dt, th, span, div')) {
       if (el.children.length || !label.test(clean(el.textContent))) continue;
       const next = el.nextElementSibling;
-      if (next && spaced(next) && !PLACEHOLDER.test(spaced(next))) return spaced(next);
+      if (next && spaced(next) && !PLACEHOLDER.test(spaced(next))) return withSystem(clean(el.textContent), spaced(next));
     }
     // Depop prints one line, "Size M • Excellent condition • Levi's", with no labelled rows.
     const own = PRIMARY[key];

@@ -132,6 +132,10 @@
       { name: 'ebay-listing', base: 'https://www.ebay.co.uk/itm/117288705558', profile: BODY,
         brand: 'Kestrel', size: '12', sizeRaw: '12', kind: 'dress', condition: 'Pre-owned - Excellent', lang: 'en', have: {}, photos: 2,
         mode: 'label', verdict: 'fits', line: /by the label$/, ask: /^Hello.*armpit/, notAsked: /inseam/, body: null, anchor: /^elevated-info$/ },
+      // eBay trainers: the size row is "UK shoe size", and the system goes with the number.
+      { name: 'ebay-shoe-size', base: 'https://www.ebay.co.uk/itm/137831479466', profile: { anchors: [{ brand: 'Nike', type: 'shoes', size: 'UK 9', fit: 'perfect' }] },
+        brand: 'Kestrel', size: 'UK 9', sizeRaw: 'UK 9', kind: 'shoes', condition: 'New with box', lang: 'en', have: {}, photos: 1,
+        mode: 'label', verdict: 'fits', line: /by the label$/, ask: /^Hello/, notAsked: /inseam/, body: null, anchor: /^elevated-info$/ },
       // A new eBay listing in several sizes: no Size row, a "Size: Select" picker; it is sized on the
       // sizes it offers, 20 and 22 sold out.
       { name: 'ebay-multi-size', base: 'https://www.ebay.co.uk/itm/154719152496', profile: BODY,

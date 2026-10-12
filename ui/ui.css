@@ -11,7 +11,6 @@
   --sans: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --wide: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --mono: "DM Mono", Menlo, Consolas, monospace;
-  --toile: url("../brand/toile-light.svg");
   color-scheme: light dark;
 }
 /* Appearance follows the system unless the profile pins light or dark (data-theme on <html>). */
@@ -24,7 +23,6 @@
     --accent: #f2f2ef;
     --accent-ink: #121212;
     --signal: #f0998f;
-  --toile: url("../brand/toile-dark.svg");
     color-scheme: dark;
   }
 }
@@ -36,7 +34,6 @@
   --accent: #f2f2ef;
   --accent-ink: #121212;
   --signal: #f0998f;
-  --toile: url("../brand/toile-dark.svg");
   color-scheme: dark;
 }
 :root[data-theme="light"] { color-scheme: light; }
@@ -45,11 +42,10 @@ body { width: 320px; margin: 0; padding: 18px 20px 14px; background: var(--paper
 button { font: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* The header sits on La Toile, the S repeated faint, with the name on a plain tag over it. */
-.top { display: flex; align-items: center; gap: 10px; margin: -18px -20px 18px; padding: 14px 20px; background: var(--toile) 0 0 / 60px 60px; border-bottom: 1px solid var(--line); }
+.top { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
 .mark { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #141413; overflow: hidden; }
 .mark img { width: 22px; height: 22px; display: block; }
-.word { padding: 6px 4px 6px 10px; background: var(--paper); font: 500 expanded 11px/1 var(--wide); letter-spacing: .44em; text-transform: uppercase; }
+.word { font: 500 expanded 11px/1 var(--wide); letter-spacing: .44em; text-transform: uppercase; }
 
 h1 { font: 400 expanded 21px/1.2 var(--wide); letter-spacing: -.01em; margin: 0 0 8px; }
 p { margin: 0 0 14px; }

@@ -14,7 +14,6 @@
   --sans: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --wide: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --mono: "DM Mono", Menlo, Consolas, monospace;
-  --toile: url("../brand/toile-light.svg");
   color-scheme: light dark;
 }
 /* Appearance follows the system unless the profile pins light or dark (data-theme on <html>). */
@@ -31,7 +30,6 @@
     --accent-soft: #2a2a28;
     --accent-ink: #121212;
     --warn: #f0998f;
-  --toile: url("../brand/toile-dark.svg");
     color-scheme: dark;
   }
 }
@@ -47,7 +45,6 @@
   --accent-soft: #2a2a28;
   --accent-ink: #121212;
   --warn: #f0998f;
-  --toile: url("../brand/toile-dark.svg");
   color-scheme: dark;
 }
 :root[data-theme="light"] { color-scheme: light; }
@@ -60,11 +57,9 @@ input { font: inherit; color: var(--ink); }
 
 .page { max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
 
-/* The header sits on La Toile, the S repeated faint, with the name on a plain tag over it. */
-.top { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px; background: var(--toile) 0 0 / 60px 60px; border: 1px solid var(--line); }
-.top .status { margin-left: auto; padding: 4px 8px; background: var(--paper); }
-.top .status:empty { display: none; }
-.brandmark { display: flex; align-items: center; gap: 12px; padding: 6px 10px 6px 6px; background: var(--paper); font: 500 expanded 12px/1 var(--wide); letter-spacing: .44em; text-transform: uppercase; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.top .status { margin-left: auto; }
+.brandmark { display: flex; align-items: center; gap: 12px; font: 500 expanded 12px/1 var(--wide); letter-spacing: .44em; text-transform: uppercase; }
 .mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #141413; overflow: hidden; }
 .mark img { width: 26px; height: 26px; display: block; }
 .status { font-size: 13px; color: var(--muted); transition: opacity 0.3s; }

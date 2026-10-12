@@ -326,6 +326,11 @@
       if (!p) continue;
       out.push({ el, label: p.label.trim(), available: !isUnavailable(el, text) });
     }
+    // Office lists the same sizes three times, in UK, EU and US tabs (ul data-locale="UK"): only the
+    // first tab, the one the page opens on, is the shopper's list.
+    const locales = out.map((o) => { const l = o.el.closest('[data-locale]'); return l ? l.getAttribute('data-locale') : null; });
+    const first = locales.find(Boolean);
+    if (first && locales.some((l) => l && l !== first)) return out.filter((o, i) => locales[i] === first);
     return out;
   }
 
@@ -570,8 +575,12 @@
     const h1 = h1El ? spacedText(h1El) : '';
     const title = clean((ld && ld.name) || meta(doc, 'meta[property="og:title"]') || h1 || doc.title);
     const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i], #bylineInfo');
+    // Microdata names the brand on its own: Office's h1 "product__brand-name" holds the brand and the
+    // product name together, ahead of its itemprop="brand" block.
+    const microBrand = doc.querySelector('[itemprop="brand"] [itemprop="name"], [itemprop="brand"][content]');
+    const microName = microBrand ? (microBrand.getAttribute('content') || spacedText(microBrand)) : '';
     // A site's tagline after a bar is not the brand: "Gymshark | We Do Gym".
-    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || (brandEl ? spacedText(brandEl) : '').slice(0, 60)).replace(/\s\|\s.*$/, '')
+    const brand = clean(ldBrand || meta(doc, 'meta[property="product:brand"]') || microName || (brandEl ? spacedText(brandEl) : '').slice(0, 60)).replace(/\s\|\s.*$/, '')
       // Amazon's byline: "Visit the Levi's Store", "Brand: Levi's".
       .replace(/^visit the (.+) store$/i, '$1').replace(/^brand: */i, '');
 

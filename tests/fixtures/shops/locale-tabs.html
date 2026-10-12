@@ -1,0 +1,62 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping on office.co.uk with a UK 6 foot, 2026-10-12): the h1 holds the
+  brand and the product name together in class "product__brand-name", ahead of the page's microdata
+  itemprop="brand", so the brand was read as "adidas Handball Spezial Trainers". The sizes come three
+  times, in UK, EU and US tabs (ul data-locale), and Sizer answered "39 1/3" from the EU tab the
+  shopper never sees. Markup trimmed from Office's product page; the brand is fictional.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kestrel Court Trainers Brown Gum - Men's Trainers | OFFICE</title>
+  <meta property="og:title" content="Kestrel Court Trainers Brown Gum - Men's Trainers">
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #111; }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .product__sizes-select { display: flex; gap: 8px; list-style: none; padding: 0; }
+    .product__sizes-option { border: 1px solid #ccc; padding: 8px 12px; min-width: 40px; }
+    .hidden-tab { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="product__info">
+      <h1 class="product__brand-name"><a href="/brand/kestrel" class="product__brand-link">Kestrel</a> <p class="product__name" itemprop="name">Court Trainers</p></h1>
+      <h2 class="product__variant">Brown Gum</h2>
+    </div>
+    <div itemprop="brand" itemtype="https://schema.org/Brand" itemscope=""><meta itemprop="name" content="Kestrel"><meta itemprop="url" content="/brand/kestrel"></div>
+    <div class="product__price"><span class="price__price">£89.99</span></div>
+    <div class="product__sizes" id="productSizes">
+      <div class="mdc-tab-bar product__sizes-tab" role="tablist"><button role="tab">UK</button><button role="tab">EU</button><button role="tab">US</button></div>
+      <div class="product__sizes-wrapper">
+        <ul class="product__sizes-select js-size-select-list" data-locale="UK">
+          <li class="product__sizes-option" data-name="5"><span class="product__sizes-size">5</span></li>
+          <li class="product__sizes-option" data-name="5.5"><span class="product__sizes-size">5.5</span></li>
+          <li class="product__sizes-option" data-name="6"><span class="product__sizes-size">6</span></li>
+          <li class="product__sizes-option" data-name="6.5"><span class="product__sizes-size">6.5</span></li>
+          <li class="product__sizes-option" data-name="7"><span class="product__sizes-size">7</span></li>
+        </ul>
+      </div>
+      <div class="product__sizes-wrapper hidden-tab">
+        <ul class="product__sizes-select js-size-select-list" data-locale="EU">
+          <li class="product__sizes-option" data-name="38"><span class="product__sizes-size">38</span></li>
+          <li class="product__sizes-option" data-name="38 2/3"><span class="product__sizes-size">38 2/3</span></li>
+          <li class="product__sizes-option" data-name="39 1/3"><span class="product__sizes-size">39 1/3</span></li>
+          <li class="product__sizes-option" data-name="40"><span class="product__sizes-size">40</span></li>
+          <li class="product__sizes-option" data-name="40 2/3"><span class="product__sizes-size">40 2/3</span></li>
+        </ul>
+      </div>
+      <div class="product__sizes-wrapper hidden-tab">
+        <ul class="product__sizes-select js-size-select-list" data-locale="US">
+          <li class="product__sizes-option" data-name="5.5"><span class="product__sizes-size">5.5</span></li>
+          <li class="product__sizes-option" data-name="6"><span class="product__sizes-size">6</span></li>
+          <li class="product__sizes-option" data-name="6.5"><span class="product__sizes-size">6.5</span></li>
+          <li class="product__sizes-option" data-name="7"><span class="product__sizes-size">7</span></li>
+          <li class="product__sizes-option" data-name="7.5"><span class="product__sizes-size">7.5</span></li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

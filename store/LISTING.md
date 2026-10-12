@@ -42,25 +42,32 @@ finder" and "what size am I" are the two phrases people type, and the dash form 
 the brand.
 
 **Summary** (132 characters max, shown in search results):
-Find your clothing size on any shop. Reads the brand’s size chart, stretch, fit notes, stock and buyers’ reviews. Jeans to shoes.
+Order one size, not two. Sizer puts your size under the size picker, from the brand’s chart, the stretch, fit notes and reviews.
 
 **Category:** Shopping · **Language:** English
 
 **Description:**
 
-Sizer is a clothing size finder for Chrome. It puts your size right under the size picker on product pages, and shows why.
+Stop ordering two sizes and sending one back. Sizer puts your size right under the size picker on the product page, and tells you why.
 
-Tell it your measurements, or a few things you already own and how they fit, and it works out your size for every brand. On a product page it reads the brand’s size chart, the fabric’s stretch, the page’s fit notes, which sizes are in stock, and what buyers said in the reviews.
+Tell it your measurements, or a few clothes you already own and how they fit. From then on, product pages show your size in that brand, worked out from the brand’s size chart, the fabric’s stretch, the page’s fit notes, which sizes are in stock and what buyers said in the reviews.
 
-WHAT YOU SEE
+WHY IT HELPS
+• Order one size with confidence, instead of two to be safe
+• The sizes you already wear, turned into the right size in every other brand
+• No size chart maths: UK, EU, FR, IT, US and letter sizes line up for you
+• Sold out in your size? The nearest sizes in stock, and how far off they are
+• Second-hand you cannot send back, checked against your clothes before you buy
+• Set up once, in about a minute. Free, with no account
+
+WHAT YOU SEE ON THE PAGE
 • Your size, under the shop’s size picker, with the matching option marked
 • A one-line reason: “No stretch, sized up” or “Buyers say it runs small, sized up”
-• If your size is sold out, the nearest sizes in stock and how far off they are
-• Open “Why this size” for the full reasoning and exactly what Sizer read on the page
-• On Vinted, Depop, Poshmark and eBay, whether a second-hand piece fits you, from the seller’s measurements or the size on the label
+• “Why this size” for the full reasoning and exactly what Sizer read on the page
+• On second-hand listings, whether the piece fits you, from the seller’s measurements or the size on the label
 
 WHAT IT READS
-• Brand size charts, downloaded daily, with a link to the brand page each one came from and whether a person has checked it
+• Brand size charts, updated daily, each with a link to the brand page it came from and whether a person has checked it
 • The shop’s own size guide, when the page prints it as a table
 • Built-in charts for 40 denim and high-street brands where no downloaded chart exists yet
 • Stretch: rigid denim leans up a size, high stretch leans down
@@ -69,26 +76,26 @@ WHAT IT READS
 • Per-size stock from the shop’s product data
 • What Sizer users who bought the brand said about the fit, once ten of them have answered
 
+SECOND-HAND, CHECKED FIRST
+A listing on Vinted, Depop, Poshmark or eBay has one size, no reviews and often no returns. Sizer reads the measurements the seller wrote (“pit to pit 48 cm”, “aisselle à aisselle”, “Bundweite”, in seven languages) and compares them with clothes you own, or with your measurements. With no measurements it places the label’s size on the brand’s chart and says it is the label only. “Ask the seller to measure” copies a short, polite message in the listing’s language asking for exactly what is missing. Sizer never sends anything for you.
+
 YOUR FIT PROFILE
 • Bust, waist, hip, shoulder width, arm length, inseam, foot length and height, in cm or inches
 • Weight, only to compare you with reviewers; it never picks a size
 • Clothes you own, marked a bit tight, just right or a bit loose, with flat-lay measurements if you like
-• Whether you like a close fit, a regular fit or a little room, for each kind of clothing
+• A close fit, a regular fit or a little room, for each kind of clothing
 • Whether to go up or down when you fall between two sizes
 • Light, dark or system appearance
 
 AFTER YOU BUY
-• A week later, “Did it fit?” in the popup and the side panel; your answer becomes a piece you own, so your next sizes learn from it
+• A week later, “Did it fit?” in the popup and the side panel. Your answer becomes a piece you own, so your next sizes learn from it
 • A side panel with the full reasoning for the page you are on and your recent sizings
 
 WORKS ON
-The large fashion shops in the UK, Europe and the US, clothing on Amazon, Vinted item pages in every country Vinted serves, and Depop, Poshmark and eBay listings. On any other shop, click the Sizer icon and choose “Check this page anyway”.
-
-SECOND-HAND ON VINTED, DEPOP, POSHMARK AND EBAY
-A listing has one size and no reviews, so Sizer reads the measurements the seller wrote (“pit to pit 48 cm”, “aisselle à aisselle”, “Bundweite”, in seven languages) and compares them with the pieces you own, or with your measurements. With no measurements it places the size on the label on the brand’s chart and says it is the label only. “Ask the seller to measure” copies a short, polite message in the listing’s language asking for exactly what is missing; Sizer never sends anything for you.
+More than 60 large fashion shops in the UK, Europe and the US, clothing on Amazon, Vinted in every country it serves, and Depop, Poshmark and eBay listings. On any other shop, click the Sizer icon and choose “Check this page anyway”.
 
 JEANS, TROUSERS, SKIRTS, DRESSES, TOPS AND SHOES
-Sizer is built around women’s sizing. Bottoms are sized on waist and hip; tops, dresses and coats on the bust and shoulders when the brand’s chart prints them. FR, EU, IT, UK, US and letter sizes line up through one table. Shoes are sized from your foot length. A men’s item, whoever wears it, goes on a standard men’s chart: letters by chest and waist, jeans by waist, tailoring by chest, and men’s US shoe sizes. Shirts sized by collar are not sized yet.
+Sizer is built around women’s sizing. Bottoms are sized on waist and hip; tops, dresses and coats on the bust and shoulders when the brand’s chart prints them. Shoes are sized from your foot length. A men’s item, whoever wears it, goes on a standard men’s chart: letters by chest and waist, jeans by waist, tailoring by chest, and men’s US shoe sizes. Shirts sized by collar are not sized yet.
 
 PRIVATE BY DESIGN
 Your measurements and the clothes you own stay in your Chrome profile. There are no accounts, no analytics and no advertising. Sizer uses no AI and sends only anonymous things: a tally of how many reviews on a page said “runs small”, “runs large” or “true to size”, with the brand and style name, the shop’s name and a random install id, so shoppers on other shops can use it. When you answer “Did it fit?” a week after a product was sized, the answer becomes a piece you own in your profile and is sent anonymously: the brand and style name, the kind of item, the shop’s name, the size you bought, the size Sizer suggested, too small, right or too big, the areas you picked, the chart tier, whether the suggestion already used other buyers’ answers, and the install id. Answers are shared only as counts per brand, one per install, from ten installs. No profile, measurement, page address or review text ever leaves your browser. Full policy: https://kristinamartinkevich.github.io/sizer/store/privacy.html

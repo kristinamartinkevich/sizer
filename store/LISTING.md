@@ -98,15 +98,18 @@ Size charts are approximate and brands change them, so check the brand’s guide
 
 **Graphic assets:**
 - Icon: `icons/128.png`
-- Screenshots (1280×800), in this order: `store/out/screenshot-1.png` (Zalando: fit note read,
-  sold out, nearest in stock), `screenshot-2.png` (ASOS: the reasoning sheet), `screenshot-3.png`
-  (Net-a-Porter: the answer marked in the size grid), `screenshot-4.png` (Vinted: the seller's
-  measurements against a pair you own), `screenshot-5.png` (fit profile). Each is a headline beside
-  a browser window showing a real page with Sizer running, zoomed onto the product details and
-  framed below the shop's header on purpose so no shop logo appears; the description's "not
-  affiliated" line covers the shop names that remain in the text. Rebuild them with
-  `store/frames.html?n=1..5` at 1280×800 after `tools/render-shop.py` (the Vinted page renders
-  from a capture kept out of the repo, since it carries a seller's listing).
+- Screenshots (1280×800), in this order: `store/out/screenshot-1.png` (Zalando: "Order one size. Not
+  two.", the fit note read, sold out, nearest in stock), `screenshot-2.png` (ASOS: the reasoning
+  sheet), `screenshot-3.png` (Everlane: the answer marked in the size grid, sold out, nearest in stock), `screenshot-4.png`
+  (Vinted: the seller's measurements against a pair you own), `screenshot-5.png` (fit profile: shops
+  Sizer was checked on, free, no account, profile stays in the browser). Shots 1 to 4 are a headline
+  beside a browser window showing a real page with Sizer running, zoomed onto the product details and
+  framed below the shop's header on purpose so no shop logo appears; the large card over the window is
+  Sizer's own answer copied from that page and magnified, never retyped. The description's "not
+  affiliated" line covers the shop names in the text and on shot 5. Rebuild them with
+  `store/frames.html?n=1..5` at 1280×800 after `tools/render-shop.py` (the Vinted and Everlane pages
+  render from captures kept out of the repo: the Vinted one carries a seller's listing, and
+  Net-a-Porter, the earlier grid shot, now refuses its stylesheets to a saved copy).
 - Small promo tile (440×280): `store/out/promo-440x280.png`
 - Marquee (1400×560): `store/out/marquee-1400x560.png`
 

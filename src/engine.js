@@ -123,17 +123,18 @@
     if ((m = s.match(/^(\d{2}) ?W ?[\/X]? ?(\d{2}) ?L\b/)) && +m[1] >= 22 && +m[1] <= 48) return { system: 'denim', value: +m[1], length: +m[2], label: String(raw).trim() };
     if ((m = s.match(/^(\d{2})\s?[\/X]\s?(\d{2})\b/)) && +m[1] >= 22 && +m[1] <= 40 && +m[2] >= 26 && +m[2] <= 38) return { system: 'denim', value: +m[1], length: +m[2], label: m[0] };
     // Third sizes are shoes too, as Adidas prints them: EU 40 2/3, 36⅓.
-    if ((m = s.match(/^(EU|FR|DE|UK|US)?\s?(\d{1,2})\s?([12])\/3|^(EU|FR|DE|UK|US)?\s?(\d{1,2})\s?([⅓⅔])/))) {
+    if ((m = s.match(/^(EUR?|FR|DE|UK|US)?\s?(\d{1,2})\s?([12])\/3|^(EUR?|FR|DE|UK|US)?\s?(\d{1,2})\s?([⅓⅔])/))) {
       const tag = m[1] || m[4];
       const third = m[3] ? +m[3] : m[6] === '⅓' ? 1 : 2;
-      return { system: { EU: 'eu', FR: 'eu', DE: 'eu', UK: 'uk', US: 'us' }[tag] || 'number', value: +(m[2] || m[5]) + third / 3, label: m[0] };
+      return { system: { EU: 'eu', EUR: 'eu', FR: 'eu', DE: 'eu', UK: 'uk', US: 'us' }[tag] || 'number', value: +(m[2] || m[5]) + third / 3, label: m[0] };
     }
     // Half sizes are shoes: 38.5, EU 38½, UK 5.5.
-    if ((m = s.match(/^(EU|FR|DE|UK|US)?\s?(\d{1,2})(?:[.,]5|\s?1\/2|½)(?![\d.,])/))) {
-      const system = { EU: 'eu', FR: 'eu', DE: 'eu', UK: 'uk', US: 'us' }[m[1]] || 'number';
+    if ((m = s.match(/^(EUR?|FR|DE|UK|US)?\s?(\d{1,2})(?:[.,]5|\s?1\/2|½)(?![\d.,])/))) {
+      const system = { EU: 'eu', EUR: 'eu', FR: 'eu', DE: 'eu', UK: 'uk', US: 'us' }[m[1]] || 'number';
       return { system, value: +m[2] + 0.5, label: m[0] };
     }
-    if ((m = s.match(/^(EU|FR|DE)\s?(\d{2})\b/))) return { system: 'eu', value: +m[2], label: m[0] };
+    // Depop prints the EU size as EUR 39.
+    if ((m = s.match(/^(EUR?|FR|DE)\s?(\d{2})\b/))) return { system: 'eu', value: +m[2], label: m[0] };
     if ((m = s.match(/^IT\s?(\d{2})\b/))) return { system: 'it', value: +m[1], label: m[0] };
     // Australia prints UK numbers.
     if ((m = s.match(/^(?:UK|AU)\s?(\d{1,2})\b/))) return { system: 'uk', value: +m[1], label: m[0] };

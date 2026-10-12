@@ -469,3 +469,13 @@ test('a listing in several sizes is sized on the sizes it offers, in the line an
   assert.notStrictEqual(Vinted.answerFor({ ...listing, options: [{ label: '14', available: true }] }, her, null, Engine).mode, 'options');
   assert.strictEqual(Vinted.answerFor(Vinted.listingFrom({ host: 'www.ebay.co.uk', title: 'Dress', size: '16', category: ['Women', 'Dresses'], description: '', options: [{ label: '14' }, { label: '16' }] }), her, null, Engine).mode, 'label');
 });
+
+// Depop, 2026-10-12: Dr Martens labelled "EUR 39" said only "Sizer would pick EU 39 for you": the
+// EUR prefix was not read, so the label was never placed against the shopper's foot.
+test('a Depop "EUR 39" shoe label is an EU size, placed against your foot', () => {
+  assert.deepStrictEqual(Engine.parseSizeLabel('EUR 39'), { system: 'eu', value: 39, label: 'EUR 39' });
+  assert.strictEqual(Engine.parseSizeLabel('EUR 39.5').value, 39.5);
+  const FOOT = { anchors: [], footLength: '24.6', unit: 'cm', fitPreference: 'regular' }; // a UK 6, EU 39 foot
+  const l = Vinted.listingFrom({ host: 'www.depop.com', title: 'Worn doc martens size EU 39', brand: 'Dr. Martens', size: 'EUR 39', category: ['Women', 'Shoes', 'Boots'], description: '' });
+  assert.strictEqual(Vinted.answerFor(l, FOOT, null, Engine).verdict, 'fits');
+});

@@ -10,7 +10,7 @@
   const Question = globalThis.SizerFitQuestion;
 
   // dossiers: per item key, 'asking' while the fit-dossier request is out, then the dossier or null.
-  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, forced: false, lookups: {}, looking: null, guideTried: false, ai: null, ask: null, noted: null, dossiers: {} };
+  const state = { phase: 'reading', product: null, result: null, sheetOpen: false, sheetView: null, forced: false, lookups: {}, looking: null, guideTried: false, ai: null, ask: null, noted: null, dossiers: {} };
   const hosts = {};
   let lastTrigger = null;
   // The "did it fit?" question in the sheet keeps its place and its answers across re-renders.
@@ -177,10 +177,12 @@
     const guide = Sheet.sourceLine(r);
     h.mount.innerHTML = `<section class="sheet" role="dialog" aria-modal="false" aria-labelledby="sizer-title" tabindex="-1">
       <header>${MARK}<span class="title" id="sizer-title">sizer</span><button class="close" data-act="close" aria-label="Close">×</button></header>
-      <div class="body">${askHTML()}${Sheet.body(state.result, state.product, { checking: checkingDossier() })}</div>
+      <div class="body">${askHTML()}${Sheet.body(state.result, state.product, { checking: checkingDossier(), view: state.sheetView })}</div>
       <footer><span class="fine">${guide}</span><button class="link" data-act="profile">Edit fit profile</button></footer>
     </section>`;
     bind(h.mount);
+    // A redraw (a late dossier, a stock change) keeps the size and tab the shopper was looking at.
+    Sheet.wire(h.mount.querySelector('.sheet'), (v) => { state.sheetView = v; });
     const slot = h.mount.querySelector('[data-fq-host]');
     if (slot) slot.replaceWith(askQuestion());
     h.mount.querySelector('.sheet').focus();
@@ -216,7 +218,7 @@
     mount.querySelectorAll('[data-act]').forEach((b) => {
       b.onclick = () => {
         const act = b.dataset.act;
-        if (act === 'why') { lastTrigger = b; state.sheetOpen = true; renderSheet(); }
+        if (act === 'why') { lastTrigger = b; state.sheetOpen = true; state.sheetView = null; renderSheet(); }
         if (act === 'close') closeSheet();
         if (act === 'profile') chrome.runtime.sendMessage({ type: 'sizer:options' });
       };
@@ -348,6 +350,7 @@
     state.product = null;
     state.result = null;
     state.sheetOpen = false;
+    state.sheetView = null;
     state.forced = false;
     state.lookups = {};
     state.looking = null;

@@ -56,6 +56,7 @@ async function showPage() {
   sheetHost.hidden = false;
   sheetRoot.innerHTML = `<style>${globalThis.SIZER_STYLE}\n.body { padding: 18px 16px 6px; } .fine { display: block; padding: 0 16px 14px; }</style>
     <div class="body">${SizerSheet.body(res, r.product)}</div><p class="fine">${SizerSheet.sourceLine(res)}</p>`;
+  SizerSheet.wire(sheetRoot.querySelector('.body'));
 }
 
 // ---- Vinted (filled by the Vinted bundle) ------------------------------------------

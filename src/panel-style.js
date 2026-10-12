@@ -148,6 +148,33 @@ ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
 .areas { list-style: none; margin: 0 0 18px; padding: 0; }
 .areas li { padding: 6px 0; border-top: 1px solid var(--hair); font-size: 14px; }
 .areas li:first-child { border-top: 0; }
+/* One size at a time: a row of sizes drives the body, garment and country tabs below it */
+[hidden] { display: none !important; }
+.fit { margin-top: 4px; }
+.fit .sizes { display: flex; flex-wrap: wrap; gap: 2px 14px; margin: 2px 0 12px; }
+.sz { position: relative; border: 0; background: none; padding: 7px 0 8px; border-bottom: 2px solid transparent; font: 600 15px/1 var(--serif); font-variant-numeric: lining-nums tabular-nums; color: var(--graphite); }
+.sz.view { border-bottom-color: var(--accent); }
+.sz.gone { color: #b2b2ad; }
+.sz.gone::after { content: ""; position: absolute; left: -2px; right: -2px; top: 46%; height: 1px; background: currentColor; transform: rotate(-22deg); }
+.sz.yours::before { content: ""; position: absolute; left: 50%; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); transform: translateX(-50%); }
+.tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--hair); overflow-x: auto; }
+.tab { border: 0; background: none; padding: 10px 0 9px; border-bottom: 2px solid transparent; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--graphite); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--graphite); }
+.tp { padding: 6px 0 4px; }
+.tr { display: grid; grid-template-columns: 1fr 64px 78px; gap: 4px 12px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--hair); font-size: 14px; }
+.tr:first-child, .tr.th + .tr { border-top: 0; }
+.tr.th { padding: 6px 0 2px; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.tr .c { text-align: right; font-variant-numeric: lining-nums tabular-nums; }
+.tr .v { grid-column: 1 / -1; display: grid; gap: 4px; margin-top: 6px; }
+.tr .w { font-size: 13px; color: var(--muted); }
+.bar { display: block; width: 100%; height: 12px; }
+.bar .track { fill: var(--hair); }
+.bar .range { fill: var(--graphite); }
+.bar .you { fill: var(--signal); }
+.tp .areas { margin: 8px 0 0; }
+.tp .src, .tp .none { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+.tp .none { font-size: 13px; padding: 10px 0; }
 .checking { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
 .web-note { margin: 0 0 6px; font-size: 14px; }
 .sources { list-style: none; margin: 0; padding: 0; }

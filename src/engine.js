@@ -851,6 +851,61 @@
     return [`Fits as expected at the ${joinNames(areas.map((a) => AREA_NAME[a.area] || a.area))}`];
   }
 
+  // ---- the sheet's size table --------------------------------------------
+
+  const TABLE_KEYS = ['bust', 'waist', 'hip'];
+  // FR numbers are the EU ones, so FR is not listed twice.
+  const CONV_SYSTEMS = ['uk', 'eu', 'us', 'it'];
+  const round1 = (v) => +v.toFixed(1);
+
+  // The range of body a chart size is cut for: halfway to the sizes either side, which is where the
+  // chart stops calling it that size. An end size runs as far out as it runs in.
+  function cutFor(chart, i, k) {
+    const v = chart[i][k];
+    const below = i > 0 ? (chart[i - 1][k] + v) / 2 : null;
+    const above = i < chart.length - 1 ? (v + chart[i + 1][k]) / 2 : null;
+    const lo = below ?? v - (above - v);
+    const hi = above ?? v + (v - below);
+    return [round1(lo), round1(hi)];
+  }
+
+  // The size in other countries: what the brand prints beside it first, else the regional table.
+  function conversions(row, system) {
+    const out = [];
+    for (const to of CONV_SYSTEMS) {
+      if (to === system) continue;
+      const own = row.aliases && row.aliases[to] != null ? row.aliases[to] : null;
+      const v = own ?? convertSize(row.value, system, to);
+      if (v != null) out.push({ system: to, value: String(v) });
+    }
+    return out;
+  }
+
+  // What the "Why this size" sheet compares, one size at a time: each chart size with the body it is
+  // cut for, the garment's own measurements when the chart prints them, and the size in other
+  // countries; each size on the page placed on the row it reads as. Null when nothing can be compared.
+  function sizeTable(chart, system, brand, keys, body, pageSizes, posOf) {
+    if (!chart || chart.length < 2) return null;
+    const shown = TABLE_KEYS.filter((k) => keys.includes(k) && typeof body[k] === 'number' && chart.every((r) => typeof r[k] === 'number'));
+    if (!shown.length) return null;
+    const last = chart.length - 1;
+    const rows = chart.map((row, i) => {
+      const garment = row.garment ? TABLE_KEYS.filter((k) => typeof row.garment[k] === 'number') : [];
+      return {
+        label: displayLabel(row, system, brand),
+        body: Object.fromEntries(shown.map((k) => [k, cutFor(chart, i, k)])),
+        garment: garment.length ? Object.fromEntries(garment.map((k) => [k, row.garment[k]])) : null,
+        conv: conversions(row, system),
+      };
+    });
+    const sizes = pageSizes.map((s) => {
+      const p = posOf(s);
+      const row = p == null || p < -0.5 || p > last + 0.5 ? null : Math.max(0, Math.min(last, Math.round(p)));
+      return { label: s.label, available: s.available == null ? null : s.available !== false, row };
+    });
+    return { keys: shown, you: Object.fromEntries(shown.map((k) => [k, round1(body[k])])), rows, sizes };
+  }
+
   // ---- the recommendation ------------------------------------------------
 
   // Fractional chart position where a body dimension lands (2.5 = halfway between sizes 2 and 3).
@@ -1234,6 +1289,8 @@
       ...(web ? { dossier: webResult(web, webMove) } : {}),
       kind,
       sizedOn: keys,
+      // Garment keys size garment to garment; the table compares your body, on the keys your body has.
+      table: sizeTable(chart, chartSystem, brand, g2g ? TABLE_KEYS.filter((k) => kind !== 'bottoms' || k !== 'bust') : keys, body, pageSizes, posOf),
       garmentToGarment: !!g2g,
       // Where the pick sits on the chart it was read from, for placeLabel.
       learnedStep,

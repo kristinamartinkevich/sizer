@@ -519,6 +519,10 @@
     const title = String((product && product.title) || '');
     const kind = kindOf(title);
     if (kind === 'shoes' || [RE.outerwear, RE.bottoms, RE.dress, RE.tops, RE.onePiece].some((re) => re.test(title))) return kind;
+    // A title naming only the model (JD's "Nike V5 RNR Women's"): the shop's breadcrumb says Footwear.
+    // Its two deepest levels only: eBay files every dress under "Clothes, Shoes & Accessories".
+    const deepest = String((product && product.section) || '').split('>').slice(-2).join(' ');
+    if (/\b(?:footwear|shoes|trainers|sneakers|boots)\b/i.test(deepest)) return 'shoes';
     const nums = ((product && product.sizes) || []).map((s) => String(s.label || '').replace(/^\s*(?:uk|us|eu)\s*/i, '').trim())
       .map((t) => (/^\d{1,2}(?:[.,]5|½)?$/.test(t) ? parseFloat(t.replace(',', '.').replace('½', '.5')) : NaN));
     if (nums.length < 3 || nums.some(Number.isNaN) || nums.every(Number.isInteger)) return kind;

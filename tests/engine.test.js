@@ -865,6 +865,19 @@ test('shoe sizes follow the foot: men’s US 9.5 for 27.5 cm, the nearest half s
   assert.equal(boots.stockText, 'UK 8.5 is not offered on this page: the largest here is 8.');
 });
 
+// JD Sports, 2026-10-12: "Off white Nike V5 RNR Women's" with one size left, 6, was sized as clothing
+// ("10"): no garment word, and one size has no half sizes to tell. The breadcrumb says Footwear.
+test('a pair filed under footwear is shoes, even with one size left', () => {
+  const her = { anchors: [{ brand: 'Nike', type: 'shoes', size: 'UK 5.5', fit: 'perfect' }, { brand: 'H&M', type: 'dresses', size: 'M', fit: 'perfect' }] };
+  const r = recommend(her, { brand: 'Nike', title: "Off white Nike V5 RNR Women's", text: '', sizes: offered(['6']), host: 'www.jdsports.co.uk', section: 'Home > Women > Womens Footwear > Trainers', currency: 'GBP' });
+  assert.equal(r.shoes, true, r.size);
+  assert.equal(r.size, '6');
+  // A dress filed under a "Shoes & Dresses" edit is still a dress when its title says so.
+  assert.notEqual(recommend(her, { brand: 'Nobody', title: 'Satin slip dress', text: '', sizes: offered(['8', '10', '12']), section: 'Home > Women > Shoes' }).shoes, true);
+  // eBay files everything under "Clothes, Shoes & Accessories"; only the deepest levels count.
+  assert.notEqual(recommend(her, { brand: 'Kestrel', title: 'Kestrel Kanga', text: '', sizes: offered(['M']), host: 'www.ebay.co.uk', section: "eBay > Clothes, Shoes & Accessories > Women > Women's Clothing > Jumpers & Cardigans" }).shoes, true);
+});
+
 // JD Sports, 2026-10-11: "New Balance 530 Women's" names only the model, so it read as no clothing.
 test('a trainer named only by its model is shoes by its half sizes', () => {
   const her = { anchors: [{ brand: 'Clarks', type: 'shoes', size: 'UK 7', fit: 'perfect' }] };

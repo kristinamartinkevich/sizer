@@ -479,3 +479,13 @@ test('a Depop "EUR 39" shoe label is an EU size, placed against your foot', () =
   const l = Vinted.listingFrom({ host: 'www.depop.com', title: 'Worn doc martens size EU 39', brand: 'Dr. Martens', size: 'EUR 39', category: ['Women', 'Shoes', 'Boots'], description: '' });
   assert.strictEqual(Vinted.answerFor(l, FOOT, null, Engine).verdict, 'fits');
 });
+
+// Poshmark, 2026-10-12: Torrid jeans labelled 18 for a shopper whose Torrid 18 fits said "Your size
+// by the label" and then "Sizer picks EU 50 for you", a size the US listing never names.
+test('a label that is your size is the size Sizer picks, as the listing names it', () => {
+  const her = { anchors: [{ brand: 'Torrid', type: 'jeans', size: '18', fit: 'perfect' }], bust: '117', waist: '102', hip: '125', unit: 'cm' };
+  const l = Vinted.listingFrom({ host: 'poshmark.com', title: 'Torrid Jegging Jeans 18R', brand: 'torrid', size: '18', category: ['Women', 'Jeans'], description: '' });
+  const a = Vinted.answerFor(l, her, null, Engine);
+  assert.strictEqual(a.verdict, 'fits');
+  assert.strictEqual(a.pick, '18');
+});

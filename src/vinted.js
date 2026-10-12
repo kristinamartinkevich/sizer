@@ -440,7 +440,9 @@
           verdict: label ? label.verdict : null,
           line: label ? label.line : `Sizer would pick ${r.pickLabel} for you`,
           flag: flagFor(l.sizeFrom),
-          pick: r.pickLabel,
+          // A label that is the shopper's size is named as the listing has it: Poshmark's Torrid 18
+          // is "18", not the chart's "EU 50".
+          pick: placed.steps === 0 ? l.size : r.pickLabel,
           // The brand's note is brand-level knowledge even when the engine had no reason to apply it.
           reasons: r.reasons.map((x) => x.text).concat(placed.brandNote && !r.reasons.some((x) => x.text === placed.brandNote) ? [placed.brandNote] : []),
           brandFact: engine.provenance(r).brandFact,

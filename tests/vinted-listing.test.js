@@ -489,3 +489,13 @@ test('a label that is your size is the size Sizer picks, as the listing names it
   assert.strictEqual(a.verdict, 'fits');
   assert.strictEqual(a.pick, '18');
 });
+
+// Vinted.de, 2026-10-12: Levi's "Mom Jean W28 L27 ... Gr. 36 S" filed in the box as EU 36 said "Too
+// small" to a shopper whose Levi's W28 fits: the box's EU 36 beat the W the title writes out.
+test('a W in a jeans title beats an EU number in the size box', () => {
+  const l = Vinted.listingFrom({ host: 'www.vinted.de', title: "Levi's High Waisted Mom Jean W28 L27 Damen Jeans hellblau Hose Gr. 36 S", brand: "Levi's", size: 'EU 36', category: ['Damen', 'Kleidung', 'Jeans'], description: '' });
+  assert.strictEqual(l.size, 'W28');
+  assert.strictEqual(l.sizeFrom, 'title');
+  const her = { anchors: [{ brand: "Levi's", type: 'jeans', size: 'W28 L30', fit: 'perfect' }], bust: '88', waist: '70', hip: '96', unit: 'cm' };
+  assert.strictEqual(Vinted.answerFor(l, her, null, Engine).verdict, 'fits');
+});

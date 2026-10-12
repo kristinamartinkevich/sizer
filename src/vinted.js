@@ -368,8 +368,9 @@
     const brand = ldText(ld.brand) || clean(r.brand);
     const legs = kind === 'jeans' || kind === 'trousers';
     const bottoms = legs && !/\d/.test(label || '');
-    // A W the title writes out ("W28 L30") beats a bare number in the box, which can be an EU 36.
-    const writtenW = legs && /^\d{2}$/.test(label || '') ? pairWaist(title) : null;
+    // A W the title writes out ("W28 L30") beats a bare number in the box, which can be an EU 36, and
+    // beats one the box names as EU, FR or DE: Vinted.de's Levi's "W28 L27" filed as "EU 36".
+    const writtenW = legs && /^(?:(?:EU|FR|DE) )?\d{2}$/.test(label || '') ? pairWaist(title) : null;
     const fromTitle = writtenW || (bottoms ? titleWaist(title) : null);
     const fromText = bottoms && !fromTitle ? pairWaist(description) : null;
     const waist = fromTitle || fromText;

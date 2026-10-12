@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sizer – Clothing Size Finder",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Order one size, not two. Sizer puts your size under the size picker, from the brand’s chart, the stretch, fit notes and reviews.",
   "permissions": [
     "storage",

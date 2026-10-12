@@ -915,3 +915,11 @@ test('a piece you own from this brand, of this kind, names the size there', () =
   const d = recommend(her, { brand: 'M&S', title: 'Jersey Midi Dress', text: '', sizes, host, currency });
   assert.notEqual(d.size, '18');
 });
+
+// Galeries Lafayette, 2026-10-12: the size select's prompt "Sélectionner une taille" was read as a
+// sold-out S, because an accented letter after the S did not count as part of a word.
+test('a word that starts with S, M or L in any language is no letter size', () => {
+  for (const prompt of ['Sélectionner une taille', 'Ölçü', 'Más tallas', 'Läpi']) assert.strictEqual(parseSizeLabel(prompt), null, prompt);
+  assert.strictEqual(parseSizeLabel('S').value, 'S');
+  assert.strictEqual(parseSizeLabel('L/XL').span, 'XL');
+});

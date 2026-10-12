@@ -47,7 +47,8 @@
   // ---- size labels -------------------------------------------------------
 
   const LETTERS = '6XL|5XL|XXXXXL|4XL|XXXXL|3XL|XXXL|XXL|2XL|XL|XXXS|3XS|XXS|2XS|XS|S|M|L';
-  const LETTER_RE = new RegExp(`^(${LETTERS})(?![A-Z])`);
+  // Not the start of a word in any language: Galeries Lafayette's prompt "Sélectionner une taille" is no S.
+  const LETTER_RE = new RegExp(`^(${LETTERS})(?!\\p{L})`, 'u');
   const LETTER_CANON = { XXXXXL: '5XL', XXXXL: '4XL', XXXL: '3XL', '2XL': 'XXL', '2XS': 'XXS', '3XS': 'XXXS' };
   const letterOf = (x) => LETTER_CANON[x] || x;
   // Sizes as words: Small, X-Large, Extra Small, XX-Large.

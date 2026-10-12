@@ -1,0 +1,40 @@
+<!doctype html>
+<!--
+  Synthetic fixture (found shopping on galerieslafayette.com with a French size 38, 2026-10-12): the
+  brand is a link in "productHeading-brand" beside a "Marque favorite" button, with no structured
+  data, so Sizer said "Brand Not found". The size select opens on a disabled prompt, "Sélectionner une
+  taille", which was read as a sold-out S. Markup trimmed from the page; the brand is fictional.
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Robe Hamy Encre - Kestrel | Galeries Lafayette</title>
+  <style>
+    body { font: 15px/1.5 Helvetica, Arial, sans-serif; margin: 0; color: #171717; }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    select { width: 240px; height: 40px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div data-test-id="product_heading" class="productHeading">
+      <div class="productHeading-tags"><p class="productHeading-label">nouveauté</p></div>
+      <div class="productHeading-brand"><a class="productHeading-link" href="/b/kestrel">Kestrel </a>
+        <div class="wishlistButton__container"><button type="button" class="wishlistButton" aria-pressed="false" aria-label="Marque favorite"></button><span class="wishlistButton__label">Marque favorite</span></div>
+      </div>
+      <h1 class="productHeading-name">Robe Hamy</h1>
+    </div>
+    <p class="price">295,00 €</p>
+    <app-product-variant-size-selector>
+      <label for="variant-size-selector">Taille</label>
+      <select id="variant-size-selector" name="variant-size-selector" required data-test-id="product_variant_size_selector">
+        <option disabled> Sélectionner une taille </option>
+        <option class="is-available" value="2013226658283"> 34 FR </option>
+        <option class="is-available" value="2013226658290"> 36 FR </option>
+        <option class="is-available" value="2013226658306"> 38 FR </option>
+        <option class="is-available" value="2013226658313"> 40 FR </option>
+      </select>
+    </app-product-variant-size-selector>
+  </main>
+</body>
+</html>

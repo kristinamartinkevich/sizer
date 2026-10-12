@@ -574,7 +574,8 @@
     const h1El = doc.querySelector('#productTitle') || doc.querySelector('h1');
     const h1 = h1El ? spacedText(h1El) : '';
     const title = clean((ld && ld.name) || meta(doc, 'meta[property="og:title"]') || h1 || doc.title);
-    const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i], #bylineInfo');
+    // Galeries Lafayette: the brand is the link in "productHeading-brand", beside a "Marque favorite" button.
+    const brandEl = doc.querySelector('[itemprop="brand"], [data-testid*="brand" i], [class*="brand-name" i], [class*="product-brand" i], [class*="heading-brand" i] a, #bylineInfo');
     // Microdata names the brand on its own: Office's h1 "product__brand-name" holds the brand and the
     // product name together, ahead of its itemprop="brand" block.
     const microBrand = doc.querySelector('[itemprop="brand"] [itemprop="name"], [itemprop="brand"][content]');
